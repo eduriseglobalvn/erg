@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-900 text-slate-300 pt-16 pb-8">
+    <footer className="bg-blue-950 text-slate-300 pt-16 pb-8">
       <div className="container mx-auto px-4 md:px-6">
         {/* THAY ĐỔI CHÍNH: Chia thành 3 cột trên màn hình LG trở lên */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
@@ -23,13 +23,13 @@ const Footer: React.FC = () => {
               Hệ thống giáo dục hàng đầu, cam kết mang lại chất lượng đào tạo tốt nhất cho thế hệ trẻ Việt Nam. Khơi dậy tiềm năng, kiến tạo tương lai.
             </p>
             <div className="flex gap-4">
-              <a href="https://www.facebook.com/eduriseerg" className="bg-slate-800 p-2 rounded-full hover:bg-blue-600 transition-colors" aria-label="Facebook">
+              <a href="https://www.facebook.com/eduriseerg" className="bg-blue-900 p-2 rounded-full hover:bg-blue-600 transition-colors" aria-label="Facebook">
                 <Facebook size={18} />
               </a>
-              <a href="#" className="bg-slate-800 p-2 rounded-full hover:bg-red-600 transition-colors" aria-label="Youtube">
+              <a href="#" className="bg-blue-900 p-2 rounded-full hover:bg-red-600 transition-colors" aria-label="Youtube">
                 <Youtube size={18} />
               </a>
-              <a href="#" className="bg-slate-800 p-2 rounded-full hover:bg-pink-600 transition-colors" aria-label="Instagram">
+              <a href="#" className="bg-blue-900 p-2 rounded-full hover:bg-pink-600 transition-colors" aria-label="Instagram">
                 <Instagram size={18} />
               </a>
             </div>

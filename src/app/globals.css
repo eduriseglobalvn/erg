@@ -3,13 +3,31 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* 1. KHAI BÁO MÀU GỐC (Base Palette) */
+  --erg-blue: #00008b;
+  --erg-red: #cc0022;
+
+
+  /* 2. GÁN MÀU THEO CHỨC NĂNG (Semantic Colors) - Dùng cái này trong code */
+  /* Bình thường: */
+  --color-primary: var(--erg-blue);   /* Màu chính: Xanh */
+  --color-highlight: var(--erg-red);  /* Màu nhấn: Đỏ (Hover, Button, Viền) */
+
+  /* KHI CÓ EVENT (Ví dụ Giáng sinh): Bạn chỉ cần comment dòng trên, mở dòng dưới: */
+  /* --color-highlight: var(--christmas-green); */
 }
 
+/* 3. Đưa biến vào Tailwind Theme để dùng class như: text-primary, bg-highlight */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Map biến CSS vào Tailwind colors */
+  --color-primary: var(--color-primary);
+  --color-highlight: var(--color-highlight);
 }
 
 @media (prefers-color-scheme: dark) {

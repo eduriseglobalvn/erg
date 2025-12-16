@@ -1,7 +1,21 @@
-import type { NextConfig } from "next";
+// next.config.ts
+import { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+    async headers() {
+        return [
+            {
+                source: '/:path*',
+                headers: [
+                    {
+                        key: 'Access-Control-Allow-Origin',
+                        value: 'local-origin.dev, *.local-origin.dev',
+                    },
+                ],
+            },
+        ]
+    },
+    devIndicators: false,
+}
 
-export default nextConfig;
+export default nextConfig

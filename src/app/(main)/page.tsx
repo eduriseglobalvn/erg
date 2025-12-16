@@ -146,8 +146,7 @@ export default function Home() {
                                 Kiến tạo nền tảng vững chắc cho tương lai
                             </h2>
                             <p className="text-gray-600 mb-8 leading-relaxed text-justify relative">
-                                Tại ERG Global, chúng tôi tin rằng mỗi học viên đều có tiềm năng riêng biệt. Với hơn 15 năm kinh nghiệm, chúng tôi cam kết mang đến môi trường giáo dục chuẩn quốc tế.
-                            </p>
+                                Tại ERG, chúng tôi tin rằng mỗi học sinh đều có những tiềm năng riêng biệt cần được khơi dậy. Với phương pháp giáo dục hiện đại, kết hợp giữa lý thuyết và thực hành, chúng tôi cam kết mang đến môi trường học tập tốt nhất.                            </p>
                             {/* Thêm whitespace-nowrap để chữ không bị rớt dòng xấu */}
                             <Link
                                 href="/gioi-thieu"
@@ -172,7 +171,7 @@ export default function Home() {
                             ))}
                             <div className="bg-gradient-to-br from-[var(--erg-blue)] to-blue-900 p-8 rounded-2xl text-white flex flex-col justify-center items-center text-center relative overflow-hidden shadow-lg">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                                <h3 className="text-5xl font-bold mb-2 relative z-10">15+</h3>
+                                <h3 className="text-5xl font-bold mb-2 relative z-10">8+</h3>
                                 <p className="text-blue-100 relative z-10">Năm kinh nghiệm đào tạo</p>
                             </div>
                         </div>

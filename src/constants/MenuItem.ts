@@ -6,7 +6,7 @@ const isDev = process.env.NODE_ENV === 'development';
 const PROTOCOL = isDev ? 'http' : 'https';
 const PORT = isDev ? ':3000' : '';
 
-const getSubdomainLink = (subdomain: string, path: string = "") => {
+export const getSubdomainLink = (subdomain: string, path: string = "") => {
     if (!subdomain) return `${PROTOCOL}://${ROOT_DOMAIN}${PORT}${path}`;
     return `${PROTOCOL}://${subdomain}.${ROOT_DOMAIN}${PORT}${path}`;
 };
@@ -17,9 +17,9 @@ export const TRAINING_PROGRAMS = [
     { label: "Tin học Quốc tế", subdomain: "tinhocquocte" },
     { label: "Tin học Quốc gia", subdomain: "tinhocquocgia" },
     { label: "Tin học Thiếu nhi", subdomain: "tinhocthieunhi" },
+    { label: "Giáo dục kỹ năng công dân số", subdomain: "congdanso" },
     { label: "Điện toán đám mây", subdomain: "dientoandammay" },
     { label: "Trí tuệ nhân tạo (AI)", subdomain: "ai" },
-    { label: "Giáo dục kỹ năng công dân số", subdomain: "congdanso" },
     // Sau này thêm AWS thì chỉ cần thêm dòng này:
     // { label: "Chứng chỉ AWS", subdomain: "aws" },
 ];

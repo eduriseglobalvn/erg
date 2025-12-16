@@ -1,4 +1,4 @@
 import ComingSoon from "@/components/helper/ComingSoon";
-export default function TinHocQuocTePage() {
+export default function TinHocQuocGiaPage() {
   return (<ComingSoon/>)
 }

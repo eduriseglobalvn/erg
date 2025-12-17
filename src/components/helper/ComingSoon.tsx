@@ -49,7 +49,7 @@ export default function ComingSoon({
                 {/* Buttons Action */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Link
-                        href="/public"
+                        href="/"
                         className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-white font-medium transition-all hover:shadow-lg hover:-translate-y-1"
                         style={{ backgroundColor: ERG_BLUE }}
                     >

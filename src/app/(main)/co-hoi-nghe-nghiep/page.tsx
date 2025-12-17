@@ -23,7 +23,7 @@ const trainingPrograms = [
   },
   {
     title: 'Kỹ năng Sư phạm & Quản lý',
-    desc: 'Bồi dưỡng phương pháp truyền đạt dễ hiểu, kỹ năng quản lý lớp học và tạo động lực học tập cho học sinh[cite: 53, 54].',
+    desc: 'Bồi dưỡng phương pháp truyền đạt dễ hiểu, kỹ năng quản lý lớp học và tạo động lực học tập cho học sinh.',
     image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1000&auto=format&fit=crop'
   },
   {
@@ -52,7 +52,7 @@ const recruitmentProcess = [
   {
     step: 3,
     title: "Kiểm tra năng lực",
-    desc: "Đánh giá tư duy logic (IQ), khả năng sư phạm và kiến thức chuyên môn CNTT (Word, Excel, Code...)[cite: 27].",
+    desc: "Đánh giá tư duy logic (IQ), khả năng sư phạm và kiến thức chuyên môn CNTT (Word, Excel, Code...).",
     detail: "Hình thức: Online hoặc trực tiếp.",
     img: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=1000&auto=format&fit=crop"
   },
@@ -66,7 +66,7 @@ const recruitmentProcess = [
   {
     step: 5,
     title: "Thỏa thuận hợp đồng",
-    desc: "Trao đổi chi tiết về loại hợp đồng, mức lương, phụ cấp và các chế độ phúc lợi khác[cite: 4].",
+    desc: "Trao đổi chi tiết về loại hợp đồng, mức lương, phụ cấp và các chế độ phúc lợi khác.",
     detail: "Giải đáp mọi thắc mắc về quyền lợi.",
     img: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1000&auto=format&fit=crop"
   },
@@ -168,7 +168,7 @@ export default function CareerPage() {
                         Tại Edurise Global, chúng tôi cam kết tạo ra môi trường làm việc nơi mỗi cá nhân đều có cơ hội phát triển. Giáo viên không chỉ giảng dạy mà còn được định hướng lộ trình nghề nghiệp rõ ràng.
                       </p>
                       <p className="text-gray-600 mb-8 leading-relaxed">
-                        Chúng tôi liên tục tổ chức các khóa đào tạo chuyên môn và kỹ năng mềm, đảm bảo nhân sự luôn bắt kịp xu hướng công nghệ giáo dục 4.0[cite: 23, 36].
+                        Chúng tôi liên tục tổ chức các khóa đào tạo chuyên môn và kỹ năng mềm, đảm bảo nhân sự luôn bắt kịp xu hướng công nghệ giáo dục 4.0.
                       </p>
 
                       {/* Stats Box */}
@@ -235,7 +235,7 @@ export default function CareerPage() {
                     <div className="md:w-1/3 space-y-6">
                       <h2 className="text-3xl font-bold text-[#00008b]">Chính sách đãi ngộ</h2>
                       <p className="text-gray-600">
-                        Hệ thống đãi ngộ của Edurise Global được xây dựng căn cứ trên các tiêu chí: Tương xứng với kết quả công việc, cạnh tranh theo thị trường và khuyến khích tăng kết quả[cite: 3].
+                        Hệ thống đãi ngộ của Edurise Global được xây dựng căn cứ trên các tiêu chí: Tương xứng với kết quả công việc, cạnh tranh theo thị trường và khuyến khích tăng kết quả.
                       </p>
                       <ul className="space-y-3">
                         {['Công bằng & Minh bạch', 'Cạnh tranh thị trường', 'Ghi nhận đóng góp'].map((txt, i) => (
@@ -269,7 +269,7 @@ export default function CareerPage() {
                           <div className="bg-red-100 p-2 rounded-full mr-3"><Zap className="w-6 h-6 text-[#cc0022]" /></div>
                           <h4 className="font-bold text-gray-800">Phụ Cấp</h4>
                         </div>
-                        <p className="text-sm text-gray-600">Hỗ trợ đi lại, cước điện thoại, phụ cấp kiêm nhiệm cho các vị trí đặc thù[cite: 14].</p>
+                        <p className="text-sm text-gray-600">Hỗ trợ đi lại, cước điện thoại, phụ cấp kiêm nhiệm cho các vị trí đặc thù.</p>
                       </div>
 
                       <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[#00008b] hover:bg-blue-50 transition-colors">
@@ -277,7 +277,7 @@ export default function CareerPage() {
                           <div className="bg-blue-100 p-2 rounded-full mr-3"><Heart className="w-6 h-6 text-[#00008b]" /></div>
                           <h4 className="font-bold text-gray-800">Phúc Lợi Xã Hội</h4>
                         </div>
-                        <p className="text-sm text-gray-600">Đầy đủ Bảo hiểm xã hội, BHYT, BHTN theo luật định và chế độ thăm hỏi, du lịch[cite: 4].</p>
+                        <p className="text-sm text-gray-600">Đầy đủ Bảo hiểm xã hội, BHYT, BHTN theo luật định và chế độ thăm hỏi, du lịch.</p>
                       </div>
                     </div>
                   </div>

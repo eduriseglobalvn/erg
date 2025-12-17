@@ -51,8 +51,14 @@ export default function CoreValuesPage() {
 
             {/* --- HERO SECTION --- */}
             <section className="relative h-[400px] flex items-center justify-center bg-white overflow-hidden">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#00008b 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+                {/* Background Pattern: Dot Grid */}
+                <div
+                    className="absolute inset-0 opacity-20"
+                    style={{
+                        backgroundImage: 'radial-gradient(#00008b 1px, transparent 1px)',
+                        backgroundSize: '24px 24px' // Kích thước chấm giống ảnh mẫu
+                    }}
+                ></div>
 
                 <div className="relative z-10 text-center px-4 animate-fade-in-up">
                     <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-blue-50 border border-blue-100 text-[#00008b] text-sm font-semibold mb-6">
@@ -136,32 +142,42 @@ export default function CoreValuesPage() {
                 </div>
             </section>
 
-            {/* --- BOTTOM CTA --- */}
-            <section className="py-16 bg-white border-t border-gray-100">
-                <div className="container mx-auto px-4 text-center">
-                    <div className="max-w-3xl mx-auto bg-blue-50 rounded-2xl p-8 md:p-12 relative overflow-hidden">
-                        {/* Decor elements */}
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#cc0022] opacity-5 rounded-full -translate-y-1/2 translate-x-1/3"></div>
-                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#00008b] opacity-5 rounded-full translate-y-1/2 -translate-x-1/3"></div>
+            {/* --- BOTTOM CTA (Nền chấm + Button đỏ) --- */}
+            <section className="py-20 bg-gray-50 border-t border-gray-100 relative overflow-hidden">
+                {/* Background Pattern: Dot Grid mờ toàn nền */}
+                <div
+                    className="absolute inset-0 opacity-10 pointer-events-none"
+                    style={{
+                        backgroundImage: 'radial-gradient(#00008b 1px, transparent 1px)',
+                        backgroundSize: '30px 30px'
+                    }}
+                ></div>
 
-                        <div className="relative z-10">
-                            <Zap className="w-10 h-10 text-[#ffcc00] mx-auto mb-4" />
-                            <h2 className="text-2xl font-bold text-[#00008b] mb-4">
-                                Sẵn sàng đồng hành cùng ERG?
-                            </h2>
-                            <p className="text-gray-600 mb-8">
-                                Chúng tôi luôn chào đón những nhân tài chia sẻ cùng hệ giá trị để kiến tạo tương lai giáo dục.
-                            </p>
-                            <a
-                                href="https://tuyendung.erg.edu.vn"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center bg-[#cc0022] hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-colors group"
-                            >
-                                Xem cơ hội nghề nghiệp
-                                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"/>
-                            </a>
-                        </div>
+                <div className="container mx-auto px-4 text-center relative z-10">
+                    <div className="max-w-4xl mx-auto bg-blue-50/80 backdrop-blur-sm rounded-3xl p-10 md:p-14 border border-blue-100 shadow-xl">
+
+                        <Zap className="w-12 h-12 text-[#ffcc00] mx-auto mb-6 drop-shadow-sm" />
+
+                        <h2 className="text-3xl font-bold text-[#00008b] mb-4">
+                            Sẵn sàng đồng hành cùng ERG?
+                        </h2>
+                        <p className="text-gray-600 mb-8 max-w-2xl mx-auto text-lg">
+                            Chúng tôi luôn chào đón những nhân tài chia sẻ cùng hệ giá trị để kiến tạo tương lai giáo dục.
+                        </p>
+
+                        <a
+                            href="https://tuyendung.erg.edu.vn"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center bg-[#cc0022] hover:bg-red-700 text-white font-bold py-4 px-10 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1"
+                        >
+                            Xem cơ hội nghề nghiệp
+                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"/>
+                        </a>
+
+                        {/* Decor Circles ở góc (Giống ảnh 2) */}
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-[#cc0022] opacity-5 rounded-bl-full rounded-tr-3xl"></div>
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#00008b] opacity-5 rounded-tr-full rounded-bl-3xl"></div>
                     </div>
                 </div>
             </section>

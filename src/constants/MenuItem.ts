@@ -21,7 +21,7 @@ export const TRAINING_PROGRAMS = [
     { label: "Điện toán đám mây", subdomain: "dientoandammay" },
     { label: "Trí tuệ nhân tạo (AI)", subdomain: "ai" },
     // Sau này thêm AWS thì chỉ cần thêm dòng này:
-    // { label: "Chứng chỉ AWS", subdomain: "aws" },
+    // { label: "Chứng chỉ AWS", tinhocquocte: "aws" },
 ];
 
 // 3. EXPORT DANH SÁCH SUBDOMAIN CHO PROXY DÙNG
@@ -54,3 +54,30 @@ export const MAIN_MENU_ITEMS = [
     { label: "CƠ HỘI NGHỀ NGHIỆP", path: "/co-hoi-nghe-nghiep" },
     { label: "LIÊN HỆ", path: "/lien-he" },
 ];
+
+export const THQT_MENU_ITEMS = [
+    {
+        label: "GIỚI THIỆU",
+        path: "/gioi-thieu",
+    },
+    {
+        label: "LỘ TRÌNH",
+        path: "/lo-trinh",
+    },
+    {
+        label: "KHÓA HỌC",
+        path: "/khoa-hoc",
+        children: [
+            { label: "MOS", path: "/khoa-hoc//mos" },
+            { label: "IC3 GS6", path: "/khoa-hoc/ic3-gs6" },
+            { label: "IC3 GS6 Spark", path: "/khoa-hoc/ic3-gs6-spark" },
+        ]
+    },
+    {
+        label: "ĐỘI NGŨ GIÁO VIÊN",
+        path: "/doi-ngu-giao-vien",
+    },
+    { label: "TIN TỨC", path: "/tin-tuc" },
+    { label: "LIÊN HỆ", path: "/lien-he" },
+
+]

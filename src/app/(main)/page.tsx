@@ -199,7 +199,7 @@ export default function Home() {
                         {TRAINING_FIELDS.map((field) => {
                             // --- LOGIC MỚI: TÁI SỬ DỤNG getSubdomainLink ---
 
-                            // 1. Tìm cấu hình subdomain
+                            // 1. Tìm cấu hình tinhocquocte
                             const programConfig = TRAINING_PROGRAMS.find(p => p.label === field.title);
 
                             // 2. Tạo URL: Nếu có config thì dùng hàm helper, không thì dùng link cũ
@@ -226,7 +226,7 @@ export default function Home() {
                                             {field.description}
                                         </p>
 
-                                        {/* Link đã được xử lý subdomain chuẩn xác */}
+                                        {/* Link đã được xử lý tinhocquocte chuẩn xác */}
                                         <Link
                                             href={targetUrl}
                                             className="text-sm font-bold uppercase tracking-wider text-[var(--erg-red)] hover:underline underline-offset-4"

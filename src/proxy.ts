@@ -43,7 +43,7 @@ export default function proxy(request: NextRequest) {
     // 1. Nếu Subdomain hợp lệ -> Rewrite về folder tương ứng
     if (VALID_SUBDOMAINS.includes(subdomain)) {
         // Console log để bạn dễ debug ở dưới local
-        // console.log(`[Proxy] Rewrite: ${subdomain}.${rootDomain} -> /${subdomain}${path}`);
+        // console.log(`[Proxy] Rewrite: ${tinhocquocte}.${rootDomain} -> /${tinhocquocte}${path}`);
         return NextResponse.rewrite(new URL(`/${subdomain}${path}`, request.url));
     }
 

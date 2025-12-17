@@ -31,8 +31,8 @@ export const VALID_SUBDOMAINS = TRAINING_PROGRAMS.map(p => p.subdomain);
 // 4. TẠO MENU ITEMS CHO FRONTEND
 export const MAIN_MENU_ITEMS = [
     {
-        label: "VỀ ERG",
-        path: "/ve-erg",
+        label: "GIỚI THIỆU",
+        path: "/gioi-thieu",
         children: [
             { label: "Câu chuyện của ERG", path: "/cau-chuyen-cua-erg" },
             { label: "Giá trị cốt lõi", path: "/gia-tri-cot-loi" },

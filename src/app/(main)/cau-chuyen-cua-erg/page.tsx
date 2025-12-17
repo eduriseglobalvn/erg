@@ -33,9 +33,18 @@ export default function ErgStoryPage() {
                 </div>
             </section>
 
-            {/* --- PHẦN 1: BỐI CẢNH RA ĐỜI (Nội dung gốc từ ảnh) --- */}
-            <section className="py-20 container mx-auto px-4">
-                <div className="flex flex-col lg:flex-row items-center gap-12">
+            {/* --- PHẦN 1: BỐI CẢNH RA ĐỜI --- */}
+            <section className="py-20 container mx-auto px-4 relative overflow-hidden">
+                {/* Dot Grid Pattern cho nền trắng */}
+                <div
+                    className="absolute inset-0 opacity-10 pointer-events-none"
+                    style={{
+                        backgroundImage: 'radial-gradient(#00008b 1px, transparent 1px)',
+                        backgroundSize: '24px 24px'
+                    }}
+                ></div>
+
+                <div className="flex flex-col lg:flex-row items-center gap-12 relative z-10">
 
                     {/* Cột Trái: Text */}
                     <div className="lg:w-1/2 space-y-6">
@@ -49,30 +58,39 @@ export default function ErgStoryPage() {
                             Giữa làn sóng chuyển đổi số mạnh mẽ, khi giáo dục toàn cầu đối mặt với yêu cầu đổi mới để bắt nhịp thời đại, ERG (EduRise Global) ra đời với một khát vọng lớn: biến công nghệ trở thành chiếc cầu nối bền vững giữa tri thức và con người.
                         </p>
 
-                        <div className="bg-blue-50 border-l-4 border-[#00008b] p-6 italic text-gray-600 rounded-r-lg">
+                        <div className="bg-white/80 backdrop-blur-sm border-l-4 border-[#00008b] p-6 italic text-gray-600 rounded-r-lg shadow-sm">
                             "Chúng tôi không chỉ dạy công nghệ, chúng tôi dùng công nghệ để khai phóng tiềm năng con người."
                         </div>
                     </div>
 
                     {/* Cột Phải: Hình ảnh minh họa */}
                     <div className="lg:w-1/2">
-                        <div className="relative rounded-2xl overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-all duration-500">
+                        <div className="relative rounded-2xl overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-all duration-500 group">
                             <img
                                 src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1000&auto=format&fit=crop"
                                 alt="Digital Transformation in Education"
                                 className="w-full h-auto object-cover"
                             />
                             {/* Decorative Elements */}
-                            <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-[#cc0022] rounded-full z-[-1]"></div>
+                            <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-[#cc0022] rounded-full z-[-1] group-hover:scale-110 transition-transform"></div>
                             <div className="absolute -top-6 -left-6 w-32 h-32 bg-[#00008b]/20 rounded-full z-[-1]"></div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* --- PHẦN 2: GIẢI MÃ TÊN GỌI (Nội dung gốc từ ảnh + Visual hóa) --- */}
-            <section className="py-20 bg-gray-50">
-                <div className="container mx-auto px-4">
+            {/* --- PHẦN 2: GIẢI MÃ TÊN GỌI --- */}
+            <section className="py-20 bg-gray-50 relative overflow-hidden">
+                {/* Dot Grid Pattern (Mờ hơn chút trên nền xám) */}
+                <div
+                    className="absolute inset-0 opacity-5 pointer-events-none"
+                    style={{
+                        backgroundImage: 'radial-gradient(#00008b 1px, transparent 1px)',
+                        backgroundSize: '24px 24px'
+                    }}
+                ></div>
+
+                <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-4xl mx-auto text-center mb-12">
                         <Quote className="w-12 h-12 text-[#cc0022] mx-auto mb-4 opacity-50" />
 
@@ -101,7 +119,7 @@ export default function ErgStoryPage() {
                         </div>
 
                         {/* Card 2: Rise */}
-                        <div className="bg-white p-8 rounded-xl shadow-lg border-t-4 border-[#cc0022] hover:-translate-y-2 transition-transform duration-300 scale-105 z-10">
+                        <div className="bg-white p-8 rounded-xl shadow-lg border-t-4 border-[#cc0022] hover:-translate-y-2 transition-transform duration-300 scale-105 z-10 ring-4 ring-white">
                             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6 mx-auto">
                                 <TrendingUp className="w-8 h-8 text-[#cc0022]" />
                             </div>
@@ -127,7 +145,7 @@ export default function ErgStoryPage() {
                 </div>
             </section>
 
-            {/* --- PHẦN 3: GIÁ TRỊ CỐT LÕI (Phần thêm vào để sinh động hơn) --- */}
+            {/* --- PHẦN 3: GIÁ TRỊ CỐT LÕI (Nền xanh đậm - Không dùng Dot Grid, dùng Shape) --- */}
             <section className="py-20 bg-[#00008b] text-white relative overflow-hidden">
                 {/* Abstract Background Shapes */}
                 <div className="absolute top-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
@@ -140,7 +158,8 @@ export default function ErgStoryPage() {
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-8">
-                        <div className="flex flex-col items-center text-center p-6 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm">
+                        {/* Item 1 */}
+                        <div className="flex flex-col items-center text-center p-6 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
                             <Lightbulb className="w-12 h-12 text-[#ffcc00] mb-4" />
                             <h3 className="text-xl font-bold mb-2">Tiên Phong</h3>
                             <p className="text-blue-100 text-sm">
@@ -148,7 +167,8 @@ export default function ErgStoryPage() {
                             </p>
                         </div>
 
-                        <div className="flex flex-col items-center text-center p-6 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm">
+                        {/* Item 2 */}
+                        <div className="flex flex-col items-center text-center p-6 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
                             <Heart className="w-12 h-12 text-[#cc0022] mb-4" />
                             <h3 className="text-xl font-bold mb-2">Tâm Huyết</h3>
                             <p className="text-blue-100 text-sm">
@@ -156,7 +176,8 @@ export default function ErgStoryPage() {
                             </p>
                         </div>
 
-                        <div className="flex flex-col items-center text-center p-6 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm">
+                        {/* Item 3 */}
+                        <div className="flex flex-col items-center text-center p-6 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
                             <Rocket className="w-12 h-12 text-blue-300 mb-4" />
                             <h3 className="text-xl font-bold mb-2">Đột Phá</h3>
                             <p className="text-blue-100 text-sm">
@@ -168,17 +189,33 @@ export default function ErgStoryPage() {
             </section>
 
             {/* --- CTA / KẾT THÚC --- */}
-            <section className="py-16 text-center">
-                <h2 className="text-2xl font-bold text-[#00008b] mb-6">
-                    Hãy cùng chúng tôi viết tiếp câu chuyện này
-                </h2>
-                <div className="flex justify-center gap-4">
-                    <a href="/tuyen-dung" className="bg-[#cc0022] hover:bg-red-700 text-white font-bold py-3 px-8 rounded shadow-lg transition-all">
-                        Gia nhập đội ngũ ERG
-                    </a>
-                    <a href="/lien-he" className="border-2 border-[#00008b] text-[#00008b] hover:bg-blue-50 font-bold py-3 px-8 rounded transition-all">
-                        Liên hệ hợp tác
-                    </a>
+            <section className="py-16 text-center relative overflow-hidden">
+                {/* Dot Grid Pattern */}
+                <div
+                    className="absolute inset-0 opacity-10 pointer-events-none"
+                    style={{
+                        backgroundImage: 'radial-gradient(#00008b 1px, transparent 1px)',
+                        backgroundSize: '24px 24px'
+                    }}
+                ></div>
+
+                <div className="relative z-10">
+                    <h2 className="text-2xl font-bold text-[#00008b] mb-6">
+                        Hãy cùng chúng tôi viết tiếp câu chuyện này
+                    </h2>
+                    <div className="flex justify-center gap-4">
+                        <a
+                            href="https://tuyendung.erg.edu.vn"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-[#cc0022] hover:bg-red-700 text-white font-bold py-3 px-8 rounded shadow-lg transition-all hover:-translate-y-1"
+                        >
+                            Gia nhập đội ngũ ERG
+                        </a>
+                        <a href="/lien-he" className="bg-white border-2 border-[#00008b] text-[#00008b] hover:bg-blue-50 font-bold py-3 px-8 rounded transition-all hover:-translate-y-1">
+                            Liên hệ hợp tác
+                        </a>
+                    </div>
                 </div>
             </section>
 

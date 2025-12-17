@@ -80,8 +80,7 @@ const recruitmentProcess = [
 ];
 
 export default function CareerPage() {
-  const [activeTab, setActiveTab] = useState<'policy' | 'process'>('process');
-
+  const [activeTab, setActiveTab] = useState<'policy' | 'process'>('policy');
   return (
       <div className="min-h-screen bg-white font-sans text-gray-800">
 

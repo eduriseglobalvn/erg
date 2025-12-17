@@ -9,7 +9,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Đội ngũ giáo viên', path: '/giao-vien' },
   { label: 'Tin tức', path: '/tin-tuc' },
   { label: 'Liên hệ', path: '/lien-he' },
-  { label: 'Tuyển dụng', path: '/tuyen-dung' },
+  { label: 'Tuyển dụng', path: '/co-hoi-nghe-nghiep' },
 ];
 
 export const HERO_SLIDES = [

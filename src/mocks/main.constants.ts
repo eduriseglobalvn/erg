@@ -8,7 +8,7 @@ export const HERO_SLIDES = [
     {
         id: 1,
         image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-        title: "Tiên phong Đào tạo Công nghệ & Kỹ năng số",
+        title: "Tiên phong Đào tạo Công nghệ & \nKỹ năng số",
         subtitle: "Hệ thống đào tạo chuẩn Quốc tế, trang bị hành trang vững chắc cho kỷ nguyên số hóa.",
     },
     {

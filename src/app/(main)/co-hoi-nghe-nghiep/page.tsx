@@ -47,7 +47,7 @@ const recruitmentProcess = [
     title: "Sàng lọc hồ sơ",
     desc: "Bộ phận Tuyển dụng chọn những ứng viên có thông tin gần với yêu cầu của vị trí cần tuyển.",
     detail: "Hồ sơ phù hợp sẽ được mời tham gia vòng kiểm tra.",
-    img: "https://images.unsplash.com/photo-1554774853-719586f8c277?q=80&w=1000&auto=format&fit=crop"
+    img: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=1000&auto=format&fit=crop"
   },
   {
     step: 3,

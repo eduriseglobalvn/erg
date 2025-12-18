@@ -6,6 +6,7 @@ import {
   FileText, UserCheck, MessageSquare,
   FileSignature, FolderCheck, ArrowRight, Lightbulb, Zap
 } from 'lucide-react';
+import {RECRUITMENT_LINK} from '@/constants/MenuItem';
 
 // --- DATA ---
 
@@ -104,7 +105,7 @@ export default function CareerPage() {
 
             {/* NÚT CTA DUY NHẤT (Theo yêu cầu) */}
             <a
-                href="https://tuyendung.erg.edu.vn"
+                href={RECRUITMENT_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group relative inline-flex items-center justify-center bg-[#cc0022] hover:bg-red-700 text-white text-lg font-bold py-4 px-12 rounded shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"

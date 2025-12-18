@@ -1,6 +1,6 @@
 // src/constants/menu.ts
 
-// 1. CẤU HÌNH DOMAIN (Giữ nguyên logic cũ)
+// 1. CẤU HÌNH DOMAIN (Giữ nguyên)
 const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'erg.edu.local';
 const isDev = process.env.NODE_ENV === 'development';
 const PROTOCOL = isDev ? 'http' : 'https';
@@ -11,8 +11,7 @@ export const getSubdomainLink = (subdomain: string, path: string = "") => {
     return `${PROTOCOL}://${subdomain}.${ROOT_DOMAIN}${PORT}${path}`;
 };
 
-// 2. ĐỊNH NGHĨA DỮ LIỆU CÁC CHƯƠNG TRÌNH ĐÀO TẠO (Source of Truth)
-// Đây là nơi duy nhất bạn cần cập nhật khi có môn học mới
+// 2. DATA CHƯƠNG TRÌNH ĐÀO TẠO (Giữ nguyên)
 export const TRAINING_PROGRAMS = [
     { label: "Tin học Quốc tế", subdomain: "tinhocquocte" },
     { label: "Tin học Quốc gia", subdomain: "tinhocquocgia" },
@@ -20,16 +19,31 @@ export const TRAINING_PROGRAMS = [
     { label: "Giáo dục kỹ năng công dân số", subdomain: "congdanso" },
     { label: "Điện toán đám mây", subdomain: "dientoandammay" },
     { label: "Trí tuệ nhân tạo (AI)", subdomain: "ai" },
-    // Sau này thêm AWS thì chỉ cần thêm dòng này:
-    // { label: "Chứng chỉ AWS", tinhocquocte: "aws" },
 ];
 
-// 3. EXPORT DANH SÁCH SUBDOMAIN CHO PROXY DÙNG
-// Kết quả sẽ là mảng: ['mos', 'tinhocquocte', 'tinhoc', 'english', 'python', 'ielts']
-export const VALID_SUBDOMAINS = TRAINING_PROGRAMS.map(p => p.subdomain);
+// --- THÊM MỚI: CÁC SUBDOMAIN KHÁC (Không thuộc menu đào tạo) ---
+// Đây là nơi bạn định nghĩa các trang chức năng như Tuyển dụng, Admin, v.v.
+export const FUNCTIONAL_SUBDOMAINS = [
+    { label: "Tuyển dụng", subdomain: "tuyendung" },
+];
 
-// 4. TẠO MENU ITEMS CHO FRONTEND
+// 3. EXPORT DANH SÁCH SUBDOMAIN (CẬP NHẬT)
+// Gộp cả Đào tạo và Chức năng vào để Proxy cho phép truy cập
+export const VALID_SUBDOMAINS = [
+    ...TRAINING_PROGRAMS.map(p => p.subdomain),
+    ...FUNCTIONAL_SUBDOMAINS.map(p => p.subdomain)
+];
+
+// --- THÊM MỚI: HELPER LINKS ---
+// Export sẵn link để dùng trong code cho tiện
+export const RECRUITMENT_LINK = getSubdomainLink("tuyendung");
+
+
+// 4. MENU ITEMS (Giữ nguyên hoặc cập nhật nếu cần)
 export const MAIN_MENU_ITEMS = [
+    // ... (Code cũ của bạn)
+    // Lưu ý: Không cần map FUNCTIONAL_SUBDOMAINS vào menu con của "Lĩnh vực đào tạo"
+    // nên code cũ của bạn vẫn đúng logic.
     {
         label: "GIỚI THIỆU",
         path: "/gioi-thieu",
@@ -44,7 +58,6 @@ export const MAIN_MENU_ITEMS = [
     {
         label: "LĨNH VỰC ĐÀO TẠO",
         path: "/linh-vuc-dao-tao",
-        // Tự động map từ mảng TRAINING_PROGRAMS ở trên
         children: TRAINING_PROGRAMS.map(program => ({
             label: program.label,
             path: getSubdomainLink(program.subdomain)
@@ -54,7 +67,6 @@ export const MAIN_MENU_ITEMS = [
     { label: "CƠ HỘI NGHỀ NGHIỆP", path: "/co-hoi-nghe-nghiep" },
     { label: "LIÊN HỆ", path: "/lien-he" },
 ];
-
 export const THQT_MENU_ITEMS = [
     {
         label: "GIỚI THIỆU",
@@ -68,7 +80,7 @@ export const THQT_MENU_ITEMS = [
         label: "KHÓA HỌC",
         path: "/khoa-hoc",
         children: [
-            { label: "MOS", path: "/khoa-hoc//mos" },
+            { label: "MOS", path: "/khoa-hoc/mos" },
             { label: "IC3 GS6", path: "/khoa-hoc/ic3-gs6" },
             { label: "IC3 GS6 Spark", path: "/khoa-hoc/ic3-gs6-spark" },
         ]
@@ -78,6 +90,30 @@ export const THQT_MENU_ITEMS = [
         path: "/doi-ngu-giao-vien",
     },
     { label: "TIN TỨC", path: "/tin-tuc" },
+    { label: "LIÊN HỆ", path: "/lien-he" },
+
+]
+
+export const TUYEN_DUNG_MENU_ITEMS = [
+    {
+        label: "GIỚI THIỆU",
+        path: "/gioi-thieu",
+    },
+    {
+        label: "TUYỂN DỤNG",
+        path: "/lo-trinh",
+    },
+    {
+        label: "VĂN HÓA",
+        path: "/van-hoa",
+        children: [
+            { label: "MOS", path: "/khoa-hoc/mos" },
+        ]
+    },
+    {
+        label: "CHIA SẺ",
+        path: "/chia-se",
+    },
     { label: "LIÊN HỆ", path: "/lien-he" },
 
 ]

@@ -17,7 +17,7 @@ const TEACHERS = [
     },
     {
         id: 2,
-        name: "Thầy Trần Tuấn Tuấn",
+        name: "Thầy Trần Tướng Tuấn",
         role: "Thạc Sĩ CNTT", // Giả định title
         image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=800&auto=format&fit=crop", // Thay bằng ảnh chân dung thầy Tuấn
         subjects: ["Lập trình", "IC3 Spark", "MOS Expert"],

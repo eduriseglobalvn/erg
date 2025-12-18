@@ -67,7 +67,7 @@ const Footer: React.FC = () => {
                         <MapPin size={24} />
                     </div>
                     <div>
-                        <p className="text-blue-100">Trung tâm Tin học ERG, Số 40-42 Bình Phú, P Bình Phú, TP. Hồ Chí Minh</p>
+                        <p className="text-blue-100">Trung tâm Tin học ERG, Số 40-42 Bình Phú, Phường Bình Phú, TP. Hồ Chí Minh</p>
                     </div>
                 </div>
               <li className="flex items-center gap-3">

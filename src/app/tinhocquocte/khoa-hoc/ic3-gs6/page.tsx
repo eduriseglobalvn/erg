@@ -97,7 +97,7 @@ export default function IC3GS6Page() {
                 {/* RIGHT SIDEBAR */}
                 <div className="lg:col-span-4 space-y-6 pt-10 lg:pt-0">
                     <div className="bg-white p-6 rounded-xl shadow-xl border-t-4 border-[var(--erg-red)] sticky top-24">
-                        <h3 className="text-xl font-bold text-[var(--erg-blue)] mb-1">Đăng Ký Tư Vấn</h3>
+                        <h3 className="text-xl font-bold text-[var(--erg-blue)] mb-1">Đăng ký tư vấn</h3>
                         <p className="text-gray-500 text-sm mb-6">Nhận lộ trình học chi tiết cho con</p>
 
                         <div className="space-y-4 mb-6">
@@ -110,8 +110,8 @@ export default function IC3GS6Page() {
                                 <span className="font-bold text-teal-600">Certiport (Mỹ)</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-100">
-                                <span className="text-gray-500 text-sm">Thời hạn:</span>
-                                <span className="font-bold text-gray-800">Vĩnh viễn</span>
+                                <span className="text-gray-500 text-sm">Hình thức:</span>
+                                <span className="font-bold text-gray-800">Online, Offline</span>
                             </div>
                         </div>
 
@@ -119,12 +119,12 @@ export default function IC3GS6Page() {
                             Tư vấn ngay
                         </button>
 
-                        <div className="mt-4 text-center">
-                            <span className="text-xs text-gray-400">Hotline hỗ trợ 24/7</span>
-                            <div className="text-[var(--erg-blue)] font-bold text-lg flex justify-center items-center gap-2">
-                                <Phone size={18}/> 0766.144.888
-                            </div>
-                        </div>
+                        {/*<div className="mt-4 text-center">*/}
+                        {/*    <span className="text-xs text-gray-400">Hotline hỗ trợ 24/7</span>*/}
+                        {/*    <div className="text-[var(--erg-blue)] font-bold text-lg flex justify-center items-center gap-2">*/}
+                        {/*        <Phone size={18}/> 0766.144.888*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
                     </div>
                 </div>
             </div>

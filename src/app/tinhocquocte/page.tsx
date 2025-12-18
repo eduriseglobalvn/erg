@@ -141,69 +141,77 @@ export default function HomePage() {
               </Link>
             </div>
 
+            {/* Sử dụng Grid để chia cột */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
-              {/* Course Card 1: IC3 Spark (Xanh Dương - Sky Blue) */}
-              <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-300">
-                <div className="h-48 bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center relative overflow-hidden">
+              {/* Course Card 1: IC3 Spark */}
+              <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-300 flex flex-col h-full"> {/* Thêm flex flex-col h-full */}
+                <div className="h-48 bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center relative overflow-hidden flex-shrink-0"> {/* flex-shrink-0 để ảnh không bị co */}
                   <span className="text-5xl font-black text-white/20 select-none group-hover:scale-110 transition-transform duration-500">SPARK</span>
                   <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/10 to-transparent"></div>
                 </div>
-                <div className="p-6">
+
+                <div className="p-6 flex flex-col flex-1"> {/* Thêm flex flex-col flex-1 để nội dung chiếm hết chiều cao còn lại */}
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider">Tiểu học</span>
                   </div>
                   <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2 group-hover:text-blue-600 transition-colors">IC3 Spark GS6</h3>
                   <p className="text-gray-600 mb-4 line-clamp-2 text-sm">Học máy tính từ bước đầu tiên, nâng cao nhận thức và kỹ năng số.</p>
-                  <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4">
+
+                  <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1"> {/* Thêm flex-1 để đẩy nút xuống */}
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-blue-500"/> Level 1: Các khái niệm cơ bản</li>
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-blue-500"/> Level 2: Kỹ năng thực hành</li>
                   </ul>
-                  <Link href="/ic3-gs6-spark" className="block w-full py-3 text-center rounded-lg border-2 border-blue-500 text-blue-600 font-bold hover:bg-blue-600 hover:text-white transition-all">
+
+                  <Link href="/ic3-gs6-spark" className="block w-full py-3 text-center rounded-lg border-2 border-blue-500 text-blue-600 font-bold hover:bg-blue-600 hover:text-white transition-all mt-auto"> {/* Thêm mt-auto để dính đáy */}
                     Xem Chi Tiết
                   </Link>
                 </div>
               </div>
 
-              {/* Course Card 2: IC3 GS6 (Xanh Teal) */}
-              <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-teal-300">
-                <div className="h-48 bg-gradient-to-br from-teal-500 to-emerald-400 flex items-center justify-center relative overflow-hidden">
+              {/* Course Card 2: IC3 GS6 */}
+              <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-teal-300 flex flex-col h-full">
+                <div className="h-48 bg-gradient-to-br from-teal-500 to-emerald-400 flex items-center justify-center relative overflow-hidden flex-shrink-0">
                   <span className="text-5xl font-black text-white/20 select-none group-hover:scale-110 transition-transform duration-500">GS6</span>
                   <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/10 to-transparent"></div>
                 </div>
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-1">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-3 py-1 rounded-full bg-teal-50 text-teal-600 text-xs font-bold uppercase tracking-wider">THCS</span>
                   </div>
                   <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2 group-hover:text-teal-600 transition-colors">IC3 GS6</h3>
                   <p className="text-gray-600 mb-4 line-clamp-2 text-sm">Chuẩn đánh giá năng lực CNTT theo tiêu chuẩn toàn cầu mới nhất.</p>
-                  <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4">
+
+                  <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1">
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-teal-500"/> 3 Cấp độ năng lực</li>
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-teal-500"/> 7 Chuyên đề trọng tâm</li>
                   </ul>
-                  <Link href="/ic3-gs6" className="block w-full py-3 text-center rounded-lg border-2 border-teal-500 text-teal-600 font-bold hover:bg-teal-500 hover:text-white transition-all">
+
+                  <Link href="/ic3-gs6" className="block w-full py-3 text-center rounded-lg border-2 border-teal-500 text-teal-600 font-bold hover:bg-teal-500 hover:text-white transition-all mt-auto">
                     Xem Chi Tiết
                   </Link>
                 </div>
               </div>
 
-              {/* Course Card 3: MOS (Cam Đỏ - Microsoft Colors) */}
-              <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-orange-300">
-                <div className="h-48 bg-gradient-to-br from-[#F25022] to-orange-500 flex items-center justify-center relative overflow-hidden">
+              {/* Course Card 3: MOS */}
+              <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-orange-300 flex flex-col h-full">
+                <div className="h-48 bg-gradient-to-br from-[#F25022] to-orange-500 flex items-center justify-center relative overflow-hidden flex-shrink-0">
                   <span className="text-5xl font-black text-white/20 select-none group-hover:scale-110 transition-transform duration-500">MOS</span>
                   <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/10 to-transparent"></div>
                 </div>
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-1">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-3 py-1 rounded-full bg-orange-50 text-[#F25022] text-xs font-bold uppercase tracking-wider">THPT & Đại học</span>
                   </div>
                   <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2 group-hover:text-[#F25022] transition-colors">Microsoft Office (MOS)</h3>
                   <p className="text-gray-600 mb-4 line-clamp-2 text-sm">Chứng chỉ tin học văn phòng quốc tế do Microsoft cấp.</p>
-                  <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4">
+
+                  <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1">
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-orange-500"/> Word, Excel, PowerPoint...</li>
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-orange-500"/> Cấp độ: Specialist, Expert</li>
                   </ul>
-                  <Link href="/mos" className="block w-full py-3 text-center rounded-lg border-2 border-[#F25022] text-[#F25022] font-bold hover:bg-[#F25022] hover:text-white transition-all">
+
+                  <Link href="/mos" className="block w-full py-3 text-center rounded-lg border-2 border-[#F25022] text-[#F25022] font-bold hover:bg-[#F25022] hover:text-white transition-all mt-auto">
                     Xem Chi Tiết
                   </Link>
                 </div>
@@ -212,7 +220,6 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-
         {/* 5. CTA SECTION */}
         <section className="py-20 bg-[var(--erg-blue)] text-white text-center">
           <div className="container mx-auto px-4">

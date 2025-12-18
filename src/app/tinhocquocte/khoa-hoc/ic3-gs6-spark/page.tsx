@@ -117,7 +117,7 @@ export default function IC3SparkPage() {
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {[
-                                "Chứng chỉ quốc tế có giá trị vĩnh viễn",
+                                "Chứng chỉ chuẩn quốc tế do Certiport (Hoa Kỳ) cấp",
                                 "Tư duy logic và giải quyết vấn đề",
                                 "Kỹ năng gõ phím 10 ngón chuẩn xác",
                                 "Tự tin sử dụng Office để làm bài tập",
@@ -137,7 +137,7 @@ export default function IC3SparkPage() {
                 <div className="lg:col-span-4 space-y-6 pt-10 lg:pt-0">
                     {/* Register Box */}
                     <div className="bg-white p-6 rounded-xl shadow-xl border-t-4 border-[var(--erg-red)] sticky top-24">
-                        <h3 className="text-xl font-bold text-[var(--erg-blue)] mb-1">Đăng Ký Học Thử</h3>
+                        <h3 className="text-xl font-bold text-[var(--erg-blue)] mb-1">Đăng kỹ tư vấn</h3>
                         <p className="text-gray-500 text-sm mb-6">Trải nghiệm lớp học tiêu chuẩn quốc tế</p>
 
                         <div className="space-y-4 mb-6">
@@ -160,12 +160,12 @@ export default function IC3SparkPage() {
                             <MousePointer2 size={18}/> Đăng Ký Ngay
                         </button>
 
-                        <div className="mt-4 text-center">
-                            <span className="text-xs text-gray-400">Tư vấn viên hỗ trợ</span>
-                            <div className="text-[var(--erg-blue)] font-bold text-lg flex justify-center items-center gap-2">
-                                <Phone size={18}/> 0766.144.888
-                            </div>
-                        </div>
+                        {/*<div className="mt-4 text-center">*/}
+                        {/*    <span className="text-xs text-gray-400">Tư vấn viên hỗ trợ</span>*/}
+                        {/*    <div className="text-[var(--erg-blue)] font-bold text-lg flex justify-center items-center gap-2">*/}
+                        {/*        <Phone size={18}/> 0766.144.888*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
                     </div>
                 </div>
             </div>

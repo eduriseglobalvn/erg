@@ -166,7 +166,7 @@ export default function MOSPage() {
                 {/* RIGHT SIDEBAR */}
                 <div className="lg:col-span-4 space-y-6 pt-10 lg:pt-0">
                     <div className="bg-white p-6 rounded-xl shadow-xl border-t-4 border-[#F25022] sticky top-24">
-                        <h3 className="text-xl font-bold text-[var(--erg-blue)] mb-4">Lợi Ích Khi Có MOS</h3>
+                        <h3 className="text-xl font-bold text-[var(--erg-blue)] mb-4">Lợi ích khi có MOS</h3>
                         <ul className="space-y-4 mb-8">
                             <li className="flex items-start gap-3">
                                 <Check className="w-5 h-5 text-green-500 mt-0.5" />
@@ -187,11 +187,11 @@ export default function MOSPage() {
                         <button className="w-full py-3.5 bg-[#F25022] text-white font-bold rounded-lg hover:opacity-90 transition-opacity active:scale-95 uppercase shadow-lg shadow-orange-200">
                             Đăng Ký Học MOS
                         </button>
-                        <div className="mt-4 text-center">
-                            <div className="text-[var(--erg-blue)] font-bold text-lg flex justify-center items-center gap-2">
-                                <Phone size={18}/> 0766.144.888
-                            </div>
-                        </div>
+                        {/*<div className="mt-4 text-center">*/}
+                        {/*    <div className="text-[var(--erg-blue)] font-bold text-lg flex justify-center items-center gap-2">*/}
+                        {/*        <Phone size={18}/> 0766.144.888*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
                     </div>
                 </div>
 

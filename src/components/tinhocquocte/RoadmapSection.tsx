@@ -120,7 +120,7 @@ export default function RoadmapSection() {
                 {/* HEADLINE */}
                 <div className="text-center mb-10">
                     <h2 className="text-3xl md:text-4xl font-bold text-[var(--erg-blue)] mb-4 uppercase">
-                        Lộ Trình Đào Tạo
+                        Chương Trình Đào Tạo
                     </h2>
                     <p className="text-gray-600 max-w-2xl mx-auto">
                         Chúng tôi thiết kế lộ trình học tập linh hoạt, phù hợp với cả chương trình chính khóa tại trường và nhu cầu luyện thi cấp tốc tại trung tâm.
@@ -139,7 +139,7 @@ export default function RoadmapSection() {
                             }`}
                         >
                             <School size={18} />
-                            Đào tạo tại cơ sở đối tác
+                            Liên kết đào tạo
                         </button>
                         <button
                             onClick={() => setActiveTab('center')}
@@ -150,7 +150,7 @@ export default function RoadmapSection() {
                             }`}
                         >
                             <Building2 size={18} />
-                            Luyện thi tại trung tâm
+                            Luyện thi cấp tốc
                         </button>
                     </div>
                 </div>

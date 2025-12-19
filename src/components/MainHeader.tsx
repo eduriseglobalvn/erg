@@ -59,6 +59,7 @@ const Header: React.FC = () => {
 
             {/* --- TOP BAR --- */}
             <div className={`hidden lg:flex justify-between items-center text-xs font-medium text-gray-500 mb-2 border-b border-gray-100 pb-2 transition-all duration-300 ${isScrolled ? 'h-0 opacity-0 overflow-hidden mb-0 pb-0' : 'opacity-100'}`}>
+              {/* ... (Giữ nguyên nội dung Top Bar) ... */}
               <div className="flex gap-4">
                 <span className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer">
                     <Phone size={14} className="text-highlight" /> Hotline: 0766.144.888
@@ -146,16 +147,25 @@ const Header: React.FC = () => {
                             <div className="absolute top-full left-0 pt-3 w-72 opacity-0 translate-y-2 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-300 ease-out z-50">
                               <div className="bg-white rounded-lg shadow-xl overflow-hidden ring-1 ring-black/5">
                                 <ul className="py-2">
-                                  {item.children?.map((subItem) => (
-                                      <li key={subItem.path}>
-                                        <Link
-                                            href={subItem.path}
-                                            className="block px-6 py-3.5 text-base font-medium text-gray-600 hover:text-primary hover:bg-slate-50 transition-colors"
-                                        >
-                                          {subItem.label}
-                                        </Link>
-                                      </li>
-                                  ))}
+                                  {item.children?.map((subItem) => {
+                                    // 1. Kiểm tra xem link có phải link ngoài (subdomain) không
+                                    const isExternal = subItem.path.startsWith('http');
+
+                                    return (
+                                        <li key={subItem.path}>
+                                          <Link
+                                              href={subItem.path}
+                                              // 2. Nếu là external link thì mở tab mới
+                                              target={isExternal ? "_blank" : undefined}
+                                              // 3. Chuẩn bảo mật khi mở tab mới
+                                              rel={isExternal ? "noopener noreferrer" : undefined}
+                                              className="block px-6 py-3.5 text-base font-medium text-gray-600 hover:text-primary hover:bg-slate-50 transition-colors"
+                                          >
+                                            {subItem.label}
+                                          </Link>
+                                        </li>
+                                    );
+                                  })}
                                 </ul>
                               </div>
                             </div>
@@ -166,7 +176,7 @@ const Header: React.FC = () => {
 
                 {/* --- SEARCH --- */}
                 <div className="flex items-center ml-2 relative">
-                  {/* Input trượt ra */}
+                  {/* ... (Giữ nguyên Search) ... */}
                   <div
                       className={`
                       flex items-center overflow-hidden transition-all duration-300 ease-in-out
@@ -177,12 +187,10 @@ const Header: React.FC = () => {
                         ref={searchInputRef}
                         type="text"
                         placeholder="Tìm kiếm..."
-                        // CẬP NHẬT: Loại bỏ focus:border-primary và focus:ring
                         className="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-gray-300 text-sm text-gray-700 bg-gray-50"
                     />
                   </div>
 
-                  {/* Nút kính lúp (Vẫn giữ màu xanh khi active cho đẹp) */}
                   <button
                       onClick={() => setIsSearchOpen(!isSearchOpen)}
                       className={`p-2 rounded-full transition-colors duration-300 hover:bg-gray-100
@@ -222,7 +230,7 @@ const Header: React.FC = () => {
             </div>
 
             <div className="flex-1 overflow-y-auto p-6">
-              {/* Mobile Search Bar: Cũng bỏ viền xanh */}
+              {/* Mobile Search Bar */}
               <div className="mb-6 relative">
                 <input
                     type="text"
@@ -253,16 +261,22 @@ const Header: React.FC = () => {
 
                               <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
                                 <div className="bg-gray-50 rounded-lg mb-4 p-2 space-y-1">
-                                  {item.children?.map(sub => (
-                                      <Link
-                                          key={sub.path}
-                                          href={sub.path}
-                                          className="block px-4 py-3 text-base font-medium text-gray-600 hover:text-primary hover:bg-white rounded-md transition-colors"
-                                          onClick={() => setIsMobileMenuOpen(false)}
-                                      >
-                                        {sub.label}
-                                      </Link>
-                                  ))}
+                                  {item.children?.map(sub => {
+                                    // Logic mở tab mới cho Mobile cũng tương tự
+                                    const isExternal = sub.path.startsWith('http');
+                                    return (
+                                        <Link
+                                            key={sub.path}
+                                            href={sub.path}
+                                            target={isExternal ? "_blank" : undefined}
+                                            rel={isExternal ? "noopener noreferrer" : undefined}
+                                            className="block px-4 py-3 text-base font-medium text-gray-600 hover:text-primary hover:bg-white rounded-md transition-colors"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                          {sub.label}
+                                        </Link>
+                                    );
+                                  })}
                                 </div>
                               </div>
                             </>
@@ -281,6 +295,7 @@ const Header: React.FC = () => {
               </nav>
 
               <div className="mt-8 pt-6 border-t border-gray-100">
+                {/* ... (Giữ nguyên footer mobile) ... */}
                 <div className="flex items-center justify-between mb-6 px-2">
                   <span className="text-gray-500 font-medium">Ngôn ngữ:</span>
                   <div className="flex items-center gap-2">

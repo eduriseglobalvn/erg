@@ -149,7 +149,7 @@ export default function Home() {
                                 Tại ERG, chúng tôi tin rằng mỗi học sinh đều có những tiềm năng riêng biệt cần được khơi dậy. Với phương pháp giáo dục hiện đại, kết hợp giữa lý thuyết và thực hành, chúng tôi cam kết mang đến môi trường học tập tốt nhất.                            </p>
                             {/* Thêm whitespace-nowrap để chữ không bị rớt dòng xấu */}
                             <Link
-                                href="/gioi-thieu"
+                                href="/gia-tri-cot-loi"
                                 className="group inline-flex items-center gap-2 text-[var(--erg-blue)] font-bold hover:text-[var(--erg-red)] transition-all whitespace-nowrap"
                             >
                                 <span className="border-b-2 border-transparent group-hover:border-[var(--erg-red)] pb-0.5">Xem chi tiết</span>

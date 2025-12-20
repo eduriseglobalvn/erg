@@ -46,7 +46,7 @@ export const MAIN_MENU_ITEMS = [
     // nên code cũ của bạn vẫn đúng logic.
     {
         label: "GIỚI THIỆU",
-        path: "/gioi-thieu",
+        path: "/cau-chuyen-cua-erg",
         children: [
             { label: "Câu chuyện của ERG", path: "/cau-chuyen-cua-erg" },
             { label: "Giá trị cốt lõi", path: "/gia-tri-cot-loi" },
@@ -83,6 +83,31 @@ export const THQT_MENU_ITEMS = [
             { label: "MOS", path: "/khoa-hoc/mos" },
             { label: "IC3 GS6", path: "/khoa-hoc/ic3-gs6" },
             { label: "IC3 GS6 Spark", path: "/khoa-hoc/ic3-gs6-spark" },
+        ]
+    },
+    {
+        label: "ĐỘI NGŨ GIÁO VIÊN",
+        path: "/doi-ngu-giao-vien",
+    },
+    { label: "TIN TỨC", path: "/tin-tuc" },
+    { label: "LIÊN HỆ", path: "/lien-he" },
+
+]
+export const THQG_MENU_ITEMS = [
+    {
+        label: "GIỚI THIỆU",
+        path: "/gioi-thieu",
+    },
+    {
+        label: "LỘ TRÌNH",
+        path: "/lo-trinh",
+    },
+    {
+        label: "KHÓA HỌC",
+        path: "/khoa-hoc",
+        children: [
+            { label: "Công nghệ thông tin cơ bản", path: "/khoa-hoc/cntt-co-ban" },
+            { label: "Công nghệ thông tin nâng cao", path: "/khoa-hoc/cntt-nang-cao" },
         ]
     },
     {

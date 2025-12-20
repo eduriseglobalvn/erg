@@ -2,16 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2, Award, Users, Globe, ChevronLeft, ChevronRight, ShieldCheck } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Award, Users, Globe, ShieldCheck } from 'lucide-react';
 import RoadmapSection from '@/components/tinhocquocte/RoadmapSection'; // Đảm bảo đường dẫn đúng
 
-// --- COMPONENT CAROUSEL CHO BANNER ---
+// --- COMPONENT CAROUSEL CHO BANNER (Đã sửa: Ảnh tràn khung, sạch sẽ) ---
 const CertificateCarousel = () => {
   const images = [
-    // Bạn thay thế bằng đường dẫn ảnh chứng chỉ thật của bạn
-    { src: "/images/cert-mos-demo.jpg", label: "Chứng chỉ MOS - Microsoft" },
-    { src: "/images/cert-ic3-demo.jpg", label: "Chứng chỉ IC3 - Certiport" },
-    { src: "/images/cert-spark-demo.jpg", label: "Chứng chỉ IC3 Spark" },
+    { src: "/util/mos.jpg", label: "Chứng chỉ MOS - Microsoft" },
+    { src: "/util/ic3.jpg", label: "Chứng chỉ IC3 - Certiport" },
+    { src: "/util/spark.jpg", label: "Chứng chỉ IC3 Spark" },
   ];
 
   const [current, setCurrent] = useState(0);
@@ -19,31 +18,40 @@ const CertificateCarousel = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
-    }, 4000); // 4 giây chuyển 1 lần
+    }, 4000);
     return () => clearInterval(timer);
-  }, []);
+  }, [images.length]);
 
   return (
       <div className="relative w-full max-w-md aspect-[4/3] rounded-2xl shadow-2xl overflow-hidden border-4 border-white/20 bg-white group">
-        {/* Background mờ giả lập giấy tờ */}
+
+        {/* Lớp dự phòng (Hiện khi ảnh đang tải hoặc lỗi) */}
         <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-          {/* Placeholder nếu chưa có ảnh */}
           <div className="text-center text-gray-400 p-8">
             <Award size={60} className="mx-auto mb-2 opacity-50"/>
-            <p className="font-bold">{images[current].label}</p>
-            <p className="text-xs mt-2">(Ảnh Demo - Hãy thay ảnh thật)</p>
+            <p className="font-bold text-xs uppercase tracking-widest">{images[current].label}</p>
           </div>
-          {/* Khi có ảnh thật, bỏ comment dòng dưới */}
-          {/* <Image src={images[current].src} alt={images[current].label} fill className="object-cover" /> */}
         </div>
 
-        {/* Navigation Dots */}
+        {/* HIỂN THỊ ẢNH THẬT (Tràn khung, không viền, không chữ) */}
+        <div className="absolute inset-0 w-full h-full transition-opacity duration-500">
+          <img
+              src={images[current].src}
+              alt={images[current].label}
+              className="w-full h-full object-cover" // Đảm bảo ảnh lấp đầy khung 4/3
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.opacity = '0';
+              }}
+          />
+        </div>
+
+        {/* Navigation Dots (Làm mờ hơn để không che ảnh) */}
         <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
           {images.map((_, idx) => (
               <button
                   key={idx}
                   onClick={() => setCurrent(idx)}
-                  className={`w-2 h-2 rounded-full transition-all ${current === idx ? 'w-6 bg-[var(--erg-red)]' : 'bg-gray-300'}`}
+                  className={`w-2 h-2 rounded-full transition-all ${current === idx ? 'w-6 bg-[var(--erg-red)]' : 'bg-white/50'}`}
               />
           ))}
         </div>
@@ -57,7 +65,6 @@ export default function HomePage() {
 
         {/* 1. HERO SECTION */}
         <section className="relative bg-[var(--erg-blue)] text-white py-20 lg:py-28 overflow-hidden">
-          {/* Background Decorative Circles */}
           <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-white opacity-5"></div>
           <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 rounded-full bg-[var(--erg-red)] opacity-10"></div>
 
@@ -85,7 +92,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Carousel Ảnh Chứng Chỉ */}
             <div className="md:w-1/2 flex justify-center w-full">
               <CertificateCarousel />
             </div>
@@ -109,7 +115,7 @@ export default function HomePage() {
                 },
                 {
                   icon: <ShieldCheck className="w-10 h-10 text-[var(--erg-red)]" />,
-                  title: "Cam Kết Chất Lượng", // Đã thay đổi nội dung
+                  title: "Cam Kết Chất Lượng",
                   desc: "Lộ trình học tập rõ ràng, cam kết hỗ trợ học viên đạt kết quả cao nhất trong các kỳ thi."
                 }
               ].map((item, i) => (
@@ -125,7 +131,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 3. ROADMAP SECTION */}
         <RoadmapSection />
 
         {/* 4. FEATURED COURSES */}
@@ -141,29 +146,23 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Sử dụng Grid để chia cột */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
               {/* Course Card 1: IC3 Spark */}
-              <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-300 flex flex-col h-full"> {/* Thêm flex flex-col h-full */}
-                <div className="h-48 bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center relative overflow-hidden flex-shrink-0"> {/* flex-shrink-0 để ảnh không bị co */}
+              <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-300 flex flex-col h-full">
+                <div className="h-48 bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center relative overflow-hidden flex-shrink-0">
                   <span className="text-5xl font-black text-white/20 select-none group-hover:scale-110 transition-transform duration-500">SPARK</span>
-                  <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/10 to-transparent"></div>
                 </div>
-
-                <div className="p-6 flex flex-col flex-1"> {/* Thêm flex flex-col flex-1 để nội dung chiếm hết chiều cao còn lại */}
+                <div className="p-6 flex flex-col flex-1">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider">Tiểu học</span>
                   </div>
                   <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2 group-hover:text-blue-600 transition-colors">IC3 Spark GS6</h3>
                   <p className="text-gray-600 mb-4 line-clamp-2 text-sm">Học máy tính từ bước đầu tiên, nâng cao nhận thức và kỹ năng số.</p>
-
-                  <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1"> {/* Thêm flex-1 để đẩy nút xuống */}
+                  <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1">
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-blue-500"/> Level 1: Các khái niệm cơ bản</li>
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-blue-500"/> Level 2: Kỹ năng thực hành</li>
                   </ul>
-
-                  <Link href="/ic3-gs6-spark" className="block w-full py-3 text-center rounded-lg border-2 border-blue-500 text-blue-600 font-bold hover:bg-blue-600 hover:text-white transition-all mt-auto"> {/* Thêm mt-auto để dính đáy */}
+                  <Link href="/ic3-gs6-spark" className="block w-full py-3 text-center rounded-lg border-2 border-blue-500 text-blue-600 font-bold hover:bg-blue-600 hover:text-white transition-all mt-auto">
                     Xem Chi Tiết
                   </Link>
                 </div>
@@ -173,7 +172,6 @@ export default function HomePage() {
               <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-teal-300 flex flex-col h-full">
                 <div className="h-48 bg-gradient-to-br from-teal-500 to-emerald-400 flex items-center justify-center relative overflow-hidden flex-shrink-0">
                   <span className="text-5xl font-black text-white/20 select-none group-hover:scale-110 transition-transform duration-500">GS6</span>
-                  <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/10 to-transparent"></div>
                 </div>
                 <div className="p-6 flex flex-col flex-1">
                   <div className="flex items-center gap-2 mb-3">
@@ -181,12 +179,10 @@ export default function HomePage() {
                   </div>
                   <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2 group-hover:text-teal-600 transition-colors">IC3 GS6</h3>
                   <p className="text-gray-600 mb-4 line-clamp-2 text-sm">Chuẩn đánh giá năng lực CNTT theo tiêu chuẩn toàn cầu mới nhất.</p>
-
                   <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1">
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-teal-500"/> 3 Cấp độ năng lực</li>
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-teal-500"/> 7 Chuyên đề trọng tâm</li>
                   </ul>
-
                   <Link href="/ic3-gs6" className="block w-full py-3 text-center rounded-lg border-2 border-teal-500 text-teal-600 font-bold hover:bg-teal-500 hover:text-white transition-all mt-auto">
                     Xem Chi Tiết
                   </Link>
@@ -197,7 +193,6 @@ export default function HomePage() {
               <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-orange-300 flex flex-col h-full">
                 <div className="h-48 bg-gradient-to-br from-[#F25022] to-orange-500 flex items-center justify-center relative overflow-hidden flex-shrink-0">
                   <span className="text-5xl font-black text-white/20 select-none group-hover:scale-110 transition-transform duration-500">MOS</span>
-                  <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/10 to-transparent"></div>
                 </div>
                 <div className="p-6 flex flex-col flex-1">
                   <div className="flex items-center gap-2 mb-3">
@@ -205,21 +200,19 @@ export default function HomePage() {
                   </div>
                   <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2 group-hover:text-[#F25022] transition-colors">Microsoft Office (MOS)</h3>
                   <p className="text-gray-600 mb-4 line-clamp-2 text-sm">Chứng chỉ tin học văn phòng quốc tế do Microsoft cấp.</p>
-
                   <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1">
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-orange-500"/> Word, Excel, PowerPoint...</li>
                     <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-orange-500"/> Cấp độ: Specialist, Expert</li>
                   </ul>
-
                   <Link href="/mos" className="block w-full py-3 text-center rounded-lg border-2 border-[#F25022] text-[#F25022] font-bold hover:bg-[#F25022] hover:text-white transition-all mt-auto">
                     Xem Chi Tiết
                   </Link>
                 </div>
               </div>
-
             </div>
           </div>
         </section>
+
         {/* 5. CTA SECTION */}
         <section className="py-20 bg-[var(--erg-blue)] text-white text-center">
           <div className="container mx-auto px-4">

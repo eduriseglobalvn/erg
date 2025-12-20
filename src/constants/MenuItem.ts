@@ -101,18 +101,15 @@ export const TUYEN_DUNG_MENU_ITEMS = [
     },
     {
         label: "TUYỂN DỤNG",
-        path: "/lo-trinh",
+        path: "/tuyen-dung",
     },
     {
         label: "VĂN HÓA",
         path: "/van-hoa",
-        children: [
-            { label: "MOS", path: "/khoa-hoc/mos" },
-        ]
     },
     {
-        label: "CHIA SẺ",
-        path: "/chia-se",
+        label: "CHÍNH SÁCH NHÂN SỰ",
+        path: "/chinh-sach",
     },
     { label: "LIÊN HỆ", path: "/lien-he" },
 

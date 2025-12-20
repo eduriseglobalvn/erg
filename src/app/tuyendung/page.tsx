@@ -122,95 +122,104 @@ export default function RecruitmentHomePage() {
         </section>
 
         {/* --- 3. HORIZONTAL SCROLL JOBS --- */}
-        <section className="container mx-auto px-4 py-20">
-          <div className="flex justify-between items-end mb-10">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-8 h-1 bg-[#cc0022]"></span>
-                <span className="text-[#cc0022] font-bold text-sm uppercase tracking-wider">Cơ hội nghề nghiệp</span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#00008b]">Việc làm mới nhất</h2>
-            </div>
+        {/* --- 3. HORIZONTAL SCROLL JOBS --- */}
+        <section className="container mx-auto px-4 py-20 relative">
 
-            <div className="flex gap-3">
-              <button onClick={() => scroll('left')} className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#00008b] hover:text-white hover:border-[#00008b] transition-all">
-                <ChevronLeft size={24}/>
-              </button>
-              <button onClick={() => scroll('right')} className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-[#00008b] hover:text-white hover:border-[#00008b] transition-all">
-                <ChevronRight size={24}/>
-              </button>
+          {/* Header */}
+          <div className="mb-10">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-8 h-1 bg-[#cc0022]"></span>
+              <span className="text-[#cc0022] font-bold text-sm uppercase tracking-wider">Cơ hội nghề nghiệp</span>
             </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#00008b]">Việc làm mới nhất</h2>
           </div>
 
-          <div ref={scrollContainerRef} className="flex overflow-x-auto gap-6 pb-12 snap-x snap-mandatory scroll-smooth no-scrollbar p-2">
-            {JOB_LISTINGS.map((job) => {
-              // Lấy config hiển thị dựa trên job.status thực tế từ Mock Data
-              // job.status đã được khai báo ở bước trước (hot, new, urgent, normal...)
-              const statusConfig = getStatusConfig(job.status);
+          {/* Wrapper: relative để làm mốc cho nút bấm */}
+          <div className="relative group">
 
-              return (
-                  <div key={job.id} className="min-w-[320px] md:min-w-[400px] bg-white rounded-2xl p-8 border border-gray-100 shadow-lg shadow-gray-100 hover:shadow-xl hover:shadow-blue-100 hover:-translate-y-1 transition-all duration-300 flex flex-col snap-start relative group">
-                    <div className="flex justify-between items-start mb-6">
-                      <span className="bg-blue-50 text-[#00008b] text-xs font-bold px-3 py-1.5 rounded-lg border border-blue-100">
-                         {job.slug.includes('it') ? 'Technical' : 'Education'}
-                      </span>
+            {/* --- NÚT PREV (TRÁI) --- */}
+            {/* SỬA LỖI LỆCH: Thêm -mt-6 để bù cho pb-12, nút sẽ nằm chính giữa Card */}
+            <button
+                onClick={() => scroll('left')}
+                className="absolute top-1/2 -translate-y-1/2 -mt-6 -left-4 z-20 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#00008b] hover:text-white hover:border-[#00008b] transition-all duration-300 opacity-0 group-hover:opacity-100 hidden md:flex"
+            >
+              <ChevronLeft size={24}/>
+            </button>
 
-                      {/* --- ICON TRẠNG THÁI --- */}
-                      {/* Thêm group/icon để xử lý hover riêng biệt, z-index cao để tooltip nổi lên */}
-                      <div className={`group/icon relative`}>
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center cursor-help transition-transform hover:scale-110 ${statusConfig.color}`}>
-                          {statusConfig.icon}
-                        </div>
+            {/* --- NÚT NEXT (PHẢI) --- */}
+            {/* SỬA LỖI LỆCH: Thêm -mt-6 */}
+            <button
+                onClick={() => scroll('right')}
+                className="absolute top-1/2 -translate-y-1/2 -mt-6 -right-4 z-20 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#00008b] hover:text-white hover:border-[#00008b] transition-all duration-300 opacity-0 group-hover:opacity-100 hidden md:flex"
+            >
+              <ChevronRight size={24}/>
+            </button>
 
-                        {/* Tooltip: Thêm z-50 và điều chỉnh vị trí để không bị mất */}
-                        <div className="absolute -top-10 right-0 z-50 opacity-0 group-hover/icon:opacity-100 transition-opacity duration-200 pointer-events-none">
-                          <div className="bg-slate-800 text-white text-xs px-3 py-1.5 rounded shadow-lg whitespace-nowrap relative">
-                            {statusConfig.label}
-                            {/* Mũi tên tooltip */}
-                            <div className="absolute -bottom-1 right-3 w-2 h-2 bg-slate-800 rotate-45"></div>
+            {/* --- CONTAINER DANH SÁCH --- */}
+            <div ref={scrollContainerRef} className="flex overflow-x-auto gap-6 pb-12 snap-x snap-mandatory scroll-smooth no-scrollbar p-2">
+              {JOB_LISTINGS.map((job) => {
+                const statusConfig = getStatusConfig(job.status);
+
+                return (
+                    <div key={job.id} className="min-w-[320px] md:min-w-[400px] bg-white rounded-2xl p-8 border border-gray-100 shadow-lg shadow-gray-100 hover:shadow-xl hover:shadow-blue-100 hover:-translate-y-1 transition-all duration-300 flex flex-col snap-start relative group/card">
+                      <div className="flex justify-between items-start mb-6">
+                        <span className="bg-blue-50 text-[#00008b] text-xs font-bold px-3 py-1.5 rounded-lg border border-blue-100">
+                           {job.slug.includes('it') ? 'Technical' : 'Education'}
+                        </span>
+
+                        {/* Status Icon */}
+                        <div className={`group/icon relative`}>
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center cursor-help transition-transform hover:scale-110 ${statusConfig.color}`}>
+                            {statusConfig.icon}
+                          </div>
+                          <div className="absolute -top-10 right-0 z-50 opacity-0 group-hover/icon:opacity-100 transition-opacity duration-200 pointer-events-none">
+                            <div className="bg-slate-800 text-white text-xs px-3 py-1.5 rounded shadow-lg whitespace-nowrap relative">
+                              {statusConfig.label}
+                              <div className="absolute -bottom-1 right-3 w-2 h-2 bg-slate-800 rotate-45"></div>
+                            </div>
                           </div>
                         </div>
                       </div>
+
+                      <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 h-[3.5rem] group-hover/card:text-[#00008b] transition-colors">
+                        {job.title}
+                      </h3>
+
+                      <div className="space-y-3 mb-8 border-t border-gray-50 pt-4">
+                        <div className="flex items-center text-gray-500 text-sm">
+                          <MapPin size={18} className="text-gray-400 mr-3 shrink-0"/>
+                          <span className="truncate font-medium">{job.location}</span>
+                        </div>
+                        <div className="flex items-center text-gray-500 text-sm">
+                          <DollarSign size={18} className="text-gray-400 mr-3 shrink-0"/>
+                          <span className="font-medium">{job.salary}</span>
+                        </div>
+                        <div className="flex items-center text-gray-500 text-sm">
+                          <Clock size={18} className="text-gray-400 mr-3 shrink-0"/>
+                          <span className="font-medium text-[#cc0022]">Hạn: {job.deadline}</span>
+                        </div>
+                      </div>
+
+                      <Link href={`/tuyen-dung/${job.slug}`} className="mt-auto w-full py-3.5 rounded-xl border-2 border-gray-100 text-gray-600 font-bold text-center group-hover/card:bg-[#00008b] group-hover/card:border-[#00008b] group-hover/card:text-white transition-all flex items-center justify-center gap-2">
+                        Ứng tuyển ngay <ArrowRight size={18}/>
+                      </Link>
                     </div>
+                );
+              })}
 
-                    <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 h-[3.5rem] group-hover:text-[#00008b] transition-colors">
-                      {job.title}
-                    </h3>
-
-                    <div className="space-y-3 mb-8 border-t border-gray-50 pt-4">
-                      <div className="flex items-center text-gray-500 text-sm">
-                        <MapPin size={18} className="text-gray-400 mr-3 shrink-0"/>
-                        <span className="truncate font-medium">{job.location}</span>
-                      </div>
-                      <div className="flex items-center text-gray-500 text-sm">
-                        <DollarSign size={18} className="text-gray-400 mr-3 shrink-0"/>
-                        <span className="font-medium">{job.salary}</span>
-                      </div>
-                      <div className="flex items-center text-gray-500 text-sm">
-                        <Clock size={18} className="text-gray-400 mr-3 shrink-0"/>
-                        <span className="font-medium text-[#cc0022]">Hạn: {job.deadline}</span>
-                      </div>
-                    </div>
-
-                    <Link href={`/tuyen-dung/${job.slug}`} className="mt-auto w-full py-3.5 rounded-xl border-2 border-gray-100 text-gray-600 font-bold text-center group-hover:bg-[#00008b] group-hover:border-[#00008b] group-hover:text-white transition-all flex items-center justify-center gap-2">
-                      Ứng tuyển ngay <ArrowRight size={18}/>
-                    </Link>
+              {/* Card Xem tất cả */}
+              <div className="min-w-[200px] flex items-center justify-center snap-start">
+                <Link href="/tuyen-dung/tat-ca" className="group flex flex-col items-center text-gray-400 hover:text-[#cc0022] transition-colors">
+                  <div className="w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center mb-4 group-hover:border-[#cc0022] transition-colors bg-gray-50 hover:bg-white">
+                    <ArrowRight size={32}/>
                   </div>
-              );
-            })}
-
-            {/* Card Xem tất cả */}
-            <div className="min-w-[200px] flex items-center justify-center snap-start">
-              <Link href="/tuyen-dung/tat-ca" className="group flex flex-col items-center text-gray-400 hover:text-[#cc0022] transition-colors">
-                <div className="w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center mb-4 group-hover:border-[#cc0022] transition-colors bg-gray-50 hover:bg-white">
-                  <ArrowRight size={32}/>
-                </div>
-                <span className="font-bold text-lg">Xem tất cả</span>
-              </Link>
+                  <span className="font-bold text-lg">Xem tất cả</span>
+                </Link>
+              </div>
             </div>
+
           </div>
         </section>
-
         {/* --- 4. HIRING PROCESS (ĐÚNG 6 BƯỚC) --- */}
         <section className="bg-gray-50 py-20">
           <div className="container mx-auto px-4">

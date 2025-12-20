@@ -1,0 +1,202 @@
+import {EmployerInfo, JobDetail, JobSummary} from "@/mocks/types";
+
+// --- BƯỚC 1: TẠO KHO DỮ LIỆU CHI TIẾT (DATABASE) ---
+// Key của object này (ví dụ: 'nhan-vien-it') PHẢI TRÙNG KHỚP với slug
+const JOB_DATABASE: Record<string, JobDetail> = {
+    // 1. Job Giáo viên / Trợ giảng
+    'giao-vien': {
+        status:"hot",
+        employer: "Trunng tâm tin học ERG",
+        title: "Tuyển dụng Giáo viên tin học",
+        postDate: "12/12/2025",
+        salary: "Thỏa thuận",
+        quantity: "5",
+        workType: "Từ thứ Hai đến thứ Bảy",
+        deadline: "30/01/2026",
+        location: "TP Hồ Chí Minh", // Sửa lại cho khớp ảnh (Hà Nội) thay vì HCM
+        summary: "Trung tâm tin học ERG tuyển dụng giáo viên tin học, trợ giảng dạy các chương trình tin học văn phòng như chứng chỉ MOS, IC3...",
+
+        jobDescription: [
+            "Tham gia giảng dạy các chương trình Tin học Văn phòng: MOS, IC3, CNTT Cơ Bản (CCA), CNTT Nâng Cao (CCB).",
+            "Làm việc tại các chi nhánh của Trung tâm tin học ERG hoặc các trường TIỂU HỌC, THCS, THPT đối tác.",
+            "Soạn thảo giáo án, bài giảng theo khung chương trình.",
+            "Theo dõi, đánh giá kết quả học tập của học sinh."
+        ],
+        requirements: [
+            "Tốt nghiệp Đại học chuyên ngành Sư phạm Tin học, CNTT hoặc các ngành liên quan.",
+            "Ưu tiên ứng viên có kinh nghiệm giảng dạy, hoặc làm việc trong môi trường giáo dục/trung tâm đào tạo.",
+            "Thành thạo kỹ năng CNTT cơ bản và nâng cao (Word, Excel, PowerPoint, Internet, lập trình cơ bản…).",
+            "Ưu tiên có các chứng chỉ Tin Học chuẩn Quốc Tế: IC3/IC3 SPARK, MOS WORD, MOS EXCEL, MOS POWERPOINT….",
+            "Có kỹ năng sư phạm: truyền đạt dễ hiểu, tạo động lực học tập.",
+            "Có khả năng quản lý lớp học, làm việc nhóm, sáng tạo trong dạy học.",
+            "Biết sử dụng phần mềm quản lý học sinh, lớp học trực tuyến là một lợi thế."
+        ],
+        benefits: [
+            "Mức lương cạnh tranh, thưởng theo năng lực giảng dạy.",
+            "Được đóng BHXH, BHYT theo quy định nhà nước.",
+            "Môi trường làm việc giáo dục, trẻ trung, chuyên nghiệp.",
+            "Cơ hội thăng tiến lên Quản lý chuyên môn."
+        ],
+        quickInfo: {
+            location: "TP Hồ Chí Minh",
+            position: "Giáo viên",
+        }
+    },
+    'tro-giang': {
+        status:"new",
+        employer: "Trunng tâm tin học ERG",
+        title: "Tuyển dụng Trợ giảng",
+        postDate: "12/12/2025",
+        salary: "Thỏa thuận",
+        quantity: "5",
+        workType: "Từ thứ Hai đến thứ Bảy",
+        deadline: "30/01/2026",
+        location: "TP Hồ Chí Minh", // Sửa lại cho khớp ảnh (Hà Nội) thay vì HCM
+        summary: "Trung tâm tin học ERG tuyển dụng trợ giảng dạy các chương trình tin học văn phòng như chứng chỉ MOS, IC3...",
+
+        jobDescription: [
+            "Tham gia giảng dạy các chương trình Tin học Văn phòng: MOS, IC3, CNTT Cơ Bản (CCA), CNTT Nâng Cao (CCB).",
+            "Làm việc tại các chi nhánh của Trung tâm tin học ERG hoặc các trường TIỂU HỌC, THCS, THPT đối tác.",
+            "Soạn thảo giáo án, bài giảng theo khung chương trình.",
+            "Theo dõi, đánh giá kết quả học tập của học sinh."
+        ],
+        requirements: [
+            "Tốt nghiệp Đại học chuyên ngành Sư phạm Tin học, CNTT hoặc các ngành liên quan.",
+            "Ưu tiên ứng viên có kinh nghiệm giảng dạy, hoặc làm việc trong môi trường giáo dục/trung tâm đào tạo.",
+            "Thành thạo kỹ năng CNTT cơ bản và nâng cao (Word, Excel, PowerPoint, Internet, lập trình cơ bản…).",
+            "Ưu tiên có các chứng chỉ Tin Học chuẩn Quốc Tế: IC3/IC3 SPARK, MOS WORD, MOS EXCEL, MOS POWERPOINT….",
+            "Có kỹ năng sư phạm: truyền đạt dễ hiểu, tạo động lực học tập.",
+            "Có khả năng quản lý lớp học, làm việc nhóm, sáng tạo trong dạy học.",
+            "Biết sử dụng phần mềm quản lý học sinh, lớp học trực tuyến là một lợi thế."
+        ],
+        benefits: [
+            "Mức lương cạnh tranh, thưởng theo năng lực giảng dạy.",
+            "Được đóng BHXH, BHYT theo quy định nhà nước.",
+            "Môi trường làm việc giáo dục, trẻ trung, chuyên nghiệp.",
+            "Cơ hội thăng tiến lên Quản lý chuyên môn."
+        ],
+        quickInfo: {
+            location: "TP Hồ Chí Minh",
+            position: "Trợ giảng",
+        }
+    },
+    'nhan-vien-giao-vu': {
+        status:"urgent",
+        employer: "Trunng tâm tin học ERG",
+        title: "Tuyển dụng Nhân viên giáo vụ",
+        postDate: "12/12/2025",
+        salary: "Thỏa thuận",
+        quantity: "5",
+        workType: "Từ thứ Hai đến thứ Bảy",
+        deadline: "30/01/2026",
+        location: "TP Hồ Chí Minh", // Sửa lại cho khớp ảnh (Hà Nội) thay vì HCM
+        summary: "Trung tâm tin học ERG tuyển dụng giáo vụ",
+
+        jobDescription: [
+            "Cập nhật, lưu trữ và quản lý thông tin học sinh, giáo trình, tài liệu, ngân hàng đề và các báo cáo liên quan.",
+            "Hỗ trợ Giáo viên và các bộ phận khác trong công tác giảng dạy, tổ chức lớp học, lịch học",
+            "Theo dõi, quản lý thời gian làm việc của Giáo viên, bộ phận hỗ trợ.",
+            "Tiếp nhận và xử lý các yêu cầu hỗ trợ hành chính, học vụ từ các phòng ban khác",
+            "Hỗ trợ tổ chức các sự kiện, hoạt động nội bộ của Trung tâm.",
+            "Giải quyết các vấn đề phát sinh trong quá trình vận hành tại Trung tâm.",
+            "Phối hợp chặt chẽ với các bộ phận khác để đảm bảo hoạt động chung diễn ra thuận lợi, hiệu quả."
+        ],
+        requirements: [
+            "Ưu tiên nữ",
+            "Tốt nghiệp Cao đẳng, Đại học ",
+            "Có kỹ năng tổ chức, sắp xếp công việc và xử lý tình huống tốt.",
+            "Thành thạo tin học văn phòng (Word, Excel, PowerPoint, Google Sheet,...).",
+            "Ưu tiên có các chứng chỉ Tin Học chuẩn Quốc Tế: IC3/IC3 SPARK, MOS WORD, MOS EXCEL, MOS POWERPOINT….",
+            "Kỹ năng giao tiếp, làm việc nhóm và xử lý tình huống linh hoạt.",
+            "Ưu tiên ứng viên có kinh nghiệm làm việc tại Trung tâm giáo dục hoặc vị trí tương đương.",
+        ],
+        benefits: [
+            "Mức lương cạnh tranh, thưởng theo năng lực giảng dạy.",
+            "Được đóng BHXH, BHYT theo quy định nhà nước.",
+            "Môi trường làm việc giáo dục, trẻ trung, chuyên nghiệp.",
+            "Cơ hội thăng tiến trong công việc"
+        ],
+        quickInfo: {
+            location: "TP Hồ Chí Minh",
+            position: "Nhân viên giáo vụ",
+        }
+    },
+
+
+    'nhan-vien-it': {
+        status:"hot",
+        employer: "Trung tâm tin học ERG",
+        title: "Nhân viên IT Helpdesk / Quản trị mạng",
+        postDate: "10/12/2025",
+        salary: "Thỏa thuận",
+        quantity: "3",
+        workType: "Từ thứ Hai đến thứ Bảy",
+        deadline: "30/01/2026",
+        location: "TP Hồ Chí Minh",
+        summary: "Tìm kiếm nhân viên IT chịu trách nhiệm vận hành hệ thống mạng, hỗ trợ kỹ thuật cho văn phòng và các cơ sở đào tạo.",
+
+        jobDescription: [
+            "Cài đặt, cấu hình và bảo trì hệ thống máy tính, mạng LAN/WAN, Wifi cho dự án và các đơn vị đối tác",
+            "Set up các phòng học vi tính, hệ thống mạng,...",
+            "Xử lý các sự cố máy tính về phần cứng & phần mềm",
+            "Quản lý các thiết bị, cơ sở vật chất, bảo trì, nâng cấp, cơ sở vật chất.",
+            "Hỗ trợ các công việc về kỹ thuật của Công ty. ",
+            "Đảm bảo an toàn dữ liệu và bảo mật hệ thống."
+        ],
+        requirements: [
+            "Tốt nghiệp Cao đẳng/Đại học chuyên ngành CNTT, Điện tử viễn thông.",
+            "Có ít nhất 1 năm kinh nghiệm ở vị trí tương đương.",
+            "Am hiểu về hệ điều hành Windows, phần cứng máy tính và các thiết bị mạng (Router, Switch).",
+            "Kỹ năng giải quyết vấn đề tốt, nhanh nhẹn, trung thực."
+        ],
+        benefits: [
+            "Lương thỏa thuận theo năng lực. ",
+            "Được lựa chọn và cởi mở đề xuất các công nghệ mới để sử dụng trong quá trình làm việc.",
+            "Môi trường tạo điều kiện để các cá nhân thể hiện năng lực học tập và phát triển bản thân.",
+            "Sếp luôn thấu hiểu, ghi nhận những đóng góp và luôn sẵn sàng thay đổi để thích nghi, đồng nghiệp luôn cởi mở chia sẻ, giúp đỡ. ",
+            "Không gian làm việc tiện nghi, sáng tạo, giúp tăng cảm hứng làm việc. ",
+            "Các quyền lợi khác theo quy định của luật lao động hiện hành."
+        ],
+        quickInfo: {
+            location: "TP Hồ Chí Minh",
+            position: "Nhân viên IT",
+        }
+    }
+};
+
+export const EMPLOYER_INFO: EmployerInfo = {
+    name : "Trung tâm Tin học ERG",
+    nameOfOrganization: "EDURISE  GLOBAL CO., LTD",
+    tax: "0319007722",
+    mainAddress: "Tầng 6 Toà nhà 83B Hoàng Sa – Phường Tân Định – TP Hồ Chí Minh",
+    location:"Trung tâm tin học ERG, 40-42 Bình Phú – Phường Bình Phú – TP Hồ Chí Minh.",
+    fieldOfActivity: [
+        "Cung cấp giải pháp CNTT, Hoạt động chuyên môn, khoa học và công nghệ khác chưa phân đầu vào, Hoạt động các trung tâm, đại lý tư vấn, giới thiệu lao động và việc làm.",
+        "Đào tạo sơ cấp.",
+        "Giáo dục khác chưa phân vào đâu: dạy máy tính, dạy ngoại ngữ, tin học, kỹ năng mềm, Giáo dục không xác định theo cấp độ.",
+        "Liên kết đào tạo các chương trình CNTT Quốc Gia và Quốc Tế theo chuẩn của Bộ Thông Tin và Truyền Thông, Sở Giáo Dục và Đào Tạo Thành phố Hồ Chí Minh.",
+    ]
+}
+// --- BƯỚC 2: TẠO DANH SÁCH TỰ ĐỘNG (JOB_LISTINGS) ---
+// Tự động map từ Database ra để đảm bảo dữ liệu luôn đồng nhất
+export const JOB_LISTINGS: JobSummary[] = Object.keys(JOB_DATABASE).map((slug, index) => {
+    const job = JOB_DATABASE[slug];
+    return {
+        id: (index + 1).toString(),
+        slug: slug, // Slug lấy từ key của object
+        title: job.title,
+        salary: job.salary,
+        quantity: job.quantity,
+        workSchedule: job.workType, // Map workType sang workSchedule
+        deadline: job.deadline,
+        location: job.location,
+        requirements: job.requirements.slice(0, 3), // Lấy 3 dòng đầu yêu cầu làm tóm tắt
+        status: job.status || 'normal' // <--- Map status sang, mặc định là normal nếu thiếu
+    };
+});
+
+// --- BƯỚC 3: HÀM LẤY CHI TIẾT (QUAN TRỌNG NHẤT) ---
+export const getJobDetailBySlug = (slug: string): JobDetail | undefined => {
+    // Tìm trong database xem có key nào trùng với slug không
+    return JOB_DATABASE[slug];
+};

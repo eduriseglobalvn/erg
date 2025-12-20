@@ -1,6 +1,6 @@
 // src/app/(main)/layout.tsx
 import React from 'react';
-import Header from "@/components/MainHeader"; // Giả sử component Header đã được tạo
+import Header from "@/components/Header"; // Giả sử component Header đã được tạo
 import Footer from "@/components/Footer"; // Giả sử component Footer đã được tạo
 // import AdsPopup from "@/components/AdsPopup";
 import FloatingContact from "@/components/FloatingContact";

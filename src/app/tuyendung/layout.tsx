@@ -1,9 +1,10 @@
 // src/app/(main)/layout.tsx
 import React from 'react';
-import Header from "@/components/tuyendung/TuyenDungHeader"; // Giả sử component Header đã được tạo
+import Header from "@/components/Header"; // Giả sử component Header đã được tạo
 import Footer from "@/components/Footer"; // Giả sử component Footer đã được tạo
 // import AdsPopup from "@/components/AdsPopup";
 import FloatingContact from "@/components/FloatingContact";
+import {TUYEN_DUNG_MENU_ITEMS} from "@/constants/MenuItem";
 
 export default function MainLayout({
                                        children,
@@ -13,7 +14,7 @@ export default function MainLayout({
     return (
         <>
             {/* CÁC COMPONENT DÙNG CHUNG CHO TẤT CẢ TRANG CỦA MAIN DOMAIN */}
-            <Header />
+            <Header menuData={TUYEN_DUNG_MENU_ITEMS}/>
             {/*<AdsPopup />*/}
 
             {/* Nội dung trang (page.tsx) được bọc trong <(main)> */}

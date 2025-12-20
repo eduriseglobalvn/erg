@@ -47,19 +47,24 @@ export interface RoadmapSection {
   items: string[];
 }
 
+
+
+
+export type JobStatusType = 'hot' | 'new' | 'urgent' | 'expired' | 'normal';
+
 export interface JobItem {
     id: number;
     title: string;
-    salary: string; // Mức lương: "8 - 20 triệu/tháng", "Thỏa thuận"
-    quantity: string; // Số lượng: "1", "Không giới hạn"
-    workSchedule: string; // Thời gian làm việc: "8h/ngày từ thứ Hai đến thứ Bảy"
-    deadline: string; // Hạn nộp: "30/11/2024"
-    requirements: string[]; // Điều kiện/yêu cầu công việc
-    // Thông tin bổ sung để tạo độ chân thực
+    salary: string;
+    quantity: string;
+    workSchedule: string;
+    deadline: string;
+    requirements: string[];
     location: string;
     descriptionShort: string;
     isUrgent: boolean;
 }
+
 export interface JobSummary {
     id: string;
     slug: string;
@@ -68,8 +73,9 @@ export interface JobSummary {
     quantity: string;
     workSchedule: string;
     deadline: string;
-    location: string; // Đã thêm location vào type này cho khớp với UI
+    location: string;
     requirements: string[];
+    status: JobStatusType; // <--- THÊM DÒNG NÀY
 }
 
 export interface JobDetail {
@@ -89,14 +95,14 @@ export interface JobDetail {
         location: string;
         position: string;
     };
+    status: JobStatusType; // <--- THÊM DÒNG NÀY
 }
+
 export interface EmployerInfo {
     name: string;
-    nameOfOrganization: string; //tên tổ chức
+    nameOfOrganization: string;
     tax: string;
     mainAddress: string;
     location: string;
     fieldOfActivity: string[];
-
-
 }

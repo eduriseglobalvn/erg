@@ -46,7 +46,7 @@ export const MAIN_MENU_ITEMS = [
     // nên code cũ của bạn vẫn đúng logic.
     {
         label: "GIỚI THIỆU",
-        path: "/gioi-thieu",
+        path: "/cau-chuyen-cua-erg",
         children: [
             { label: "Câu chuyện của ERG", path: "/cau-chuyen-cua-erg" },
             { label: "Giá trị cốt lõi", path: "/gia-tri-cot-loi" },

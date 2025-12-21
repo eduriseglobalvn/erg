@@ -119,6 +119,33 @@ export const THQG_MENU_ITEMS = [
 
 ]
 
+export const CDS_MENU_ITEMS = [
+    {
+        label: "GIỚI THIỆU",
+        path: "/gioi-thieu",
+    },
+    {
+        label: "LỘ TRÌNH",
+        path: "/lo-trinh",
+    },
+    // {
+    //     label: "KHÓA HỌC",
+    //     path: "/khoa-hoc",
+    //     children: [
+    //         { label: "Công nghệ thông tin cơ bản", path: "/khoa-hoc/cntt-co-ban" },
+    //         { label: "Công nghệ thông tin nâng cao", path: "/khoa-hoc/cntt-nang-cao" },
+    //     ]
+    // },
+    // {
+    //     label: "ĐỘI NGŨ GIÁO VIÊN",
+    //     path: "/doi-ngu-giao-vien",
+    // },
+    { label: "TÀI LIỆU", path: "/tai-lieu" },
+    { label: "TIN TỨC", path: "/tin-tuc" },
+    { label: "LIÊN HỆ", path: "/lien-he" },
+
+]
+
 export const TUYEN_DUNG_MENU_ITEMS = [
     {
         label: "GIỚI THIỆU",

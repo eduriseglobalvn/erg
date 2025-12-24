@@ -119,6 +119,32 @@ export const THQG_MENU_ITEMS = [
 
 ]
 
+export const THTN_MENU_ITEMS = [
+    {
+        label: "GIỚI THIỆU",
+        path: "/",
+    },
+    // {
+    //     label: "LỘ TRÌNH",
+    //     path: "/",
+    // },
+    {
+        label: "KHÓA HỌC",
+        path: "/khoa-hoc",
+        children: [
+            { label: "Lập trình Python thiếu nhi", path: "/khoa-hoc/lap-trinh-python-thieu-nhi" },
+            { label: "Lập trình SCRATCH", path: "/khoa-hoc/lap-trinh-scratch" },
+        ]
+    },
+    {
+        label: "ĐỘI NGŨ GIÁO VIÊN",
+        path: "/doi-ngu-giao-vien",
+    },
+    { label: "TIN TỨC", path: "/tin-tuc" },
+    { label: "LIÊN HỆ", path: "/lien-he" },
+
+]
+
 export const CDS_MENU_ITEMS = [
     {
         label: "GIỚI THIỆU",
@@ -141,6 +167,57 @@ export const CDS_MENU_ITEMS = [
     //     path: "/doi-ngu-giao-vien",
     // },
     { label: "TÀI LIỆU", path: "/tai-lieu" },
+    { label: "TIN TỨC", path: "/tin-tuc" },
+    { label: "LIÊN HỆ", path: "/lien-he" },
+
+]
+
+export const DTDM_MENU_ITEMS = [
+    {
+        label: "GIỚI THIỆU",
+        path: "/",
+    },
+    // {
+    //     label: "LỘ TRÌNH",
+    //     path: "/",
+    // },
+    // {
+    //     label: "KHÓA HỌC",
+    //     path: "/khoa-hoc",
+    //     children: [
+    //         { label: "Lập trình Python thiếu nhi", path: "/khoa-hoc/lap-trinh-python-thieu-nhi" },
+    //         { label: "Lập trình SCRATCH", path: "/khoa-hoc/lap-trinh-scratch" },
+    //     ]
+    // },
+    {
+        label: "ĐỘI NGŨ GIÁO VIÊN",
+        path: "/doi-ngu-giao-vien",
+    },
+    { label: "TIN TỨC", path: "/tin-tuc" },
+    { label: "LIÊN HỆ", path: "/lien-he" },
+
+]
+
+export const AI_MENU_ITEMS = [
+    {
+        label: "GIỚI THIỆU",
+        path: "/",
+    },
+    // {
+    //     label: "LỘ TRÌNH",
+    //     path: "/",
+    // },
+    {
+        label: "KHÓA HỌC",
+        path: "/khoa-hoc",
+        children: [
+            { label: "Học cùng AI", path: "/khoa-hoc/hoc-cung-ai" },
+        ]
+    },
+    {
+        label: "ĐỘI NGŨ GIÁO VIÊN",
+        path: "/doi-ngu-giao-vien",
+    },
     { label: "TIN TỨC", path: "/tin-tuc" },
     { label: "LIÊN HỆ", path: "/lien-he" },
 

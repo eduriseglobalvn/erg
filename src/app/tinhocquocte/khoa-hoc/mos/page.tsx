@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Award, FileText, Check, Star, Database, Mail, Presentation, Table, Phone } from 'lucide-react';
+import {Award, FileText, Check, Star, Database, Mail, Presentation, Table, Phone, ImageIcon} from 'lucide-react';
+import ImageGallery from "@/components/ImageGallery";
+import {REAL_IMAGES} from "@/mocks/imageGalerry";
 
 export default function MOSPage() {
     return (
@@ -36,7 +38,7 @@ export default function MOSPage() {
                     </h1>
 
                     <p className="text-white/95 text-lg max-w-2xl border-l-4 border-white/50 pl-5 font-medium leading-relaxed drop-shadow-sm">
-                        Chứng chỉ tin học văn phòng quốc tế do Microsoft cấp, có giá trị trọn đời trên toàn cầu.
+                        Chứng chỉ tin học văn phòng quốc tế do Microsoft cấp, có giá trị sử dụng trên toàn cầu.
                     </p>
                 </div>
             </div>
@@ -170,15 +172,15 @@ export default function MOSPage() {
                         <ul className="space-y-4 mb-8">
                             <li className="flex items-start gap-3">
                                 <Check className="w-5 h-5 text-green-500 mt-0.5" />
-                                <span className="text-sm text-gray-600">Miễn thi nghề THPT</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                                <Check className="w-5 h-5 text-green-500 mt-0.5" />
                                 <span className="text-sm text-gray-600">Ưu tiên xét tuyển Đại học</span>
                             </li>
                             <li className="flex items-start gap-3">
                                 <Check className="w-5 h-5 text-green-500 mt-0.5" />
                                 <span className="text-sm text-gray-600">Chuẩn đầu ra sinh viên</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                                <Check className="w-5 h-5 text-green-500 mt-0.5" />
+                                <span className="text-sm text-gray-600">Ứng dụng thực tế trong công việc</span>
                             </li>
 
                         </ul>
@@ -192,6 +194,21 @@ export default function MOSPage() {
                         {/*        <Phone size={18}/> 0766.144.888*/}
                         {/*    </div>*/}
                         {/*</div>*/}
+                    </div>
+
+                    {/* 2. CARD HÌNH ẢNH (GỌI COMPONENT) */}
+                    <div className="bg-white p-4 rounded-xl shadow-lg border-t-4 border-teal-500">
+                        <div className="flex items-center gap-2 mb-2">
+                            <ImageIcon className="text-teal-600" size={20} />
+                            <h3 className="text-lg font-bold">Hình ảnh thực tế</h3>
+                        </div>
+                        <p className="text-xs text-gray-500 mb-4 text-justify">
+                            Trải nghiệm không gian học tập chuẩn quốc tế và các hoạt động ngoại khóa thú vị.
+                        </p>
+
+                        {/* Truyền Props với đúng kiểu dữ liệu */}
+                        <ImageGallery images={REAL_IMAGES} autoPlayTime={5000} />
+
                     </div>
                 </div>
 

@@ -12,14 +12,14 @@ export default function CoreValuesPage() {
         {
             id: 1,
             title: "Trách nhiệm xã hội",
-            content: "ERG đóng góp vào sự phát triển bền vững của xã hội thông qua các chương trình đào tạo quốc tế, năng cao kỹ năng công nghệ cho cộng đồng.",
+            content: "ERG đóng góp vào sự phát triển bền vững của xã hội thông qua các chương trình đào tạo quốc tế, nâng cao kỹ năng công nghệ cho cộng đồng.",
             icon: <Globe className="w-6 h-6 text-white" />,
             theme: "blue", // Xanh
         },
         {
             id: 2,
             title: "Chất lượng vượt trội",
-            content: "ERG cam kết mang lại những sản phẩm và dịch vụ với chất lượng ưu việt nhất thông qua việc đảm bảo tỷ lệ thành công tối ưu và trải nghiệm dịch vụ vượt trội.",
+            content: "ERG cam kết mang lại những sản phẩm và dịch vụ với chất lượng tốt nhất thông qua việc đảm bảo tỷ lệ thành công tối ưu và trải nghiệm dịch vụ vượt trội.",
             icon: <Star className="w-6 h-6 text-white" />,
             theme: "red", // Đỏ
         },

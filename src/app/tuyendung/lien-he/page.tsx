@@ -41,6 +41,11 @@ export default function RecruitmentContactPage() {
                         <h1 className="text-4xl lg:text-5xl font-bold mb-4 tracking-tight" style={{ color: ERG_BLUE }}>
                             Ứng tuyển ngay
                         </h1>
+                        <div
+                            className="w-34 h-1.5 rounded-full mb-4"
+                            style={{ backgroundColor: ERG_RED }}
+                        >
+                        </div>
                         <p className="text-gray-500 text-lg leading-relaxed">
                             Bạn chưa tìm thấy vị trí phù hợp trong danh sách? <br/>
                             Hãy để lại thông tin và CV, bộ phận Nhân sự (HR) sẽ liên hệ ngay khi có cơ hội dành cho bạn.

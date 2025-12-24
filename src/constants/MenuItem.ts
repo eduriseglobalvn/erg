@@ -82,7 +82,7 @@ export const THQT_MENU_ITEMS = [
         children: [
             { label: "MOS", path: "/khoa-hoc/mos" },
             { label: "IC3 GS6", path: "/khoa-hoc/ic3-gs6" },
-            { label: "IC3 GS6 Spark", path: "/khoa-hoc/ic3-gs6-spark" },
+            { label: "IC3 Spark GS6 ", path: "/khoa-hoc/ic3-spark-gs6" },
         ]
     },
     {

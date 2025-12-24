@@ -8,9 +8,9 @@ import RoadmapSection from "@/components/congdanso/RoadmapSection";
 // --- CAROUSEL BANNER (Giữ nguyên logic code bạn đưa, thay nội dung) ---
 const CitizenshipCarousel = () => {
   const images = [
-    { src: "/images/kdc-safety.jpg", label: "An Toàn Trực Tuyến" },
-    { src: "/images/kdc-skills.jpg", label: "Kỹ Năng Số Thiết Yếu" },
-    { src: "/images/kdc-ethics.jpg", label: "Đạo Đức & Trách Nhiệm" },
+    { src: "", label: "An Toàn Trực Tuyến" },
+    { src: "", label: "Kỹ Năng Số Thiết Yếu" },
+    { src: "", label: "Đạo Đức & Trách Nhiệm" },
   ];
 
   const [current, setCurrent] = useState(0);

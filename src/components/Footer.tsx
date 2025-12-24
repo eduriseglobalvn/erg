@@ -9,10 +9,7 @@ const FooterWaveFix = () => {
             {/* 1. Thanh Gradient trên cùng */}
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#cc0022] via-[#00008b] to-[#cc0022]"></div>
 
-            {/* === 2. PHẦN NỘI DUNG CHÍNH ===
-         FIX: Thay đổi `pb-2` thành `pb-28` hoặc `pb-32`.
-         Điều này tạo ra khoảng trống lớn ở dưới cùng, đẩy chữ lên trên để sóng không che mất.
-      */}
+            {/* === 2. PHẦN NỘI DUNG CHÍNH === */}
             <div className="container mx-auto px-4 md:px-6 pb-28 md:pb-32">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
 
@@ -25,7 +22,7 @@ const FooterWaveFix = () => {
                             <span className="text-xl font-extrabold text-[#00008b] tracking-tight">Edurise Global</span>
                         </div>
                         <p className="text-slate-600 mb-8 leading-relaxed pr-4 text-justify font-medium">
-                            Hệ thống giáo dục hàng đầu, cam kết mang lại chất lượng đào tạo tốt nhất cho thế hệ trẻ Việt Nam. Khơi dậy tiềm năng, kiến tạo tương lai.
+                            Hệ thống giáo dục về công nghệ hàng đầu, cam kết mang lại chất lượng đào tạo tốt nhất cho thế hệ trẻ Việt Nam. Khơi dậy tiềm năng, kiến tạo tương lai.
                         </p>
                         <div className="flex gap-4">
                             <a href="https://www.facebook.com/eduriseerg" className="group bg-white p-3 rounded-full shadow-sm border border-slate-100 hover:bg-[#00008b] transition-all duration-300">
@@ -47,15 +44,23 @@ const FooterWaveFix = () => {
                             <span className="absolute -bottom-2 left-0 w-12 h-1 bg-[#cc0022] rounded-full"></span>
                         </h3>
                         <ul className="space-y-6">
-                            <li className="flex items-start gap-4">
-                                <div className="bg-white p-2.5 rounded-full shadow-sm text-[#cc0022] shrink-0 mt-1 border border-slate-50">
+                            {/* --- ĐÃ SỬA: Thêm class 'group' và hiệu ứng hover cho MapPin --- */}
+                            <li className="flex items-start gap-4 group">
+                                <div className="bg-white p-2.5 rounded-full shadow-sm text-[#cc0022] shrink-0 mt-1 border border-slate-50 group-hover:bg-[#cc0022] group-hover:text-white transition-all">
                                     <MapPin size={20} />
                                 </div>
                                 <div>
                                     <span className="text-slate-500 text-xs font-bold uppercase block mb-1">Trụ sở chính</span>
-                                    <p className="text-[#00008b] font-semibold leading-tight block">83B, Hoàng Sa, Phường Tân Định, TP.Hồ Chí Minh</p>
+                                    <a
+                                        href="https://maps.app.goo.gl/nkpn1e1KZJ1ZvrYg8"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[#00008b] font-semibold leading-tight block hover:text-[#cc0022] transition-colors"
+                                    >Số 83B, Đường Hoàng Sa, Phường Tân Định, TP.Hồ Chí Minh
+                                    </a>
                                 </div>
                             </li>
+
                             <li className="flex items-start gap-4 group">
                                 <div className="bg-white p-2.5 rounded-full shadow-sm text-[#cc0022] shrink-0 border border-slate-50 group-hover:bg-[#cc0022] group-hover:text-white transition-all">
                                     <Phone size={20} />
@@ -84,15 +89,24 @@ const FooterWaveFix = () => {
                             <span className="absolute -bottom-2 left-0 w-12 h-1 bg-[#cc0022] rounded-full"></span>
                         </h3>
                         <ul className="space-y-6">
-                            <li className="flex items-start gap-4">
-                                <div className="bg-white p-2.5 rounded-full shadow-sm text-[#cc0022] shrink-0 mt-1 border border-slate-50">
+                            {/* --- ĐÃ SỬA: Thêm thẻ <a> bao bọc để click mở Google Maps --- */}
+                            <li className="flex items-start gap-4 group">
+                                <div className="bg-white p-2.5 rounded-full shadow-sm text-[#cc0022] shrink-0 mt-1 border border-slate-50 group-hover:bg-[#cc0022] group-hover:text-white transition-all">
                                     <MapPin size={20} />
                                 </div>
                                 <div>
                                     <span className="text-slate-500 text-xs font-bold uppercase block mb-1">Địa chỉ</span>
-                                    <p className="text-[#00008b] font-semibold leading-tight block">Trung tâm Tin học ERG, Số 40-42 Bình Phú, Phường Bình Phú, TP. Hồ Chí Minh</p>
+                                    <a
+                                        href="https://maps.app.goo.gl/A5izGLp4PALPgjX26"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[#00008b] font-semibold leading-tight block hover:text-[#cc0022] transition-colors"
+                                    >
+                                        Trung tâm Tin học ERG, Số 40-42, Đường Bình Phú, Phường Bình Phú, TP. Hồ Chí Minh
+                                    </a>
                                 </div>
                             </li>
+
                             <li className="flex items-start gap-4 group">
                                 <div className="bg-white p-2.5 rounded-full shadow-sm text-[#cc0022] shrink-0 border border-slate-50 group-hover:bg-[#cc0022] group-hover:text-white transition-all">
                                     <Phone size={20} />
@@ -102,6 +116,7 @@ const FooterWaveFix = () => {
                                     <a href="tel:0967689259" className="text-[#00008b] font-bold text-lg hover:text-[#cc0022] transition-colors">0967.689.259</a>
                                 </div>
                             </li>
+
                             <li className="flex items-start gap-4 group">
                                 <div className="bg-white p-2.5 rounded-full shadow-sm text-[#cc0022] shrink-0 border border-slate-50 group-hover:bg-[#cc0022] group-hover:text-white transition-all">
                                     <Mail size={20} />
@@ -116,15 +131,13 @@ const FooterWaveFix = () => {
                 </div>
             </div>
 
-            {/* === 3. PHẦN LƯỢN SÓNG & COPYRIGHT ===
-         Phần này được đặt trong một khối relative riêng biệt ở cuối.
-      */}
+            {/* === 3. PHẦN LƯỢN SÓNG & COPYRIGHT === */}
             <div className="relative w-full">
 
-                {/* Lớp SVG Lượn sóng: Nằm đè lên trên khoảng trống padding đã tạo ở trên */}
+                {/* Lớp SVG Lượn sóng */}
                 <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0] transform -translate-y-[99%] z-10">
                     <svg
-                        className="relative block w-[calc(100%+1.3px)] h-[60px] md:h-[100px]" // Tăng độ cao sóng lên 100px cho mềm mại
+                        className="relative block w-[calc(100%+1.3px)] h-[60px] md:h-[100px]"
                         data-name="Layer 1"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 1200 120"

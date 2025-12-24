@@ -7,16 +7,13 @@ import {
     ChevronRight,
     Loader2,
     Flame,
-    ExternalLink, ChevronRightIcon
+    ExternalLink,
+    ChevronRightIcon
 } from 'lucide-react';
 
 // --- CẤU HÌNH ---
 const DEFAULT_IMAGE = 'https://moet.gov.vn/upload/2007219/20251020/image_2025-10-20_11-46-19_998cd.png';
 const ITEMS_PER_PAGE = 9;
-
-// Mã màu ERG (Dùng trực tiếp hoặc cấu hình trong tailwind.config.js)
-const ERG_BLUE = '#00008b';
-const ERG_RED = '#cc0022';
 
 // --- DỮ LIỆU MẪU ERG ---
 const MOCK_ERG_NEWS: NewsItem[] = [
@@ -44,7 +41,6 @@ const MOCK_ERG_NEWS: NewsItem[] = [
         description: "Nhìn lại chặng đường phát triển và tri ân những đóng góp không ngừng nghỉ của đội ngũ nhân sự.",
         source: 'ERG'
     },
-
 ];
 
 // --- INTERFACES ---
@@ -104,6 +100,7 @@ export default function NewsPage() {
             try {
                 const res = await fetch('/api/rss');
                 if (!res.ok) throw new Error('Failed');
+
                 const xmlText = await res.text();
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(xmlText, "text/xml");
@@ -113,18 +110,39 @@ export default function NewsPage() {
                     const desc = item.querySelector("description")?.textContent || "";
                     const content = item.getElementsByTagName("content:encoded")[0]?.textContent || "";
                     const img = extractImage(content) !== DEFAULT_IMAGE ? extractImage(content) : extractImage(desc);
+
+                    // --- SỬA LỖI LINK TẠI ĐÂY ---
+                    // 1. Ưu tiên lấy từ thẻ <guid> vì trong RSS này guid chứa đúng link bài viết
+                    let url = item.querySelector("guid")?.textContent?.trim() || "";
+
+                    // 2. Nếu không có guid, tìm thẻ <link> có chứa text (bỏ qua thẻ atom:link rỗng)
+                    if (!url) {
+                        const links = item.getElementsByTagName("link");
+                        for (let i = 0; i < links.length; i++) {
+                            // Chỉ lấy thẻ link có nội dung text (link bài viết)
+                            if (links[i].textContent && links[i].textContent.trim().length > 0) {
+                                url = links[i].textContent.trim();
+                                break;
+                            }
+                        }
+                    }
+                    // ----------------------------
+
                     return {
                         title: item.querySelector("title")?.textContent || "",
                         pubDate: item.querySelector("pubDate")?.textContent || "",
-                        link: item.querySelector("link")?.textContent || "",
+                        link: url, // Gán URL đã xử lý
                         thumbnail: img,
                         description: stripHtml(desc),
                         source: 'RSS'
                     };
                 });
                 setRssNews(formatted.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()));
-            } catch (err) { console.error(err); }
-            finally { setLoadingRss(false); }
+            } catch (err) {
+                console.error("Lỗi lấy RSS:", err);
+            } finally {
+                setLoadingRss(false);
+            }
         };
         fetchRss();
     }, []);
@@ -141,7 +159,6 @@ export default function NewsPage() {
         document.getElementById('news-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
-    // Tạo mảng số trang (Logic hiển thị: 1 ... 4 5 6 ... 10)
     const getPageNumbers = () => {
         const pages = [];
         if (totalPages <= 5) {
@@ -172,7 +189,7 @@ export default function NewsPage() {
 
             <div id="news-container" className="container mx-auto px-4 md:px-8 py-10">
 
-                {/* --- TAB NAVIGATION (DESIGN MỚI) --- */}
+                {/* --- TAB NAVIGATION --- */}
                 <div className="flex justify-start gap-10 border-b border-gray-200 mb-10">
                     <button
                         onClick={() => setActiveTab('ERG')}
@@ -211,7 +228,7 @@ export default function NewsPage() {
                                     key={index}
                                     className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group border border-gray-100 flex flex-col h-full"
                                 >
-                                    <a href={item.link} target={activeTab === 'RSS' ? "_blank" : "_self"} className="relative h-52 overflow-hidden block">
+                                    <a href={item.link} target={item.source === 'RSS' ? "_blank" : "_self"} className="relative h-52 overflow-hidden block">
                                         <img
                                             src={item.thumbnail}
                                             alt={item.title}
@@ -232,7 +249,7 @@ export default function NewsPage() {
                                         </div>
 
                                         <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-[#00008b] transition-colors line-clamp-2">
-                                            <a href={item.link} target={activeTab === 'RSS' ? "_blank" : "_self"}>{item.title}</a>
+                                            <a href={item.link} target={item.source === 'RSS' ? "_blank" : "_self"}>{item.title}</a>
                                         </h3>
 
                                         <p className="text-gray-500 text-sm line-clamp-3 mb-4 flex-grow leading-relaxed">
@@ -242,7 +259,7 @@ export default function NewsPage() {
                                         <div className="mt-auto pt-4 border-t border-gray-50 flex justify-between items-center">
                                             <a
                                                 href={item.link}
-                                                target={activeTab === 'RSS' ? "_blank" : "_self"}
+                                                target={item.source === 'RSS' ? "_blank" : "_self"}
                                                 className="text-[#cc0022] font-semibold text-sm hover:underline inline-flex items-center gap-1"
                                             >
                                                 Xem chi tiết <ChevronRightIcon size={14} />
@@ -254,10 +271,9 @@ export default function NewsPage() {
                             ))}
                         </div>
 
-                        {/* --- PAGINATION (DESIGN MỚI) --- */}
+                        {/* --- PAGINATION --- */}
                         {totalPages > 1 && (
                             <div className="flex justify-center items-center gap-2 mt-8">
-                                {/* Nút Previous */}
                                 <button
                                     onClick={() => paginate(currentPage - 1)}
                                     disabled={currentPage === 1}
@@ -270,7 +286,6 @@ export default function NewsPage() {
                                     <ChevronLeft size={20} />
                                 </button>
 
-                                {/* Các số trang */}
                                 {getPageNumbers().map((page, idx) => (
                                     <React.Fragment key={idx}>
                                         {page === '...' ? (
@@ -280,8 +295,8 @@ export default function NewsPage() {
                                                 onClick={() => paginate(page as number)}
                                                 className={`w-10 h-10 flex items-center justify-center rounded-lg font-medium text-base transition-all border
                                                     ${currentPage === page
-                                                    ? 'bg-[#00008b] text-white border-[#00008b] shadow-md' // Active Style
-                                                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-gray-400' // Inactive Style
+                                                    ? 'bg-[#00008b] text-white border-[#00008b] shadow-md'
+                                                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
                                                 }`}
                                             >
                                                 {page}
@@ -290,7 +305,6 @@ export default function NewsPage() {
                                     </React.Fragment>
                                 ))}
 
-                                {/* Nút Next */}
                                 <button
                                     onClick={() => paginate(currentPage + 1)}
                                     disabled={currentPage === totalPages}

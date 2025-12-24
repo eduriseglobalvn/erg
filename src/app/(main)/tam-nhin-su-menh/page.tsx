@@ -1,24 +1,21 @@
 'use client';
 
 import React from 'react';
-import { Eye, Target, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Eye, Target, ArrowRight, CheckCircle2, BookOpen } from 'lucide-react';
 
 export default function VisionMissionPage() {
     return (
         <div className="min-h-screen bg-white font-sans text-gray-800 overflow-x-hidden">
 
-            {/* --- HERO SECTION --- */}
+            {/* --- HERO SECTION (Giữ nguyên ảnh nền abstract vì nó làm nền tốt) --- */}
             <section className="relative h-[450px] flex items-center justify-center bg-[#00008b] overflow-hidden">
-                {/* Abstract Background Image */}
                 <div className="absolute inset-0 opacity-40 mix-blend-overlay">
                     <img
-                        src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000&auto=format&fit=crop"
-                        alt="Vision Background"
+                        src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2000&auto=format&fit=crop"
+                        alt="Education Vision Background"
                         className="w-full h-full object-cover"
                     />
                 </div>
-
-                {/* Dot Grid Pattern Overlay (White dots on Blue) */}
                 <div
                     className="absolute inset-0 opacity-20 pointer-events-none"
                     style={{
@@ -29,22 +26,21 @@ export default function VisionMissionPage() {
 
                 <div className="relative z-10 text-center px-4 animate-fade-in-up">
                     <h4 className="text-[#cc0022] font-bold tracking-[0.2em] text-sm uppercase mb-4 bg-white/10 inline-block px-4 py-1 rounded-full backdrop-blur-sm border border-white/10">
-                        Định hướng chiến lược
+                        La bàn định hướng
                     </h4>
                     <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight leading-tight">
                         TẦM NHÌN & SỨ MỆNH
                     </h1>
                     <div className="w-24 h-1.5 bg-[#cc0022] mx-auto rounded-full mb-6"></div>
-                    <p className="text-xl text-blue-100 max-w-2xl mx-auto font-light leading-relaxed">
-                        "Khẳng định vị thế, kiến tạo tương lai số hóa bền vững."
+                    <p className="text-xl text-blue-100 max-w-3xl mx-auto font-light leading-relaxed italic">
+                        "Khơi dậy tiềm năng con người, kiến tạo công dân số toàn cầu."
                     </p>
                 </div>
             </section>
 
             {/* --- MAIN CONTENT: VISION (Tầm Nhìn) --- */}
             <section className="py-24 relative">
-                {/* Background decorative elements */}
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-gray-50 -z-10 hidden lg:block"></div>
+                <div className="absolute top-0 right-0 w-1/3 h-full bg-blue-50/50 -z-10 hidden lg:block"></div>
                 <div
                     className="absolute inset-0 opacity-[0.05] pointer-events-none"
                     style={{
@@ -59,12 +55,16 @@ export default function VisionMissionPage() {
                         {/* Image Block (Left) */}
                         <div className="w-full lg:w-1/2 relative group">
                             <div className="relative rounded-2xl overflow-hidden shadow-2xl border-[8px] border-white">
+                                {/* ẢNH MỚI CHO TẦM NHÌN:
+                                    - Hình ảnh một đội ngũ chuyên nghiệp đang nhìn về hướng cửa sổ lớn/thành phố.
+                                    - Thể hiện: Tầm nhìn xa, hướng tới tương lai, sự chuyên nghiệp của doanh nghiệp.
+                                */}
                                 <img
                                     src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop"
-                                    alt="ERG Vision"
+                                    alt="ERG Future Vision Team"
                                     className="w-full h-[400px] lg:h-[500px] object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#00008b]/80 to-transparent opacity-60"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#00008b]/50 to-transparent opacity-30"></div>
 
                                 {/* Floating Icon Badge */}
                                 <div className="absolute bottom-8 left-8 bg-white p-4 rounded-xl shadow-lg flex items-center gap-4 animate-bounce-slow">
@@ -72,12 +72,11 @@ export default function VisionMissionPage() {
                                         <Eye className="w-8 h-8 text-[#00008b]" />
                                     </div>
                                     <div>
-                                        <span className="block text-xs text-gray-500 uppercase font-bold">Mục tiêu</span>
-                                        <span className="block text-lg font-bold text-[#00008b]">Định hình tương lai</span>
+                                        <span className="block text-xs text-gray-500 uppercase font-bold">Mục tiêu 2030</span>
+                                        <span className="block text-lg font-bold text-[#00008b]">Hệ sinh thái giáo dục số</span>
                                     </div>
                                 </div>
                             </div>
-                            {/* Decor Square */}
                             <div className="absolute -top-6 -left-6 w-32 h-32 bg-[#cc0022] rounded-2xl -z-10 opacity-10"></div>
                         </div>
 
@@ -89,21 +88,20 @@ export default function VisionMissionPage() {
                             </div>
 
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight">
-                                Trở thành tập đoàn công nghệ <span className="text-[#00008b]">hàng đầu</span>
+                                Trở thành tổ chức giáo dục công nghệ <span className="text-[#00008b]">tiên phong</span>
                             </h2>
 
-                            {/* Nội dung từ ảnh */}
                             <div className="space-y-6 text-lg text-gray-600 leading-relaxed text-justify">
                                 <p>
-                                    ERG hướng tới trở thành một tập đoàn công nghệ về cung ứng hạ tầng, nhân sự và cung cấp giải pháp công nghệ thông tin, định hình tương lai số hóa và tạo ra tác động tích cực bền vững cho xã hội.
+                                    ERG định hướng trở thành hệ thống giáo dục công nghệ hàng đầu, tiên phong trong việc cung cấp các giải pháp đào tạo chuẩn quốc tế. Chúng tôi kiến tạo môi trường học tập không giới hạn, nơi công nghệ là đòn bẩy để khai phóng tư duy và kỹ năng.
                                 </p>
                                 <p>
-                                    Tập trung vào việc xây dựng mối quan hệ tin cậy với khách hàng và đối tác, chúng tôi hướng đến việc trở thành biểu tượng của sự <span className="font-bold text-[#cc0022]">chuyên nghiệp, minh bạch và tận tâm</span> trong kỷ nguyên công nghệ số.
+                                    Chúng tôi khao khát xây dựng một thế hệ nhân lực số ưu tú, không chỉ làm chủ công nghệ mà còn dẫn dắt sự đổi mới sáng tạo, góp phần đưa trí tuệ Việt vươn tầm thế giới trong kỷ nguyên 4.0.
                                 </p>
                             </div>
 
                             <div className="mt-10 grid grid-cols-2 gap-4">
-                                {['Định hình tương lai số', 'Tác động bền vững', 'Biểu tượng chuyên nghiệp', 'Đối tác tin cậy'].map((tag, i) => (
+                                {['Chuẩn hóa quốc tế', 'Học tập trọn đời', 'Cộng đồng tri thức', 'Đổi mới sáng tạo'].map((tag, i) => (
                                     <div key={i} className="flex items-center gap-2">
                                         <CheckCircle2 className="w-5 h-5 text-[#cc0022]" />
                                         <span className="text-sm font-medium text-gray-700">{tag}</span>
@@ -117,7 +115,6 @@ export default function VisionMissionPage() {
 
             {/* --- MAIN CONTENT: MISSION (Sứ Mệnh) --- */}
             <section className="py-24 bg-gray-50 relative overflow-hidden">
-                {/* Decor Dots */}
                 <div
                     className="absolute inset-0 opacity-[0.08] pointer-events-none"
                     style={{
@@ -129,13 +126,16 @@ export default function VisionMissionPage() {
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <div className="flex flex-col lg:flex-row-reverse items-center gap-16">
 
-                        {/* Image Block (Right) - Style khác 1 chút cho đa dạng */}
+                        {/* Image Block (Right) */}
                         <div className="w-full lg:w-1/2 relative group">
-                            {/* Image Container */}
                             <div className="relative rounded-tl-[80px] rounded-br-[80px] rounded-tr-2xl rounded-bl-2xl overflow-hidden shadow-2xl border-4 border-white">
+                                {/* ẢNH MỚI CHO SỨ MỆNH:
+                                    - Hình ảnh một nhóm sinh viên/học viên đa dạng đang tích cực hợp tác, sử dụng laptop.
+                                    - Thể hiện: Hành động thực tế (thực học - thực làm), sự hợp tác, môi trường học tập hiện đại.
+                                */}
                                 <img
-                                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop"
-                                    alt="ERG Mission"
+                                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop"
+                                    alt="ERG Practical Mission"
                                     className="w-full h-[400px] lg:h-[500px] object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                                 <div className="absolute inset-0 bg-[#00008b] opacity-10 group-hover:opacity-0 transition-opacity"></div>
@@ -143,15 +143,14 @@ export default function VisionMissionPage() {
                                 {/* Floating Icon Badge */}
                                 <div className="absolute top-8 right-8 bg-[#cc0022] text-white p-4 rounded-xl shadow-lg flex items-center gap-4">
                                     <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm">
-                                        <Target className="w-8 h-8 text-white" />
+                                        <BookOpen className="w-8 h-8 text-white" />
                                     </div>
                                     <div>
-                                        <span className="block text-xs opacity-80 uppercase font-bold">Cam kết</span>
-                                        <span className="block text-lg font-bold">Chất lượng cao</span>
+                                        <span className="block text-xs opacity-80 uppercase font-bold">Phương châm</span>
+                                        <span className="block text-lg font-bold">Thực học - Thực làm</span>
                                     </div>
                                 </div>
                             </div>
-                            {/* Decor Circle */}
                             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#00008b] rounded-full -z-10 opacity-10 blur-2xl"></div>
                         </div>
 
@@ -163,25 +162,24 @@ export default function VisionMissionPage() {
                             </div>
 
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight text-right lg:text-left">
-                                Thúc đẩy <span className="text-[#cc0022]">chuyển đổi số</span> & Phát triển cộng đồng
+                                Nâng tầm tri thức & <span className="text-[#cc0022]">Phổ cập kỹ năng số</span>
                             </h2>
 
-                            {/* Nội dung từ ảnh */}
                             <div className="bg-white p-8 rounded-2xl shadow-sm border-l-4 border-[#cc0022]">
                                 <p className="text-lg text-gray-600 leading-relaxed text-justify">
-                                    ERG cung cấp các giải pháp công nghệ và dịch vụ tin học chất lượng cao, góp phần thúc đẩy quá trình chuyển đổi số trong cộng đồng, nâng cao năng lực công nghệ cho khách hàng và đối tác, đồng hành cùng sự phát triển bền vững của xã hội trong kỷ nguyên số hóa.
+                                    Sứ mệnh của ERG là xóa bỏ khoảng cách số thông qua giáo dục chất lượng cao. Chúng tôi cam kết cung cấp các chương trình đào tạo thực chiến, cập nhật xu hướng công nghệ mới nhất, giúp học viên không chỉ thành thạo kỹ năng mà còn phát triển tư duy giải quyết vấn đề, sẵn sàng chinh phục thị trường lao động toàn cầu.
                                 </p>
                             </div>
 
                             <div className="mt-8 flex flex-col sm:flex-row gap-6 justify-end lg:justify-start">
                                 <div className="text-center sm:text-left">
-                                    <h3 className="text-4xl font-bold text-[#00008b]">100%</h3>
-                                    <p className="text-sm text-gray-500 mt-1">Cam kết chất lượng</p>
+                                    <h3 className="text-4xl font-bold text-[#00008b]">10K+</h3>
+                                    <p className="text-sm text-gray-500 mt-1">Học viên tiêu biểu</p>
                                 </div>
                                 <div className="w-px h-12 bg-gray-300 hidden sm:block"></div>
                                 <div className="text-center sm:text-left">
-                                    <h3 className="text-4xl font-bold text-[#00008b]">4.0</h3>
-                                    <p className="text-sm text-gray-500 mt-1">Tiêu chuẩn công nghệ</p>
+                                    <h3 className="text-4xl font-bold text-[#00008b]">98%</h3>
+                                    <p className="text-sm text-gray-500 mt-1">Hài lòng về chất lượng</p>
                                 </div>
                             </div>
 
@@ -194,13 +192,13 @@ export default function VisionMissionPage() {
             <section className="py-16 bg-[#00008b] text-white text-center">
                 <div className="container mx-auto px-4">
                     <h2 className="text-2xl md:text-3xl font-bold mb-6">
-                        Những giá trị này được xây dựng dựa trên 5 trụ cột cốt lõi
+                        Triết lý giáo dục này được xây dựng trên 5 giá trị cốt lõi
                     </h2>
                     <a
                         href="/gia-tri-cot-loi"
                         className="inline-flex items-center bg-[#cc0022] hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all hover:scale-105"
                     >
-                        XEM GIÁ TRỊ CỐT LÕI <ArrowRight className="ml-2 w-5 h-5" />
+                        KHÁM PHÁ GIÁ TRỊ CỐT LÕI <ArrowRight className="ml-2 w-5 h-5" />
                     </a>
                 </div>
             </section>

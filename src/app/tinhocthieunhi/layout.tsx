@@ -4,7 +4,7 @@ import Header from "@/components/Header"; // Giả sử component Header đã đ
 import Footer from "@/components/Footer"; // Giả sử component Footer đã được tạo
 // import AdsPopup from "@/components/AdsPopup";
 import FloatingContact from "@/components/FloatingContact";
-import {DTDM_MENU_ITEMS} from "@/constants/MenuItem";
+import {THTN_MENU_ITEMS} from "@/constants/MenuItem";
 
 export default function MainLayout({
                                        children,
@@ -14,7 +14,7 @@ export default function MainLayout({
     return (
         <>
             {/* CÁC COMPONENT DÙNG CHUNG CHO TẤT CẢ TRANG CỦA MAIN DOMAIN */}
-            <Header menuData={DTDM_MENU_ITEMS}/>
+            <Header menuData={THTN_MENU_ITEMS}/>
             {/*<AdsPopup />*/}
 
             {/* Nội dung trang (page.tsx) được bọc trong <(main)> */}

@@ -16,8 +16,8 @@ import {
     Zap
 } from 'lucide-react';
 // Import Component Gallery (Giữ nguyên từ code cũ)
-import ImageGallery from '@/components/ImageGallery';
-import { REAL_IMAGES } from '@/mocks/imageGalerry';
+import ImageGallery from '@/components/ai/ImageGallery';
+import {AI_IMAGES, REAL_IMAGES} from '@/mocks/imageGalerry';
 
 // --- MÀU SẮC & DỮ LIỆU CỐ ĐỊNH ---
 const AI_INDIGO = '#4f46e5'; // Indigo-600
@@ -260,7 +260,7 @@ export default function AiDetailPage() {
                                     <Globe className="text-indigo-600" size={24} />
                                     <div>
                                         <p className="text-xs text-indigo-500 font-bold uppercase">Hình thức học</p>
-                                        <p className="font-bold text-gray-800">Offline tại Trung tâm</p>
+                                        <p className="font-bold text-gray-800">Liên kết đào tạo</p>
                                     </div>
                                 </div>
 
@@ -290,13 +290,19 @@ export default function AiDetailPage() {
                         <div className="bg-white p-5 rounded-2xl shadow-lg border-t-4 border-yellow-400">
                             <div className="flex items-center gap-2 mb-3">
                                 <GraduationCap className="text-yellow-600" size={20} />
-                                <h3 className="text-lg font-bold text-gray-800">Môi trường học tập</h3>
+                                <h3 className="text-lg font-bold text-gray-800">Tài liệu học tập</h3>
                             </div>
-                            <p className="text-xs text-gray-500 mb-4">
-                                Phòng Lab hiện đại, trang bị đầy đủ Robot giáo dục và hệ thống máy tính cấu hình cao.
-                            </p>
-                            {/* Component Gallery */}
-                            <ImageGallery images={REAL_IMAGES} autoPlayTime={4000} />
+                            {/*<p className="text-xs text-gray-500 mb-4">*/}
+                            {/*    Phòng Lab hiện đại, trang bị đầy đủ Robot giáo dục và hệ thống máy tính cấu hình cao.*/}
+                            {/*</p>*/}
+
+                            {/* --- CẬP NHẬT TẠI ĐÂY --- */}
+                            <ImageGallery
+                                images={AI_IMAGES}
+                                autoPlayTime={4000}
+                                // Sử dụng tỷ lệ 3:4 (Dọc) để cao hơn hình vuông
+                                aspectRatio="aspect-[3/4]"
+                            />
                         </div>
 
                         {/* 3. Author Badge (Optional Decoration) */}

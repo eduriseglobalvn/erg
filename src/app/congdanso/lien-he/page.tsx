@@ -7,8 +7,9 @@ const ERG_BLUE = '#00008b';
 const ERG_RED = '#cc0022';
 
 const INTEREST_TOPICS = [
-    "Chứng chỉ công nghệ thông tin cơ bản",
-    "Chứng chỉ công nghệ thông tin nâng cao"
+    "Ic3 Gs6",
+    "Ic3 Gs6 spark",
+    "MOS"
 ];
 
 export default function ContactPage() {
@@ -84,28 +85,28 @@ export default function ContactPage() {
                             />
                         </div>
 
-                        {/* Checkbox Section */}
-                        <div className="space-y-3 pt-2">
-                            <label className="text-sm font-bold text-gray-900">Chủ đề quan tâm</label>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                {INTEREST_TOPICS.map((item, idx) => (
-                                    <label key={idx} className="flex items-start gap-3 cursor-pointer group p-2 rounded-md hover:bg-gray-50 transition-colors -ml-2">
-                                        <div className="relative flex items-center pt-0.5">
-                                            <input
-                                                type="checkbox"
-                                                className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-gray-300 shadow-sm transition-all checked:border-[#00008b] checked:bg-[#00008b] hover:border-[#00008b]"
-                                            />
-                                            <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" strokeWidth="1">
-                                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <span className="text-gray-600 text-sm font-medium group-hover:text-[#00008b] transition-colors">{item}</span>
-                                    </label>
-                                ))}
-                            </div>
-                        </div>
+                        {/*/!* Checkbox Section *!/*/}
+                        {/*<div className="space-y-3 pt-2">*/}
+                        {/*    <label className="text-sm font-bold text-gray-900">Chủ đề quan tâm</label>*/}
+                        {/*    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">*/}
+                        {/*        {INTEREST_TOPICS.map((item, idx) => (*/}
+                        {/*            <label key={idx} className="flex items-start gap-3 cursor-pointer group p-2 rounded-md hover:bg-gray-50 transition-colors -ml-2">*/}
+                        {/*                <div className="relative flex items-center pt-0.5">*/}
+                        {/*                    <input*/}
+                        {/*                        type="checkbox"*/}
+                        {/*                        className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-gray-300 shadow-sm transition-all checked:border-[#00008b] checked:bg-[#00008b] hover:border-[#00008b]"*/}
+                        {/*                    />*/}
+                        {/*                    <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100">*/}
+                        {/*                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" strokeWidth="1">*/}
+                        {/*                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path>*/}
+                        {/*                        </svg>*/}
+                        {/*                    </div>*/}
+                        {/*                </div>*/}
+                        {/*                <span className="text-gray-600 text-sm font-medium group-hover:text-[#00008b] transition-colors">{item}</span>*/}
+                        {/*            </label>*/}
+                        {/*        ))}*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
 
                         {/* Message */}
                         <div className="space-y-1.5">

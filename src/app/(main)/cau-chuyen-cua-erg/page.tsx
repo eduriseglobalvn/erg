@@ -138,7 +138,7 @@ export default function ErgStoryPage() {
                             <h4 className="text-2xl font-bold text-center text-[#00008b] mb-2">Global</h4>
                             <p className="text-center text-sm font-bold text-[#cc0022] uppercase tracking-wide mb-4">Global - Toàn cầu</p>
                             <p className="text-gray-600 text-center">
-                                Tầm nhìn quốc tế, đưa tiêu chuẩn giáo dục toàn cầu (IC3, MOS) đến với người học Việt Nam.
+                                Tầm nhìn quốc tế, đưa tiêu chuẩn giáo dục toàn cầu đến với người học Việt Nam.
                             </p>
                         </div>
                     </div>
@@ -153,41 +153,43 @@ export default function ErgStoryPage() {
 
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl font-bold mb-4">Điều Gì Tạo Nên ERG?</h2>
-                        <div className="w-20 h-1 bg-[#cc0022] mx-auto"></div>
+                        {/* Tăng từ text-3xl lên text-4xl hoặc 5xl */}
+                        <h2 className="text-5xl md:text-5xl font-extrabold mb-6">Điều Gì Tạo Nên ERG?</h2>
+                        <div className="w-24 h-1.5 bg-[#cc0022] mx-auto"></div>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <div className="grid md:grid-cols-3 gap-10">
                         {/* Item 1 */}
-                        <div className="flex flex-col items-center text-center p-6 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
-                            <Lightbulb className="w-12 h-12 text-[#ffcc00] mb-4" />
-                            <h3 className="text-xl font-bold mb-2">Tiên Phong</h3>
-                            <p className="text-blue-100 text-sm">
-                                Luôn đi đầu trong việc áp dụng các công nghệ mới và phương pháp giáo dục STEM vào giảng dạy.
+                        <div className="flex flex-col items-center text-center p-8 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
+                            <Lightbulb className="w-14 h-14 text-[#ffcc00] mb-6" />
+                            {/* Tiêu đề mục: Tăng từ text-xl lên text-2xl */}
+                            <h3 className="text-3xl font-bold mb-3">Tiên Phong</h3>
+                            {/* Nội dung: Tăng từ text-sm lên text-base hoặc text-lg */}
+                            <p className="text-blue-100 text-base md:text-xl leading-relaxed">
+                                Luôn đi đầu trong việc áp dụng các công nghệ phương pháp giáo dục mới vào giảng dạy.
                             </p>
                         </div>
 
                         {/* Item 2 */}
-                        <div className="flex flex-col items-center text-center p-6 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
-                            <Heart className="w-12 h-12 text-[#cc0022] mb-4" />
-                            <h3 className="text-xl font-bold mb-2">Tâm Huyết</h3>
-                            <p className="text-blue-100 text-sm">
+                        <div className="flex flex-col items-center text-center p-8 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
+                            <Heart className="w-14 h-14 text-[#cc0022] mb-6" />
+                            <h3 className="text-3xl font-bold mb-3">Tâm Huyết</h3>
+                            <p className="text-blue-100 text-base md:text-xl leading-relaxed">
                                 Đội ngũ giáo viên không chỉ là người truyền đạt kiến thức mà còn là người truyền lửa đam mê.
                             </p>
                         </div>
 
                         {/* Item 3 */}
-                        <div className="flex flex-col items-center text-center p-6 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
-                            <Rocket className="w-12 h-12 text-blue-300 mb-4" />
-                            <h3 className="text-xl font-bold mb-2">Đột Phá</h3>
-                            <p className="text-blue-100 text-sm">
+                        <div className="flex flex-col items-center text-center p-8 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
+                            <Rocket className="w-14 h-14 text-blue-300 mb-6" />
+                            <h3 className="text-3xl font-bold mb-3">Đột Phá</h3>
+                            <p className="text-blue-100 text-base md:text-xl leading-relaxed">
                                 Tạo ra những bước nhảy vọt về năng lực số cho học viên, mở ra cánh cửa sự nghiệp tương lai.
                             </p>
                         </div>
                     </div>
                 </div>
             </section>
-
             {/* --- CTA / KẾT THÚC --- */}
             <section className="py-16 text-center relative overflow-hidden">
                 {/* Dot Grid Pattern */}
@@ -199,20 +201,27 @@ export default function ErgStoryPage() {
                     }}
                 ></div>
 
-                <div className="relative z-10">
-                    <h2 className="text-2xl font-bold text-[#00008b] mb-6">
-                        Hãy cùng chúng tôi viết tiếp câu chuyện này
+                <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+                    {/* Tiêu đề: Tăng size, tăng khoảng cách chữ và thêm font-extrabold để tạo sức nặng */}
+                    <h2 className="text-5xl md:text-6xl font-extrabold text-[#00008b] mb-14 tracking-tight leading-tight">
+                        Hãy cùng chúng tôi <br className="hidden md:block" /> viết tiếp câu chuyện này
                     </h2>
-                    <div className="flex justify-center gap-4">
+
+                    {/* Nút bấm: Điều chỉnh padding, bo góc lớn hơn (xl) và shadow tinh tế hơn */}
+                    <div className="flex flex-col md:flex-row justify-center items-center gap-8">
                         <a
                             href="https://tuyendung.erg.edu.vn"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-[#cc0022] hover:bg-red-700 text-white font-bold py-3 px-8 rounded shadow-lg transition-all hover:-translate-y-1"
+                            className="group relative bg-[#cc0022] hover:bg-[#b3001e] text-white font-bold py-6 px-12 rounded-2xl text-2xl shadow-2xl shadow-red-900/20 transition-all duration-300 hover:-translate-y-2 active:scale-95"
                         >
                             Gia nhập đội ngũ ERG
                         </a>
-                        <a href="/lien-he" className="bg-white border-2 border-[#00008b] text-[#00008b] hover:bg-blue-50 font-bold py-3 px-8 rounded transition-all hover:-translate-y-1">
+
+                        <a
+                            href="/lien-he"
+                            className="bg-white border-[3px] border-[#00008b] text-[#00008b] hover:bg-[#00008b] hover:text-white font-bold py-6 px-12 rounded-2xl text-2xl shadow-xl shadow-blue-900/10 transition-all duration-300 hover:-translate-y-2 active:scale-95"
+                        >
                             Liên hệ hợp tác
                         </a>
                     </div>

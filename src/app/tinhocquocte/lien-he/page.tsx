@@ -28,6 +28,11 @@ export default function ContactPage() {
                     <h1 className="text-4xl lg:text-5xl font-bold mb-4 tracking-tight" style={{ color: ERG_BLUE }}>
                         Liên hệ tư vấn
                     </h1>
+                    <div
+                        className="w-34 h-1.5 rounded-full mb-4"
+                        style={{ backgroundColor: ERG_RED }}
+                    >
+                    </div>
                     <p className="text-gray-500 text-lg mb-10 leading-relaxed">
                         Để lại thông tin bên dưới, chuyên viên tư vấn của ERG sẽ liên hệ hỗ trợ bạn lộ trình học tập phù hợp nhất trong vòng 24h.
                     </p>

@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import { BookOpen, Shield, Star, MousePointer2, Monitor, Trophy, Phone, CheckCircle2 } from 'lucide-react';
+import {BookOpen, Shield, Star, MousePointer2, Monitor, Trophy, Phone, CheckCircle2, ImageIcon} from 'lucide-react';
+import ImageGallery from "@/components/ImageGallery";
+import {REAL_IMAGES} from "@/mocks/imageGalerry";
 
 export default function IC3SparkPage() {
     return (
@@ -166,6 +168,20 @@ export default function IC3SparkPage() {
                         {/*        <Phone size={18}/> 0766.144.888*/}
                         {/*    </div>*/}
                         {/*</div>*/}
+                    </div>
+                    {/* 2. CARD HÌNH ẢNH (GỌI COMPONENT) */}
+                    <div className="bg-white p-4 rounded-xl shadow-lg border-t-4 border-teal-500">
+                        <div className="flex items-center gap-2 mb-2">
+                            <ImageIcon className="text-teal-600" size={20} />
+                            <h3 className="text-lg font-bold">Hình ảnh thực tế</h3>
+                        </div>
+                        <p className="text-xs text-gray-500 mb-4 text-justify">
+                            Trải nghiệm không gian học tập chuẩn quốc tế và các hoạt động ngoại khóa thú vị.
+                        </p>
+
+                        {/* Truyền Props với đúng kiểu dữ liệu */}
+                        <ImageGallery images={REAL_IMAGES} autoPlayTime={5000} />
+
                     </div>
                 </div>
             </div>

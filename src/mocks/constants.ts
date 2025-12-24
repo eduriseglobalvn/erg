@@ -1,16 +1,6 @@
 import { Course, NavItem, NewsItem, Teacher, Testimonial, RoadmapSection } from '@/mocks/types';
 import { ShieldCheck, UserCheck, FileText, Monitor, Sun, MessageCircle } from 'lucide-react';
 
-export const NAV_ITEMS: NavItem[] = [
-  { label: 'Trang chủ', path: '/' },
-  { label: 'Giới thiệu', path: '/gioi-thieu' },
-  { label: 'Khóa học', path: '/khoa-hoc' },
-  { label: 'Lộ trình', path: '/lo-trinh' },
-  { label: 'Đội ngũ giáo viên', path: '/giao-vien' },
-  { label: 'Tin tức', path: '/tin-tuc' },
-  { label: 'Liên hệ', path: '/lien-he' },
-  { label: 'Tuyển dụng', path: '/co-hoi-nghe-nghiep' },
-];
 
 export const HERO_SLIDES = [
   {

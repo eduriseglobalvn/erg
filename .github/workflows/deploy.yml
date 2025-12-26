@@ -50,6 +50,8 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT || 21 }}
           local-dir: ./deploy/
           server-dir: public_html/vuongtran/
+          protocol: ftp
           delete-destination-extra-files: false

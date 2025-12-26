@@ -115,7 +115,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
                 </div>
                 <div className="flex flex-col">
                   <h1 className="text-xl md:text-2xl font-extrabold leading-none tracking-tight text-primary">
-                    EDURISE GLOBAL
+                    EDURISE GLOBAL TEST
                   </h1>
                   <p className="text-[10px] md:text-xs font-semibold tracking-widest text-gray-500 uppercase mt-1">
                     Learn today, Lead tomorrow

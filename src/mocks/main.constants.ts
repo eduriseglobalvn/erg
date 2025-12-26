@@ -1,6 +1,6 @@
 import {
     Star, Monitor, Handshake, Award, Users, BookOpen,
-    Zap, ShieldCheck, Cloud, Brain, Target, TrendingUp, Sun, MessageCircle
+    Zap, ShieldCheck, Cloud, Brain, Target, TrendingUp, Sun, MessageCircle, Wallet
 } from 'lucide-react';
 
 // 1. Banner Slides
@@ -8,7 +8,7 @@ export const HERO_SLIDES = [
     {
         id: 1,
         image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
-        title: "Tiên phong Đào tạo Công nghệ & Kỹ năng số",
+        title: "Tiên phong Đào tạo Công nghệ & \nKỹ năng số",
         subtitle: "Hệ thống đào tạo chuẩn Quốc tế, trang bị hành trang vững chắc cho kỷ nguyên số hóa.",
     },
     {
@@ -87,34 +87,46 @@ export const CORE_VALUES = [
 // 4. Why Choose Us
 export const WHY_CHOOSE_US = [
     {
-        icon: ShieldCheck,
-        title: "Chương trình học bài bản",
-        desc: "Lộ trình học được thiết kế chuyên nghiệp, từ cơ bản đến nâng cao, bám sát các tiêu chuẩn quốc tế."
-    },
-    {
+        id: 1,
         icon: Users,
-        title: "Giáo viên chuyên môn cao",
-        desc: "Đội ngũ giáo viên là chuyên gia, có kinh nghiệm thực tế, giúp bạn học được kiến thức sát với công việc."
+        title: "Đội ngũ giáo viên chất lượng cao",
+        desc: "Giáo viên nhiều năm kinh nghiệm, chuyên môn vững vàng, tận tâm với nghề và luôn cập nhật phương pháp giảng dạy hiện đại."
     },
     {
-        icon: TrendingUp,
-        title: "Tăng cơ hội việc làm",
-        desc: "Kỹ năng tin học và các chứng chỉ quốc tế (MOS, IC3) là yêu cầu cơ bản của các công việc hiện đại."
+        id: 2,
+        icon: BookOpen, // Thay icon phù hợp với chương trình học
+        title: "Chương trình chuẩn Quốc tế",
+        desc: "Giáo trình biên soạn dựa trên tiêu chuẩn quốc tế, bám sát thực tiễn, giúp học viên nắm vững kiến thức nền tảng và kỹ năng tư duy."
     },
     {
+        id: 3,
         icon: Monitor,
         title: "Cơ sở vật chất hiện đại",
-        desc: "Được cung cấp máy tính và các trang thiết bị học tập phù hợp, tiện nghi."
+        desc: "Phòng học được trang bị đầy đủ thiết bị công nghệ tiên tiến, mang đến môi trường học tập tiện nghi, chuyên nghiệp và hiệu quả."
     },
     {
-        icon: Sun, // Icon mặt trời như trong ảnh
-        title: "Thời gian học linh hoạt",
-        desc: "Cho phép bạn lựa chọn hoặc tự sắp xếp lịch học phù hợp với thời gian rảnh."
+        id: 4,
+        icon: ShieldCheck,
+        title: "Kiểm soát chất lượng chặt chẽ",
+        desc: "Chương trình giảng dạy và đào tạo được giám sát chặt chẽ theo lộ trình rõ ràng, đảm bảo chất lượng đồng đều."
+    },
+    // Mục số 5: Sẽ được tách riêng để xử lý hiển thị đặc biệt
+    {
+        id: 5,
+        isFeatured: true, // Cờ đánh dấu để highlight
+        icon: Award,
+        title: "Cam kết tỉ lệ đầu ra",
+        desc: "ERG cam kết tỷ lệ học viên đạt chuẩn đầu ra và vượt qua các kỳ thi quốc tế đạt:",
+        stats: [
+            { label: "Khối TH, THCS, THPT", value: "Trên 90%" },
+            { label: "Khối Cao Đẳng - Đại Học", value: "100%" }
+        ]
     },
     {
-        icon: MessageCircle,
-        title: "Hỗ trợ và tương tác",
-        desc: "Dễ dàng trao đổi, hỏi đáp và nhận được sự hỗ trợ nhiệt tình từ giáo viên và trung tâm."
+        id: 6,
+        icon: Wallet, // Icon ví tiền cho chi phí
+        title: "Chi phí hợp lý, nhiều ưu đãi",
+        desc: "Học phí phù hợp, chính sách linh hoạt cùng nhiều chương trình học bổng dành cho học sinh."
     }
 ];
 

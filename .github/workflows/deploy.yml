@@ -1,0 +1,57 @@
+name: Deploy Next.js to cPanel
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.4' # Version chính xác bạn yêu cầu
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+        env:
+          NEXT_PUBLIC_ROOT_DOMAIN: vuongtran.io.vn # Truyền vào để middleware build đúng
+
+      - name: Prepare Deployment Files
+        run: |
+          mkdir -p deploy
+          
+          # 1. Copy toàn bộ folder standalone (đã bao gồm server.js của Next)
+          cp -r .next/standalone/. deploy/
+          
+          # 2. Copy static và public (để hiển thị hình ảnh, css)
+          cp -r .next/static deploy/.next/static
+          cp -r public deploy/public
+          
+          # 3. TỰ TẠO FILE deploy.js (Thay vì copy từ source)
+          # File này đóng vai trò khởi chạy server.js của Next.js standalone
+          echo "process.env.NODE_ENV = 'production';
+          process.env.PORT = process.env.PORT || 3000;
+          require('./server.js');" > deploy/deploy.js
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT || 21 }}
+          local-dir: ./deploy/
+          server-dir: public_html/vuongtran/
+          protocol: ftp
+          delete-destination-extra-files: false

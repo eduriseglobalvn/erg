@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { TRAINING_PROGRAMS , getSubdomainLink} from '@/constants/MenuItem';
 import {
-    ChevronLeft, ChevronRight, ArrowRight, Star
+    ChevronLeft, ChevronRight, ArrowRight, Star, CheckCircle2
 } from 'lucide-react';
 import {
     HERO_SLIDES, TRAINING_FIELDS, CORE_VALUES, WHY_CHOOSE_US, TESTIMONIALS, LATEST_NEWS
@@ -79,7 +79,7 @@ export default function Home() {
                 <div className="absolute inset-0 flex items-center container mx-auto px-4 md:px-6">
                     <div className="relative bg-white/95 backdrop-blur-md p-8 md:p-12 rounded-2xl shadow-2xl max-w-xl animate-fade-in-up border-l-[6px] border-[var(--erg-red)] overflow-hidden">
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--erg-blue)]/10 rounded-full blur-xl"></div>
-                        <h2 className="relative z-10 text-3xl md:text-5xl font-bold text-[var(--erg-blue)] mb-4 leading-tight">
+                        <h2 className="relative z-10 text-3xl md:text-5xl font-bold text-[var(--erg-blue)] mb-4 leading-tight whitespace-pre-line">
                             {HERO_SLIDES[currentSlide].title}
                         </h2>
                         <p className="relative z-10 text-lg text-gray-600 mb-8 leading-relaxed">
@@ -149,7 +149,7 @@ export default function Home() {
                                 Tại ERG, chúng tôi tin rằng mỗi học sinh đều có những tiềm năng riêng biệt cần được khơi dậy. Với phương pháp giáo dục hiện đại, kết hợp giữa lý thuyết và thực hành, chúng tôi cam kết mang đến môi trường học tập tốt nhất.                            </p>
                             {/* Thêm whitespace-nowrap để chữ không bị rớt dòng xấu */}
                             <Link
-                                href="/gioi-thieu"
+                                href="/gia-tri-cot-loi"
                                 className="group inline-flex items-center gap-2 text-[var(--erg-blue)] font-bold hover:text-[var(--erg-red)] transition-all whitespace-nowrap"
                             >
                                 <span className="border-b-2 border-transparent group-hover:border-[var(--erg-red)] pb-0.5">Xem chi tiết</span>
@@ -199,7 +199,7 @@ export default function Home() {
                         {TRAINING_FIELDS.map((field) => {
                             // --- LOGIC MỚI: TÁI SỬ DỤNG getSubdomainLink ---
 
-                            // 1. Tìm cấu hình subdomain
+                            // 1. Tìm cấu hình tinhocquocte
                             const programConfig = TRAINING_PROGRAMS.find(p => p.label === field.title);
 
                             // 2. Tạo URL: Nếu có config thì dùng hàm helper, không thì dùng link cũ
@@ -226,7 +226,7 @@ export default function Home() {
                                             {field.description}
                                         </p>
 
-                                        {/* Link đã được xử lý subdomain chuẩn xác */}
+                                        {/* Link đã được xử lý tinhocquocte chuẩn xác */}
                                         <Link
                                             href={targetUrl}
                                             className="text-sm font-bold uppercase tracking-wider text-[var(--erg-red)] hover:underline underline-offset-4"
@@ -285,29 +285,87 @@ export default function Home() {
 
 
             {/* 5. WHY CHOOSE US */}
-            <section className="py-24 bg-blue-50/40 relative overflow-hidden">
+            <section className="py-24 bg-slate-50 relative overflow-hidden">
+                {/* Background Pattern */}
+                <div
+                    className="absolute inset-0 opacity-[0.05] pointer-events-none"
+                    style={{
+                        backgroundImage: 'radial-gradient(var(--erg-blue) 1px, transparent 1px)',
+                        backgroundSize: '30px 30px'
+                    }}
+                ></div>
+
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
-                    <div className="text-center mb-20">
-                        <h2 className="text-3xl md:text-4xl font-bold text-[var(--erg-blue)] mb-3">Tại sao chọn ERG Global?</h2>
-                        <p className="text-gray-500 max-w-2xl mx-auto">Sự khác biệt tạo nên thương hiệu đào tạo hàng đầu</p>
+                    {/* Header */}
+                    <div className="text-center mb-16">
+                        <h4 className="text-[var(--erg-red)] font-bold uppercase tracking-widest text-sm mb-3">
+                            Giá trị khác biệt
+                        </h4>
+                        <h2 className="text-3xl md:text-5xl font-bold text-[var(--erg-blue)] mb-4">
+                            Lý do nên chọn ERG Global
+                        </h2>
+                        <div className="w-24 h-1.5 bg-[var(--erg-red)] mx-auto rounded-full"></div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-16 relative">
-                        {WHY_CHOOSE_US.map((item, index) => (
-                            <div key={index} className="flex flex-col items-center text-center group relative z-10">
-                                <div className="w-20 h-20 mb-6 rounded-full bg-white border-4 border-white shadow-lg flex items-center justify-center text-[var(--erg-red)] group-hover:bg-[var(--erg-red)] group-hover:text-white group-hover:scale-110 transition-all duration-300">
-                                    <item.icon size={32} strokeWidth={1.5} />
+                    {/* Grid Layout: 3 Cột đều nhau */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
+
+                        {WHY_CHOOSE_US.map((item) => {
+                            // --- GIAO DIỆN CHO THẺ CAM KẾT (Nền xanh, Chữ trắng) ---
+                            if (item.isFeatured) {
+                                return (
+                                    <div key={item.id} className="relative group md:col-span-2 lg:col-span-1">
+                                        <div className="h-full bg-[var(--erg-blue)] rounded-2xl p-8 shadow-xl border border-blue-900 flex flex-col justify-between relative overflow-hidden z-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+
+                                            {/* Decor blob nền (Giữ lại để đẹp nhưng không ảnh hưởng bố cục) */}
+                                            <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+
+                                            <div>
+                                                <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center mb-5 backdrop-blur-sm border border-white/20">
+                                                    <item.icon size={32} className="text-yellow-400" />
+                                                </div>
+
+                                                <h3 className="text-xl font-bold text-white mb-3">
+                                                    {item.title}
+                                                </h3>
+                                                <p className="text-blue-100 text-sm mb-6 leading-relaxed opacity-90">
+                                                    {item.desc}
+                                                </p>
+                                            </div>
+
+                                            {/* Phần số liệu: 2 cột ngang hàng */}
+                                            <div className="grid grid-cols-2 gap-4 bg-black/20 rounded-xl p-4 border border-white/5 mt-auto">
+                                                {item.stats?.map((stat, idx) => (
+                                                    <div key={idx} className="text-center">
+                                                        <div className="text-2xl font-bold text-yellow-400 leading-none mb-1">{stat.value}</div>
+                                                        <div className="text-[10px] text-white/70 uppercase font-medium">{stat.label}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            }
+
+                            // --- GIAO DIỆN CHO CÁC THẺ THƯỜNG ---
+                            return (
+                                <div key={item.id} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-[var(--erg-blue)]/20 transition-all duration-300 group flex flex-col h-full hover:-translate-y-1">
+                                    <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mb-5 group-hover:bg-[var(--erg-blue)] transition-all duration-300">
+                                        <item.icon size={28} className="text-[var(--erg-blue)] group-hover:text-white transition-colors" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-[var(--erg-blue)] transition-colors">
+                                        {item.id}. {item.title}
+                                    </h3>
+                                    <p className="text-gray-600 text-sm leading-relaxed flex-grow">
+                                        {item.desc}
+                                    </p>
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-3">{item.title}</h3>
-                                <p className="text-gray-600 text-sm leading-relaxed px-6">
-                                    {item.desc}
-                                </p>
-                            </div>
-                        ))}
+                            );
+                        })}
+
                     </div>
                 </div>
             </section>
-
             {/* 6. TESTIMONIALS */}
             <section className="py-24 bg-white relative overflow-hidden">
                 <GradientBlob color="bg-blue-100" className="top-1/4 left-0 w-[500px] h-[500px] -translate-x-1/2" />

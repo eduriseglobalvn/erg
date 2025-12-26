@@ -42,3 +42,8 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Ví dụ họa tiết mạch điện (Nếu bạn muốn nền background xịn hơn nữa) */
+.bg-circuit {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10h80v80h-80z' fill='none' stroke='%23334155' stroke-width='0.5' opacity='0.1'/%3E%3Cpath d='M20 20h60v60h-60z' fill='none' stroke='%23334155' stroke-width='0.5' opacity='0.1'/%3E%3C/svg%3E");
+}

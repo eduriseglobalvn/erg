@@ -29,18 +29,25 @@ jobs:
 
       - name: Prepare Deployment Files
         run: |
-          mkdir -p deploy
+          mkdir -p deploy/tmp # Tạo thư mục tmp cho việc restart
+          
           # 1. Copy core standalone (chứa server.js và node_modules tối giản)
           cp -r .next/standalone/. deploy/
+          
           # 2. Copy static và public để chạy giao diện
           cp -r .next/static deploy/.next/static
           cp -r public deploy/public
-          # 3. Tạo file khởi chạy deploy.js
+          
+          # 3. Tạo file khởi chạy deploy.js cho cPanel
           echo "process.env.NODE_ENV = 'production';
           process.env.PORT = process.env.PORT || 3000;
           require('./server.js');" > deploy/deploy.js
           
-          # 4. NÉN: Vào thư mục deploy để nén, tránh lồng thư mục khi giải nén
+          # 4. CẬP NHẬT RESTART: Ghi thời gian hiện tại vào restart.txt
+          # Việc thay đổi nội dung file này sẽ kích hoạt restart trên cPanel
+          date > deploy/tmp/restart.txt
+          
+          # 5. NÉN: Vào thư mục deploy để nén nội dung bên trong
           cd deploy && zip -r ../build.zip . && cd ..
 
       - name: FTP Deploy
@@ -52,12 +59,12 @@ jobs:
           port: ${{ secrets.FTP_PORT || 21 }}
           protocol: ftp
           local-dir: ./
-          # VÌ PATH FTP CỦA BẠN ĐÃ LÀ /public_html/vuongtran NÊN ĐỂ ./
+          # Vì Path FTP đã là /public_html/vuongtran nên để ./
           server-dir: ./
           exclude: |
             **/*
             !build.zip
 
       - name: Trigger Unzip
-        # File unzip.php nằm ở gốc public_html/vuongtran nên gọi trực tiếp qua domain
+        # Sửa lại URL: Nếu domain trỏ thẳng vào folder vuongtran, dùng đường dẫn này:
         run: curl https://vuongtran.io.vn/vuongtran/unzip.php

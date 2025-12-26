@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { VALID_SUBDOMAINS } from "@/constants/MenuItem"; // Nhớ check đúng đường dẫn file menu
 
-export default function proxy(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const url = request.nextUrl;
 
     // 1. Lấy Hostname và Root Domain từ Env
@@ -59,6 +59,6 @@ export default function proxy(request: NextRequest) {
 
 export const config = {
     matcher: [
-        '/((?!api|_next/static|_next/image|favicon.ico|.*\\.).*)',
+        '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js|woff|woff2|ttf|eot)).*)',
     ],
 };

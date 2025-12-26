@@ -3,7 +3,7 @@ name: Deploy Next.js to cPanel
 on:
   push:
     branches:
-      - production # Lưu ý: Bạn đang để branch production, hãy đổi thành main nếu cần
+      - production
 
 jobs:
   build-and-deploy:
@@ -30,9 +30,9 @@ jobs:
       - name: Prepare Deployment Files
         run: |
           mkdir -p deploy
-          # 1. Copy core standalone
+          # 1. Copy core standalone (chứa server.js và node_modules tối giản)
           cp -r .next/standalone/. deploy/
-          # 2. Copy static và public
+          # 2. Copy static và public để chạy giao diện
           cp -r .next/static deploy/.next/static
           cp -r public deploy/public
           # 3. Tạo file khởi chạy deploy.js
@@ -40,10 +40,10 @@ jobs:
           process.env.PORT = process.env.PORT || 3000;
           require('./server.js');" > deploy/deploy.js
           
-          # 4. NÉN THÀNH FILE build.zip để upload cực nhanh
+          # 4. NÉN: Vào thư mục deploy để nén, tránh lồng thư mục khi giải nén
           cd deploy && zip -r ../build.zip . && cd ..
 
-      - name: FTP Deploy (Upload duy nhất 1 file build.zip)
+      - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -52,10 +52,12 @@ jobs:
           port: ${{ secrets.FTP_PORT || 21 }}
           protocol: ftp
           local-dir: ./
-          server-dir: public_html/vuongtran/
+          # VÌ PATH FTP CỦA BẠN ĐÃ LÀ /public_html/vuongtran NÊN ĐỂ ./
+          server-dir: ./
           exclude: |
             **/*
             !build.zip
 
-      - name: Trigger Unzip (Giải nén tự động)
+      - name: Trigger Unzip
+        # File unzip.php nằm ở gốc public_html/vuongtran nên gọi trực tiếp qua domain
         run: curl https://vuongtran.io.vn/vuongtran/unzip.php

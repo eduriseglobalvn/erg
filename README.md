@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ERG - EduRise Global Platform
 
-## Getting Started
+> **"Khơi nguồn trí tuệ – Dẫn lối tương lai"**
 
-First, run the development server:
+Chào mừng đến với mã nguồn chính thức của **ERG (EduRise Global)**. Đây là nền tảng giáo dục tiên phong kết hợp công nghệ, cung cấp các giải pháp giáo dục thông minh và lộ trình đào tạo chuyên sâu (Cloud DevOps, Chuyển đổi số, v.v.).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌟 Giới thiệu
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ERG ra đời với sứ mệnh biến công nghệ trở thành cầu nối bền vững giữa tri thức và con người. Tên gọi ERG đại diện cho:
+*   **Edu (Education)**: Giáo dục là nền tảng cốt lõi.
+*   **Rise (Vươn tầm)**: Khát vọng đổi mới và phát triển không ngừng.
+*   **Global (Toàn cầu)**: Tầm nhìn và tiêu chuẩn quốc tế.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠 Công nghệ sử dụng
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Dự án được xây dựng trên nền tảng công nghệ hiện đại, tối ưu cho hiệu năng và trải nghiệm người dùng:
 
-## Learn More
+-   **Framework**: Next.js 16+ (App Router)
+-   **Language**: TypeScript
+-   **Styling**: Tailwind CSS
+-   **Icons**: Lucide React
+-   **Runtime**: Node.js v20.19.4
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Cài đặt và Chạy Local
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Để chạy dự án trên máy cá nhân, vui lòng thực hiện các bước sau:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1.  **Clone repository:**
+    ```bash
+    git clone <your-repo-url>
+    cd erg
+    ```
 
-## Deploy on Vercel
+2.  **Cài đặt dependencies:**
+    ```bash
+    yarn install
+    # hoặc nếu dùng npm:
+    npm install
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3.  **Cấu hình Môi trường (Multi-domain):**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    Dự án hỗ trợ chạy Multi-domain. Để môi trường dev hoạt động đúng với các subdomain, bạn cần cấu hình như sau:
+
+    -   Tạo file `.env.local` tại thư mục gốc dự án:
+        ```env
+        NEXT_PUBLIC_ROOT_DOMAIN=localhost:3000
+        ```
+    -   **Lưu ý:** Trình duyệt hiện đại hỗ trợ sẵn subdomain trên localhost (ví dụ: `app.localhost:3000`), nên bạn thường không cần sửa file hosts.
+    -   Nếu muốn giả lập domain production (ví dụ: `erg.local`), hãy thêm vào file hosts (`/etc/hosts` hoặc `C:\Windows\System32\drivers\etc\hosts`):
+        ```text
+        127.0.0.1 erg.local
+        127.0.0.1 app.erg.local
+        ```
+        Và cập nhật `.env.local` thành: `NEXT_PUBLIC_ROOT_DOMAIN=erg.local:3000`.
+
+4.  **Chạy môi trường phát triển:**
+    ```bash
+    yarn dev
+    # hoặc nếu dùng npm:
+    npm run dev
+    ```
+    Truy cập http://localhost:3000 để xem kết quả.
+
+## 📦 Quy trình Deploy (CI/CD)
+
+Dự án sử dụng **GitHub Actions** để tự động hóa quy trình triển khai lên hosting cPanel thông qua giao thức FTP.
+
+### Workflow: `Deploy Next.js to cPanel`
+
+Quy trình sẽ tự động kích hoạt khi có code mới được push vào nhánh `production`.
+
+1.  **Build**:
+    -   Sử dụng Node.js v20.19.4.
+    -   Chạy `npm run build` để tạo bản build production (chế độ Standalone).
+2.  **Prepare**:
+    -   Đóng gói `standalone`, `static`, và `public` assets.
+    -   Tạo file `deploy.js` entry point cho Node server.
+    -   Nén toàn bộ thành `build.zip`.
+3.  **Deploy**:
+    -   Upload `build.zip` lên server qua FTP.
+    -   Trigger script giải nén (`unzip.php`) trên server để hoàn tất cập nhật.
+
+## 📂 Cấu trúc dự án
+
+-   `src/app`: Mã nguồn chính (Next.js App Router).
+    -   `(main)/cau-chuyen-cua-erg`: Trang giới thiệu về ERG.
+-   `src/components`: Các UI components tái sử dụng (ví dụ: `RoadmapSection`).
+-   `.github/workflows`: Cấu hình CI/CD pipeline.
+
+---
+© 2024 ERG Workspace. All rights reserved.

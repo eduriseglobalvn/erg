@@ -1,0 +1,70 @@
+name: Deploy Next.js to cPanel
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.4'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build project
+        run: yarn build
+        env:
+          NEXT_PUBLIC_ROOT_DOMAIN: vuongtran.io.vn
+
+      - name: Prepare Deployment Files
+        run: |
+          mkdir -p deploy/tmp # Tạo thư mục tmp cho việc restart
+          
+          # 1. Copy core standalone (chứa server.js và node_modules tối giản)
+          cp -r .next/standalone/. deploy/
+          
+          # 2. Copy static và public để chạy giao diện
+          cp -r .next/static deploy/.next/static
+          cp -r public deploy/public
+          
+          # 3. Tạo file khởi chạy deploy.js cho cPanel
+          echo "process.env.NODE_ENV = 'production';
+          process.env.PORT = process.env.PORT || 3000;
+          require('./server.js');" > deploy/deploy.js
+          
+          # 4. CẬP NHẬT RESTART: Ghi thời gian hiện tại vào restart.txt
+          # Việc thay đổi nội dung file này sẽ kích hoạt restart trên cPanel
+          date > deploy/tmp/restart.txt
+          
+          # 5. NÉN: Vào thư mục deploy để nén nội dung bên trong
+          cd deploy && zip -r ../build.zip . && cd ..
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT || 21 }}
+          protocol: ftp
+          local-dir: ./
+          # Vì Path FTP đã là /public_html/vuongtran nên để ./
+          server-dir: ./
+          exclude: |
+            **/*
+            !build.zip
+
+      - name: Trigger Unzip
+        # Sửa lại URL: Nếu domain trỏ thẳng vào folder vuongtran, dùng đường dẫn này:
+        run: curl https://vuongtran.io.vn/vuongtran/unzip.php

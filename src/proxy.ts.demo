@@ -1,0 +1,55 @@
+// src/proxy.ts
+import { NextRequest, NextResponse } from "next/server";
+import { VALID_SUBDOMAINS } from "@/constants/MenuItem";
+
+// Cách 1: Dùng export default (Khuyên dùng)
+export default function proxy(request: NextRequest) {
+    const url = request.nextUrl;
+    let hostname = request.headers.get("host") || "";
+    
+    // RẤT QUAN TRỌNG: Kiểm tra lại file .env.development 
+    // Phải có NEXT_PUBLIC_ROOT_DOMAIN=erg.edu.local
+    let rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'localhost';
+
+    if (hostname.includes(":")) hostname = hostname.split(":")[0];
+    if (rootDomain.includes(":")) rootDomain = rootDomain.split(":")[0];
+
+    let subdomain = "";
+    if (hostname === 'localhost' || hostname === rootDomain) {
+        subdomain = "";
+    } else if (hostname.endsWith(`.${rootDomain}`)) {
+        subdomain = hostname.replace(`.${rootDomain}`, "");
+    }
+
+    // --- CHÈN LOG Ở ĐÂY ---
+    console.log("---------------- PROXY DEBUG ----------------");
+    console.log("Full Hostname:", hostname);
+    console.log("Root Domain Env:", rootDomain);
+    console.log("Subdomain trích xuất:", subdomain);
+    console.log("Danh sách hợp lệ:", VALID_SUBDOMAINS);
+    console.log("Có khớp không?:", VALID_SUBDOMAINS.includes(subdomain));
+    console.log("---------------------------------------------");
+
+    const searchParams = url.searchParams.toString();
+    const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
+
+    // Debug để xem nó có nhận đúng subdomain không (Check terminal)
+    // console.log("SUBDOMAIN DETECTED:", subdomain);
+
+    if (VALID_SUBDOMAINS.includes(subdomain)) {
+        return NextResponse.rewrite(new URL(`/${subdomain}${path}`, request.url));
+    }
+
+    if (!subdomain || subdomain === 'www') {
+        return NextResponse.next();
+    }
+
+    return NextResponse.rewrite(new URL('/', request.url));
+}
+
+// Giữ nguyên config matcher
+export const config = {
+    matcher: [
+        '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js|woff|woff2|ttf|eot)).*)',
+    ],
+};

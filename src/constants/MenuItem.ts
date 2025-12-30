@@ -1,7 +1,8 @@
 // src/constants/menu.ts
 
 // 1. CẤU HÌNH DOMAIN (Giữ nguyên)
-const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'erg.edu.local';
+const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 
+                    (process.env.NODE_ENV === 'production' ? 'erg.edu.vn' : 'erg.edu.local');
 const isDev = process.env.NODE_ENV === 'development';
 const PROTOCOL = isDev ? 'http' : 'https';
 const PORT = isDev ? ':3000' : '';

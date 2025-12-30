@@ -3,16 +3,55 @@ import {EmployerInfo, JobDetail, JobSummary} from "@/mocks/types";
 // --- BƯỚC 1: TẠO KHO DỮ LIỆU CHI TIẾT (DATABASE) ---
 // Key của object này (ví dụ: 'nhan-vien-it') PHẢI TRÙNG KHỚP với slug
 const JOB_DATABASE: Record<string, JobDetail> = {
+    'giao-vien-stem-robot': {
+        status: "urgent", // Yêu cầu tuyển gấp
+        employer: "Trung tâm tin học ERG",
+        title: "Giáo viên STEM Robot",
+        postDate: "30/12/2025", // Ngày đăng mới nhất
+        salary: "Thỏa thuận",
+        quantity: "3",
+        workType: "Toàn thời gian",
+        deadline: "28/02/2026",
+        location: "TP Hồ Chí Minh",
+        summary: "Tuyển dụng Giáo viên dạy Lập trình Robot, STEM cho học sinh, môi trường sáng tạo, thu nhập hấp dẫn.",
+
+        jobDescription: [
+            "Giảng dạy các bộ môn STEM, Lập trình Robot, Lắp ráp mô hình thông minh cho học sinh theo chương trình của Trung tâm.",
+            "Hướng dẫn học sinh thực hành, rèn luyện tư duy logic và kỹ năng giải quyết vấn đề qua các dự án công nghệ.",
+            "Soạn thảo giáo án, bài giảng và chuẩn bị học cụ, thiết bị Robot trước khi lên lớp.",
+            "Tổ chức và hướng dẫn học sinh tham gia các buổi học thử (Demo), các cuộc thi Robotic trong và ngoài trung tâm.",
+            "Đánh giá quá trình học tập và trao đổi với phụ huynh về sự tiến bộ của học sinh."
+        ],
+        requirements: [
+            "Tốt nghiệp Cao đẳng/Đại học chuyên ngành CNTT, Kỹ thuật máy tính, Cơ điện tử hoặc các khối ngành Kỹ thuật (Bách Khoa...).",
+            "Chấp nhận cả Giáo viên Tiếng Anh và Giáo viên Vật Lý có đam mê công nghệ và yêu thích đổi mới phương pháp dạy.",
+            "Yêu thích trẻ em, yêu thích công việc giảng dạy và có khả năng truyền cảm hứng.",
+            "Ưu tiên ứng viên có kiến thức về ngôn ngữ lập trình (Scratch, Python, C++...) hoặc các bộ kit Lego Education, Arduino.",
+            "Có khả năng giao tiếp tốt, kiên nhẫn và nhiệt tình."
+        ],
+        benefits: [
+            "Thu nhập hấp dẫn (Lương cứng + Phụ cấp), mức lương thỏa thuận theo năng lực.",
+            "ĐẶC BIỆT: Có thưởng thêm (bonus) khi học sinh đăng ký học chính thức sau các buổi dạy thử (Demo).",
+            "Được đào tạo chuyên sâu về phương pháp dạy học STEM và quy trình vận hành Robot.",
+            "Cơ hội tham gia dẫn dắt đội tuyển thi đấu các giải Robotic lớn.",
+            "Môi trường làm việc trẻ trung, sáng tạo, tiếp cận công nghệ mới."
+        ],
+        quickInfo: {
+            location: "TP Hồ Chí Minh",
+            position: "Giáo viên STEM",
+        }
+    },
+
     // 1. Job Giáo viên / Trợ giảng
     'giao-vien': {
         status:"hot",
         employer: "Trunng tâm tin học ERG",
         title: "Tuyển dụng Giáo viên tin học",
-        postDate: "12/12/2025",
+        postDate: "30/12/2025",
         salary: "Thỏa thuận",
         quantity: "5",
         workType: "Từ thứ Hai đến thứ Bảy",
-        deadline: "30/01/2026",
+        deadline: "30/02/2026",
         location: "TP Hồ Chí Minh", // Sửa lại cho khớp ảnh (Hà Nội) thay vì HCM
         summary: "Trung tâm tin học ERG tuyển dụng giáo viên tin học, trợ giảng dạy các chương trình tin học văn phòng như chứng chỉ MOS, IC3...",
 
@@ -50,7 +89,7 @@ const JOB_DATABASE: Record<string, JobDetail> = {
         salary: "Thỏa thuận",
         quantity: "5",
         workType: "Từ thứ Hai đến thứ Bảy",
-        deadline: "30/01/2026",
+        deadline: "30/02/2026",
         location: "TP Hồ Chí Minh", // Sửa lại cho khớp ảnh (Hà Nội) thay vì HCM
         summary: "Trung tâm tin học ERG tuyển dụng trợ giảng dạy các chương trình tin học văn phòng như chứng chỉ MOS, IC3...",
 
@@ -88,7 +127,7 @@ const JOB_DATABASE: Record<string, JobDetail> = {
         salary: "Thỏa thuận",
         quantity: "5",
         workType: "Từ thứ Hai đến thứ Bảy",
-        deadline: "30/01/2026",
+        deadline: "30/02/2026",
         location: "TP Hồ Chí Minh", // Sửa lại cho khớp ảnh (Hà Nội) thay vì HCM
         summary: "Trung tâm tin học ERG tuyển dụng giáo vụ",
 
@@ -131,7 +170,7 @@ const JOB_DATABASE: Record<string, JobDetail> = {
         salary: "Thỏa thuận",
         quantity: "3",
         workType: "Từ thứ Hai đến thứ Bảy",
-        deadline: "30/01/2026",
+        deadline: "30/02/2026",
         location: "TP Hồ Chí Minh",
         summary: "Tìm kiếm nhân viên IT chịu trách nhiệm vận hành hệ thống mạng, hỗ trợ kỹ thuật cho văn phòng và các cơ sở đào tạo.",
 

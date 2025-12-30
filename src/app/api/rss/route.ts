@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
     // Bỏ qua lỗi SSL nếu server đích dùng chứng chỉ tự ký hoặc cũ
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
     const RSS_URL = 'https://giaoducthoidai.vn/rss/giao-duc-17.rss';
 
     try {

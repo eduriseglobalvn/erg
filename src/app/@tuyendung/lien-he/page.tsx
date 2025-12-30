@@ -207,7 +207,7 @@ export default function RecruitmentContactPage() {
                             <div>
                                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-0.5">Hotline HR</p>
                                 <a href="tel:0967689259" className="text-sm font-bold text-gray-800 hover:text-[#cc0022] transition-colors">
-                                    0967 689 259 (Ms. Thư)
+                                    0967 689 259 (Mr. Minh)
                                 </a>
                             </div>
                         </div>

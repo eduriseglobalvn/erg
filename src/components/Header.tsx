@@ -76,7 +76,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
                     <Phone size={14} className="text-highlight" /> Hotline: 0766.144.888
                 </span>
                 <span className="hover:text-primary transition-colors cursor-pointer">
-                    Email: info.eduerg@gmail.com
+                    Email: info@erg.edu.vn
                 </span>
               </div>
 

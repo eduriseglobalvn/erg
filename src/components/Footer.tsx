@@ -76,7 +76,7 @@ const FooterWaveFix = () => {
                                 </div>
                                 <div>
                                     <span className="text-slate-500 text-xs font-bold uppercase block mb-1">Email</span>
-                                    <a href="mailto:info.eduerg@gmail.com" className="text-[#00008b] font-medium hover:text-[#cc0022] transition-colors">info.eduerg@gmail.com</a>
+                                    <a href="mailto:info@erg.edu.vn" className="text-[#00008b] font-medium hover:text-[#cc0022] transition-colors">info@erg.edu.vn</a>
                                 </div>
                             </li>
                         </ul>
@@ -123,7 +123,7 @@ const FooterWaveFix = () => {
                                 </div>
                                 <div>
                                     <span className="text-slate-500 text-xs font-bold uppercase block mb-1">Email</span>
-                                    <a href="mailto:ic3.erg@gmail.com" className="text-[#00008b] font-medium hover:text-[#cc0022] transition-colors">ic3.erg@gmail.com</a>
+                                    <a href="mailto:daotao@erg.edu.vn" className="text-[#00008b] font-medium hover:text-[#cc0022] transition-colors">daotao@erg.edu.vn</a>
                                 </div>
                             </li>
                         </ul>

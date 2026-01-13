@@ -32,6 +32,7 @@ export default async function RootLayout(props: {
     congdanso: React.ReactNode;
     dientoandammay: React.ReactNode;
     tuyendung: React.ReactNode;
+    admin: React.ReactNode;
 }) {
     // 1. Lấy Hostname thực tế từ Request
     const headerList = await headers();
@@ -60,6 +61,7 @@ export default async function RootLayout(props: {
         case 'congdanso': content = props.congdanso; break;
         case 'dientoandammay': content = props.dientoandammay; break;
         case 'tuyendung': content = props.tuyendung; break;
+        case 'admin': content = props.admin; break;
         case '': 
         case 'www': 
             content = props.main; break;
@@ -68,7 +70,7 @@ export default async function RootLayout(props: {
     }
 
     return (
-        <html lang="vi">
+        <html lang="vi" suppressHydrationWarning>
             <head>
                 <GoogleAnalytics gaId="G-PF00V6RJDD" />
             </head>

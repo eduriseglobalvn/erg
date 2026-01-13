@@ -3,46 +3,9 @@
 import React from 'react';
 import Image from 'next/image';
 import { GraduationCap, Quote, Star, BookOpen, Facebook, Linkedin, Mail } from 'lucide-react';
-
+import {TEACHERS} from "@/mocks/constants";
 // DATA MẪU (Dựa trên ảnh của bạn, nhưng đã tách text ra khỏi ảnh)
-const TEACHERS = [
-    {
-        id: 1,
-        name: "Thầy Ngô Xuân Trúc",
-        role: "Kỹ Sư CNTT",
-        image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop", // Thay bằng ảnh chân dung thầy Trúc
-        subjects: ["IC3 GS6", "MOS", "CNTT Cơ Bản"],
-        quote: "Mỗi một học sinh đều là một câu chuyện riêng, vai trò của tôi là người lắng nghe, đồng hành cùng các em.",
-        exp: "5+ Năm"
-    },
-    {
-        id: 2,
-        name: "Thầy Trần Tướng Tuấn",
-        role: "Thạc Sĩ CNTT", // Giả định title
-        image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=800&auto=format&fit=crop", // Thay bằng ảnh chân dung thầy Tuấn
-        subjects: ["Lập trình", "IC3 Spark", "MOS Expert"],
-        quote: "Công nghệ chỉ là một công cụ. Nhiệm vụ của chúng tôi là giúp các em làm chủ những công cụ đó trong tương lai.",
-        exp: "8+ Năm"
-    },
-    {
-        id: 3,
-        name: "Thầy Trần Quốc Vương",
-        role: "Kỹ Sư CNTT",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop", // Thay bằng ảnh chân dung thầy Vương
-        subjects: ["IC3 GS6", "Tin học quốc tế"],
-        quote: "Tin học ứng dụng lập trình giúp học sinh rèn luyện tư duy logic, tính thân thiện và khả năng sáng tạo.",
-        exp: "4+ Năm"
-    },
-    {
-        id: 4,
-        name: "Thầy Trần Thanh Nhã",
-        role: "Kỹ Sư CNTT",
-        image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop", // Thay bằng ảnh chân dung thầy Nhã
-        subjects: ["Scratch", "IC3 Spark", "Tin học cơ bản"],
-        quote: "Công nghệ không chỉ hiện diện trong lớp học, mà còn trở thành một phần trong tư duy và hành động.",
-        exp: "6+ Năm"
-    },
-];
+
 
 export default function TeachersPage() {
     return (

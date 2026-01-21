@@ -13,6 +13,7 @@ import { Highlight } from "@tiptap/extension-highlight"
 import { Subscript } from "@tiptap/extension-subscript"
 import { Superscript } from "@tiptap/extension-superscript"
 import { Selection } from "@tiptap/extensions"
+import BubbleMenuExtension from '@tiptap/extension-bubble-menu'
 // Thêm extension mới
 import { TextStyle } from "@tiptap/extension-text-style"
 import { FontFamily } from "@tiptap/extension-font-family"
@@ -56,6 +57,8 @@ import {
 import { MarkButton } from "@/components/admin/shared/editor/tiptap-ui/mark-button"
 import { TextAlignButton } from "@/components/admin/shared/editor/tiptap-ui/text-align-button"
 import { UndoRedoButton } from "@/components/admin/shared/editor/tiptap-ui/undo-redo-button"
+// [NEW] Import AI Bubble Menu
+import { AIBubbleMenu } from "@/components/admin/shared/editor/tiptap-ui/ai-bubble-menu"
 
 // --- Icons ---
 import { ArrowLeftIcon } from "@/components/admin/shared/editor/tiptap-icons/arrow-left-icon"
@@ -80,8 +83,6 @@ import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils"
 
 // --- Styles ---
 import "@/components/admin/shared/editor/tiptap-templates/simple/simple-editor.scss"
-
-import content from "@/components/admin/shared/editor/tiptap-templates/simple/data/content.json"
 
 // BỔ SUNG: Custom FontSize Extension
 const FontSize = Extension.create({
@@ -280,7 +281,22 @@ const MobileToolbarContent = ({
     </>
 )
 
-export function SimpleEditor() {
+// [UPDATE] Thêm props title và onTitleChange
+interface SimpleEditorProps {
+    initialContent?: string;
+    onEditorReady?: (editor: any) => void;
+    onRefine?: (text: string, prompt: string) => Promise<string | null>;
+    title?: string;
+    onTitleChange?: (value: string) => void;
+}
+
+export function SimpleEditor({
+                                 initialContent = "",
+                                 onEditorReady,
+                                 onRefine,
+                                 title,           // [NEW]
+                                 onTitleChange    // [NEW]
+                             }: SimpleEditorProps) {
     const isMobile = useIsBreakpoint()
     const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
         "main"
@@ -296,6 +312,9 @@ export function SimpleEditor() {
                 "aria-label": "Main content area, start typing to enter text.",
                 class: "simple-editor",
             },
+        },
+        onCreate({ editor }) {
+            if (onEditorReady) onEditorReady(editor);
         },
         extensions: [
             StarterKit.configure({
@@ -325,14 +344,19 @@ export function SimpleEditor() {
                 upload: handleImageUpload,
                 onError: (error) => console.error("Upload failed:", error),
             }),
+            BubbleMenuExtension.configure({
+                pluginKey: 'bubbleMenuAI',
+            }),
         ],
-        content,
+        content: initialContent,
     })
 
     return (
         <div className="simple-editor-wrapper flex flex-col w-full h-full relative bg-white dark:bg-[#191919]">
             <EditorContext.Provider value={{ editor }}>
-                <div className="shrink-0 border-b z-40 bg-white dark:bg-[#191919]">
+
+                {/* TOOLBAR Ở TRÊN CÙNG (Sticky mặc định do Flex Layout) */}
+                <div className="shrink-0 border-b z-50 relative bg-white dark:bg-[#191919]">
                     <Toolbar className="w-full">
                         {mobileView === "main" ? (
                             <MainToolbarContent
@@ -350,8 +374,24 @@ export function SimpleEditor() {
                     </Toolbar>
                 </div>
 
-                <div className="flex-1 overflow-y-auto scroll-smooth">
-                    <div className="max-w-[850px] mx-auto px-8 py-12 min-h-full">
+                {/* VÙNG SCROLL CHỨA CẢ TITLE VÀ EDITOR */}
+                <div className="flex-1 overflow-y-auto scroll-smooth relative">
+                    {editor && onRefine && (
+                        <AIBubbleMenu editor={editor} onRefine={onRefine} />
+                    )}
+
+                    <div className="max-w-[850px] mx-auto px-8 pt-12 pb-32 min-h-full">
+
+                        {/* [NEW] INPUT TITLE ĐƯỢC ĐẶT Ở ĐÂY */}
+                        {onTitleChange && (
+                            <input
+                                className="text-4xl font-bold w-full outline-none bg-transparent placeholder:text-gray-300 text-black dark:text-white mb-6 border-none p-0 focus:ring-0"
+                                placeholder="Tiêu đề bài viết..."
+                                value={title}
+                                onChange={(e) => onTitleChange(e.target.value)}
+                            />
+                        )}
+
                         <EditorContent
                             editor={editor}
                             role="presentation"

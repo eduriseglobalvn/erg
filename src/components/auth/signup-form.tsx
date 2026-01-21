@@ -1,15 +1,60 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
+
 import { cn } from "@/lib/utils"
+import { authApi } from "@/services"
 import { Button } from "@/components/admin/ui/button"
 import {
     Card, CardContent, CardDescription, CardHeader, CardTitle
 } from "@/components/admin/ui/card"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
-import Link from "next/link"
 
 export function SignupForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+    const router = useRouter()
+    const [isLoading, setIsLoading] = useState(false)
+    const [formData, setFormData] = useState({
+        fullName: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    })
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        if (formData.password !== formData.confirmPassword) {
+            toast.warning("Mật khẩu xác nhận không khớp")
+            return
+        }
+
+        setIsLoading(true)
+        try {
+            await authApi.register({
+                email: formData.email,
+                password: formData.password,
+                fullName: formData.fullName
+            })
+
+            toast.success("Đăng ký thành công! Vui lòng xác thực email.")
+            // Chuyển sang trang OTP, đánh dấu là mode kích hoạt
+            router.push(`/auth/otp?email=${encodeURIComponent(formData.email)}&mode=activation`)
+        } catch (error: any) {
+            toast.error(error.message || "Đăng ký thất bại")
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }))
+    }
+
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Card>
@@ -20,25 +65,58 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
                                 <Label htmlFor="fullname">Họ và tên</Label>
-                                <Input id="fullname" type="text" placeholder="Nguyễn Văn A" required />
+                                <Input
+                                    id="fullName"
+                                    value={formData.fullName}
+                                    onChange={handleChange}
+                                    type="text"
+                                    placeholder="Nguyễn Văn A"
+                                    required
+                                    disabled={isLoading}
+                                />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="email">Email</Label>
-                                <Input id="email" type="email" placeholder="m@example.com" required />
+                                <Input
+                                    id="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    type="email"
+                                    placeholder="m@example.com"
+                                    required
+                                    disabled={isLoading}
+                                />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="password">Mật khẩu</Label>
-                                <Input id="password" type="password" required />
+                                <Input
+                                    id="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    type="password"
+                                    required
+                                    disabled={isLoading}
+                                />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="confirm-password">Xác nhận mật khẩu</Label>
-                                <Input id="confirm-password" type="password" required />
+                                <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
+                                <Input
+                                    id="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    type="password"
+                                    required
+                                    disabled={isLoading}
+                                />
                             </div>
-                            <Button type="submit" className="w-full">Tạo tài khoản</Button>
+                            <Button type="submit" className="w-full" disabled={isLoading}>
+                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                {isLoading ? "Đang xử lý..." : "Tạo tài khoản"}
+                            </Button>
                         </div>
                     </form>
                     <div className="mt-4 text-center text-sm">

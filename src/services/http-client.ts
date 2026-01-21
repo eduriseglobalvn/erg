@@ -1,0 +1,152 @@
+// src/services/http-client.ts
+"use client";
+
+// Định nghĩa URL Backend (nên lấy từ biến môi trường)
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+interface CustomRequestInit extends RequestInit {
+    requireAuth?: boolean;
+}
+
+// --- BIẾN TOÀN CỤC ĐỂ QUẢN LÝ REFRESH TOKEN ---
+// isRefreshing: Cái khóa để ngăn 10 request cùng gọi refresh 1 lúc (Race Condition)
+let isRefreshing = false;
+// failedQueue: Hàng chờ chứa các request bị lỗi 401 đang đợi token mới
+let failedQueue: any[] = [];
+
+// Hàm xử lý hàng chờ sau khi refresh xong (hoặc thất bại)
+const processQueue = (error: any, token: string | null = null) => {
+    failedQueue.forEach((prom) => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve(token);
+        }
+    });
+    failedQueue = [];
+};
+
+export const httpClient = async <T>(
+    endpoint: string,
+    options?: CustomRequestInit
+): Promise<T> => {
+    const { requireAuth = true, ...fetchOptions } = options || {};
+
+    // Helper lấy token từ LocalStorage
+    const getAccessToken = () => localStorage.getItem('accessToken');
+    const getRefreshToken = () => localStorage.getItem('refreshToken');
+    const getUserId = () => localStorage.getItem('userId'); // Cần lưu userId lúc login
+
+    // Helper tạo headers
+    const createHeaders = (token: string | null) => {
+        const headers = new Headers(fetchOptions.headers);
+        headers.set('Content-Type', 'application/json');
+        if (requireAuth && token) {
+            headers.set('Authorization', `Bearer ${token}`);
+        }
+        return headers;
+    };
+
+    const url = `${BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+
+    try {
+        // --- BƯỚC 1: GỬI REQUEST LẦN ĐẦU ---
+        const response = await fetch(url, {
+            ...fetchOptions,
+            headers: createHeaders(getAccessToken()),
+        });
+
+        // Nếu thành công -> trả về data
+        if (response.ok) {
+            // Xử lý trường hợp response body rỗng
+            const contentLength = response.headers.get('Content-Length');
+            if (contentLength === '0') return {} as T;
+            return response.json();
+        }
+
+        // --- BƯỚC 2: XỬ LÝ KHI GẶP LỖI 401 (TOKEN HẾT HẠN) ---
+        if (response.status === 401 && requireAuth) {
+
+            // Nếu đang có 1 thằng khác đi refresh rồi -> Xếp hàng đợi
+            if (isRefreshing) {
+                return new Promise((resolve, reject) => {
+                    failedQueue.push({
+                        resolve: (newToken: string) => {
+                            // Khi có token mới, thực hiện lại request này
+                            const newHeaders = createHeaders(newToken);
+                            resolve(
+                                fetch(url, { ...fetchOptions, headers: newHeaders }).then((res) => res.json())
+                            );
+                        },
+                        reject: (err: any) => reject(err),
+                    });
+                });
+            }
+
+            // Nếu chưa ai refresh -> Mình xung phong đi refresh
+            isRefreshing = true;
+            const refreshToken = getRefreshToken();
+            const userId = getUserId();
+
+            if (refreshToken && userId) {
+                try {
+                    // Gọi API Refresh (Lưu ý: Gọi fetch thuần để tránh lặp vô tận)
+                    const refreshResponse = await fetch(`${BASE_URL}/auth/refresh`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId, refreshToken }),
+                    });
+
+                    if (refreshResponse.ok) {
+                        const data = await refreshResponse.json();
+
+                        // 1. Lưu token mới vào LocalStorage
+                        localStorage.setItem('accessToken', data.accessToken);
+                        localStorage.setItem('refreshToken', data.refreshToken);
+
+                        // 2. Giải phóng hàng chờ (báo cho các ông kia là có token rồi)
+                        processQueue(null, data.accessToken);
+                        isRefreshing = false;
+
+                        // 3. Thực hiện lại request của chính mình
+                        return httpClient<T>(endpoint, options);
+                    } else {
+                        // Refresh thất bại (RefreshToken hết hạn/bị thu hồi) -> ĐÁ RA
+                        throw new Error('Session expired');
+                    }
+                } catch (error) {
+                    processQueue(error, null);
+                    isRefreshing = false;
+                    handleLogout(); // Hàm logout
+                    throw error;
+                }
+            } else {
+                // Không có refreshToken -> Logout luôn
+                handleLogout();
+                throw new Error('No refresh token available');
+            }
+        }
+
+        // Các lỗi khác (403, 404, 500...)
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP Error ${response.status}`);
+
+    } catch (error) {
+        throw error;
+    }
+};
+
+// --- HÀM LOGOUT & ĐÁ NGƯỜI DÙNG RA ---
+export const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+        // 1. Xóa sạch dấu vết
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('user'); // Nếu có lưu thông tin user
+
+        // 2. Chuyển hướng về trang Login
+        // Dùng window.location để force reload lại trạng thái trắng tinh
+        window.location.href = '/auth/login?reason=session_expired';
+    }
+};

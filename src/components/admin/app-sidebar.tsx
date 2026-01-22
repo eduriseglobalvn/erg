@@ -187,9 +187,9 @@ const data = {
 // --- COMPONENT HIỂN THỊ MENU ---
 // Phần này xử lý logic: Nếu có menu con thì hiện mũi tên, không có thì hiện link thường
 function NavMain({
-                     items,
-                     label
-                 }: {
+    items,
+    label
+}: {
     items: {
         title: string
         url: string
@@ -261,6 +261,26 @@ function NavMain({
 
 // --- PHẦN CHÍNH CỦA THANH SIDEBAR ---
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const [user, setUser] = React.useState({
+        name: "Admin",
+        email: "admin@congty.com",
+        avatar: "/avatars/avatar.jpg",
+    })
+
+    React.useEffect(() => {
+        const storedUser = localStorage.getItem("user")
+        if (storedUser) {
+            try {
+                const parsed = JSON.parse(storedUser)
+                setUser({
+                    name: parsed.fullName || "Admin",
+                    email: parsed.email || "admin@congty.com",
+                    avatar: parsed.avatarUrl || "/avatars/avatar.jpg",
+                })
+            } catch (e) { }
+        }
+    }, [])
+
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
@@ -312,7 +332,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
             <SidebarFooter>
                 {/* Thông tin người dùng ở dưới cùng */}
-                <NavUser user={data.user} />
+                <NavUser user={user} />
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>

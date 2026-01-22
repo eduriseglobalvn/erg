@@ -55,13 +55,29 @@ export function OTPForm({ className, ...props }: React.ComponentPropsWithoutRef<
                     localStorage.setItem("refreshToken", res.refreshToken)
                     if (res.user) {
                         localStorage.setItem("user", JSON.stringify(res.user))
+                        if (res.user.id) localStorage.setItem("userId", res.user.id)
                     }
                 }
 
                 toast.success("Kích hoạt thành công!")
 
-                // 2. Chuyển hướng sang trang Onboarding (Cập nhật hồ sơ) thay vì về login
-                router.push("/onboarding")
+                // 2. Kiểm tra trạng thái hồ sơ và chuyển hướng
+                try {
+                    const userRes = await authApi.getProfile();
+                    const user = userRes.data || userRes;
+
+                    if (user) {
+                        localStorage.setItem("user", JSON.stringify(user));
+                    }
+
+                    if (user && !user.isProfileCompleted) {
+                        window.location.href = "/onboarding";
+                    } else {
+                        window.location.href = "/";
+                    }
+                } catch (e) {
+                    window.location.href = "/";
+                }
 
             } else if (mode === 'reset_password') {
                 // CASE 2: Quên mật khẩu -> Chuyển sang trang đặt pass mới

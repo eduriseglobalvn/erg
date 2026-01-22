@@ -23,8 +23,8 @@ import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 
 // SVG Icons
-const AppleIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.24.72-.62 1.73-1.53 2.79zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.06 2.27-1.69 4.2-3.74 4.25z"/></svg>)
-const GoogleIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5"><path d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.16-7.27 1.95 0 3.73.71 5.05 1.88l1.94-2.1C17.69 3.26 15.34 2 12.16 2 6.61 2 2 6.61 2 12s4.61 10 10.16 10c6.83 0 10.64-5.78 10.19-10.9z"/></svg>)
+const AppleIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.24.72-.62 1.73-1.53 2.79zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.06 2.27-1.69 4.2-3.74 4.25z" /></svg>)
+const GoogleIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5"><path d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.16-7.27 1.95 0 3.73.71 5.05 1.88l1.94-2.1C17.69 3.26 15.34 2 12.16 2 6.61 2 2 6.61 2 12s4.61 10 10.16 10c6.83 0 10.64-5.78 10.19-10.9z" /></svg>)
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
     const router = useRouter()
@@ -54,18 +54,52 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                 if (data.user) {
                     localStorage.setItem("user", JSON.stringify(data.user));
                     // Lưu userId riêng nếu cần dùng ở httpClient
-                    if(data.user.id) localStorage.setItem("userId", data.user.id);
+                    if (data.user.id) localStorage.setItem("userId", data.user.id);
                 }
 
                 toast.success("Đăng nhập thành công!");
-                router.push("/");
+
+                // [MỚI] Kiểm tra profile completed và cập nhật thông tin user mới nhất
+                try {
+                    const userRes = await authApi.getProfile();
+                    const user = userRes.data || userRes;
+
+                    if (user) {
+                        // Cập nhật lại localStorage với thông tin đầy đủ nhất (có isProfileCompleted, v.v.)
+                        localStorage.setItem("user", JSON.stringify(user));
+                    }
+
+                    if (user && !user.isProfileCompleted) {
+                        window.location.href = "/onboarding";
+                    } else {
+                        window.location.href = "/";
+                    }
+                } catch (e) {
+                    window.location.href = "/";
+                }
             } else {
                 toast.error("Không nhận được Token từ máy chủ");
             }
 
         } catch (error: any) {
             console.error("Login Error:", error);
-            toast.error(error.message || "Email hoặc mật khẩu không chính xác");
+            const errorMessage = error.message || "";
+
+            // [MỚI] Xử lý lỗi 403 Account not activated hoặc các thông báo tương tự
+            const lowered = errorMessage.toLowerCase();
+            if (
+                lowered.includes("not activated") ||
+                lowered.includes("account is not activated") ||
+                lowered.includes("actived") ||
+                lowered.includes("403")
+            ) {
+                toast.warning("Tài khoản chưa kích hoạt. Vui lòng nhập mã PIN đã được gửi tới email để kích hoạt.");
+                // Redirect sang trang verify-pin kèm email và mode
+                router.push(`/auth/otp?email=${encodeURIComponent(email)}&mode=activation`);
+                return;
+            }
+
+            toast.error(errorMessage || "Email hoặc mật khẩu không chính xác");
         } finally {
             setIsLoading(false)
         }
@@ -95,7 +129,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 
                             <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                                 <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                                  Hoặc tiếp tục với
+                                    Hoặc tiếp tục với
                                 </span>
                             </div>
 
@@ -114,13 +148,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                             </div>
 
                             {/* Password */}
-                            <div className="grid gap-2">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Mật khẩu</Label>
-                                    <Link href="/auth/forgot-password" className="ml-auto text-sm underline-offset-4 hover:underline">
-                                        Quên mật khẩu?
-                                    </Link>
-                                </div>
+                            <div className="grid gap-2 relative">
+                                <Label htmlFor="password">Mật khẩu</Label>
                                 <Input
                                     id="password"
                                     type="password"
@@ -128,7 +157,20 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     disabled={isLoading}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault()
+                                            handleSubmit(e as unknown as React.FormEvent)
+                                        }
+                                    }}
                                 />
+                                <Link
+                                    href="/auth/forgot-password"
+                                    className="absolute right-0 top-0 text-sm underline-offset-4 hover:underline"
+                                    tabIndex={-1}
+                                >
+                                    Quên mật khẩu?
+                                </Link>
                             </div>
 
                             <Button type="submit" className="w-full" disabled={isLoading}>

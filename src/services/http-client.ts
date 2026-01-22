@@ -40,7 +40,12 @@ export const httpClient = async <T>(
     // Helper tạo headers
     const createHeaders = (token: string | null) => {
         const headers = new Headers(fetchOptions.headers);
-        headers.set('Content-Type', 'application/json');
+
+        // Chỉ set JSON nếu không phải là FormData (để browser tự xử lý multipart)
+        if (!(fetchOptions.body instanceof FormData)) {
+            headers.set('Content-Type', 'application/json');
+        }
+
         if (requireAuth && token) {
             headers.set('Authorization', `Bearer ${token}`);
         }
@@ -128,8 +133,10 @@ export const httpClient = async <T>(
         }
 
         // Các lỗi khác (403, 404, 500...)
+        // Các lỗi khác (403, 404, 500...)
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP Error ${response.status}`);
+        // [MODIFIED] Trả về full errorData message để frontend handle logic
+        throw new Error(errorData.message || JSON.stringify(errorData) || `HTTP Error ${response.status}`);
 
     } catch (error) {
         throw error;

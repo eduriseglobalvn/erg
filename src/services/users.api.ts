@@ -25,6 +25,15 @@ export const userApi = {
         });
     },
 
+    // 2.5. Onboarding (Upload Avatar + Info)
+    // POST /users/onboarding
+    onboarding: (formData: FormData) => {
+        return httpClient<User>('/users/onboarding', {
+            method: 'POST',
+            body: formData,
+        });
+    },
+
     // 3. Đổi mật khẩu
     // PUT /users/me/password
     changePassword: (data: ChangePasswordPayload) => {

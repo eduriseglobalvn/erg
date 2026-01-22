@@ -40,31 +40,84 @@ export default function OnboardingPage() {
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    useEffect(() => {
-        const token = localStorage.getItem("accessToken");
-        if (!token) {
-            router.push("/auth/login");
-            return;
-        }
+    const hasFetched = useRef(false);
 
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
+    useEffect(() => {
+        const fetchUserData = async () => {
+            // Prevent double fetch in React Strict Mode
+            if (hasFetched.current) return;
+            hasFetched.current = true;
+
+            const token = localStorage.getItem("accessToken");
+            if (!token) {
+                router.push("/auth/login");
+                return;
+            }
+
+            // 1. Kiểm tra nhanh trong localStorage xem đã có data (vừa save lúc login/otp) chưa
+            const storedUser = localStorage.getItem("user");
+            if (storedUser) {
+                try {
+                    const userObj = JSON.parse(storedUser);
+                    if (userObj.fullName) {
+                        setFormData(prev => ({
+                            ...prev,
+                            fullName: userObj.fullName || "",
+                            phone: userObj.phone || userObj.phoneNumber || "",
+                            bio: userObj.bio || "",
+                            address: userObj.address || ""
+                        }));
+                        if (userObj.avatarUrl) setAvatarPreview(userObj.avatarUrl);
+
+                        // Nếu data đã đủ thì có thể skip fetch để tránh gọi /me dư thừa
+                        // return; 
+                    }
+                } catch (e) { }
+            }
+
             try {
-                const userObj = JSON.parse(storedUser);
+                // 2. Chỉ gọi API nếu thực sự cần reset data hoặc localStorage lỗi
+                const res: any = await userApi.getMe();
+                const userObj = res.data || res;
+
+                // [MỚI] Check status pending tại đây luôn cho chắc
+                // if (userObj.status === 'pending') {
+                //     toast.warning("Tài khoản chưa kích hoạt");
+                //     router.push(`/verify-pin?email=${encodeURIComponent(userObj.email)}&mode=activation`);
+                //     return;
+                // }
+
                 setFormData(prev => ({
                     ...prev,
                     fullName: userObj.fullName || "",
-                    phone: userObj.phone || "",
-                    // Nếu user đã có avatar cũ thì hiển thị luôn
-                    // avatarUrl: userObj.avatarUrl || ""
+                    phone: userObj.phone || userObj.phoneNumber || "",
+                    bio: userObj.bio || "",
+                    address: userObj.address || ""
                 }));
+
                 if (userObj.avatarUrl) {
                     setAvatarPreview(userObj.avatarUrl);
                 }
-            } catch (e) {
-                console.error("Error parsing user data", e);
+            } catch (error) {
+                console.error("Failed to fetch user data", error);
+
+                // Fallback: nếu lỗi API thì thử lấy từ localStorage (option)
+                const storedUser = localStorage.getItem("user");
+                if (storedUser) {
+                    try {
+                        const userObj = JSON.parse(storedUser);
+                        setFormData(prev => ({
+                            ...prev,
+                            fullName: userObj.fullName || "",
+                        }));
+                    } catch (e) {
+                        // ignore
+                    }
+                }
             }
-        }
+        };
+
+        fetchUserData();
     }, [router]);
 
     const handleSkip = () => {
@@ -99,25 +152,27 @@ export default function OnboardingPage() {
         setIsLoading(true)
 
         try {
-            // [TODO: Upload Avatar]
-            // Ở đây bạn sẽ gọi API upload ảnh lên R2/S3 trước
-            // const uploadRes = await uploadApi.upload(avatarFile);
-            // const finalAvatarUrl = uploadRes.url;
+            // Tạo FormData để gửi lên server
+            const payload = new FormData();
+            payload.append("fullName", formData.fullName);
+            payload.append("phone", formData.phone);
+            payload.append("bio", formData.bio);
+            // payload.append("address", formData.address); // Backend chưa có field này trong DTO onboarding, check lại nếu cần
 
-            // Tạm thời mình bỏ qua bước upload file thật và gửi thông tin text trước
-            const payload = {
-                ...formData,
-                isProfileCompleted: true,
-                // avatarUrl: finalAvatarUrl // Khi nào có API upload thì uncomment dòng này
-            };
+            if (avatarFile) {
+                payload.append("avatar", avatarFile);
+            }
 
-            const updatedUser = await userApi.updateProfile(payload);
+            // Gọi API Onboarding
+            const updatedUser = await userApi.onboarding(payload);
 
-            // Cập nhật LocalStorage
-            const currentUser = localStorage.getItem("user");
-            if (currentUser) {
-                const userObj = JSON.parse(currentUser);
-                localStorage.setItem("user", JSON.stringify({ ...userObj, ...updatedUser }));
+            // Cập nhật lại LocalStorage với thông tin mới nhất từ server trả về
+            const currentUserStr = localStorage.getItem("user");
+            if (currentUserStr) {
+                const currentUser = JSON.parse(currentUserStr);
+                localStorage.setItem("user", JSON.stringify({ ...currentUser, ...updatedUser }));
+            } else {
+                localStorage.setItem("user", JSON.stringify(updatedUser));
             }
 
             toast.success("Hồ sơ đã được cập nhật!");

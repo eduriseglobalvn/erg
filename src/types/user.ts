@@ -8,8 +8,9 @@ export interface User {
     avatarUrl?: string;
     role: string;
     isProfileCompleted: boolean;
+    status: string;
     // Thêm các trường khác tùy entity của bạn (jobPosition, address, etc...)
-    phoneNumber?: string;
+    phone?: string;
     bio?: string;
     address?: string;
     createdAt: string;
@@ -18,7 +19,7 @@ export interface User {
 // 2. Payload cập nhật hồ sơ
 export interface UpdateProfilePayload {
     fullName?: string;
-    phoneNumber?: string;
+    phone?: string;
     bio?: string;
     address?: string;
     avatarUrl?: string;

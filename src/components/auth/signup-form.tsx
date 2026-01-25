@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "sonner"
-import { Loader2 } from "lucide-react"
+import { Loader2, Eye, EyeOff } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { authApi } from "@/services"
@@ -24,6 +24,8 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
         password: "",
         confirmPassword: ""
     })
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -93,25 +95,65 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="password">Mật khẩu</Label>
-                                <Input
-                                    id="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    type="password"
-                                    required
-                                    disabled={isLoading}
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        type={showPassword ? "text" : "password"}
+                                        required
+                                        disabled={isLoading}
+                                        className="pr-10"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        tabIndex={-1}
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-muted-foreground" />
+                                        )}
+                                        <span className="sr-only">
+                                            {showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                                        </span>
+                                    </Button>
+                                </div>
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
-                                <Input
-                                    id="confirmPassword"
-                                    value={formData.confirmPassword}
-                                    onChange={handleChange}
-                                    type="password"
-                                    required
-                                    disabled={isLoading}
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="confirmPassword"
+                                        value={formData.confirmPassword}
+                                        onChange={handleChange}
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        required
+                                        disabled={isLoading}
+                                        className="pr-10"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        tabIndex={-1}
+                                    >
+                                        {showConfirmPassword ? (
+                                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-muted-foreground" />
+                                        )}
+                                        <span className="sr-only">
+                                            {showConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                                        </span>
+                                    </Button>
+                                </div>
                             </div>
                             <Button type="submit" className="w-full" disabled={isLoading}>
                                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

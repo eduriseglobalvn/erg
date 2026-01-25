@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { usePathname } from "next/navigation"
 import {
     AudioWaveform,
     BookOpen,
@@ -184,11 +185,11 @@ const data = {
     ]
 }
 
-// --- COMPONENT HIỂN THỊ MENU ---
-// Phần này xử lý logic: Nếu có menu con thì hiện mũi tên, không có thì hiện link thường
+// --- COMPONENT GROUP MENU CHÍNH (Dùng cho Quản lý bài viết, Công cụ tự động) ---
 function NavMain({
     items,
-    label
+    label,
+    pathname
 }: {
     items: {
         title: string
@@ -202,7 +203,18 @@ function NavMain({
         }[]
     }[]
     label?: string
+    pathname?: string
 }) {
+    // Helper để check active state
+    const isItemActive = (url: string) => {
+        if (!pathname) return false
+        if (url === "#") return false // Collapsible items không được active
+        if (url === "/") {
+            return pathname === "/" || pathname === ""
+        }
+        return pathname.startsWith(url)
+    }
+
     return (
         <SidebarGroup>
             {/* Hiển thị tên nhóm menu (ví dụ: QUẢN LÝ NỘI DUNG) */}
@@ -231,7 +243,10 @@ function NavMain({
                                         <SidebarMenuSub>
                                             {item.items.map((subItem) => (
                                                 <SidebarMenuSubItem key={subItem.title}>
-                                                    <SidebarMenuSubButton asChild>
+                                                    <SidebarMenuSubButton
+                                                        asChild
+                                                        isActive={isItemActive(subItem.url)}
+                                                    >
                                                         <a href={subItem.url}>
                                                             {subItem.icon && <subItem.icon className="mr-2 h-4 w-4" />}
                                                             <span>{subItem.title}</span>
@@ -244,7 +259,11 @@ function NavMain({
                                 </>
                             ) : (
                                 /* TRƯỜNG HỢP KHÁC: Nếu không có menu con, chỉ là link thường */
-                                <SidebarMenuButton asChild tooltip={item.title} isActive={item.isActive}>
+                                <SidebarMenuButton
+                                    asChild
+                                    tooltip={item.title}
+                                    isActive={isItemActive(item.url)}
+                                >
                                     <a href={item.url}>
                                         {item.icon && <item.icon />}
                                         <span>{item.title}</span>
@@ -261,6 +280,8 @@ function NavMain({
 
 // --- PHẦN CHÍNH CỦA THANH SIDEBAR ---
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const pathname = usePathname() // Hook để lấy URL hiện tại
+
     const [user, setUser] = React.useState({
         name: "Admin",
         email: "admin@congty.com",
@@ -281,6 +302,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         }
     }, [])
 
+    // Helper function để check active state
+    const isItemActive = (url: string) => {
+        if (url === "/") {
+            return pathname === "/" || pathname === ""
+        }
+        return pathname?.startsWith(url) || false
+    }
+
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
@@ -294,7 +323,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenu>
                         {data.navDashboard.map((item) => (
                             <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton asChild isActive={item.isActive} tooltip={item.title}>
+                                <SidebarMenuButton
+                                    asChild
+                                    isActive={isItemActive(item.url)}
+                                    tooltip={item.title}
+                                >
                                     <a href={item.url}>
                                         <item.icon />
                                         <span>{item.title}</span>
@@ -305,11 +338,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </SidebarMenu>
                 </SidebarGroup>
 
-                {/* 2. Nhóm Quản lý bài viết (Dùng component NavMain đã viết ở trên) */}
-                <NavMain items={data.navContent} label="Quản lý nội dung" />
+                {/* 2. Nhóm Quản lý bài viết */}
+                <NavMain items={data.navContent} label="Quản lý nội dung" pathname={pathname} />
 
                 {/* 3. Nhóm Công cụ tự động */}
-                <NavMain items={data.navAutomation} label="Công cụ tự động" />
+                <NavMain items={data.navAutomation} label="Công cụ tự động" pathname={pathname} />
 
                 {/* 4. Nhóm Cài đặt hệ thống */}
                 <SidebarGroup>
@@ -317,7 +350,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenu>
                         {data.navSystem.map((item) => (
                             <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton asChild tooltip={item.title}>
+                                <SidebarMenuButton
+                                    asChild
+                                    tooltip={item.title}
+                                    isActive={isItemActive(item.url)}
+                                >
                                     <a href={item.url}>
                                         <item.icon />
                                         <span>{item.title}</span>

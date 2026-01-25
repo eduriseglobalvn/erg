@@ -4,11 +4,11 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "sonner"
-import { Loader2 } from "lucide-react"
+import { Loader2, Eye, EyeOff } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 // Import Service API
-import { authApi } from "@/services"
+import { authApi, httpClient, handleLogout } from "@/services"
 
 // Import UI Components
 import { Button } from "@/components/admin/ui/button"
@@ -32,6 +32,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
     const [isLoading, setIsLoading] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -59,22 +60,34 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 
                 toast.success("Đăng nhập thành công!");
 
-                // [MỚI] Kiểm tra profile completed và cập nhật thông tin user mới nhất
+                // [MỚI] Gọi /sessions/current để lấy permissions và kiểm tra status
                 try {
-                    const userRes = await authApi.getProfile();
-                    const user = userRes.data || userRes;
+                    const sessionRes: any = await httpClient('/sessions/current', {
+                        method: 'GET',
+                        requireAuth: true,
+                    });
+                    const sessionData = sessionRes.data || sessionRes;
 
-                    if (user) {
-                        // Cập nhật lại localStorage với thông tin đầy đủ nhất (có isProfileCompleted, v.v.)
-                        localStorage.setItem("user", JSON.stringify(user));
-                    }
+                    if (sessionData.user) {
+                        // Lưu user info đầy đủ
+                        localStorage.setItem("user", JSON.stringify(sessionData.user));
 
-                    if (user && !user.isProfileCompleted) {
-                        window.location.href = "/onboarding";
+                        // Lưu permissions và roles
+                        if (sessionData.accessControl) {
+                            const permissions = sessionData.accessControl.permissions || [];
+                            const roles = sessionData.accessControl.roles || [];
+
+                            localStorage.setItem('permissions', JSON.stringify(permissions));
+                            localStorage.setItem('roles', JSON.stringify(roles));
+                        }
+
+                        // Redirect về trang chủ
+                        window.location.href = "/";
                     } else {
                         window.location.href = "/";
                     }
                 } catch (e) {
+                    console.error("Failed to fetch session:", e);
                     window.location.href = "/";
                 }
             } else {
@@ -150,20 +163,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                             {/* Password */}
                             <div className="grid gap-2 relative">
                                 <Label htmlFor="password">Mật khẩu</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    disabled={isLoading}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                            e.preventDefault()
-                                            handleSubmit(e as unknown as React.FormEvent)
-                                        }
-                                    }}
-                                />
                                 <Link
                                     href="/auth/forgot-password"
                                     className="absolute right-0 top-0 text-sm underline-offset-4 hover:underline"
@@ -171,6 +170,41 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                 >
                                     Quên mật khẩu?
                                 </Link>
+
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        type={showPassword ? "text" : "password"}
+                                        required
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        disabled={isLoading}
+                                        className="pr-10" // Padding right cho icon
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.preventDefault()
+                                                handleSubmit(e as unknown as React.FormEvent)
+                                            }
+                                        }}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        tabIndex={-1}
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-muted-foreground" />
+                                        )}
+                                        <span className="sr-only">
+                                            {showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                                        </span>
+                                    </Button>
+                                </div>
                             </div>
 
                             <Button type="submit" className="w-full" disabled={isLoading}>

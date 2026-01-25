@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { authApi } from "@/services"
+import { authApi, httpClient, handleLogout } from "@/services"
 import { Button } from "@/components/admin/ui/button"
 import {
     Card, CardContent, CardDescription, CardHeader, CardTitle
@@ -61,21 +61,34 @@ export function OTPForm({ className, ...props }: React.ComponentPropsWithoutRef<
 
                 toast.success("Kích hoạt thành công!")
 
-                // 2. Kiểm tra trạng thái hồ sơ và chuyển hướng
+                // 2. Gọi /sessions/current để lấy permissions và kiểm tra trạng thái
                 try {
-                    const userRes = await authApi.getProfile();
-                    const user = userRes.data || userRes;
+                    const sessionRes: any = await httpClient('/sessions/current', {
+                        method: 'GET',
+                        requireAuth: true,
+                    });
+                    const sessionData = sessionRes.data || sessionRes;
 
-                    if (user) {
-                        localStorage.setItem("user", JSON.stringify(user));
-                    }
+                    if (sessionData.user) {
+                        // Lưu user info đầy đủ
+                        localStorage.setItem("user", JSON.stringify(sessionData.user));
 
-                    if (user && !user.isProfileCompleted) {
-                        window.location.href = "/onboarding";
+                        // Lưu permissions và roles
+                        if (sessionData.accessControl) {
+                            const permissions = sessionData.accessControl.permissions || [];
+                            const roles = sessionData.accessControl.roles || [];
+
+                            localStorage.setItem('permissions', JSON.stringify(permissions));
+                            localStorage.setItem('roles', JSON.stringify(roles));
+                        }
+
+                        // Redirect về trang chủ
+                        window.location.href = "/";
                     } else {
                         window.location.href = "/";
                     }
                 } catch (e) {
+                    console.error("Failed to fetch session:", e);
                     window.location.href = "/";
                 }
 

@@ -1,8 +1,14 @@
 // src/services/http-client.ts
 "use client";
 
-// Định nghĩa URL Backend (nên lấy từ biến môi trường)
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+/**
+ * HTTP Client với Next.js Proxy
+ * 
+ * ✅ Tất cả requests đều đi qua Next.js proxy tại /api/*
+ * ✅ Next.js tự động forward sang Backend (cấu hình trong next.config.ts)
+ * ✅ Same-Origin requests → Bypass CORS, AdBlock
+ * ✅ Auto refresh token khi hết hạn
+ */
 
 interface CustomRequestInit extends RequestInit {
     requireAuth?: boolean;
@@ -52,7 +58,21 @@ export const httpClient = async <T>(
         return headers;
     };
 
-    const url = `${BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+    // ✅ Transform endpoint to always start with /api/
+    // This ensures absolute paths from root
+    let url: string;
+    if (endpoint.startsWith('/api/')) {
+        // Already has /api/ prefix
+        url = endpoint;
+    } else if (endpoint.startsWith('/')) {
+        // Has / but not /api/, add /api prefix
+        url = `/api${endpoint}`;
+    } else {
+        // No leading /, add /api/ prefix
+        url = `/api/${endpoint}`;
+    }
+
+    console.log('[httpClient] Endpoint:', endpoint, '→ URL:', url);
 
     try {
         // --- BƯỚC 1: GỬI REQUEST LẦN ĐẦU ---
@@ -95,8 +115,8 @@ export const httpClient = async <T>(
 
             if (refreshToken && userId) {
                 try {
-                    // Gọi API Refresh (Lưu ý: Gọi fetch thuần để tránh lặp vô tận)
-                    const refreshResponse = await fetch(`${BASE_URL}/auth/refresh`, {
+                    // ✅ Gọi API Refresh qua proxy
+                    const refreshResponse = await fetch('/api/auth/refresh', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ userId, refreshToken }),
@@ -133,7 +153,6 @@ export const httpClient = async <T>(
         }
 
         // Các lỗi khác (403, 404, 500...)
-        // Các lỗi khác (403, 404, 500...)
         const errorData = await response.json().catch(() => ({}));
         // [MODIFIED] Trả về full errorData message để frontend handle logic
         throw new Error(errorData.message || JSON.stringify(errorData) || `HTTP Error ${response.status}`);
@@ -150,7 +169,9 @@ export const handleLogout = () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('userId');
-        localStorage.removeItem('user'); // Nếu có lưu thông tin user
+        localStorage.removeItem('user');
+        localStorage.removeItem('permissions');
+        localStorage.removeItem('roles');
 
         // 2. Chuyển hướng về trang Login
         // Dùng window.location để force reload lại trạng thái trắng tinh

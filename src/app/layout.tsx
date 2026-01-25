@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { headers } from "next/headers";
+import { AnalyticsTracker } from "@/components/analytics-tracker";
 
 const inter = Inter({ subsets: ["latin", "vietnamese"] });
 
@@ -37,7 +38,7 @@ export default async function RootLayout(props: {
     // 1. Lấy Hostname thực tế từ Request
     const headerList = await headers();
     let hostname = headerList.get("host") || "";
-    
+
     // 2. Lấy Root Domain (Quan trọng để tách subdomain)
     // Local: erg.edu.local | Prod: erg.edu.vn
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'erg.edu.local';
@@ -62,10 +63,10 @@ export default async function RootLayout(props: {
         case 'dientoandammay': content = props.dientoandammay; break;
         case 'tuyendung': content = props.tuyendung; break;
         case 'admin': content = props.admin; break;
-        case '': 
-        case 'www': 
+        case '':
+        case 'www':
             content = props.main; break;
-        default: 
+        default:
             content = props.main; // Fallback về trang chủ nếu subdomain lạ
     }
 
@@ -78,9 +79,11 @@ export default async function RootLayout(props: {
                 className={`${inter.className} bg-gray-50 text-slate-800 antialiased flex flex-col min-h-screen overflow-x-hidden`}
                 suppressHydrationWarning={true}
             >
+                <AnalyticsTracker />
+
                 {/* Render Slot tương ứng */}
                 {content}
-                
+
                 {/* props.children là bắt buộc trong cấu trúc Next.js nhưng sẽ rỗng ở đây */}
                 {/* {props.children} */}
             </body>

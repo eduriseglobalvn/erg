@@ -62,5 +62,12 @@ export const authApi = {
             method: 'GET',
             requireAuth: true,
         });
+    },
+
+    logout: () => {
+        return httpClient<any>('/auth/logout', {
+            method: 'POST',
+            requireAuth: true,
+        });
     }
 };

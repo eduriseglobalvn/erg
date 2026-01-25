@@ -59,6 +59,13 @@ export default function OnboardingPage() {
             if (storedUser) {
                 try {
                     const userObj = JSON.parse(storedUser);
+
+                    // [QUAN TRỌNG] Nếu đã hoàn thành hồ sơ -> Redirect về Dashboard ngay
+                    if (userObj.isProfileCompleted) {
+                        router.push("/");
+                        return;
+                    }
+
                     if (userObj.fullName) {
                         setFormData(prev => ({
                             ...prev,
@@ -69,8 +76,11 @@ export default function OnboardingPage() {
                         }));
                         if (userObj.avatarUrl) setAvatarPreview(userObj.avatarUrl);
 
-                        // Nếu data đã đủ thì có thể skip fetch để tránh gọi /me dư thừa
-                        // return; 
+                        // Nếu data đã đủ (có tên và sđt) thì SKIP fetch để tránh gọi /me dư thừa
+                        // Vì AuthGuard đã vừa fetch mới nhất rồi
+                        if (userObj.fullName || userObj.phone) {
+                            return;
+                        }
                     }
                 } catch (e) { }
             }
@@ -121,7 +131,9 @@ export default function OnboardingPage() {
     }, [router]);
 
     const handleSkip = () => {
-        toast.info("Bạn có thể cập nhật hồ sơ sau trong phần Cài đặt");
+        // Lưu cờ vào sessionStorage (sẽ mất khi đóng tab/browser)
+        sessionStorage.setItem("skipOnboarding", "true");
+        toast.info("Đã bỏ qua tạm thời. Bạn có thể cập nhật sau.");
         router.push("/");
     }
 
@@ -168,15 +180,23 @@ export default function OnboardingPage() {
 
             // Cập nhật lại LocalStorage với thông tin mới nhất từ server trả về
             const currentUserStr = localStorage.getItem("user");
+            let newUserData = updatedUser;
+
+            // Đảm bảo cờ isProfileCompleted luôn là true sau khi update thành công
+            if (!newUserData.isProfileCompleted) {
+                newUserData = { ...newUserData, isProfileCompleted: true };
+            }
+
             if (currentUserStr) {
                 const currentUser = JSON.parse(currentUserStr);
-                localStorage.setItem("user", JSON.stringify({ ...currentUser, ...updatedUser }));
+                localStorage.setItem("user", JSON.stringify({ ...currentUser, ...newUserData }));
             } else {
-                localStorage.setItem("user", JSON.stringify(updatedUser));
+                localStorage.setItem("user", JSON.stringify(newUserData));
             }
 
             toast.success("Hồ sơ đã được cập nhật!");
-            router.push("/")
+            // Full reload để AdminAuthGuard fetch lại data mới nhất từ server clean nhất
+            window.location.href = "/";
         } catch (error: any) {
             console.error(error);
             toast.error(error.message || "Cập nhật thất bại");

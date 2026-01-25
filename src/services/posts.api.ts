@@ -22,4 +22,7 @@ export const postsApi = {
 
     create: (data: any) => httpClient('/posts', { method: 'POST', body: JSON.stringify(data) }),
     update: (id: string, data: any) => httpClient(`/posts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    getAll: (page = 1, limit = 10) => {
+        return httpClient<any>(`/posts?page=${page}&limit=${limit}`, { method: 'GET' });
+    }
 };

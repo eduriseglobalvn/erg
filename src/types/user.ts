@@ -8,7 +8,7 @@ export interface User {
     avatarUrl?: string;
     role: string;
     isProfileCompleted: boolean;
-    status: string;
+    status: 'PENDING' | 'ACTIVE' | 'BANNED' | 'BLOCKED';
     // Thêm các trường khác tùy entity của bạn (jobPosition, address, etc...)
     phone?: string;
     bio?: string;

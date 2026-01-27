@@ -1,8 +1,10 @@
 "use client"
 
 import * as React from "react"
+import { useQuery } from "@tanstack/react-query"
 import { TrendingUp } from "lucide-react"
 import { Label, Pie, PieChart } from "recharts"
+import { analyticsApi } from "@/services/analytics.api"
 
 import {
     Card,
@@ -19,13 +21,8 @@ import {
     ChartTooltipContent,
 } from "@/components/admin/ui/chart"
 
-const chartData = [
-    { category: "Tin Giáo dục", count: 275, fill: "#2563eb" },
-    { category: "Mẹo & Thủ thuật", count: 200, fill: "#60a5fa" },
-    { category: "Hoạt động", count: 287, fill: "#3b82f6" },
-    { category: "Tuyển dụng", count: 173, fill: "#93c5fd" },
-    { category: "Khác", count: 190, fill: "#dbeafe" },
-]
+// Statics removed, will be dynamic from useQuery analytics
+
 
 const chartConfig = {
     count: {
@@ -54,9 +51,25 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export function AnalyticsPieChart() {
+    const { data: summaryData } = useQuery({
+        queryKey: ['analytics', 'posts', 'summary', '90d'],
+        queryFn: () => analyticsApi.getPostSummary('90d').then(res => res.data)
+    })
+
+    const chartData = React.useMemo(() => {
+        const data = summaryData?.categoryDistribution || [];
+        const colors = ["#2563eb", "#60a5fa", "#3b82f6", "#93c5fd", "#dbeafe"];
+        return data.map((item, idx) => ({
+            ...item,
+            fill: colors[idx % colors.length]
+        }));
+    }, [summaryData])
+
     const totalPosts = React.useMemo(() => {
         return chartData.reduce((acc, curr) => acc + curr.count, 0)
-    }, [])
+    }, [chartData])
+
+
 
     return (
         <Card className="flex flex-col">

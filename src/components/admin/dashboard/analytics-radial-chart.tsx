@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useQuery } from "@tanstack/react-query"
 import { TrendingUp } from "lucide-react"
 import {
     Label,
@@ -32,30 +33,19 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export function AnalyticsRadialChart() {
-    const [totalUsers, setTotalUsers] = React.useState(0)
-    const [isLoading, setIsLoading] = React.useState(true)
-
-    React.useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                // Fetch users (chỉ cần lấy meta.total)
-                const res: any = await userApi.getAllUsers(1, 1);
-                const meta = res?.data?.meta || res?.meta;
-                if (meta?.total) {
-                    setTotalUsers(meta.total);
-                }
-            } catch (error) {
-                console.error("Failed to fetch user count", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchUsers();
-    }, []);
+    const { data: totalUsers = 0, isLoading } = useQuery({
+        queryKey: ['analytics', 'users', 'count'],
+        queryFn: async () => {
+            const res: any = await userApi.getAllUsers(1, 1);
+            const meta = res?.data?.meta || res?.meta;
+            return meta?.total || 0;
+        }
+    })
 
     const chartData = [
         { browser: "users", count: totalUsers, fill: "#2563eb" },
     ]
+
 
     return (
         <Card className="flex flex-col">

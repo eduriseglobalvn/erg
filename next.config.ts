@@ -46,6 +46,17 @@ const nextConfig: NextConfig = {
     },
 
     devIndicators: false,
+
+    // Tối ưu bundle size cho các thư viện nặng (Barrel imports)
+    experimental: {
+        optimizePackageImports: [
+            'recharts',
+            'lucide-react',
+            '@tiptap/react',
+            'lodash'
+        ],
+    },
+
     images: {
         minimumCacheTTL: 60,
         unoptimized: true,

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { EditorContent, EditorContext, useEditor, Extension } from "@tiptap/react"
 
 // --- Tiptap Core Extensions ---
@@ -64,7 +64,7 @@ import { AIBubbleMenu } from "@/components/admin/shared/editor/tiptap-ui/ai-bubb
 import { ArrowLeftIcon } from "@/components/admin/shared/editor/tiptap-icons/arrow-left-icon"
 import { HighlighterIcon } from "@/components/admin/shared/editor/tiptap-icons/highlighter-icon"
 import { LinkIcon } from "@/components/admin/shared/editor/tiptap-icons/link-icon"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, Loader2, Sparkles } from "lucide-react"
 
 // --- Hooks ---
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
@@ -112,11 +112,11 @@ const FontSize = Extension.create({
 })
 
 const MainToolbarContent = ({
-                                onHighlighterClick,
-                                onLinkClick,
-                                isMobile,
-                                editor,
-                            }: {
+    onHighlighterClick,
+    onLinkClick,
+    isMobile,
+    editor,
+}: {
     onHighlighterClick: () => void
     onLinkClick: () => void
     isMobile: boolean
@@ -253,9 +253,9 @@ const MainToolbarContent = ({
 }
 
 const MobileToolbarContent = ({
-                                  type,
-                                  onBack,
-                              }: {
+    type,
+    onBack,
+}: {
     type: "highlighter" | "link"
     onBack: () => void
 }) => (
@@ -288,19 +288,48 @@ interface SimpleEditorProps {
     onRefine?: (text: string, prompt: string) => Promise<string | null>;
     title?: string;
     onTitleChange?: (value: string) => void;
+    isRefining?: boolean;
 }
 
 export function SimpleEditor({
-                                 initialContent = "",
-                                 onEditorReady,
-                                 onRefine,
-                                 title,           // [NEW]
-                                 onTitleChange    // [NEW]
-                             }: SimpleEditorProps) {
+    initialContent = "",
+    onEditorReady,
+    onRefine,
+    title = "",
+    onTitleChange,
+    isRefining
+}: SimpleEditorProps) {
     const isMobile = useIsBreakpoint()
     const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
         "main"
     )
+
+    // [OPTIMIZATION] Dùng local state để gõ title mượt hơn
+    const [localTitle, setLocalTitle] = useState(title);
+    const syncTimeoutRef = useRef<any>(null);
+
+    // Đồng bộ ngược từ Prop vào Local State 
+    // Chỉ cập nhật khi tiêu đề thực sự khác biệt (để AI có thể đổ dữ liệu vào)
+    useEffect(() => {
+        if (title !== localTitle && title !== "") {
+            setLocalTitle(title);
+        }
+    }, [title]);
+
+    // [NEW] Debounced sync lên cha để tránh giật lag toàn bộ trang
+    const debouncedSyncTitle = (val: string) => {
+        if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+        syncTimeoutRef.current = setTimeout(() => {
+            if (onTitleChange) onTitleChange(val);
+        }, 1000); // Tăng lên 1s để gõ cho sướng, không làm phiền trang mẹ quá nhiều
+    };
+
+    // Dọn dẹp timeout
+    useEffect(() => {
+        return () => {
+            if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+        };
+    }, []);
 
     const editor = useEditor({
         immediatelyRender: false,
@@ -376,19 +405,47 @@ export function SimpleEditor({
 
                 {/* VÙNG SCROLL CHỨA CẢ TITLE VÀ EDITOR */}
                 <div className="flex-1 overflow-y-auto scroll-smooth relative">
+                    {/* Refining Overlay */}
+                    {isRefining && (
+                        <div className="absolute inset-0 z-[60] bg-white/50 dark:bg-zinc-900/50 backdrop-blur-[1px] flex items-center justify-center">
+                            <div className="flex flex-col items-center gap-2 bg-white dark:bg-zinc-800 p-4 rounded-xl shadow-2xl border animate-in fade-in zoom-in duration-200">
+                                <Loader2 className="h-8 w-8 text-purple-600 animate-spin" />
+                                <span className="text-sm font-medium text-purple-600">AI đang xử lý văn bản...</span>
+                            </div>
+                        </div>
+                    )}
+
                     {editor && onRefine && (
                         <AIBubbleMenu editor={editor} onRefine={onRefine} />
                     )}
 
-                    <div className="max-w-[850px] mx-auto px-8 pt-12 pb-32 min-h-full">
+                    <div className="max-w-[1100px] mx-auto px-12 pt-16 pb-32 min-h-full">
 
-                        {/* [NEW] INPUT TITLE ĐƯỢC ĐẶT Ở ĐÂY */}
+                        {/* [NEW] TEXTAREA TITLE - Cực mượt với Debounced Sync */}
                         {onTitleChange && (
-                            <input
-                                className="text-4xl font-bold w-full outline-none bg-transparent placeholder:text-gray-300 text-black dark:text-white mb-6 border-none p-0 focus:ring-0"
+                            <textarea
+                                className="text-4xl font-extrabold w-full outline-none bg-transparent placeholder:text-gray-300 text-black dark:text-white mb-8 border-none p-0 focus:ring-0 resize-none overflow-hidden min-h-[50px] leading-tight text-center"
                                 placeholder="Tiêu đề bài viết..."
-                                value={title}
-                                onChange={(e) => onTitleChange(e.target.value)}
+                                value={localTitle}
+                                rows={1}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setLocalTitle(val); // HIỂN THỊ CỰC NHANH (KHÔNG DELAY)
+                                    debouncedSyncTitle(val); // Đợi gõ xong mới báo lên cha
+
+                                    // Auto resize height
+                                    e.target.style.height = 'auto';
+                                    e.target.style.height = e.target.scrollHeight + 'px';
+                                }}
+                                onBlur={() => {
+                                    // Khi blur thì sync ngay lập tức để đảm bảo dữ liệu mới nhất
+                                    if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+                                    onTitleChange(localTitle);
+                                }}
+                                onFocus={(e) => {
+                                    e.target.style.height = 'auto';
+                                    e.target.style.height = e.target.scrollHeight + 'px';
+                                }}
                             />
                         )}
 

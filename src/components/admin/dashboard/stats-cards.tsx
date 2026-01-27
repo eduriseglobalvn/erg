@@ -2,37 +2,49 @@
 
 import { TrendingUp, Users, FileText, Activity, Globe } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card"
-import { analyticsApi } from "@/services/analytics.api"
-import { useState, useEffect } from "react"
+import { analyticsApi, DashboardOverview } from "@/services/analytics.api"
+import { useQuery } from "@tanstack/react-query"
+import { Skeleton } from "@/components/admin/ui/skeleton"
+
 
 export function StatsCards() {
-    const [stats, setStats] = useState({
-        totalVisits: 0,
-        activeUsers: 0,
-        newUsers: 0,
-        totalPosts: 0
+    const { data: rawData, isLoading: isLoadingOverview } = useQuery({
+        queryKey: ['admin', 'overview'],
+        queryFn: async () => {
+            const res = await analyticsApi.getOverview()
+            return 'data' in res ? (res as any).data : res
+        }
     })
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Gọi API Analytics Overview
-                const res: any = await analyticsApi.getOverview();
-                const data = res?.data || res || {};
+    const { data: postData, isLoading: isLoadingSummary } = useQuery({
+        queryKey: ['analytics', 'posts', 'summary', '90d'],
+        queryFn: () => analyticsApi.getPostSummary('90d').then(res => res.data)
+    })
 
-                setStats({
-                    totalVisits: data.totalVisits || 0,
-                    activeUsers: data.activeUsers || 0,
-                    newUsers: data.newUsers || 0,
-                    totalPosts: data.totalPosts || 0
-                });
+    const isLoading = isLoadingOverview || isLoadingSummary
+    const stats = rawData || {}
+    const postStats = postData?.overview || { totalPosts: 0, publishedPosts: 0, draftPosts: 0 }
 
-            } catch (e) {
-                console.error("Failed to fetch dashboard overview", e)
-            }
-        }
-        fetchData();
-    }, [])
+
+
+    if (isLoading) {
+        return (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                    <Card key={i}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <Skeleton className="h-4 w-[100px]" />
+                            <Skeleton className="h-4 w-4 rounded-full" />
+                        </CardHeader>
+                        <CardContent>
+                            <Skeleton className="h-8 w-[60px] mb-1" />
+                            <Skeleton className="h-3 w-[140px]" />
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+        )
+    }
 
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -43,7 +55,7 @@ export function StatsCards() {
                     <Globe className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">{stats.totalVisits.toLocaleString()}</div>
+                    <div className="text-2xl font-bold">{(stats.totalVisits || 0).toLocaleString()}</div>
                     <p className="text-xs text-muted-foreground mt-1">Lượt truy cập tổng hợp</p>
                 </CardContent>
             </Card>
@@ -55,32 +67,34 @@ export function StatsCards() {
                     <Activity className="h-4 w-4 text-green-500" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">{stats.activeUsers.toLocaleString()}</div>
+                    <div className="text-2xl font-bold">{(stats.activeUsers || 0).toLocaleString()}</div>
                     <p className="text-xs text-muted-foreground mt-1">Người dùng hoạt động</p>
                 </CardContent>
             </Card>
 
-            {/* Card 3: New Users */}
+            {/* Card 3: Total Posts (Mới từ API Insight) */}
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">New Users</CardTitle>
-                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <CardTitle className="text-sm font-medium text-muted-foreground">Total Posts</CardTitle>
+                    <FileText className="h-4 w-4 text-blue-500" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">{stats.newUsers.toLocaleString()}</div>
-                    <p className="text-xs text-muted-foreground mt-1">Đăng ký mới kỳ này</p>
+                    <div className="text-2xl font-bold">{(postStats.totalPosts).toLocaleString()}</div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                        <span className="text-green-600 font-bold">{postStats.publishedPosts}</span> đăng - <span className="text-orange-500 font-bold">{postStats.draftPosts}</span> nháp
+                    </p>
                 </CardContent>
             </Card>
 
-            {/* Card 4: Posts Placeholder (Example) */}
+            {/* Card 4: System Health */}
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">System Health</CardTitle>
-                    <TrendingUp className="h-4 w-4 text-green-500" />
+                    <CardTitle className="text-sm font-medium text-muted-foreground">Active Sessions</CardTitle>
+                    <Activity className="h-4 w-4 text-green-500" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold text-green-600">Good</div>
-                    <p className="text-xs text-muted-foreground mt-1">Hệ thống ổn định</p>
+                    <div className="text-2xl font-bold">{(stats.activeUsers || 0).toLocaleString()}</div>
+                    <p className="text-xs text-muted-foreground mt-1">Phiên đang hoạt động</p>
                 </CardContent>
             </Card>
         </div>

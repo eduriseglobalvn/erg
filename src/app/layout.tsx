@@ -5,6 +5,7 @@ import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { headers } from "next/headers";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
+import { QueryProvider } from "@/providers/query-provider";
 
 const inter = Inter({ subsets: ["latin", "vietnamese"] });
 
@@ -82,7 +83,9 @@ export default async function RootLayout(props: {
                 <AnalyticsTracker />
 
                 {/* Render Slot tương ứng */}
-                {content}
+                <QueryProvider>
+                    {content}
+                </QueryProvider>
 
                 {/* props.children là bắt buộc trong cấu trúc Next.js nhưng sẽ rỗng ở đây */}
                 {/* {props.children} */}

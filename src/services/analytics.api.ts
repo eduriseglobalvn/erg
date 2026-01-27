@@ -28,6 +28,26 @@ export interface SessionStartResponse {
     timestamp: string;
 }
 
+export interface PostSummaryResponse {
+    statusCode: number;
+    data: {
+        monthlyStats: {
+            month: string;
+            posts: number;
+            views: number;
+        }[];
+        categoryDistribution: {
+            category: string;
+            count: number;
+        }[];
+        overview: {
+            totalPosts: number;
+            publishedPosts: number;
+            draftPosts: number;
+        };
+    };
+}
+
 // ========== Analytics API ==========
 
 /**
@@ -59,6 +79,13 @@ export const analyticsApi = {
      */
     getStats: (range: string = "7d") => {
         return httpClient<VisitorStatsResponse>(`/api/insight/stats?range=${range}`);
+    },
+
+    /**
+     * GET /api/insight/posts/summary - Post analytics summary
+     */
+    getPostSummary: (range: string = "90d") => {
+        return httpClient<PostSummaryResponse>(`/api/insight/posts/summary?range=${range}`);
     },
 
     // ========== USER TRACKING APIs (Public - Bypass AdBlock) ==========

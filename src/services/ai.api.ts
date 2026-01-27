@@ -24,9 +24,48 @@ export const aiApi = {
 
     // 3. Refine: Token cũng tự động có
     refine: (data: { text: string; instruction: string }) => {
-        return httpClient<{ result: string }>('/ai-content/refine', {
+        return httpClient<{ data: { refinedContent: string } }>('/ai-content/refine', {
             method: 'POST',
             body: JSON.stringify(data),
         });
     },
+
+    // 4. AI Key Management
+    getMyKeys: () => {
+        return httpClient<{
+            data: Array<{
+                id: string;
+                key: string;
+                label: string | null;
+                projectId: string | null;
+                status: 'active' | 'rate_limited' | 'quota_exceeded' | 'error';
+                todayUsage: number;
+                maxDailyQuota: number;
+                usageCount: number;
+                lastUsedAt: string | null;
+                cooldownUntil: string | null;
+                lastErrorMessage: string | null;
+            }>
+        }>('/ai-content/keys/my');
+    },
+
+    saveKey: (data: {
+        id?: string;
+        key: string;
+        label?: string;
+        projectId?: string;
+        maxDailyQuota?: number;
+        type?: 'private' | 'public';
+    }) => {
+        return httpClient<any>('/ai-content/keys', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
+
+    deleteKey: (id: string) => {
+        return httpClient<any>(`/ai-content/keys/${id}`, {
+            method: 'DELETE',
+        });
+    }
 };

@@ -1,7 +1,9 @@
 "use client"
 
 import * as React from "react"
+import { useQuery } from "@tanstack/react-query"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Skeleton } from "@/components/admin/ui/skeleton"
 
 import {
     Card,
@@ -42,26 +44,15 @@ const timeRangeLabels = {
 
 export function VisitorsChart() {
     const [timeRange, setTimeRange] = React.useState<"90d" | "30d" | "7d">("90d")
-    const [chartData, setChartData] = React.useState<VisitorStat[]>([])
-    const [isLoading, setIsLoading] = React.useState(true)
 
-    React.useEffect(() => {
-        const fetchStats = async () => {
-            setIsLoading(true);
-            try {
-                const res = await analyticsApi.getStats(timeRange);
-                if (res.data) {
-                    setChartData(res.data);
-                }
-            } catch (error) {
-                console.error('Failed to fetch visitor stats:', error);
-            } finally {
-                setIsLoading(false);
-            }
+    const { data: chartData = [], isLoading } = useQuery({
+        queryKey: ['analytics', 'visitors', timeRange],
+        queryFn: async () => {
+            const res = await analyticsApi.getStats(timeRange)
+            return res.data || []
         }
+    })
 
-        fetchStats()
-    }, [timeRange]);
 
     return (
         <Card className="border-none shadow-sm">
@@ -116,8 +107,12 @@ export function VisitorsChart() {
 
             <CardContent className="pt-0">
                 {isLoading ? (
-                    <div className="flex h-[300px] items-center justify-center">
-                        <p className="text-sm text-muted-foreground">Loading chart data...</p>
+                    <div className="flex flex-col space-y-3 h-[300px]">
+                        <Skeleton className="h-[250px] w-full rounded-xl" />
+                        <div className="flex items-center justify-between">
+                            <Skeleton className="h-4 w-[100px]" />
+                            <Skeleton className="h-4 w-[100px]" />
+                        </div>
                     </div>
                 ) : (
                     <ChartContainer

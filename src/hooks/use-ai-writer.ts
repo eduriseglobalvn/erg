@@ -24,10 +24,54 @@ interface AiStatusData {
 
 export function useAiWriter(editor: any) {
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isRefining, setIsRefining] = useState(false);
     const [progress, setProgress] = useState(0);
 
     // FIX LỖI 1: Dùng 'any' cho interval để tránh xung đột kiểu giữa Node và Browser
     const intervalRef = useRef<any>(null);
+
+    // --- HÀM MÔ PHỎNG HIỆU ỨNG GÕ CHỮ (NÂNG CẤP: CHUẨN ĐỊNH DẠNG) ---
+    const typeIntoEditor = async (html: string, editor: any) => {
+        if (!editor || !html) return;
+
+        // 1. Xóa trắng editor
+        editor.commands.setContent('');
+
+        // 2. Parse HTML thành các khối (blocks)
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        // Lấy tất cả các con trực tiếp của body (p, h2, figure, ...)
+        const blocks = Array.from(doc.body.childNodes);
+
+        for (const node of blocks) {
+            // Loại bỏ text node chỉ chứa khoảng trắng/newline thừa
+            if (node.nodeType === Node.TEXT_NODE && !node.textContent?.trim()) continue;
+
+            const content = node.nodeType === Node.TEXT_NODE
+                ? node.textContent
+                : (node as HTMLElement).outerHTML;
+
+            if (content) {
+                // Chèn khối nguyên vẹn để không bị hỏng thẻ HTML
+                editor.commands.insertContent(content);
+
+                // Delay nhẹ giữa các khối để tạo hiệu ứng streaming
+                await new Promise(r => setTimeout(r, 400));
+
+                // Tự động cuộn
+                const editorEl = editor.options.element;
+                if (editorEl) {
+                    const scrollContainer = editorEl.closest('.overflow-y-auto');
+                    if (scrollContainer) {
+                        scrollContainer.scrollTo({
+                            top: scrollContainer.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            }
+        }
+    };
 
     const generateFullPost = async (topic: string, categoryId: string, onSuccess: (data: any) => void) => {
         setIsGenerating(true);
@@ -35,65 +79,67 @@ export function useAiWriter(editor: any) {
         const toastId = toast.loading('AI đang lên ý tưởng...');
 
         try {
-            // A. Gọi API tạo Job
-            // Response có thể là { jobId: "..." } hoặc { data: { jobId: "..." } }
             const res: any = await aiApi.generate({ topic, categoryId });
-
-            // Lấy jobId an toàn
             const jobId = res?.data?.jobId || res?.jobId;
 
             if (!jobId) throw new Error("Không lấy được Job ID từ Server");
 
-            // B. Polling (Hỏi server liên tục)
             intervalRef.current = setInterval(async () => {
                 try {
-                    // Gọi API check status
-                    // Ép kiểu về 'any' trước để tránh TS bắt bẻ, sau đó ép về Interface chuẩn
-                    const resStatus = await aiApi.checkStatus(jobId) as unknown as ApiResponse<AiStatusData>;
+                    const resStatus = await aiApi.checkStatus(jobId) as any;
 
-                    // Lấy cục data ra (Đây là chỗ hay bị lỗi đỏ nhất)
-                    const statusData = resStatus.data || (resStatus as any);
+                    // Kiểm tra lỗi từ phía Server (nếu không phải 200/201...)
+                    if (!resStatus || (resStatus.status && resStatus.status >= 400)) {
+                        throw new Error(resStatus.message || "Lỗi khi kiểm tra trạng thái AI");
+                    }
 
-                    // Cập nhật tiến độ
+                    const statusData = resStatus.data || resStatus;
+
                     if (statusData.progress) setProgress(statusData.progress);
 
-                    // C. Xử lý Hoàn thành
                     if (statusData.state === 'completed') {
                         clearInterval(intervalRef.current);
                         setProgress(95);
 
-                        // 1. Lấy Post ID
                         const postId = statusData.result?.postId;
-                        if (!postId) throw new Error("Không tìm thấy Post ID trong kết quả AI");
+                        if (!postId) throw new Error("Không tìm thấy nội dung bài viết sau khi xử lý");
 
-                        // 2. Gọi API lấy chi tiết bài viết
-                        // Ép kiểu 'any' cho postRes để linh hoạt lấy .data
                         const postRes: any = await postsApi.getOne(postId);
+                        if (!postRes || (postRes.status && postRes.status >= 400)) {
+                            throw new Error("Không thể lấy dữ liệu bài viết đã tạo");
+                        }
 
-                        // Lấy dữ liệu bài viết thật (Title, Content...)
                         const actualPostData = postRes.data || postRes;
 
-                        setProgress(100);
+                        // === BẮT ĐẦU QUY TRÌNH HIỂN THỊ ===
                         toast.dismiss(toastId);
-                        toast.success('AI đã viết xong!');
+                        toast.success('AI đã viết xong, đang trình bày...');
 
-                        // 3. Truyền dữ liệu ra ngoài
+                        // 1. Cập nhật Title và Metadata NGAY LẬP TỨC
                         onSuccess(actualPostData);
 
+                        // 2. Thực hiện gõ vào editor (hiệu ứng chảy chữ)
+                        if (editor && actualPostData.content) {
+                            await typeIntoEditor(actualPostData.content, editor);
+                        }
+
+                        setProgress(100);
                         setIsGenerating(false);
                     }
-                    // D. Xử lý Thất bại
                     else if (statusData.state === 'failed') {
                         clearInterval(intervalRef.current);
                         toast.dismiss(toastId);
-                        toast.error('AI gặp lỗi trong quá trình xử lý');
+                        toast.error(statusData.error || 'AI gặp lỗi trong quá trình xử lý');
                         setIsGenerating(false);
                     }
-                } catch (err) {
-                    // Lỗi mạng khi polling thì bỏ qua, chờ lần sau gọi tiếp
-                    console.warn("Polling error:", err);
+                } catch (err: any) {
+                    console.error("Polling error:", err);
+                    clearInterval(intervalRef.current);
+                    toast.dismiss(toastId);
+                    toast.error(err.message || 'Lỗi khi đồng bộ kết quả AI');
+                    setIsGenerating(false);
                 }
-            }, 2000);
+            }, 5000); // Tăng lên 5s để nhẹ server tối đa theo yêu cầu từ USER
 
         } catch (error: any) {
             console.error(error);
@@ -105,19 +151,22 @@ export function useAiWriter(editor: any) {
     };
 
     const refineText = async (originalText: string, instruction: string) => {
+        setIsRefining(true);
         try {
             const res: any = await aiApi.refine({ text: originalText, instruction });
-            // Lấy kết quả linh hoạt (dù backend trả về kiểu gì cũng bắt được)
-            return res.result || res.data?.result;
+            return res.data?.refinedContent || res.refinedContent || res.result;
         } catch (e) {
             console.error(e);
             toast.error('Lỗi kết nối AI');
             return null;
+        } finally {
+            setIsRefining(false);
         }
     };
 
     return {
         isGenerating,
+        isRefining,
         progress,
         generateFullPost,
         refineText

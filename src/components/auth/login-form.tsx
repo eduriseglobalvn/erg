@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import * as React from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -21,6 +22,7 @@ import {
 } from "@/components/admin/ui/card"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
+import { Checkbox } from "@/components/admin/ui/checkbox"
 
 // SVG Icons
 const AppleIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.24.72-.62 1.73-1.53 2.79zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.06 2.27-1.69 4.2-3.74 4.25z" /></svg>)
@@ -32,7 +34,16 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
     const [isLoading, setIsLoading] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [rememberMe, setRememberMe] = useState(true)
     const [showPassword, setShowPassword] = useState(false)
+
+    // [MỚI] Tự động điền Email nếu đã "Ghi nhớ" từ trước
+    React.useEffect(() => {
+        const savedEmail = localStorage.getItem("rememberedEmail")
+        if (savedEmail) {
+            setEmail(savedEmail)
+        }
+    }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -45,7 +56,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         setIsLoading(true)
 
         try {
-            const res = await authApi.login({ email, password });
+            const res = await authApi.login({ email, password, rememberMe }) as any;
             const data = res.data || res;
 
             if (data && data.accessToken) {
@@ -81,8 +92,17 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                             localStorage.setItem('roles', JSON.stringify(roles));
                         }
 
-                        // Redirect về trang chủ
-                        window.location.href = "/";
+                        // [MỚI] Xử lý "Ghi nhớ đăng nhập" bằng LocalStorage
+                        if (rememberMe) {
+                            localStorage.setItem("rememberedEmail", email)
+                        } else {
+                            localStorage.removeItem("rememberedEmail")
+                        }
+
+                        // Delay 500ms để trình duyệt kịp hiện popup "Lưu mật khẩu"
+                        setTimeout(() => {
+                            window.location.href = "/";
+                        }, 500);
                     } else {
                         window.location.href = "/";
                     }
@@ -128,7 +148,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} method="POST" action="">
                         <div className="grid gap-6">
                             {/* Social Login */}
                             <div className="flex flex-col gap-4">
@@ -151,9 +171,11 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                 <Label htmlFor="email">Email</Label>
                                 <Input
                                     id="email"
+                                    name="email"
                                     type="email"
                                     placeholder="m@example.com"
                                     required
+                                    autoComplete="username"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     disabled={isLoading}
@@ -174,18 +196,14 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                 <div className="relative">
                                     <Input
                                         id="password"
+                                        name="password"
                                         type={showPassword ? "text" : "password"}
                                         required
+                                        autoComplete="current-password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         disabled={isLoading}
                                         className="pr-10" // Padding right cho icon
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                e.preventDefault()
-                                                handleSubmit(e as unknown as React.FormEvent)
-                                            }
-                                        }}
                                     />
                                     <Button
                                         type="button"
@@ -205,6 +223,22 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                         </span>
                                     </Button>
                                 </div>
+                            </div>
+
+                            {/* Remember Me */}
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="remember"
+                                    name="remember"
+                                    checked={rememberMe}
+                                    onCheckedChange={(checked: any) => setRememberMe(checked as boolean)}
+                                />
+                                <label
+                                    htmlFor="remember"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                >
+                                    Ghi nhớ đăng nhập
+                                </label>
                             </div>
 
                             <Button type="submit" className="w-full" disabled={isLoading}>

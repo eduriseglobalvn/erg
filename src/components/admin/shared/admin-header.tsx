@@ -22,10 +22,7 @@ export function AdminHeader() {
     const { setTheme, theme } = useTheme()
 
     return (
-        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 sticky top-0 z-50 bg-white/80 dark:bg-[#191919]/80 backdrop-blur-md">            {/* ^^^ THAY ĐỔI Ở ĐÂY:
-                1. z-50: Để nó luôn nằm trên Editor và Toolbar của Editor.
-                2. bg-background/95 backdrop-blur: Tạo nền mờ hiện đại, nội dung trượt qua bên dưới sẽ không bị lẫn.
-            */}
+        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 sticky top-0 z-50 bg-white/80 dark:bg-[#191919]/80 backdrop-blur-md">
 
             {/* 1. Bên trái: Sidebar Trigger & Breadcrumb */}
             <div className="flex items-center gap-2">

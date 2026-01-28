@@ -3,7 +3,8 @@
 @import '../styles/_keyframe-animations.scss';
 
 @import "tailwindcss";
-@import "tw-animate-css";
+@source "..";
+/* @import "tw-animate-css"; */
 @plugin "tailwindcss-animate";
 @plugin "@tailwindcss/typography";
 
@@ -32,9 +33,10 @@
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.145 0 0);
 
-    /* SHADCN VARIABLES (Giữ nguyên cho các component UI chuẩn) */
-    /* Lưu ý: --primary của Shadcn thường là màu tối (đen), khác với --color-primary (xanh) của bạn */
-    --primary: oklch(0.205 0 0);
+    /* SHADCN VARIABLES - Cập nhật để dùng ERG colors */
+    /* Primary = ERG Blue (#00008b) */
+    --primary: 240 100% 27%;
+    /* HSL của #00008b */
     --primary-foreground: oklch(0.985 0 0);
 
     --secondary: oklch(0.97 0 0);
@@ -43,29 +45,37 @@
     --muted-foreground: oklch(0.556 0 0);
     --accent: oklch(0.97 0 0);
     --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
+
+    /* Destructive = ERG Red cho actions nguy hiểm */
+    --destructive: 348 75% 40%;
+    /* HSL của #cc0022 */
     --destructive-foreground: oklch(0.985 0 0);
 
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
+    --ring: 221 83% 27%;
+    /* Ring cũng dùng ERG blue */
 
-    /* Charts - Light Mode */
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
+    /* Charts - Light Mode - Dùng ERG colors */
+    --chart-1: 221 83% 27%;
+    /* ERG Blue */
+    --chart-2: 348 75% 40%;
+    /* ERG Red */
     --chart-3: oklch(0.398 0.07 227.392);
     --chart-4: oklch(0.828 0.189 84.429);
     --chart-5: oklch(0.769 0.188 70.08);
 
-    /* Sidebar Admin */
+    /* Sidebar Admin - Dùng ERG blue cho active items */
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary: 221 83% 27%;
+    /* ERG Blue */
     --sidebar-primary-foreground: oklch(0.985 0 0);
     --sidebar-accent: oklch(0.97 0 0);
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --sidebar-ring: 221 83% 27%;
+    /* ERG Blue */
 }
 
 .dark {
@@ -77,37 +87,48 @@
     --popover: oklch(0.205 0 0);
     --popover-foreground: oklch(0.985 0 0);
 
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
+    /* Dark mode - ERG Blue nhạt hơn để dễ nhìn */
+    --primary: 221 70% 45%;
+    /* ERG Blue nhạt hơn */
+    --primary-foreground: oklch(0.985 0 0);
+
     --secondary: oklch(0.269 0 0);
     --secondary-foreground: oklch(0.985 0 0);
     --muted: oklch(0.269 0 0);
     --muted-foreground: oklch(0.708 0 0);
     --accent: oklch(0.269 0 0);
     --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
+
+    /* Dark mode - ERG Red nhạt hơn */
+    --destructive: 348 70% 50%;
+    /* ERG Red nhạt hơn */
+    --destructive-foreground: oklch(0.985 0 0);
 
     --border: oklch(0.269 0 0);
     --input: oklch(0.269 0 0);
-    --ring: oklch(0.556 0 0);
+    --ring: 221 70% 45%;
+    /* Ring dùng ERG blue */
 
-    /* Charts - Dark Mode */
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
+    /* Charts - Dark Mode - ERG colors */
+    --chart-1: 221 70% 55%;
+    /* ERG Blue light */
+    --chart-2: 348 70% 60%;
+    /* ERG Red light */
     --chart-3: oklch(0.769 0.188 70.08);
     --chart-4: oklch(0.627 0.265 303.9);
     --chart-5: oklch(0.645 0.246 16.439);
 
-    /* Sidebar Dark */
+    /* Sidebar Dark - ERG blue */
     --sidebar: oklch(0.205 0 0);
     --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary: 221 70% 55%;
+    /* ERG Blue light */
     --sidebar-primary-foreground: oklch(0.985 0 0);
     --sidebar-accent: oklch(0.269 0 0);
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(0.269 0 0);
-    --sidebar-ring: oklch(0.556 0 0);
+    --sidebar-ring: 221 70% 55%;
+    /* ERG Blue light */
 }
 
 @theme inline {
@@ -120,7 +141,10 @@
     /* --- SỬA LỖI TẠI ĐÂY --- */
     /* Code cũ sai: --color-primary: var(--primary); (Dẫn đến màu đen) */
     /* Code sửa lại: Trỏ về biến --color-primary đã định nghĩa ở :root (Màu xanh ERG) */
-    --color-primary: var(--color-primary);
+    /* Code sửa lại: Trỏ về biến --primary (đã định nghĩa HSL ở :root) qua hàm hsl() hoặc dùng oklch tương đương nếu cần. 
+       Tuy nhiên, do --primary là HSL (space-separated), ta cần cú pháp đúng cho Tailwind v4.
+       Cách an toàn nhất là tham chiếu biến --erg-blue hoặc define cứng ở đây nếu biến --primary là list channels. */
+    --color-primary: hsl(var(--primary));
     --color-highlight: var(--color-highlight);
 
     /* Các biến Shadcn khác giữ nguyên mapping */
@@ -181,17 +205,121 @@
         width: 6px;
         height: 6px;
     }
+
     ::-webkit-scrollbar-track {
         @apply bg-transparent;
     }
+
     ::-webkit-scrollbar-thumb {
         @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40;
     }
+
+    /* ========== ADMIN SIDEBAR - IMPROVED DESIGN ========== */
+    /* Thiết kế lại sidebar cho đẹp, hài hòa và chuyên nghiệp */
+
+    /* Reset và cải thiện base styling */
+    [data-sidebar="sidebar"] {
+        font-size: 0.9rem;
+        letter-spacing: -0.01em;
+    }
+
+    /* Menu items - base state */
+    [data-sidebar="sidebar"] a,
+    [data-sidebar="sidebar"] button {
+        border-radius: 8px !important;
+        padding: 0.65rem 0.75rem !important;
+        margin: 0.15rem 0 !important;
+        transition: all 0.2s ease !important;
+        font-weight: 500 !important;
+    }
+
+    /* Menu items - hover state (màu xanh ERG nhẹ nhàng) */
+    [data-sidebar="sidebar"] a[data-active="false"]:hover,
+    [data-sidebar="sidebar"] button[data-active="false"]:hover {
+        background-color: hsl(221 83% 97%) !important;
+        color: hsl(221 83% 27%) !important;
+    }
+
+    /* Menu items - active state (màu xanh ERG nổi bật hơn) */
+    [data-sidebar="sidebar"] a[data-active="true"],
+    [data-sidebar="sidebar"] button[data-active="true"] {
+        background-color: hsl(221 83% 95%) !important;
+        color: hsl(221 83% 27%) !important;
+        font-weight: 600 !important;
+        border-left: 3px solid hsl(221 83% 27%) !important;
+        padding-left: calc(0.75rem - 3px) !important;
+    }
+
+    /* Collapsible trigger khi mở */
+    [data-sidebar="sidebar"] [data-state="open"]>button {
+        background-color: hsl(221 83% 97%) !important;
+        color: hsl(221 83% 27%) !important;
+    }
+
+    /* Sub-menu items styling */
+    [data-sidebar="sidebar"] .group {
+        margin-left: 0.5rem;
+    }
+
+    [data-sidebar="sidebar"] .group a {
+        font-size: 0.875rem !important;
+        padding-left: 2rem !important;
+        font-weight: 400 !important;
+    }
+
+    [data-sidebar="sidebar"] .group a:hover {
+        background-color: hsl(221 83% 98%) !important;
+    }
+
+    [data-sidebar="sidebar"] .group a[data-active="true"] {
+        background-color: hsl(221 83% 96%) !important;
+        border-left: 2px solid hsl(221 83% 27%) !important;
+        padding-left: calc(2rem - 2px) !important;
+    }
+
+    /* Icons styling */
+    [data-sidebar="sidebar"] svg {
+        width: 18px !important;
+        height: 18px !important;
+        stroke-width: 2 !important;
+    }
+
+    /* Group labels */
+    [data-sidebar="sidebar"] [data-sidebar="group-label"] {
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        color: hsl(var(--muted-foreground)) !important;
+        padding: 0.5rem 0.75rem !important;
+        margin-top: 1rem !important;
+    }
+
+    /* Sidebar header */
+    [data-sidebar="sidebar-header"] {
+        padding: 1rem 0.75rem !important;
+        border-bottom: 1px solid hsl(var(--border)) !important;
+    }
+
+    /* Sidebar footer */
+    [data-sidebar="sidebar-footer"] {
+        padding: 1rem 0.75rem !important;
+        border-top: 1px solid hsl(var(--border)) !important;
+    }
+
+    /* Chevron icons trong collapsible */
+    [data-sidebar="sidebar"] [data-slot="chevron"] {
+        transition: transform 0.2s ease !important;
+    }
+
+    [data-sidebar="sidebar"] [data-state="open"] [data-slot="chevron"] {
+        transform: rotate(90deg) !important;
+    }
 }
 
-.bg-circuit {
+/* .bg-circuit {
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10h80v80h-80z' fill='none' stroke='%23334155' stroke-width='0.5' opacity='0.1'/%3E%3Cpath d='M20 20h60v60h-60z' fill='none' stroke='%23334155' stroke-width='0.5' opacity='0.1'/%3E%3C/svg%3E");
-}
+} */
 
 /* --- TIPTAP CUSTOM STYLES (Giữ lại từ code mới) --- */
 
@@ -200,18 +328,21 @@ ul[data-type="taskList"] {
     list-style: none;
     padding: 0;
 }
+
 ul[data-type="taskList"] li {
     display: flex;
     align-items: flex-start;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
 }
-ul[data-type="taskList"] li > label {
+
+ul[data-type="taskList"] li>label {
     flex: 0 0 auto;
     margin-top: 0.25rem;
     user-select: none;
 }
-ul[data-type="taskList"] li > div {
+
+ul[data-type="taskList"] li>div {
     flex: 1 1 auto;
 }
 
@@ -223,6 +354,7 @@ ul[data-type="taskList"] li > div {
     table-layout: fixed;
     width: 100%;
 }
+
 .ProseMirror td,
 .ProseMirror th {
     border: 1px solid var(--color-border);
@@ -232,11 +364,13 @@ ul[data-type="taskList"] li > div {
     position: relative;
     vertical-align: top;
 }
+
 .ProseMirror th {
     background-color: var(--color-muted);
     font-weight: bold;
     text-align: left;
 }
+
 .ProseMirror .selectedCell:after {
     background: rgba(200, 200, 255, 0.4);
     content: "";

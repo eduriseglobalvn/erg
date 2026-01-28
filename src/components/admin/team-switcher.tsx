@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { ChevronsUpDown, Plus } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 import {
   DropdownMenu,
@@ -35,56 +36,33 @@ export function TeamSwitcher({
     return null
   }
 
+  const { state } = useSidebar()
+  const isCollapsed = state === "collapsed"
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <activeTeam.logo className="size-4" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{activeTeam.name}</span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            align="start"
-            side={isMobile ? "bottom" : "right"}
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Teams
-            </DropdownMenuLabel>
-            {teams.map((team, index) => (
-              <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className="gap-2 p-2"
-              >
-                <div className="flex size-6 items-center justify-center rounded-md border">
-                  <team.logo className="size-3.5 shrink-0" />
-                </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                <Plus className="size-4" />
-              </div>
-              <div className="text-muted-foreground font-medium">Add team</div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className={cn(
+          "flex items-center gap-3 px-2 py-2 transition-all duration-300",
+          isCollapsed ? "justify-center px-0" : "justify-start"
+        )}>
+          {/* Logo Box */}
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary/5 p-1.5 shrink-0 shadow-sm border border-primary/10">
+            <img src="/erg.png" alt="Logo" className="size-full object-contain" />
+          </div>
+
+          {/* Text Content - Hidden when collapsed */}
+          {!isCollapsed && (
+            <div className="flex flex-col min-w-0 animate-in fade-in slide-in-from-left-2 duration-300">
+              <span className="text-sm font-bold text-primary truncate leading-tight">
+                {activeTeam.name}
+              </span>
+              <span className="text-[10px] text-muted-foreground truncate uppercase font-bold tracking-tight opacity-80">
+                {activeTeam.plan}
+              </span>
+            </div>
+          )}
+        </div>
       </SidebarMenuItem>
     </SidebarMenu>
   )

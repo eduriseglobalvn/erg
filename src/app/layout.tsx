@@ -42,7 +42,7 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
         icons: {
             icon: [{ url: '/erg.png', sizes: '16x32', type: 'image/png' }],
-            apple: [{ url: '/icon.png' }],
+            apple: [{ url: '/erg.png' }],
         },
         metadataBase: new URL(BASE_URL),
         robots,

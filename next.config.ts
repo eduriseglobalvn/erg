@@ -36,7 +36,7 @@ const nextConfig: NextConfig = {
                         key: 'Access-Control-Allow-Origin',
                         // LƯU Ý: Prod không cho phép liệt kê nhiều domain bằng dấu phẩy.
                         // Nếu dùng nhiều domain, bạn nên dùng Middleware (xem mục 2).
-                        value: 'https://erg.edu.local,https://erg.edu.vn',
+                        value: '*', // Allow all origins to resolve CORS issues, or set to specific domain
                     },
                     { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS' },
                     { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },

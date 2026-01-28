@@ -1,5 +1,6 @@
-
 import { MetadataRoute } from 'next';
+
+export const revalidate = 3600; // Revalidate every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const apiUrl = process.env.BACKEND_URL || 'http://localhost:3000';
@@ -9,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         console.log(`[${new Date().toISOString()}] [Sitemap] Fetching from: ${apiUrl}/sitemap/data`);
         // Fetch sitemap data from Backend
         const response = await fetch(`${apiUrl}/sitemap/data`, {
-            cache: 'no-store', // Disable cache completely to see updates immediately
+            next: { revalidate: 3600 }, // Cache for 1 hour
         });
 
         if (!response.ok) {

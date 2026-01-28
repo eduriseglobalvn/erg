@@ -10,11 +10,34 @@ export interface PostDetailResponse {
         content: string;
         slug: string;
         excerpt?: string;
+        thumbnailUrl?: string;
+        publishedAt?: string;
+        updatedAt?: string;
+        createdAt?: string; // Add createdAt
+
+        // SEO Fields
+        metaTitle?: string;
+        metaDescription?: string;
+        canonicalUrl?: string;
+        schemaType?: string;
+        seoScore?: number;
+        keywords?: string;
+
+        author?: {
+            fullName: string;
+            avatarUrl?: string;
+            socialLinks?: {
+                linkedin?: string;
+                twitter?: string;
+                facebook?: string;
+            };
+        };
         category?: {
             id: string;
             name: string;
             slug: string;
-        }
+        };
+        tags?: string[];
     }
 }
 
@@ -38,6 +61,9 @@ export const postsApi = {
     // 2. Hàm getOne trả về đúng Interface trên
     getOne: (id: string) => {
         return httpClient<PostDetailResponse>(`/posts/${id}`);
+    },
+    getBySlug: (slug: string) => {
+        return httpClient<PostDetailResponse>(`/posts/slug/${slug}`);
     },
 
     create: (data: any) => httpClient('/posts', { method: 'POST', body: JSON.stringify(data) }),

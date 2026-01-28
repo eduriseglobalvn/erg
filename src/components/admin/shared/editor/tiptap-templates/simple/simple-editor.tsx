@@ -30,6 +30,8 @@ import {
 // --- Tiptap Node ---
 import { ImageUploadNode } from "@/components/admin/shared/editor/tiptap-node/image-upload-node/image-upload-node-extension"
 import { HorizontalRule } from "@/components/admin/shared/editor/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension"
+import { HeadingWithAnchor } from "@/components/admin/shared/editor/tiptap-extension/heading-with-anchor"
+import { TableOfContentsNode } from "@/components/admin/shared/editor/tiptap-extension/table-of-contents-node"
 import "@/components/admin/shared/editor/tiptap-node/blockquote-node/blockquote-node.scss"
 import "@/components/admin/shared/editor/tiptap-node/code-block-node/code-block-node.scss"
 import "@/components/admin/shared/editor/tiptap-node/horizontal-rule-node/horizontal-rule-node.scss"
@@ -64,7 +66,7 @@ import { AIBubbleMenu } from "@/components/admin/shared/editor/tiptap-ui/ai-bubb
 import { ArrowLeftIcon } from "@/components/admin/shared/editor/tiptap-icons/arrow-left-icon"
 import { HighlighterIcon } from "@/components/admin/shared/editor/tiptap-icons/highlighter-icon"
 import { LinkIcon } from "@/components/admin/shared/editor/tiptap-icons/link-icon"
-import { ChevronDown, Loader2, Sparkles } from "lucide-react"
+import { ChevronDown, Loader2, Sparkles, ListTree } from "lucide-react"
 
 // --- Hooks ---
 import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
@@ -239,6 +241,15 @@ const MainToolbarContent = ({
 
             <ToolbarGroup>
                 <ImageUploadButton text="Add" />
+                <Button
+                    data-style="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground border"
+                    title="Chèn Mục lục"
+                    onClick={() => editor.chain().focus().insertContent('<toc-node></toc-node>').run()}
+                >
+                    <ListTree className="h-4 w-4" />
+                </Button>
             </ToolbarGroup>
 
             <Spacer />
@@ -347,12 +358,17 @@ export function SimpleEditor({
         },
         extensions: [
             StarterKit.configure({
+                heading: false, // Tắt mặc định
                 horizontalRule: false,
                 link: {
                     openOnClick: false,
                     enableClickSelection: true,
                 },
             }),
+            HeadingWithAnchor.configure({
+                levels: [1, 2, 3, 4, 5, 6],
+            }),
+            TableOfContentsNode,
             TextStyle,
             FontFamily,
             FontSize,

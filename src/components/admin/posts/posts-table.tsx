@@ -123,7 +123,7 @@ const columns: ColumnDef<Post>[] = [
                                 {post.category?.name || "Chưa phân loại"}
                             </Badge>
                             {post.isCreatedByAI && (
-                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 font-semibold text-[10px] border border-blue-100 shadow-sm shrink-0">
+                                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary font-semibold text-[10px] border border-primary/20 shadow-sm shrink-0">
                                     <Bot className="h-3 w-3" />
                                     <span>AI CHẤP BÚT</span>
                                 </div>
@@ -390,7 +390,7 @@ export function PostsTable({ categorySlug, status, isTrash }: { categorySlug?: s
             <div className="rounded-md border bg-card overflow-hidden">
                 <div className="overflow-x-auto w-full">
                     <Table className="w-full table-fixed min-w-[1050px]">
-                        <TableHeader>
+                        <TableHeader className="bg-muted/40">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => {
@@ -426,6 +426,7 @@ export function PostsTable({ categorySlug, status, isTrash }: { categorySlug?: s
                                     <TableRow
                                         key={row.id}
                                         data-state={row.getIsSelected() && "selected"}
+                                        className="hover:bg-muted/40 transition-colors"
                                     >
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell key={cell.id} className={`p-0 px-4 overflow-hidden h-full ${cell.column.id === 'title' ? 'text-left' : 'text-center'}`}>

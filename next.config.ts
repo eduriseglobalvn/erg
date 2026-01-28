@@ -53,7 +53,8 @@ const nextConfig: NextConfig = {
             'recharts',
             'lucide-react',
             '@tiptap/react',
-            'lodash'
+            'lodash',
+            'framer-motion'
         ],
     },
 

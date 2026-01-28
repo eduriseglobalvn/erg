@@ -6,7 +6,8 @@ import {
     AlignLeft, AlignCenter, AlignRight, AlignJustify,
     List, ListOrdered, CheckSquare, Quote,
     Image as ImageIcon, Link as LinkIcon,
-    Undo, Redo, ChevronDown, Minus, Type
+    Undo, Redo, ChevronDown, Minus, Type,
+    ListTree
 } from 'lucide-react'
 import {
     DropdownMenu,
@@ -86,6 +87,11 @@ export function Toolbar({ editor }: ToolbarProps) {
                 </DropdownMenuContent>
             </DropdownMenu>
 
+            {/* Insert TOC Button */}
+            <Button variant="ghost" size="icon" className="h-8 w-8" title="Chèn Mục lục" onClick={() => editor?.chain().focus().insertContent('<toc-node></toc-node>').run()}>
+                <ListTree className="w-4 h-4" />
+            </Button>
+
             <div className="w-px h-5 bg-border mx-1" />
 
             {/* 3. LIST DROPDOWN */}
@@ -133,6 +139,6 @@ export function Toolbar({ editor }: ToolbarProps) {
                 <Quote className="w-4 h-4" />
             </Button>
 
-        </div>
+        </div >
     )
 }

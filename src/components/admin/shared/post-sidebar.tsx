@@ -19,6 +19,11 @@ interface PostData {
     slug?: string;
     excerpt?: string;
     categoryId?: string;
+    seoScore?: number;
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string;
+    schemaType?: string;
     thumbnailUrl?: string | null;
     status?: string;
 }
@@ -56,6 +61,21 @@ export function PostSidebar({
         }
     }
 
+    // [HELPER] Get SEO Score Color
+    const getScoreColor = (score: number) => {
+        if (score < 50) return "bg-red-500 text-red-500";
+        if (score < 80) return "bg-amber-500 text-amber-500";
+        return "bg-green-500 text-green-500";
+    }
+
+    // Default Schema Types
+    const SCHEMA_TYPES = [
+        { value: "Article", label: "Article (Bài viết chung)" },
+        { value: "NewsArticle", label: "NewsArticle (Tin tức)" },
+        { value: "BlogPosting", label: "BlogPosting (Blog)" },
+        { value: "TechArticle", label: "TechArticle (Bài kỹ thuật)" },
+    ];
+
     return (
         <div className="w-full h-full overflow-y-auto border-l bg-gray-50/50 dark:bg-zinc-900/50 relative">
 
@@ -85,6 +105,24 @@ export function PostSidebar({
 
             {/* 2. CÁC PHẦN CÀI ĐẶT BÊN DƯỚI */}
             <div className="p-4 space-y-6">
+
+                {/* Score SEO Display */}
+                {post.seoScore !== undefined && (
+                    <div className="bg-white dark:bg-zinc-800 rounded-lg p-3 border shadow-sm">
+                        <div className="flex justify-between items-center mb-2">
+                            <span className="text-xs font-bold uppercase text-muted-foreground">Điểm SEO</span>
+                            <span className={`text-sm font-black ${getScoreColor(post.seoScore).split(' ')[1]}`}>
+                                {post.seoScore}/100
+                            </span>
+                        </div>
+                        <div className="h-2 w-full bg-gray-100 dark:bg-zinc-700 rounded-full overflow-hidden">
+                            <div
+                                className={`h-full transition-all duration-500 ${getScoreColor(post.seoScore).split(' ')[0]}`}
+                                style={{ width: `${post.seoScore}%` }}
+                            />
+                        </div>
+                    </div>
+                )}
 
                 {/* Trạng thái & Hiển thị */}
                 <div className="space-y-4">
@@ -162,11 +200,73 @@ export function PostSidebar({
 
                 <div className="h-px bg-border" />
 
-                {/* SEO */}
+                {/* SEO Configuration */}
                 <div className="space-y-4 pb-10">
-                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">SEO & URL</h3>
+                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Cấu hình SEO</h3>
+
                     <div className="grid gap-2">
-                        <Label>Đường dẫn (Slug)</Label>
+                        <Label>Meta Title</Label>
+                        <Input
+                            placeholder={post.title || "Tiêu đề bài viết"}
+                            className="bg-white dark:bg-black"
+                            value={post.metaTitle || ""}
+                            onChange={(e) => onUpdate({ metaTitle: e.target.value })}
+                        />
+                        <span className="text-[10px] text-muted-foreground text-right">{post.metaTitle?.length || 0}/60 ký tự</span>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label>Mô tả ngắn (Sapo)</Label>
+                        <textarea
+                            className="flex w-full rounded-md border border-input bg-white dark:bg-black px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]"
+                            placeholder="Tóm tắt nội dung bài viết..."
+                            value={post.excerpt || ""}
+                            onChange={(e) => onUpdate({ excerpt: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label>Meta Description</Label>
+                        <textarea
+                            className="flex w-full rounded-md border border-input bg-white dark:bg-black px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]"
+                            placeholder="Mô tả hiển thị trên Google (Auto generate nếu trống)"
+                            value={post.metaDescription || ""}
+                            onChange={(e) => onUpdate({ metaDescription: e.target.value })}
+                        />
+                        <span className="text-[10px] text-muted-foreground text-right">{post.metaDescription?.length || 0}/160 ký tự</span>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label>Focus Keyword</Label>
+                        <Input
+                            placeholder="Từ khóa chính..."
+                            className="bg-white dark:bg-black"
+                            value={post.keywords || ""}
+                            onChange={(e) => onUpdate({ keywords: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label>Schema Type (JSON-LD)</Label>
+                        <Select
+                            value={post.schemaType || "Article"}
+                            onValueChange={(val) => onUpdate({ schemaType: val })}
+                        >
+                            <SelectTrigger className="bg-white dark:bg-black"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                                {SCHEMA_TYPES.map(type => (
+                                    <SelectItem key={type.value} value={type.value}>
+                                        {type.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="h-px bg-border my-2" />
+
+                    <div className="grid gap-2">
+                        <Label>URL Slug</Label>
                         <div className="relative">
                             <Globe className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
@@ -176,15 +276,6 @@ export function PostSidebar({
                                 onChange={(e) => onUpdate({ slug: e.target.value })}
                             />
                         </div>
-                    </div>
-                    <div className="grid gap-2">
-                        <Label>Mô tả ngắn</Label>
-                        <textarea
-                            className="flex w-full rounded-md border border-input bg-white dark:bg-black px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]"
-                            placeholder="Mô tả sẽ hiển thị trên Google..."
-                            value={post.excerpt || ""}
-                            onChange={(e) => onUpdate({ excerpt: e.target.value })}
-                        />
                     </div>
                 </div>
             </div>

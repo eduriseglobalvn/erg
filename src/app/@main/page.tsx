@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { TRAINING_PROGRAMS , getSubdomainLink} from '@/constants/MenuItem';
+import { TRAINING_PROGRAMS, getSubdomainLink } from '@/constants/MenuItem';
 import {
     ChevronLeft, ChevronRight, ArrowRight, Star, CheckCircle2
 } from 'lucide-react';
@@ -63,9 +63,8 @@ export default function Home() {
                 {HERO_SLIDES.map((slide, index) => (
                     <div
                         key={index}
-                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                            index === currentSlide ? 'opacity-100' : 'opacity-0'
-                        }`}
+                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+                            }`}
                     >
                         <img
                             src={slide.image}
@@ -79,9 +78,9 @@ export default function Home() {
                 <div className="absolute inset-0 flex items-center container mx-auto px-4 md:px-6">
                     <div className="relative bg-white/95 backdrop-blur-md p-8 md:p-12 rounded-2xl shadow-2xl max-w-xl animate-fade-in-up border-l-[6px] border-[var(--erg-red)] overflow-hidden">
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--erg-blue)]/10 rounded-full blur-xl"></div>
-                        <h2 className="relative z-10 text-3xl md:text-5xl font-bold text-[var(--erg-blue)] mb-4 leading-tight whitespace-pre-line">
+                        <h1 className="relative z-10 text-3xl md:text-5xl font-bold text-[var(--erg-blue)] mb-4 leading-tight whitespace-pre-line">
                             {HERO_SLIDES[currentSlide].title}
-                        </h2>
+                        </h1>
                         <p className="relative z-10 text-lg text-gray-600 mb-8 leading-relaxed">
                             {HERO_SLIDES[currentSlide].subtitle}
                         </p>

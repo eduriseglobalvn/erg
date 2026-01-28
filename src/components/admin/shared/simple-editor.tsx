@@ -14,6 +14,8 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import { common, createLowlight } from 'lowlight'
 
 import { Toolbar } from './toolbar'
+import { HeadingWithAnchor } from './editor/tiptap-extension/heading-with-anchor'
+import { TableOfContentsNode } from './editor/tiptap-extension/table-of-contents-node'
 
 const lowlight = createLowlight(common)
 
@@ -21,9 +23,15 @@ export default function SimpleEditor({ content, onChange }: { content: string, o
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
-                heading: { levels: [1, 2, 3] },
+                heading: false, // Tắt heading mặc định để dùng cái custom có ID
                 codeBlock: false, // Tắt mặc định để dùng cái xịn hơn bên dưới
             }),
+            // Custom Heading có hỗ trợ ID
+            HeadingWithAnchor.configure({
+                levels: [1, 2, 3],
+            }),
+            // Node TOC
+            TableOfContentsNode,
             // Kích hoạt Code Block xịn (có màu mè)
             CodeBlockLowlight.configure({
                 lowlight,

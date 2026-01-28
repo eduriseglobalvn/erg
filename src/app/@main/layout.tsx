@@ -6,8 +6,8 @@ import Footer from "@/components/Footer"; // Giả sử component Footer đã đ
 import FloatingContact from "@/components/FloatingContact";
 
 export default function MainLayout({
-                                       children,
-                                   }: Readonly<{
+    children,
+}: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
@@ -17,7 +17,7 @@ export default function MainLayout({
             {/*<AdsPopup />*/}
 
             {/* Nội dung trang (page.tsx) được bọc trong <(main)> */}
-            <main className="flex-grow pt-[65px] lg:pt-[88px] w-full max-w-[100vw] overflow-hidden">
+            <main className="flex-grow pt-[70px] lg:pt-[135px] w-full max-w-[100vw] overflow-hidden">
                 {children}
             </main>
 

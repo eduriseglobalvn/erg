@@ -9,15 +9,11 @@ const nextConfig: NextConfig = {
         const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
         return [
-            // 1. Rule RIÊNG cho Insight/Analytics (Backend CÓ dùng /api prefix)
-            // Frontend: /api/insight/overview -> Backend: http://localhost:3000/api/insight/overview
             {
+                // Quy tắc riêng cho analytics để tránh lỗi 500 do Header
                 source: '/api/insight/:path*',
                 destination: `${backendUrl}/api/insight/:path*`,
             },
-
-            // 2. Rule CHUNG cho các API khác (Auth, Users... - Backend KHÔNG dùng /api prefix)
-            // Frontend: /api/auth/login -> Backend: http://localhost:3000/auth/login
             {
                 source: '/api/:path*',
                 destination: `${backendUrl}/:path*`,

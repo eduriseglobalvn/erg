@@ -1,39 +1,80 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useMutation } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/admin/ui/button"
 import { Sparkles, ArrowUp, StopCircle, X } from "lucide-react"
 import { SimpleEditor } from "@/components/admin/shared/editor/tiptap-templates/simple/simple-editor"
 import { PostSidebar } from "@/components/admin/shared/post-sidebar"
 import { useAiWriter } from "@/hooks/use-ai-writer"
-
-// Import Framer Motion
+import { postsApi } from "@/services/posts.api"
+import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
+import { AiWriterBar } from "@/components/admin/shared/editor/tiptap-ui/ai-writer-bar"
 
 export default function CreatePostPage() {
+    const router = useRouter();
     const [editorInstance, setEditorInstance] = useState<any>(null);
     const [title, setTitle] = useState("");
-    const [aiTopic, setAiTopic] = useState("");
     const [showAiInput, setShowAiInput] = useState(false);
+
+    const [postMetadata, setPostMetadata] = useState({
+        slug: "",
+        excerpt: "",
+        categoryId: "",
+        thumbnailUrl: null as string | null,
+        status: "draft"
+    });
 
     const { isGenerating, progress, generateFullPost, refineText } = useAiWriter(editorInstance);
 
-    const handleAiSuccess = (postData: any) => {
-        if (postData.title) setTitle(postData.title);
-        if (editorInstance && postData.content) {
-            editorInstance.commands.setContent(postData.content);
+    // Create Mutation
+    const createMutation = useMutation({
+        mutationFn: (data: any) => postsApi.create(data),
+        onSuccess: (res: any) => {
+            const id = res.data?.id || res.id;
+            toast.success("Đã đăng bài viết thành công!");
+            router.push(`/admin/posts/${id}/edit`);
+        },
+        onError: (error: any) => {
+            toast.error(error.message || "Lỗi khi đăng bài viết");
         }
-        if (postData.id) {
-            window.history.replaceState(null, '', `/admin/posts/${postData.id}/edit`);
+    })
+
+    const handleSave = () => {
+        if (!title.trim()) {
+            toast.error("Vui lòng nhập tiêu đề bài viết");
+            return;
         }
-        setAiTopic("");
-        // Tùy chọn: Tự động đóng sau khi xong (nếu muốn)
-        // setShowAiInput(false);
+        createMutation.mutate({
+            ...postMetadata,
+            title,
+            content: editorInstance?.getHTML() || "",
+        });
     };
 
-    const handleStartAi = () => {
-        if (aiTopic.trim()) {
-            generateFullPost(aiTopic, "DEFAULT_CAT_ID", handleAiSuccess);
+    const handleAiSuccess = (aiData: any) => {
+        if (aiData.title) setTitle(aiData.title);
+        if (editorInstance && aiData.content) {
+            editorInstance.commands.setContent(aiData.content);
+        }
+
+        // Cập nhật Metadata cho Sidebar
+        setPostMetadata(prev => ({
+            ...prev,
+            slug: aiData.slug || prev.slug,
+            excerpt: aiData.excerpt || prev.excerpt,
+            categoryId: aiData.category?.id || aiData.categoryId || prev.categoryId,
+            thumbnailUrl: aiData.thumbnailUrl || prev.thumbnailUrl
+        }));
+
+        setShowAiInput(false);
+    };
+
+    const handleStartAi = (topic: string) => {
+        if (topic.trim()) {
+            generateFullPost(topic, postMetadata.categoryId || "DEFAULT_CAT_ID", handleAiSuccess);
         }
     }
 
@@ -58,114 +99,31 @@ export default function CreatePostPage() {
                     />
                 </div>
 
-                {/* === KHU VỰC AI (Sử dụng AnimatePresence để quản lý hiệu ứng ra/vào) === */}
                 <AnimatePresence mode="wait">
-
-                    {/* TRƯỜNG HỢP 1: HIỂN THỊ THANH INPUT */}
                     {isInputVisible ? (
-                        <motion.div
-                            key="ai-input-bar"
-                            // Hiệu ứng vào: Trượt từ dưới lên, mờ dần -> rõ, scale từ nhỏ -> to
-                            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 20, scale: 0.95, transition: { duration: 0.2 } }}
-                            // Spring config: độ nảy (bounce), độ cứng (stiffness) tạo cảm giác vật lý
-                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                            className="absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-3xl px-4 z-50"
-                        >
-                            <div className="relative flex items-center gap-2 p-1.5 pl-3 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#333] rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
-                                {/* Icon trạng thái */}
-                                <div className="shrink-0">
-                                    {isGenerating ? (
-                                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-900/20">
-                                            <Sparkles className="w-4 h-4 text-purple-600 animate-spin" />
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 dark:bg-[#2a2a2a]">
-                                            <Sparkles className="w-4 h-4 text-gray-400" />
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Input / Progress */}
-                                {isGenerating ? (
-                                    <div className="flex-1 px-3 h-10 flex flex-col justify-center gap-1.5">
-                                        <div className="flex justify-between items-center text-xs font-medium text-purple-600 dark:text-purple-400">
-                                            <motion.span
-                                                animate={{ opacity: [0.5, 1, 0.5] }}
-                                                transition={{ repeat: Infinity, duration: 1.5 }}
-                                            >
-                                                AI đang suy nghĩ...
-                                            </motion.span>
-                                            <span>{progress}%</span>
-                                        </div>
-                                        <div className="h-1 w-full bg-gray-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                            <motion.div
-                                                className="h-full bg-purple-600"
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${progress}%` }}
-                                                transition={{ type: "spring", stiffness: 50 }}
-                                            />
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <input
-                                        className="flex-1 bg-transparent border-none outline-none h-11 px-2 text-[15px] placeholder:text-gray-400 text-black dark:text-gray-200"
-                                        placeholder="Hỏi AI để viết bài (VD: Lợi ích của React Server Components)..."
-                                        value={aiTopic}
-                                        onChange={(e) => setAiTopic(e.target.value)}
-                                        onKeyDown={(e) => {
-                                            if(e.key === 'Enter' && !isGenerating) handleStartAi();
-                                        }}
-                                        autoFocus
-                                    />
-                                )}
-
-                                {/* Actions */}
-                                <div className="flex items-center gap-1 pr-1">
-                                    {!isGenerating && (
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="rounded-full w-8 h-8 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-[#333]"
-                                            onClick={() => setShowAiInput(false)}
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </Button>
-                                    )}
-
-                                    <Button
-                                        size="icon"
-                                        className={`rounded-full shrink-0 w-9 h-9 transition-all duration-200 ${
-                                            aiTopic
-                                                ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-md'
-                                                : 'bg-gray-100 text-gray-300 dark:bg-[#2a2a2a] dark:text-gray-600 cursor-not-allowed'
-                                        }`}
-                                        onClick={handleStartAi}
-                                        disabled={!aiTopic || isGenerating}
-                                    >
-                                        {isGenerating ? <StopCircle className="w-4 h-4" /> : <ArrowUp className="w-4 h-4" />}
-                                    </Button>
-                                </div>
-                            </div>
-                        </motion.div>
+                        <AiWriterBar
+                            isGenerating={isGenerating}
+                            progress={progress}
+                            onStart={handleStartAi}
+                            onClose={() => setShowAiInput(false)}
+                        />
                     ) : (
-                        /* TRƯỜNG HỢP 2: HIỂN THỊ NÚT TRÒN (FAB) */
                         <motion.div
                             key="ai-fab"
-                            // Hiệu ứng: Zoom in từ 0 -> 1, xoay nhẹ
-                            initial={{ scale: 0, rotate: 45, opacity: 0 }}
-                            animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                            exit={{ scale: 0, rotate: 45, opacity: 0, transition: { duration: 0.2 } }}
-                            transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                            className="absolute bottom-6 right-8 z-50"
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0, opacity: 0 }}
+                            className="absolute bottom-6 right-8 z-50 text-right"
                         >
-                            <Button
-                                className="h-14 w-14 rounded-full bg-purple-600 hover:bg-purple-700 text-white shadow-[0_8px_30px_rgb(124,58,237,0.3)] hover:shadow-[0_8px_30px_rgb(124,58,237,0.5)]"
-                                onClick={() => setShowAiInput(true)}
-                            >
-                                <Sparkles className="w-6 h-6" />
-                            </Button>
+                            <div className="group flex items-center gap-3">
+                                <span className="px-3 py-1.5 rounded-lg bg-black/80 text-white text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">AI WRITER</span>
+                                <Button
+                                    className="h-14 w-14 rounded-full bg-purple-600 hover:bg-purple-700 text-white shadow-lg"
+                                    onClick={() => setShowAiInput(true)}
+                                >
+                                    <Sparkles className="w-6 h-6" />
+                                </Button>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -173,7 +131,12 @@ export default function CreatePostPage() {
             </main>
 
             <aside className="w-[350px] border-l hidden lg:block shrink-0 h-full overflow-hidden z-10 bg-gray-50/30">
-                <PostSidebar />
+                <PostSidebar
+                    post={{ ...postMetadata, title, content: "" }}
+                    onUpdate={(data) => setPostMetadata(prev => ({ ...prev, ...data }))}
+                    onSave={handleSave}
+                    isSaving={createMutation.isPending}
+                />
             </aside>
         </div>
     )

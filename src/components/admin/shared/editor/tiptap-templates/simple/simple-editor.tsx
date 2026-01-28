@@ -243,7 +243,6 @@ const MainToolbarContent = ({
                 <ImageUploadButton text="Add" />
                 <Button
                     data-style="ghost"
-                    size="icon"
                     className="h-8 w-8 text-muted-foreground hover:text-foreground border"
                     title="Chèn Mục lục"
                     onClick={() => editor.chain().focus().insertContent('<toc-node></toc-node>').run()}

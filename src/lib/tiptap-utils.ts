@@ -374,17 +374,45 @@ export const handleImageUpload = async (
     )
   }
 
-  // For demo/testing: Simulate upload progress. In production, replace the following code
-  // with your own upload implementation.
-  for (let progress = 0; progress <= 100; progress += 10) {
+  // Check if upload was aborted before starting
+  if (abortSignal?.aborted) {
+    throw new Error("Upload cancelled")
+  }
+
+  try {
+    // Start progress
+    onProgress?.({ progress: 10 })
+
+    // Dynamic import to avoid circular dependency
+    const { postsApi } = await import('@/services/posts.api')
+
+    onProgress?.({ progress: 30 })
+
+    // Upload to backend
+    const result = await postsApi.uploadImage(file)
+
+    onProgress?.({ progress: 90 })
+
+    // Check abort again before returning
+    if (abortSignal?.aborted) {
+      // Try to delete the uploaded image
+      try {
+        await postsApi.deleteImage(result.url)
+      } catch (e) {
+        console.error('Failed to delete aborted upload:', e)
+      }
+      throw new Error("Upload cancelled")
+    }
+
+    onProgress?.({ progress: 100 })
+
+    return result.url
+  } catch (error) {
     if (abortSignal?.aborted) {
       throw new Error("Upload cancelled")
     }
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    onProgress?.({ progress })
+    throw error
   }
-
-  return "/images/tiptap-ui-placeholder-image.jpg"
 }
 
 type ProtocolOptions = {

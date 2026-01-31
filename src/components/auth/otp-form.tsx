@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { authApi, httpClient, handleLogout } from "@/services"
+import { useVerifyPinMutation, useResendPinMutation } from "@/hooks/use-verify-pin"
 import { Button } from "@/components/admin/ui/button"
 import {
     Card, CardContent, CardDescription, CardHeader, CardTitle
@@ -22,8 +22,11 @@ export function OTPForm({ className, ...props }: React.ComponentPropsWithoutRef<
     const email = searchParams.get("email")
     const mode = searchParams.get("mode") // 'activation' | 'reset_password'
 
-    const [isLoading, setIsLoading] = useState(false)
     const [pin, setPin] = useState("")
+
+    // TanStack Query mutations
+    const verifyPinMutation = useVerifyPinMutation()
+    const resendPinMutation = useResendPinMutation()
 
     useEffect(() => {
         if (!email) {
@@ -39,81 +42,26 @@ export function OTPForm({ className, ...props }: React.ComponentPropsWithoutRef<
             return
         }
 
-        setIsLoading(true)
+        if (!email) {
+            toast.error("Email invalid")
+            return
+        }
 
-        try {
-            if (!email) throw new Error("Email invalid")
-
-            if (mode === 'activation') {
-                // CASE 1: Kích hoạt tài khoản & Tự động đăng nhập
-                // Gọi API verifyPin (Backend đã sửa để trả về Token ngay sau khi verify)
-                const res: any = await authApi.verifyPin({ email, pin })
-
-                // 1. Lưu Token vào LocalStorage để Auto Login
-                if (res?.accessToken) {
-                    localStorage.setItem("accessToken", res.accessToken)
-                    localStorage.setItem("refreshToken", res.refreshToken)
-                    if (res.user) {
-                        localStorage.setItem("user", JSON.stringify(res.user))
-                        if (res.user.id) localStorage.setItem("userId", res.user.id)
-                    }
-                }
-
-                toast.success("Kích hoạt thành công!")
-
-                // 2. Gọi /sessions/current để lấy permissions và kiểm tra trạng thái
-                try {
-                    const sessionRes: any = await httpClient('/sessions/current', {
-                        method: 'GET',
-                        requireAuth: true,
-                    });
-                    const sessionData = sessionRes.data || sessionRes;
-
-                    if (sessionData.user) {
-                        // Lưu user info đầy đủ
-                        localStorage.setItem("user", JSON.stringify(sessionData.user));
-
-                        // Lưu permissions và roles
-                        if (sessionData.accessControl) {
-                            const permissions = sessionData.accessControl.permissions || [];
-                            const roles = sessionData.accessControl.roles || [];
-
-                            localStorage.setItem('permissions', JSON.stringify(permissions));
-                            localStorage.setItem('roles', JSON.stringify(roles));
-                        }
-
-                        // Redirect về trang chủ
-                        window.location.href = "/";
-                    } else {
-                        window.location.href = "/";
-                    }
-                } catch (e) {
-                    console.error("Failed to fetch session:", e);
-                    window.location.href = "/";
-                }
-
-            } else if (mode === 'reset_password') {
-                // CASE 2: Quên mật khẩu -> Chuyển sang trang đặt pass mới
-                // Ta truyền PIN qua URL để trang sau dùng gọi API resetPassword
-                router.push(`/auth/change-password?email=${encodeURIComponent(email)}&pin=${pin}`)
-            }
-        } catch (error: any) {
-            console.error(error)
-            toast.error(error.message || "Mã xác thực không chính xác")
-        } finally {
-            setIsLoading(false)
+        if (mode === 'activation') {
+            // CASE 1: Kích hoạt tài khoản & Tự động đăng nhập
+            verifyPinMutation.mutate({ email, pin })
+        } else if (mode === 'reset_password') {
+            // CASE 2: Quên mật khẩu -> Chuyển sang trang đặt pass mới
+            router.push(`/auth/change-password?email=${encodeURIComponent(email)}&pin=${pin}`)
         }
     }
 
-    const handleResend = async () => {
+    const handleResend = () => {
         if (!email) return
-        try {
-            await authApi.resendPin(email)
-            toast.success("Đã gửi lại mã PIN mới")
-        } catch (error: any) {
-            toast.error(error.message || "Không thể gửi lại mã")
-        }
+        resendPinMutation.mutate(email)
     }
+
+    const isLoading = verifyPinMutation.isPending
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>

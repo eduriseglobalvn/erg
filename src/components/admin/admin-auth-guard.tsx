@@ -2,173 +2,109 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { httpClient, handleLogout } from "@/services/http-client";
+import { handleLogout } from "@/services/http-client";
 import { PermissionDeniedDialog } from "@/components/admin/shared/permission-denied-dialog";
-import { userApi } from "@/services/users.api";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function AdminAuthGuard({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
 
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isChecking, setIsChecking] = useState(true);
     const [showPermissionDenied, setShowPermissionDenied] = useState(false);
 
+    // Danh sách Public Routes (Không cần Token)
+    const publicPaths = [
+        "/auth/login",
+        "/auth/register",
+        "/auth/signup",
+        "/auth/forgot-password",
+        "/auth/reset-password",
+        "/auth/change-password",
+        "/auth/otp",
+        "/403"
+    ];
+
+    const isPublicPage = publicPaths.some((path) => pathname.startsWith(path));
+    const token = typeof window !== 'undefined' ? localStorage.getItem("accessToken") : null;
+
+    // Sử dụng useAuth hook với TanStack Query
+    const { data: auth, isLoading: isChecking, isError } = useAuth();
+
     useEffect(() => {
-        // 1. Định nghĩa danh sách Public Routes (Không cần Token)
-        // [QUAN TRỌNG] Phải liệt kê đủ tất cả các trang Auth ở đây
-        const publicPaths = [
-            "/auth/login",
-            "/auth/register",
-            "/auth/signup",          // <--- Fix lỗi của bạn ở đây
-            "/auth/forgot-password",
-            "/auth/reset-password",
-            "/auth/change-password", // Trang đặt lại pass từ email (có token trên URL nhưng chưa login)
-            "/auth/otp",
-            "/403"                   // Trang 403 không cần auth check
-        ];
-
-        // Check xem trang hiện tại có phải public không
-        const isPublicPage = publicPaths.some((path) => pathname.startsWith(path));
-        const token = localStorage.getItem("accessToken");
-
-        const checkAuth = async () => {
-            // TRƯỜNG HỢP 1: Trang Public (Login, Register...)
-            if (isPublicPage) {
-                // [NÂNG CAO] Nếu đã có Token mà lại vào trang Login -> Đá về Dashboard luôn
-                if (token) {
-                    try {
-                        await httpClient("/sessions/current");
-                        router.push("/");
-                        return;
-                    } catch {
-                        handleLogout();
-                    }
-                }
-
-                setIsAuthenticated(true);
-                setIsChecking(false);
-                return;
+        // TRƯỜNG HỢP 1: Trang Public (Login, Register...)
+        if (isPublicPage) {
+            // Nếu đã có Token mà lại vào trang Login -> Đá về Dashboard luôn
+            if (token && auth) {
+                router.push("/");
             }
+            return;
+        }
 
-            // TRƯỜNG HỢP 2: Trang Private
-            if (!token) {
-                setIsAuthenticated(false);
-                setIsChecking(false);
-                router.push("/auth/login");
-                return;
-            }
+        // TRƯỜNG HỢP 2: Trang Private - Không có token
+        if (!token) {
+            router.push("/auth/login");
+            return;
+        }
 
-            try {
-                // [FIX] Gọi song song cả Session (lấy permissions) và Me (lấy isProfileCompleted)
-                // Vì API /sessions/current không trả về isProfileCompleted
-                const [sessionRes, userRes]: [any, any] = await Promise.all([
-                    httpClient("/sessions/current"),
-                    userApi.getMe()
-                ]);
+        // TRƯỜNG HỢP 3: Query failed (session expired/revoked)
+        if (isError) {
+            console.error("Session revoked or expired");
+            handleLogout();
+            return;
+        }
 
-                const sessionData = sessionRes.data || sessionRes;
-                const userData = userRes.data || userRes;
+        // TRƯỜNG HỢP 4: Auth data loaded - Validate user status
+        if (auth?.user) {
+            const userStatus = auth.user.status;
 
-                // Merge thông tin user từ /users/me vào session user
-                // userData chứa profile đầy đủ bao gồm isProfileCompleted
-                const fullUser = {
-                    ...sessionData.user,
-                    ...userData
-                };
-
-                // Kiểm tra status của user
-                if (fullUser) {
-                    const userStatus = fullUser.status;
-
-                    // Nếu user bị BANNED hoặc BLOCKED -> Logout ngay
-                    if (userStatus === 'BANNED' || userStatus === 'BLOCKED') {
-                        console.error(`Account is ${userStatus}`);
-                        setIsAuthenticated(false);
-                        handleLogout();
-                        return;
-                    }
-
-                    // Nếu user vẫn PENDING (chưa verify PIN) -> Redirect về verify
-                    if (userStatus === 'PENDING') {
-                        setIsAuthenticated(false);
-                        setIsChecking(false);
-                        router.push(`/auth/otp?email=${encodeURIComponent(fullUser.email)}&mode=activation`);
-                        return;
-                    }
-
-                    // Lưu permissions vào localStorage
-                    if (sessionData.accessControl) {
-                        localStorage.setItem('permissions', JSON.stringify(sessionData.accessControl.permissions || []));
-                        localStorage.setItem('roles', JSON.stringify(sessionData.accessControl.roles || []));
-
-                        const permissions = sessionData.accessControl.permissions || [];
-                        const roles = sessionData.accessControl.roles || [];
-
-                        // Nếu user không có quyền gì cả -> Hiển thị dialog
-                        if (permissions.length === 0 && roles.length === 0) {
-                            setIsChecking(false);
-                            setShowPermissionDenied(true);
-                            return;
-                        }
-                    } else {
-                        // Không có accessControl -> Hiển thị dialog
-                        setIsChecking(false);
-                        setShowPermissionDenied(true);
-                        return;
-                    }
-
-                    // [CẢI THIỆN] Check localStorage xem có cờ isProfileCompleted không (fallback)
-                    let isCompleted = fullUser.isProfileCompleted;
-
-                    // Fallback check localStorage
-                    if (!isCompleted) {
-                        try {
-                            const storedUserStr = localStorage.getItem('user');
-                            if (storedUserStr) {
-                                const storedUser = JSON.parse(storedUserStr);
-                                if (storedUser.isProfileCompleted) {
-                                    isCompleted = true;
-                                    fullUser.isProfileCompleted = true;
-                                }
-                            }
-                        } catch (e) { }
-                    }
-
-                    // Update user info in localStorage
-                    localStorage.setItem('user', JSON.stringify(fullUser));
-
-                    // [MỚI] Logic chuyển hướng Onboarding
-                    const skipOnboarding = sessionStorage.getItem("skipOnboarding") === "true";
-
-                    if (!isCompleted && !skipOnboarding && pathname !== '/onboarding') {
-                        setIsAuthenticated(false);
-                        setIsChecking(false);
-                        router.push('/onboarding');
-                        return;
-                    }
-
-                    // Nếu đã hoàn thành hồ sơ mà vẫn ở trang onboarding -> Đẩy về home
-                    if (isCompleted && pathname === '/onboarding') {
-                        setIsAuthenticated(false);
-                        setIsChecking(false);
-                        router.push('/');
-                        return;
-                    }
-                }
-
-                setIsAuthenticated(true);
-            } catch (error) {
-                console.error("Session revoked or expired:", error);
-                setIsAuthenticated(false);
+            // Nếu user bị BANNED hoặc BLOCKED -> Logout ngay
+            if (userStatus === 'BANNED' || userStatus === 'BLOCKED') {
+                console.error(`Account is ${userStatus}`);
                 handleLogout();
-            } finally {
-                setIsChecking(false);
+                return;
             }
-        };
 
-        checkAuth();
-    }, [pathname, router]);
+            // Nếu user vẫn PENDING (chưa verify PIN) -> Redirect về verify
+            if (userStatus === 'PENDING') {
+                router.push(`/auth/otp?email=${encodeURIComponent(auth.user.email)}&mode=activation`);
+                return;
+            }
+
+            // Lưu permissions vào localStorage
+            if (auth.permissions || auth.roles) {
+                localStorage.setItem('permissions', JSON.stringify(auth.permissions));
+                localStorage.setItem('roles', JSON.stringify(auth.roles));
+
+                // Nếu user không có quyền gì cả -> Hiển thị dialog
+                if (auth.permissions.length === 0 && auth.roles.length === 0) {
+                    setShowPermissionDenied(true);
+                    return;
+                }
+            } else {
+                // Không có accessControl -> Hiển thị dialog
+                setShowPermissionDenied(true);
+                return;
+            }
+
+            // Check profile completion
+            const skipOnboarding = sessionStorage.getItem("skipOnboarding") === "true";
+            const isCompleted = auth.user.isProfileCompleted;
+
+            if (!isCompleted && !skipOnboarding && pathname !== '/onboarding') {
+                router.push('/onboarding');
+                return;
+            }
+
+            // Nếu đã hoàn thành hồ sơ mà vẫn ở trang onboarding -> Đẩy về home
+            if (isCompleted && pathname === '/onboarding') {
+                router.push('/');
+                return;
+            }
+
+            // Update user info in localStorage
+            localStorage.setItem('user', JSON.stringify(auth.user));
+        }
+    }, [auth, isError, pathname, router, isPublicPage, token]);
 
     // --- RENDER UI ---
 
@@ -190,12 +126,7 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
         )
     }
 
-    // 2. Nếu là trang Private mà chưa Auth -> Không render gì cả (đợi redirect)
-    // TRỪ KHI đang hiển thị popup permission denied (vẫn cho render để hiện popup)
-    const publicPaths = ["/auth/login", "/auth/register", "/auth/signup", "/auth/forgot-password", "/auth/reset-password", "/auth/change-password", "/auth/otp", "/403"];
-    const isPublicPage = publicPaths.some((path) => pathname.startsWith(path));
-
-    // Nếu Permission Denied -> Render Dialog
+    // 2. Nếu Permission Denied -> Render Dialog
     if (showPermissionDenied) {
         return (
             <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
@@ -208,10 +139,11 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
         );
     }
 
-    if (!isAuthenticated && !isPublicPage) {
+    // 3. Nếu là trang Private mà chưa có auth data -> Không render gì cả (đợi redirect)
+    if (!isPublicPage && !auth) {
         return null;
     }
 
-    // 3. Render nội dung
+    // 4. Render nội dung
     return <>{children}</>;
 }

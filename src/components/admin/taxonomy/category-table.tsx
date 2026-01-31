@@ -50,6 +50,7 @@ import {
 import { postsApi, Category } from "@/services/posts.api"
 import { toast } from "sonner"
 import { CategoryDialog } from "./category-dialog"
+import { ConfirmDialog } from "@/components/admin/shared/confirm-dialog"
 
 const categoryIcons: Record<string, React.ElementType> = {
     "GraduationCap": GraduationCap,
@@ -72,6 +73,8 @@ export function CategoryTable() {
     const [searchTerm, setSearchTerm] = React.useState("")
     const [isDialogOpen, setIsDialogOpen] = React.useState(false)
     const [selectedCategory, setSelectedCategory] = React.useState<Category | null>(null)
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false)
+    const [categoryToDelete, setCategoryToDelete] = React.useState<Category | null>(null)
 
     const { data: categories = [], isLoading } = useQuery({
         queryKey: ['categories'],
@@ -83,9 +86,13 @@ export function CategoryTable() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['categories'] })
             toast.success("Xóa chuyên mục thành công")
+            setIsDeleteDialogOpen(false)
+            setCategoryToDelete(null)
         },
         onError: (error: any) => {
             toast.error(error.message || "Không thể xóa chuyên mục này")
+            setIsDeleteDialogOpen(false)
+            setCategoryToDelete(null)
         }
     })
 
@@ -99,10 +106,9 @@ export function CategoryTable() {
         setIsDialogOpen(true)
     }
 
-    const handleDelete = (id: string) => {
-        if (confirm("Bạn có chắc chắn muốn xóa chuyên mục này?")) {
-            deleteMutation.mutate(id)
-        }
+    const handleDelete = (category: Category) => {
+        setCategoryToDelete(category)
+        setIsDeleteDialogOpen(true)
     }
 
     const filteredData = React.useMemo(() => {
@@ -172,8 +178,8 @@ export function CategoryTable() {
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                                className="text-destructive"
-                                onClick={() => handleDelete(category.id)}
+                                className="text-destructive font-bold"
+                                onClick={() => handleDelete(category)}
                             >
                                 <Trash2 className="mr-2 h-4 w-4" /> Xóa chuyên mục
                             </DropdownMenuItem>
@@ -263,6 +269,17 @@ export function CategoryTable() {
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 category={selectedCategory}
+            />
+
+            <ConfirmDialog
+                open={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+                title="Xóa chuyên mục?"
+                description={`Bạn có chắc chắn muốn xóa chuyên mục "${categoryToDelete?.name}"? Lưu ý: Không thể xóa nếu vẫn còn bài viết bên trong.`}
+                onConfirm={() => categoryToDelete && deleteMutation.mutate(categoryToDelete.id)}
+                variant="destructive"
+                confirmText="Xác nhận xóa"
+                isLoading={deleteMutation.isPending}
             />
         </div>
     )

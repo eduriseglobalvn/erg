@@ -2,26 +2,26 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { authApi } from "@/services"
+import { useResetPasswordMutation } from "@/hooks/use-verify-pin"
 import { Button } from "@/components/admin/ui/button"
 import {
     Card, CardContent, CardDescription, CardHeader, CardTitle
 } from "@/components/admin/ui/card"
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
+import { toast } from "sonner"
 
 export function ChangePasswordForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
     const router = useRouter()
     const searchParams = useSearchParams()
+    const resetPasswordMutation = useResetPasswordMutation()
 
     const email = searchParams.get("email")
     const pin = searchParams.get("pin")
 
-    const [isLoading, setIsLoading] = useState(false)
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
 
@@ -40,25 +40,21 @@ export function ChangePasswordForm({ className, ...props }: React.ComponentProps
             return
         }
 
-        setIsLoading(true)
-
-        try {
-            if (!email || !pin) throw new Error("Thông tin không hợp lệ")
-
-            await authApi.resetPassword({
-                email,
-                pin,
-                newPassword: password
-            })
-
-            toast.success("Mật khẩu đã được thay đổi thành công!")
-            router.push("/auth/login")
-        } catch (error: any) {
-            toast.error(error.message || "Đổi mật khẩu thất bại")
-        } finally {
-            setIsLoading(false)
+        if (!email || !pin) {
+            toast.error("Thông tin không hợp lệ")
+            return
         }
+
+        resetPasswordMutation.mutate(
+            { email, pin, newPassword: password },
+            {
+                onSuccess: () => {
+                    router.push("/auth/login")
+                }
+            }
+        )
     }
+
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -80,7 +76,7 @@ export function ChangePasswordForm({ className, ...props }: React.ComponentProps
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    disabled={isLoading}
+                                    disabled={resetPasswordMutation.isPending}
                                 />
                             </div>
                             <div className="grid gap-2">
@@ -91,12 +87,12 @@ export function ChangePasswordForm({ className, ...props }: React.ComponentProps
                                     required
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    disabled={isLoading}
+                                    disabled={resetPasswordMutation.isPending}
                                 />
                             </div>
-                            <Button type="submit" className="w-full" disabled={isLoading}>
-                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                {isLoading ? "Đang cập nhật..." : "Cập nhật mật khẩu"}
+                            <Button type="submit" className="w-full" disabled={resetPasswordMutation.isPending}>
+                                {resetPasswordMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                {resetPasswordMutation.isPending ? "Đang cập nhật..." : "Cập nhật mật khẩu"}
                             </Button>
                         </div>
                     </form>

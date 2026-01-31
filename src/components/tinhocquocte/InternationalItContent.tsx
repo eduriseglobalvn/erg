@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2, Award, Users, Globe, ShieldCheck } from 'lucide-react';
 import RoadmapSection from '@/components/tinhocquocte/RoadmapSection';
+import { CourseCard } from '@/components/cards/course-card';
 
 const CertificateCarousel = () => {
     const images = [
@@ -141,68 +142,53 @@ export default function InternationalItContent() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {/* Course Card 1: IC3 Spark */}
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-300 flex flex-col h-full">
-                            <div className="h-48 bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center relative overflow-hidden flex-shrink-0">
-                                <span className="text-5xl font-black text-white/20 select-none group-hover:scale-110 transition-transform duration-500">SPARK</span>
-                            </div>
-                            <div className="p-6 flex flex-col flex-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider">Tiểu học</span>
-                                </div>
-                                <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2 group-hover:text-blue-600 transition-colors">IC3 Spark GS6</h3>
-                                <p className="text-gray-600 mb-4 line-clamp-2 text-sm">Học máy tính từ bước đầu tiên, nâng cao nhận thức và kỹ năng số.</p>
-                                <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1">
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-blue-500" /> Level 1: Các khái niệm cơ bản</li>
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-blue-500" /> Level 2: Kỹ năng thực hành</li>
-                                </ul>
-                                <Link href="/ic3-gs6-spark" className="block w-full py-3 text-center rounded-lg border-2 border-blue-500 text-blue-600 font-bold hover:bg-blue-600 hover:text-white transition-all mt-auto">
-                                    Xem Chi Tiết
-                                </Link>
-                            </div>
-                        </div>
+                        <CourseCard
+                            id="ic3-gs6-spark"
+                            code="Tiểu học"
+                            displayTitle="SPARK"
+                            subtitle="Primary Skills"
+                            title="IC3 Spark GS6"
+                            description="Học máy tính từ bước đầu tiên, nâng cao nhận thức và kỹ năng số."
+                            points={[
+                                "Level 1: Các khái niệm cơ bản",
+                                "Level 2: Kỹ năng thực hành"
+                            ]}
+                            href="/ic3-gs6-spark"
+                            headerGradient="from-blue-400 to-cyan-300"
+                            btnColor="border-blue-500 text-blue-600 hover:bg-blue-600"
+                        />
 
-                        {/* Course Card 2: IC3 GS6 */}
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-teal-300 flex flex-col h-full">
-                            <div className="h-48 bg-gradient-to-br from-teal-500 to-emerald-400 flex items-center justify-center relative overflow-hidden flex-shrink-0">
-                                <span className="text-5xl font-black text-white/20 select-none group-hover:scale-110 transition-transform duration-500">GS6</span>
-                            </div>
-                            <div className="p-6 flex flex-col flex-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="px-3 py-1 rounded-full bg-teal-50 text-teal-600 text-xs font-bold uppercase tracking-wider">THCS</span>
-                                </div>
-                                <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2 group-hover:text-teal-600 transition-colors">IC3 GS6</h3>
-                                <p className="text-gray-600 mb-4 line-clamp-2 text-sm">Chuẩn đánh giá năng lực CNTT theo tiêu chuẩn toàn cầu mới nhất.</p>
-                                <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1">
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-teal-500" /> 3 Cấp độ năng lực</li>
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-teal-500" /> 7 Chuyên đề trọng tâm</li>
-                                </ul>
-                                <Link href="/ic3-gs6" className="block w-full py-3 text-center rounded-lg border-2 border-teal-500 text-teal-600 font-bold hover:bg-teal-500 hover:text-white transition-all mt-auto">
-                                    Xem Chi Tiết
-                                </Link>
-                            </div>
-                        </div>
+                        <CourseCard
+                            id="ic3-gs6"
+                            code="THCS"
+                            displayTitle="GS6"
+                            subtitle="Digital Literacy"
+                            title="IC3 GS6"
+                            description="Chuẩn đánh giá năng lực CNTT theo tiêu chuẩn toàn cầu mới nhất."
+                            points={[
+                                "3 Cấp độ năng lực",
+                                "7 Chuyên đề trọng tâm"
+                            ]}
+                            href="/ic3-gs6"
+                            headerGradient="from-teal-500 to-emerald-400"
+                            btnColor="border-teal-500 text-teal-600 hover:bg-teal-500"
+                        />
 
-                        {/* Course Card 3: MOS */}
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-orange-300 flex flex-col h-full">
-                            <div className="h-48 bg-gradient-to-br from-[#F25022] to-orange-500 flex items-center justify-center relative overflow-hidden flex-shrink-0">
-                                <span className="text-5xl font-black text-white/20 select-none group-hover:scale-110 transition-transform duration-500">MOS</span>
-                            </div>
-                            <div className="p-6 flex flex-col flex-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="px-3 py-1 rounded-full bg-orange-50 text-[#F25022] text-xs font-bold uppercase tracking-wider">THPT & Đại học</span>
-                                </div>
-                                <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2 group-hover:text-[#F25022] transition-colors">Microsoft Office (MOS)</h3>
-                                <p className="text-gray-600 mb-4 line-clamp-2 text-sm">Chứng chỉ tin học văn phòng quốc tế do Microsoft cấp.</p>
-                                <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1">
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-orange-500" /> Word, Excel, PowerPoint...</li>
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-orange-500" /> Cấp độ: Specialist, Expert</li>
-                                </ul>
-                                <Link href="/mos" className="block w-full py-3 text-center rounded-lg border-2 border-[#F25022] text-[#F25022] font-bold hover:bg-[#F25022] hover:text-white transition-all mt-auto">
-                                    Xem Chi Tiết
-                                </Link>
-                            </div>
-                        </div>
+                        <CourseCard
+                            id="mos"
+                            code="THPT & Đại học"
+                            displayTitle="MOS"
+                            subtitle="Expert Skills"
+                            title="Microsoft Office (MOS)"
+                            description="Chứng chỉ tin học văn phòng quốc tế do Microsoft cấp."
+                            points={[
+                                "Word, Excel, PowerPoint...",
+                                "Cấp độ: Specialist, Expert"
+                            ]}
+                            href="/mos"
+                            headerGradient="from-[#F25022] to-orange-500"
+                            btnColor="border-orange-500 text-orange-600 hover:bg-orange-500"
+                        />
                     </div>
                 </div>
             </section>
@@ -212,7 +198,12 @@ export default function InternationalItContent() {
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl md:text-4xl font-bold mb-6">Sẵn sàng cho kỷ nguyên số?</h2>
                     <p className="text-blue-100 mb-8 text-lg max-w-2xl mx-auto">Đăng ký tư vấn ngay hôm nay để nhận lộ trình học tập chi tiết phù hợp nhất với năng lực của bạn.</p>
-                    <Link href="/lien-he" className="inline-block px-12 py-4 bg-[var(--erg-red)] text-white font-bold rounded-full text-lg hover:scale-105 transition-transform shadow-lg shadow-red-900/30">
+                    <Link
+                        href="/lien-he"
+                        className="inline-block px-12 py-4 bg-[var(--erg-red)] text-white font-bold rounded-full text-lg hover:scale-105 transition-transform shadow-lg shadow-red-900/30"
+                        data-analytics="click_register_consultation"
+                        data-analytics-metadata='{"section": "footer", "subdomain": "tinhocquocte"}'
+                    >
                         Đăng Ký Tư Vấn Ngay
                     </Link>
                 </div>

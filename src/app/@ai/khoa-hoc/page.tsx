@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Bot, BrainCircuit, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
+import { Bot, Sparkles } from 'lucide-react';
+import { CourseCard } from '@/components/cards/course-card';
 
 export default function CoursesPage() {
     // Dữ liệu chỉ có 1 khóa học duy nhất: Học cùng AI
@@ -52,56 +53,23 @@ export default function CoursesPage() {
             {/* Course List Container */}
             <div className="container mx-auto px-4 -mt-20 relative z-10">
                 {/* Sử dụng max-w-3xl và mx-auto để căn giữa thẻ duy nhất */}
-                <div className="max-w-3xl mx-auto">
+                <div className="max-w-xl mx-auto">
                     {courses.map((course) => (
-                        <div
+                        <CourseCard
                             key={course.id}
-                            className={`bg-white rounded-3xl shadow-xl border-2 p-8 md:p-10 flex flex-col md:flex-row gap-8 items-start hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group ${course.colorClass}`}
-                        >
-                            {/* Icon / Image Area */}
-                            <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:block">
-                                <div className={`w-24 h-24 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform ${course.bgIcon}`}>
-                                    {course.icon}
-                                </div>
-                            </div>
-
-                            {/* Content Area */}
-                            <div className="flex-1 w-full">
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
-                                    <h2 className="text-3xl font-bold text-gray-800 group-hover:text-indigo-700 transition-colors">
-                                        {course.title}
-                                    </h2>
-                                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider w-fit ${course.badgeColor}`}>
-                                        {course.subTitle}
-                                    </span>
-                                </div>
-
-                                <p className="text-gray-600 mb-6 text-base leading-relaxed font-medium">
-                                    {course.description}
-                                </p>
-
-                                {/* List Levels / Features */}
-                                <div className="space-y-3 mb-8 bg-gray-50 p-6 rounded-xl border border-gray-100">
-                                    <h4 className="font-bold text-gray-700 text-sm mb-2 flex items-center gap-2">
-                                        <BrainCircuit size={16} className="text-indigo-500" /> Điểm nổi bật:
-                                    </h4>
-                                    {course.levels.map((lvl, idx) => (
-                                        <div key={idx} className="flex items-start gap-3 text-sm text-gray-700">
-                                            <CheckCircle2 size={18} className="text-green-500 flex-shrink-0 mt-0.5" />
-                                            <span>{lvl}</span>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {/* Button CTA */}
-                                <Link
-                                    href={course.link}
-                                    className={`flex items-center justify-center gap-2 w-full py-4 rounded-xl text-white font-bold transition-all shadow-lg hover:-translate-y-1 ${course.btnClass}`}
-                                >
-                                    XEM CHI TIẾT CHƯƠNG TRÌNH <ArrowRight size={20} />
-                                </Link>
-                            </div>
-                        </div>
+                            id={course.id}
+                            title={course.title}
+                            displayTitle="AI"
+                            subtitle={course.subTitle}
+                            description={course.description}
+                            icon={course.icon}
+                            points={course.levels}
+                            href={course.link}
+                            headerGradient="from-indigo-600 to-indigo-400"
+                            btnColor="border-indigo-600 text-indigo-600 hover:bg-indigo-600"
+                            modules="Điểm nổi bật:"
+                            code="GIÁO DỤC 4.0"
+                        />
                     ))}
                 </div>
             </div>

@@ -12,63 +12,76 @@ import { analyticsApi } from '@/services/analytics.api';
  */
 export function usePageTracking() {
     const pathname = usePathname();
-    const sessionIdRef = useRef<string | null>(null);
+    const visitIdRef = useRef<string | null>(null);
     const startTimeRef = useRef<number>(Date.now());
 
     useEffect(() => {
-        // 1. Track Session Begin
+        // 1. Track    useEffect(() => {
         const trackSessionBegin = async () => {
             startTimeRef.current = Date.now();
 
             try {
-                // Chỉ track nếu đang ở browser client
                 if (typeof window !== 'undefined') {
-                    // SKIP Tracking on Admin Domain
-                    if (window.location.hostname.startsWith('admin')) {
-                        console.log('[Tracker] Skipping admin page');
-                        return;
+                    // --- PHÂN TÍCH ENTITY ---
+                    let entityType = 'page';
+                    let entityId = pathname === '/' ? 'home' : pathname.split('/').filter(Boolean).pop() || 'home';
+
+                    const host = window.location.hostname;
+                    if (pathname === '/' && !host.includes('www') && host.split('.').length > 2) {
+                        entityId = host.split('.')[0] + '-home';
                     }
 
-                    const url = window.location.href;
-                    const referrer = document.referrer || '';
+                    const pathParts = pathname.split('/').filter(Boolean);
+                    if (pathParts.length > 0) {
+                        const first = pathParts[0];
+                        if (['tin-tuc', 'posts', 'news'].includes(first)) entityType = 'post';
+                        else if (['khoa-hoc', 'courses'].includes(first)) entityType = 'course';
+                        else if (['danh-muc', 'category'].includes(first)) entityType = 'category';
+                    }
 
-                    console.log('[Tracker] Starting session:', { url, referrer });
+                    console.log(`%c[Analytics] 🚀 Khởi tạo phiên: ${entityType} | ${entityId}`, "color: #007bff; font-weight: bold;");
 
-                    const response = await analyticsApi.trackSessionBegin({
-                        url,
-                        referrer,
+                    const response: any = await analyticsApi.trackSessionBegin({
+                        url: window.location.href,
+                        referrer: document.referrer || '',
+                        entityType,
+                        entityId
                     });
 
-                    // Lưu sessionId hoặc visitId để dùng khi finish
-                    // Backend có thể trả về sessionId hoặc visitId
-                    const id = response?.sessionId || response?.visitId;
-                    if (id) {
-                        sessionIdRef.current = id;
-                        console.log('[Tracker] Session started:', sessionIdRef.current);
+                    // CỐ GẮNG LẤY ID LINH HOẠT (phẳng hoặc lồng trong data)
+                    const vId = response?.visitId || response?.sessionInternalId ||
+                        response?.data?.visitId || response?.data?.sessionInternalId;
+
+                    if (vId) {
+                        visitIdRef.current = vId;
+                        sessionStorage.setItem('erg_visit_id', vId);
+                        console.log(`%c[Analytics] ✅ Đã nhận ID: ${vId}`, "color: #28a745; font-weight: bold;");
+                    } else {
+                        console.warn('[Analytics] ⚠️ Không tìm thấy ID trong response BE:', response);
                     }
                 }
             } catch (e) {
-                console.warn('[Tracker] Session begin failed:', e);
+                console.warn('[Analytics] Session begin failed:', e);
             }
         };
 
-        // 2. Track Session Finish
         const trackSessionFinish = () => {
-            if (!sessionIdRef.current) return;
+            const currentId = visitIdRef.current || sessionStorage.getItem('erg_visit_id');
+            if (!currentId) return;
 
             const duration = Math.round((Date.now() - startTimeRef.current) / 1000);
-            console.log('[Tracker] Finishing session:', { sessionId: sessionIdRef.current, duration });
 
-            analyticsApi.trackSessionFinish(sessionIdRef.current, duration);
+            console.log(`%c[Analytics] 🏁 Kết thúc phiên. ID: ${currentId} | Ở lại: ${duration}s`, "color: #dc3545; font-weight: bold;");
+
+            analyticsApi.trackSessionFinish(currentId, duration);
+
+            // Chỉ xóa sau khi finish thành công
+            visitIdRef.current = null;
+            sessionStorage.removeItem('erg_visit_id');
         };
 
-        // Start tracking
         trackSessionBegin();
-
-        // Listen for page unload
         window.addEventListener('beforeunload', trackSessionFinish);
-
-        // Cleanup
         return () => {
             trackSessionFinish();
             window.removeEventListener('beforeunload', trackSessionFinish);

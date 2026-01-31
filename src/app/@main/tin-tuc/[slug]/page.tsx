@@ -16,7 +16,7 @@ import { PostDetailResponse } from '@/services/posts.api';
 async function getPost(slug: string): Promise<PostDetailResponse['data'] | null> {
     try {
         const apiUrl = process.env.BACKEND_URL || 'http://localhost:3000';
-        const res = await fetch(`${apiUrl}/posts/slug/${slug}`, {
+        const res = await fetch(`${apiUrl}/api/posts/slug/${slug}`, {
             next: { revalidate: 60 }, // ISR: Revalidate every 60 seconds
         });
 
@@ -36,7 +36,7 @@ async function getPost(slug: string): Promise<PostDetailResponse['data'] | null>
 async function getRecentPosts(): Promise<any[]> {
     try {
         const apiUrl = process.env.BACKEND_URL || 'http://localhost:3000';
-        const res = await fetch(`${apiUrl}/posts?limit=5&sortBy=createdAt&order=DESC&status=published`, {
+        const res = await fetch(`${apiUrl}/api/posts?limit=5&sortBy=createdAt&order=DESC&status=published`, {
             next: { revalidate: 60 },
         });
 

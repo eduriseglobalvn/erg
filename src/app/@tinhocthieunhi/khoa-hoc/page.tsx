@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Gamepad2, Code2, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Gamepad2, Code2 } from 'lucide-react';
+import { CourseCard } from '@/components/cards/course-card';
 
 export default function CoursesPage() {
     const courses = [
@@ -63,46 +64,25 @@ export default function CoursesPage() {
                 {/* Thay đổi grid-cols-3 thành grid-cols-2 để hiển thị 2 cột */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {courses.map((course) => (
-                        <div
+                        <CourseCard
                             key={course.id}
-                            // Thay đổi border-t-4 thành border-2 để có viền bao quanh đẹp hơn cho bố cục 2 cột
-                            className={`bg-white rounded-2xl shadow-xl border-2 p-8 flex flex-col h-full hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group ${course.colorClass}`}
-                        >
-                            {/* Icon Header */}
-                            <div className={`mb-6 w-20 h-20 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform ${course.bgIcon}`}>
-                                {course.icon}
-                            </div>
-
-                            <div className="flex-1">
-                                <span className="inline-block px-3 py-1 rounded bg-gray-100 text-xs font-bold text-gray-500 mb-3 uppercase tracking-wider">
-                                  {course.subTitle}
-                                </span>
-                                <h2 className="text-2xl font-bold text-gray-800 mb-3 group-hover:text-[var(--erg-blue)] transition-colors">
-                                    {course.title}
-                                </h2>
-                                <p className="text-gray-600 mb-6 text-sm leading-relaxed font-medium">
-                                    {course.description}
-                                </p>
-
-                                {/* List Levels */}
-                                <div className="space-y-3 mb-8 bg-gray-50 p-5 rounded-xl border border-gray-100">
-                                    {course.levels.map((lvl, idx) => (
-                                        <div key={idx} className="flex items-start gap-3 text-sm text-gray-700">
-                                            <CheckCircle2 size={18} className="text-gray-400 flex-shrink-0 mt-0.5" />
-                                            <span>{lvl}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Button CTA */}
-                            <Link
-                                href={course.link}
-                                className={`flex items-center justify-center gap-2 w-full py-4 rounded-xl text-white font-bold transition-all shadow-lg ${course.btnClass}`}
-                            >
-                                XEM CHI TIẾT <ArrowRight size={18} />
-                            </Link>
-                        </div>
+                            id={course.id}
+                            title={course.title}
+                            displayTitle={course.id.toUpperCase()}
+                            subtitle={course.subTitle}
+                            description={course.description}
+                            icon={course.icon}
+                            points={course.levels}
+                            href={course.link}
+                            headerGradient={
+                                course.id === 'scratch' ? "from-orange-500 to-orange-300" :
+                                    "from-blue-600 to-blue-400"
+                            }
+                            btnColor={
+                                course.id === 'scratch' ? "border-orange-500 text-orange-600 hover:bg-orange-500" :
+                                    "border-blue-600 text-blue-600 hover:bg-blue-600"
+                            }
+                        />
                     ))}
                 </div>
             </div>

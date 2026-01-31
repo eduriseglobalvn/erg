@@ -165,16 +165,9 @@ export const httpClient = async <T>(
 // --- HÀM LOGOUT & ĐÁ NGƯỜI DÙNG RA ---
 export const handleLogout = () => {
     if (typeof window !== 'undefined') {
-        // 1. Xóa sạch dấu vết
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('user');
-        localStorage.removeItem('permissions');
-        localStorage.removeItem('roles');
-
-        // 2. Chuyển hướng về trang Login
-        // Dùng window.location để force reload lại trạng thái trắng tinh
-        window.location.href = '/auth/login?reason=session_expired';
+        // Dynamic import to avoid circular dependency
+        import('@/lib/logout-utils').then(({ handleLogoutWithCache }) => {
+            handleLogoutWithCache();
+        });
     }
 };

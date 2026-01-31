@@ -5,7 +5,6 @@ import { EditorContent, EditorContext, useEditor, Extension } from "@tiptap/reac
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit"
-import { Image } from "@tiptap/extension-image"
 import { TaskItem, TaskList } from "@tiptap/extension-list"
 import { TextAlign } from "@tiptap/extension-text-align"
 import { Typography } from "@tiptap/extension-typography"
@@ -14,7 +13,6 @@ import { Subscript } from "@tiptap/extension-subscript"
 import { Superscript } from "@tiptap/extension-superscript"
 import { Selection } from "@tiptap/extensions"
 import BubbleMenuExtension from '@tiptap/extension-bubble-menu'
-// Thêm extension mới
 import { TextStyle } from "@tiptap/extension-text-style"
 import { FontFamily } from "@tiptap/extension-font-family"
 
@@ -28,6 +26,7 @@ import {
 } from "@/components/admin/shared/editor/tiptap-ui-primitive/toolbar"
 
 // --- Tiptap Node ---
+import { ImageNode } from "@/components/admin/shared/editor/tiptap-node/image-node/image-node-extension"
 import { ImageUploadNode } from "@/components/admin/shared/editor/tiptap-node/image-upload-node/image-upload-node-extension"
 import { HorizontalRule } from "@/components/admin/shared/editor/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension"
 import { HeadingWithAnchor } from "@/components/admin/shared/editor/tiptap-extension/heading-with-anchor"
@@ -376,7 +375,7 @@ export function SimpleEditor({
             TaskList,
             TaskItem.configure({ nested: true }),
             Highlight.configure({ multicolor: true }),
-            Image,
+            ImageNode,
             Typography,
             Superscript,
             Subscript,

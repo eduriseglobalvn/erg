@@ -8,7 +8,8 @@ import {
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { postsApi } from '@/services/posts.api';
-import { NewsCard } from '@/components/main/news-card';
+import { NewsCard } from '@/components/shared/news-card';
+import { NewsGridSkeleton } from '@/components/shared/news-card-skeleton';
 
 // --- CONFIG ---
 const DEFAULT_IMAGE = 'https://media.erg.edu.vn/posts/default-thumbnail.webp';
@@ -89,10 +90,7 @@ export default function NewsPage() {
 
                 {/* --- LOADING & CONTENT --- */}
                 {isLoading ? (
-                    <div className="flex flex-col items-center justify-center py-32">
-                        <Loader2 className="animate-spin text-[#00008b] mb-4" size={48} />
-                        <p className="text-gray-500 font-medium">Đang tải dữ liệu bài viết...</p>
-                    </div>
+                    <NewsGridSkeleton count={6} />
                 ) : isError ? (
                     <div className="text-center py-20 text-red-500 font-medium border rounded-xl bg-red-50">
                         Đã có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại sau.

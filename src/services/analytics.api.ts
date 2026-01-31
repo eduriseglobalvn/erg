@@ -94,7 +94,12 @@ export const analyticsApi = {
      * POST /api/insight/session/begin
      * → Next.js forward to: {BACKEND}/api/insight/session/begin
      */
-    trackSessionBegin: async (data: { url: string; referrer: string }): Promise<SessionStartResponse> => {
+    trackSessionBegin: async (data: {
+        url: string;
+        referrer: string;
+        entityType?: string;
+        entityId?: string;
+    }): Promise<SessionStartResponse> => {
         console.log('[Analytics] Starting session:', data);
 
         const response = await fetch('/api/insight/session/begin', {
@@ -118,23 +123,19 @@ export const analyticsApi = {
      * PUT /api/insight/session/:id/finish
      * → Next.js forward to: {BACKEND}/api/insight/session/:id/finish
      */
-    trackSessionFinish: (sessionId: string, duration: number) => {
-        const url = `/api/insight/session/${sessionId}/finish`;
-        const blob = new Blob([JSON.stringify({ duration })], { type: 'application/json' });
+    trackSessionFinish: (visitId: string, duration: number) => {
+        const url = `/api/insight/session/${visitId}/finish`;
+        const body = JSON.stringify({ duration });
 
-        console.log('[Analytics] Finishing session:', { sessionId, duration });
+        console.log('[Analytics] Finishing session (PUT):', { visitId, duration });
 
-        // Sử dụng sendBeacon để đảm bảo request được gửi ngay cả khi user đóng tab
-        if (navigator.sendBeacon) {
-            navigator.sendBeacon(url, blob);
-        } else {
-            // Fallback cho browser không hỗ trợ sendBeacon
+        if (typeof window !== 'undefined') {
             fetch(url, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ duration }),
+                body: body,
                 keepalive: true
-            }).catch(console.error);
+            }).catch(err => console.warn('[Analytics] Session finish failed:', err));
         }
     },
 
@@ -143,9 +144,9 @@ export const analyticsApi = {
      * → Next.js forward to: {BACKEND}/api/insight/behavior
      */
     trackBehavior: async (data: {
-        sessionId?: string;
+        sessionInternalId: string;
         eventType: string;
-        eventData?: Record<string, any>;
+        metadata?: Record<string, any>;
     }) => {
         console.log('[Analytics] Tracking behavior:', data);
 

@@ -10,6 +10,8 @@ import {
     ExternalLink,
     ChevronRightIcon
 } from 'lucide-react';
+import { NewsCard } from '@/components/shared/news-card';
+import { NewsGridSkeleton } from '@/components/shared/news-card-skeleton';
 
 // --- CẤU HÌNH ---
 const DEFAULT_IMAGE = 'https://moet.gov.vn/upload/2007219/20251020/image_2025-10-20_11-46-19_998cd.png';
@@ -193,21 +195,19 @@ export default function NewsPage() {
                 <div className="flex justify-start gap-10 border-b border-gray-200 mb-10">
                     <button
                         onClick={() => setActiveTab('ERG')}
-                        className={`pb-4 text-xl font-medium transition-all duration-200 ${
-                            activeTab === 'ERG'
-                                ? 'text-[#cc0022] border-b-4 border-[#cc0022]'
-                                : 'text-gray-500 hover:text-[#00008b] border-b-4 border-transparent'
-                        }`}
+                        className={`pb-4 text-xl font-medium transition-all duration-200 ${activeTab === 'ERG'
+                            ? 'text-[#cc0022] border-b-4 border-[#cc0022]'
+                            : 'text-gray-500 hover:text-[#00008b] border-b-4 border-transparent'
+                            }`}
                     >
                         Tin tức ERG
                     </button>
                     <button
                         onClick={() => setActiveTab('RSS')}
-                        className={`pb-4 text-xl font-medium transition-all duration-200 ${
-                            activeTab === 'RSS'
-                                ? 'text-[#cc0022] border-b-4 border-[#cc0022]'
-                                : 'text-gray-500 hover:text-[#00008b] border-b-4 border-transparent'
-                        }`}
+                        className={`pb-4 text-xl font-medium transition-all duration-200 ${activeTab === 'RSS'
+                            ? 'text-[#cc0022] border-b-4 border-[#cc0022]'
+                            : 'text-gray-500 hover:text-[#00008b] border-b-4 border-transparent'
+                            }`}
                     >
                         Điểm tin Giáo dục
                     </button>
@@ -215,59 +215,24 @@ export default function NewsPage() {
 
                 {/* --- LOADING & CONTENT --- */}
                 {activeTab === 'RSS' && loadingRss ? (
-                    <div className="flex flex-col items-center justify-center py-20">
-                        <Loader2 className="animate-spin text-[#00008b] mb-4" size={48} />
-                        <p className="text-gray-500">Đang tải dữ liệu...</p>
-                    </div>
+                    <NewsGridSkeleton count={6} />
                 ) : (
                     <>
                         {/* News Grid */}
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                             {displayedNews.map((item, index) => (
-                                <article
+                                <NewsCard
                                     key={index}
-                                    className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group border border-gray-100 flex flex-col h-full"
-                                >
-                                    <a href={item.link} target={item.source === 'RSS' ? "_blank" : "_self"} className="relative h-52 overflow-hidden block">
-                                        <img
-                                            src={item.thumbnail}
-                                            alt={item.title}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                            onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_IMAGE; }}
-                                        />
-                                        {isRecentNews(item.pubDate) && (
-                                            <div className="absolute top-3 left-3 flex items-center gap-1 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded shadow-md">
-                                                <Flame size={12} className="fill-yellow-300 text-yellow-300" /> NEW
-                                            </div>
-                                        )}
-                                    </a>
-
-                                    <div className="p-6 flex flex-col flex-grow">
-                                        <div className="flex items-center gap-2 text-sm text-[#00008b] font-semibold mb-3">
-                                            <Calendar size={16} />
-                                            <span>{formatDate(item.pubDate)}</span>
-                                        </div>
-
-                                        <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-[#00008b] transition-colors line-clamp-2">
-                                            <a href={item.link} target={item.source === 'RSS' ? "_blank" : "_self"}>{item.title}</a>
-                                        </h3>
-
-                                        <p className="text-gray-500 text-sm line-clamp-3 mb-4 flex-grow leading-relaxed">
-                                            {item.description}
-                                        </p>
-
-                                        <div className="mt-auto pt-4 border-t border-gray-50 flex justify-between items-center">
-                                            <a
-                                                href={item.link}
-                                                target={item.source === 'RSS' ? "_blank" : "_self"}
-                                                className="text-[#cc0022] font-semibold text-sm hover:underline inline-flex items-center gap-1"
-                                            >
-                                                Xem chi tiết <ChevronRightIcon size={14} />
-                                            </a>
-                                            {item.source === 'RSS' && <ExternalLink size={14} className="text-gray-300" />}
-                                        </div>
-                                    </div>
-                                </article>
+                                    title={item.title}
+                                    excerpt={item.description}
+                                    date={formatDate(item.pubDate)}
+                                    thumbnail={item.thumbnail}
+                                    href={item.link}
+                                    target={item.source === 'RSS' ? '_blank' : '_self'}
+                                    isNew={isRecentNews(item.pubDate)}
+                                    showExternalIcon={item.source === 'RSS'}
+                                    categoryName={item.source === 'ERG' ? 'ERG News' : 'Điểm tin'}
+                                />
                             ))}
                         </div>
 
@@ -279,9 +244,9 @@ export default function NewsPage() {
                                     disabled={currentPage === 1}
                                     className={`w-10 h-10 flex items-center justify-center rounded-lg border transition-colors
                                         ${currentPage === 1
-                                        ? 'bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed'
-                                        : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
-                                    }`}
+                                            ? 'bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed'
+                                            : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                                        }`}
                                 >
                                     <ChevronLeft size={20} />
                                 </button>
@@ -295,9 +260,9 @@ export default function NewsPage() {
                                                 onClick={() => paginate(page as number)}
                                                 className={`w-10 h-10 flex items-center justify-center rounded-lg font-medium text-base transition-all border
                                                     ${currentPage === page
-                                                    ? 'bg-[#00008b] text-white border-[#00008b] shadow-md'
-                                                    : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
-                                                }`}
+                                                        ? 'bg-[#00008b] text-white border-[#00008b] shadow-md'
+                                                        : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50 hover:border-gray-400'
+                                                    }`}
                                             >
                                                 {page}
                                             </button>
@@ -310,9 +275,9 @@ export default function NewsPage() {
                                     disabled={currentPage === totalPages}
                                     className={`w-10 h-10 flex items-center justify-center rounded-lg border transition-colors
                                         ${currentPage === totalPages
-                                        ? 'bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed'
-                                        : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
-                                    }`}
+                                            ? 'bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed'
+                                            : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                                        }`}
                                 >
                                     <ChevronRight size={20} />
                                 </button>

@@ -11,6 +11,7 @@ import {
     Cpu,
     GraduationCap
 } from 'lucide-react';
+import { CourseCard } from '@/components/cards/course-card';
 
 const AiCarousel = () => {
     const images = [
@@ -154,117 +155,24 @@ export default function AiLearningContent() {
                     </div>
 
                     {/* SINGLE FEATURED CARD */}
-                    <div className="max-w-5xl mx-auto">
-                        <div className="bg-white rounded-3xl p-8 md:p-12 border border-indigo-100 shadow-2xl shadow-indigo-100/50 relative overflow-hidden flex flex-col md:flex-row gap-10 items-center">
-
-                            {/* Decorative Background */}
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-bl-full opacity-60 -z-0"></div>
-
-                            {/* Left Side: Info & Steps */}
-                            <div className="flex-1 relative z-10">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <span className="bg-indigo-600 text-white p-2.5 rounded-lg shadow-lg shadow-indigo-200">
-                                        <Bot size={28} />
-                                    </span>
-                                    <div>
-                                        <h3 className="text-3xl font-bold text-gray-800">Học Cùng AI</h3>
-                                        <span className="text-indigo-600 font-bold text-sm tracking-wider uppercase">Bộ sách từ Lớp 1 - 12</span>
-                                    </div>
-                                </div>
-
-                                <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-                                    Chương trình đào tạo chính quy dựa trên bộ sách <strong>"Học cùng AI"</strong> (NXB Giáo dục Việt Nam). Giúp học sinh tiếp cận Trí tuệ nhân tạo một cách hệ thống, khoa học và đầy hứng thú.
-                                </p>
-
-                                {/* Feature List / Timeline */}
-                                <div className="space-y-6">
-                                    {/* Feature 1 */}
-                                    <div className="flex gap-4">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold border-2 border-indigo-200">1</div>
-                                            <div className="w-0.5 h-full bg-indigo-100 my-2"></div>
-                                        </div>
-                                        <div className="pb-2">
-                                            <h4 className="text-lg font-bold text-gray-800">Khởi động (Tiểu học)</h4>
-                                            <p className="text-sm text-gray-600 mt-1">
-                                                Làm quen với robot, nhận diện giọng nói, hình ảnh. Học qua các trò chơi tương tác thú vị cùng nhân vật mèo máy thông minh.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {/* Feature 2 */}
-                                    <div className="flex gap-4">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold border-2 border-indigo-200">2</div>
-                                            <div className="w-0.5 h-full bg-indigo-100 my-2"></div>
-                                        </div>
-                                        <div className="pb-2">
-                                            <h4 className="text-lg font-bold text-gray-800">Tăng tốc (THCS)</h4>
-                                            <p className="text-sm text-gray-600 mt-1">
-                                                Hiểu các khái niệm cốt lõi: Dữ liệu lớn (Big Data), Máy học (Machine Learning). Bắt đầu lập trình các ứng dụng AI đơn giản.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {/* Feature 3 */}
-                                    <div className="flex gap-4">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold shadow-lg">3</div>
-                                        </div>
-                                        <div>
-                                            <h4 className="text-lg font-bold text-gray-800">Về đích (THPT)</h4>
-                                            <p className="text-sm text-gray-600 mt-1">
-                                                Chuyên sâu về thuật toán, Đạo đức AI và ứng dụng vào thực tế xã hội. Sẵn sàng cho bậc Đại học và nghề nghiệp tương lai.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* CTA Button */}
-                                <div className="mt-10 pt-8 border-t border-gray-100">
-                                    <Link href="/khoa-hoc/hoc-cung-ai" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-all shadow-xl shadow-indigo-600/30 hover:-translate-y-1">
-                                        Xem Chi Tiết Chương Trình <ArrowRight size={20} />
-                                    </Link>
-                                    <p className="mt-4 text-sm text-gray-500 italic">
-                                        * Chương trình được cập nhật liên tục theo xu hướng công nghệ mới nhất.
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Right Side: Image Visualization (Placeholder for Book Cover style) */}
-                            <div className="md:w-5/12 flex flex-col items-center justify-center relative">
-                                {/* Background Blob */}
-                                <div className="absolute w-64 h-64 bg-yellow-300 rounded-full blur-3xl opacity-20 top-10"></div>
-
-                                {/* Simulated Book/Card Look */}
-                                <div className="relative w-full aspect-[3/4] max-w-sm bg-gradient-to-b from-blue-400 to-indigo-600 rounded-2xl shadow-2xl p-6 flex flex-col items-center text-center text-white border-4 border-white transform rotate-2 hover:rotate-0 transition-transform duration-500">
-                                    <div className="w-full flex justify-between items-center mb-8 opacity-80">
-                                        <Cpu size={24} />
-                                        <span className="text-xs font-bold uppercase border border-white/30 px-2 py-1 rounded">NXB Giáo Dục</span>
-                                    </div>
-
-                                    <h3 className="text-4xl font-extrabold mb-2 font-serif tracking-tight drop-shadow-md">
-                                        HỌC CÙNG <span className="text-yellow-300 text-5xl">AI</span>
-                                    </h3>
-                                    <div className="my-6">
-                                        {/* Icon thay thế cho hình ảnh con mèo/robot trong bìa sách */}
-                                        <Bot size={120} className="text-white drop-shadow-lg" />
-                                    </div>
-
-                                    <div className="mt-auto w-full">
-                                        <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3">
-                                            <p className="font-bold text-sm">Dành cho học sinh phổ thông</p>
-                                            <div className="flex justify-center gap-1 mt-1">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <div key={i} className="w-2 h-2 rounded-full bg-yellow-400"></div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
+                    <div className="max-w-3xl mx-auto">
+                        <CourseCard
+                            id="hoc-cung-ai"
+                            code="Lớp 1 - 12"
+                            displayTitle="AI"
+                            subtitle="Future Intelligence"
+                            title="Chương trình Học Cùng AI"
+                            description="Trang bị kiến thức Trí tuệ nhân tạo bài bản cho học sinh phổ thông theo bộ sách 'Học cùng AI' (NXB Giáo dục Việt Nam)."
+                            points={[
+                                "Tiểu học: Làm quen Robot & Nhận diện",
+                                "THCS: Big Data & Máy học (Machine Learning)",
+                                "THPT: Thuật toán & Đạo đức AI chuyên sâu"
+                            ]}
+                            href="/khoa-hoc/hoc-cung-ai"
+                            headerGradient="from-indigo-600 to-blue-500"
+                            btnColor="border-indigo-600 text-indigo-600 hover:bg-indigo-600"
+                            icon={<Bot />}
+                        />
                     </div>
 
                     {/* Note footer */}

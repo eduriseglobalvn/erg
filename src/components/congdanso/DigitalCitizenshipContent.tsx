@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2, Brain, Globe, Shield, Activity } from 'lucide-react';
 import RoadmapSection from "@/components/congdanso/RoadmapSection";
+import { CourseCard } from '@/components/cards/course-card';
 
 const CitizenshipCarousel = () => {
     const images = [
@@ -125,68 +126,59 @@ export default function DigitalCitizenshipContent() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-green-500 flex flex-col h-full">
-                            <div className="h-40 bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center">
-                                <span className="text-6xl font-black text-white/20 select-none">01</span>
-                            </div>
-                            <div className="p-6 flex flex-col flex-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-bold uppercase tracking-wider">Lớp 1 - 5</span>
-                                </div>
-                                <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2">Kỹ Năng Công Dân Số Tiểu Học</h3>
-                                <p className="text-gray-600 mb-4 text-sm">Khởi động hành trình số với sự tò mò và an toàn.</p>
-                                <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1">
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-green-500" /> Hoạt động hướng nghiệp</li>
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-green-500" /> Khởi nghiệp & Đổi mới sáng tạo</li>
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-green-500" /> Cân bằng thời gian sử dụng thiết bị</li>
-                                </ul>
-                                <Link href="/kdc-tieu-hoc" className="block w-full py-3 text-center rounded-lg border-2 border-green-500 text-green-600 font-bold hover:bg-green-500 hover:text-white transition-all mt-auto">
-                                    Chi Tiết Khóa Học
-                                </Link>
-                            </div>
-                        </div>
+                        <CourseCard
+                            id="kdc-tieu-hoc"
+                            displayTitle="01"
+                            subtitle="Lớp 1 - 5"
+                            title="Kỹ Năng Công Dân Số Tiểu Học"
+                            description="Khởi động hành trình số với sự tò mò và an toàn."
+                            icon={<div className="text-6xl font-black text-white/20 select-none">01</div>}
+                            points={[
+                                "Hoạt động hướng nghiệp",
+                                "Khởi nghiệp & Đổi mới sáng tạo",
+                                "Cân bằng thời gian sử dụng thiết bị"
+                            ]}
+                            href="/kdc-tieu-hoc"
+                            headerGradient="from-green-500 to-emerald-400"
+                            btnColor="border-green-500 text-green-600 hover:bg-green-500"
+                            modules="Điểm nổi bật:"
+                        />
 
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-500 flex flex-col h-full">
-                            <div className="h-40 bg-gradient-to-br from-blue-600 to-cyan-400 flex items-center justify-center">
-                                <span className="text-6xl font-black text-white/20 select-none">02</span>
-                            </div>
-                            <div className="p-6 flex flex-col flex-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider">Lớp 6 - 9</span>
-                                </div>
-                                <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2">Kỹ Năng Công Dân Số THCS</h3>
-                                <p className="text-gray-600 mb-4 text-sm">Phát triển tư duy phản biện và trách nhiệm xã hội.</p>
-                                <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1">
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-blue-500" /> Nhận diện tin giả (Fake News)</li>
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-blue-500" /> Phòng chống bắt nạt mạng</li>
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-blue-500" /> Bản quyền & Đạo đức số</li>
-                                </ul>
-                                <Link href="/kdc-thcs" className="block w-full py-3 text-center rounded-lg border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-600 hover:text-white transition-all mt-auto">
-                                    Chi Tiết Khóa Học
-                                </Link>
-                            </div>
-                        </div>
+                        <CourseCard
+                            id="kdc-thcs"
+                            displayTitle="02"
+                            subtitle="Lớp 6 - 9"
+                            title="Kỹ Năng Công Dân Số THCS"
+                            description="Phát triển tư duy phản biện và trách nhiệm xã hội."
+                            icon={<div className="text-6xl font-black text-white/20 select-none">02</div>}
+                            points={[
+                                "Nhận diện tin giả (Fake News)",
+                                "Phòng chống bắt nạt mạng",
+                                "Bản quyền & Đạo đức số"
+                            ]}
+                            href="/kdc-thcs"
+                            headerGradient="from-blue-600 to-cyan-400"
+                            btnColor="border-blue-600 text-blue-600 hover:bg-blue-600"
+                            modules="Điểm nổi bật:"
+                        />
 
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-orange-500 flex flex-col h-full">
-                            <div className="h-40 bg-gradient-to-br from-orange-500 to-red-400 flex items-center justify-center">
-                                <span className="text-6xl font-black text-white/20 select-none">03</span>
-                            </div>
-                            <div className="p-6 flex flex-col flex-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-bold uppercase tracking-wider">Lớp 10 - 12</span>
-                                </div>
-                                <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2">Kỹ Năng Công Dân Số THPT</h3>
-                                <p className="text-gray-600 mb-4 text-sm">Làm chủ công nghệ, định hướng nghề nghiệp tương lai.</p>
-                                <ul className="space-y-2 mb-6 border-t border-gray-100 pt-4 flex-1">
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-orange-500" /> Xây dựng thương hiệu cá nhân số</li>
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-orange-500" /> Dấu chân số & Tuyển dụng</li>
-                                    <li className="flex items-center gap-2 text-sm text-gray-600"><CheckCircle2 size={16} className="text-orange-500" /> Tham gia cộng đồng số toàn cầu</li>
-                                </ul>
-                                <Link href="/kdc-thpt" className="block w-full py-3 text-center rounded-lg border-2 border-orange-500 text-orange-600 font-bold hover:bg-orange-500 hover:text-white transition-all mt-auto">
-                                    Chi Tiết Khóa Học
-                                </Link>
-                            </div>
-                        </div>
+                        <CourseCard
+                            id="kdc-thpt"
+                            displayTitle="03"
+                            subtitle="Lớp 10 - 12"
+                            title="Kỹ Năng Công Dân Số THPT"
+                            description="Làm chủ công nghệ, định hướng nghề nghiệp tương lai."
+                            icon={<div className="text-6xl font-black text-white/20 select-none">03</div>}
+                            points={[
+                                "Xây dựng thương hiệu cá nhân số",
+                                "Dấu chân số & Tuyển dụng",
+                                "Tham gia cộng đồng số toàn cầu"
+                            ]}
+                            href="/kdc-thpt"
+                            headerGradient="from-orange-500 to-red-400"
+                            btnColor="border-orange-500 text-orange-600 hover:bg-orange-500"
+                            modules="Điểm nổi bật:"
+                        />
                     </div>
                 </div>
             </section>

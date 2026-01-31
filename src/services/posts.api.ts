@@ -90,7 +90,7 @@ export const postsApi = {
     },
 
     getCategories: () => {
-        return httpClient<CategoriesResponse>('/posts/categories');
+        return httpClient<CategoriesResponse>('/posts/categories').then(res => res.data);
     },
 
     getCategoryById: (id: string) => {

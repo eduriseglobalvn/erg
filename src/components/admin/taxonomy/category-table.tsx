@@ -75,7 +75,7 @@ export function CategoryTable() {
 
     const { data: categories = [], isLoading } = useQuery({
         queryKey: ['categories'],
-        queryFn: () => postsApi.getCategories().then(res => res.data)
+        queryFn: () => postsApi.getCategories()
     })
 
     const deleteMutation = useMutation({

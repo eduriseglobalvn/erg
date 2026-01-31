@@ -10,13 +10,10 @@ const nextConfig: NextConfig = {
 
         return [
             {
-                // Quy tắc riêng cho analytics để tránh lỗi 500 do Header
-                source: '/api/insight/:path*',
-                destination: `${backendUrl}/api/insight/:path*`,
-            },
-            {
+                // Proxy toàn bộ /api sang Backend và giữ nguyên tiền tố /api
+                // Đảm bảo không nhân đôi /api nếu frontend đã gọi /api/...
                 source: '/api/:path*',
-                destination: `${backendUrl}/:path*`,
+                destination: `${backendUrl}/api/:path*`,
             },
         ];
     },

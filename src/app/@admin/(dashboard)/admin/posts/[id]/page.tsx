@@ -13,7 +13,7 @@ export default function CategoryPostsPage() {
     // Fetch thực tế từ API (Client side - Có accessToken từ localStorage)
     const { data: categories } = useQuery({
         queryKey: ['categories'],
-        queryFn: () => postsApi.getCategories().then(res => res.data)
+        queryFn: () => postsApi.getCategories()
     })
 
     const displayTitle = React.useMemo(() => {

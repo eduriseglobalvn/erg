@@ -4,12 +4,10 @@ import * as React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { toast } from "sonner"
 import { Loader2, Eye, EyeOff } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-// Import Service API
-import { authApi, httpClient, handleLogout } from "@/services"
+import { useLoginMutation } from "@/hooks/use-login"
 
 // Import UI Components
 import { Button } from "@/components/admin/ui/button"
@@ -30,14 +28,14 @@ const GoogleIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
     const router = useRouter()
+    const loginMutation = useLoginMutation()
 
-    const [isLoading, setIsLoading] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [rememberMe, setRememberMe] = useState(true)
     const [showPassword, setShowPassword] = useState(false)
 
-    // [MỚI] Tự động điền Email nếu đã "Ghi nhớ" từ trước
+    // Tự động điền Email nếu đã "Ghi nhớ" từ trước
     React.useEffect(() => {
         const savedEmail = localStorage.getItem("rememberedEmail")
         if (savedEmail) {
@@ -49,93 +47,28 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         e.preventDefault()
 
         if (!email || !password) {
-            toast.warning("Vui lòng nhập đầy đủ email và mật khẩu")
             return
         }
 
-        setIsLoading(true)
+        // Check lỗi activation và redirect nếu cần
+        loginMutation.mutate(
+            { email, password, rememberMe },
+            {
+                onError: (error: any) => {
+                    const errorMessage = error.message || '';
+                    const lowered = errorMessage.toLowerCase();
 
-        try {
-            const res = await authApi.login({ email, password, rememberMe }) as any;
-            const data = res.data || res;
-
-            if (data && data.accessToken) {
-                localStorage.setItem("accessToken", data.accessToken);
-                localStorage.setItem("refreshToken", data.refreshToken); // Lưu thêm RefreshToken nếu có
-
-                if (data.user) {
-                    localStorage.setItem("user", JSON.stringify(data.user));
-                    // Lưu userId riêng nếu cần dùng ở httpClient
-                    if (data.user.id) localStorage.setItem("userId", data.user.id);
-                }
-
-                toast.success("Đăng nhập thành công!");
-
-                // [MỚI] Gọi /sessions/current để lấy permissions và kiểm tra status
-                try {
-                    const sessionRes: any = await httpClient('/sessions/current', {
-                        method: 'GET',
-                        requireAuth: true,
-                    });
-                    const sessionData = sessionRes.data || sessionRes;
-
-                    if (sessionData.user) {
-                        // Lưu user info đầy đủ
-                        localStorage.setItem("user", JSON.stringify(sessionData.user));
-
-                        // Lưu permissions và roles
-                        if (sessionData.accessControl) {
-                            const permissions = sessionData.accessControl.permissions || [];
-                            const roles = sessionData.accessControl.roles || [];
-
-                            localStorage.setItem('permissions', JSON.stringify(permissions));
-                            localStorage.setItem('roles', JSON.stringify(roles));
-                        }
-
-                        // [MỚI] Xử lý "Ghi nhớ đăng nhập" bằng LocalStorage
-                        if (rememberMe) {
-                            localStorage.setItem("rememberedEmail", email)
-                        } else {
-                            localStorage.removeItem("rememberedEmail")
-                        }
-
-                        // Delay 500ms để trình duyệt kịp hiện popup "Lưu mật khẩu"
-                        setTimeout(() => {
-                            window.location.href = "/";
-                        }, 500);
-                    } else {
-                        window.location.href = "/";
+                    if (
+                        lowered.includes("not activated") ||
+                        lowered.includes("account is not activated") ||
+                        lowered.includes("actived") ||
+                        lowered.includes("403")
+                    ) {
+                        router.push(`/auth/otp?email=${encodeURIComponent(email)}&mode=activation`);
                     }
-                } catch (e) {
-                    console.error("Failed to fetch session:", e);
-                    window.location.href = "/";
                 }
-            } else {
-                toast.error("Không nhận được Token từ máy chủ");
             }
-
-        } catch (error: any) {
-            console.error("Login Error:", error);
-            const errorMessage = error.message || "";
-
-            // [MỚI] Xử lý lỗi 403 Account not activated hoặc các thông báo tương tự
-            const lowered = errorMessage.toLowerCase();
-            if (
-                lowered.includes("not activated") ||
-                lowered.includes("account is not activated") ||
-                lowered.includes("actived") ||
-                lowered.includes("403")
-            ) {
-                toast.warning("Tài khoản chưa kích hoạt. Vui lòng nhập mã PIN đã được gửi tới email để kích hoạt.");
-                // Redirect sang trang verify-pin kèm email và mode
-                router.push(`/auth/otp?email=${encodeURIComponent(email)}&mode=activation`);
-                return;
-            }
-
-            toast.error(errorMessage || "Email hoặc mật khẩu không chính xác");
-        } finally {
-            setIsLoading(false)
-        }
+        )
     }
 
     return (
@@ -152,10 +85,10 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                         <div className="grid gap-6">
                             {/* Social Login */}
                             <div className="flex flex-col gap-4">
-                                <Button variant="outline" type="button" className="w-full flex items-center gap-2" disabled={isLoading}>
+                                <Button variant="outline" type="button" className="w-full flex items-center gap-2" disabled={loginMutation.isPending}>
                                     <AppleIcon /> Đăng nhập với Apple
                                 </Button>
-                                <Button variant="outline" type="button" className="w-full flex items-center gap-2" disabled={isLoading}>
+                                <Button variant="outline" type="button" className="w-full flex items-center gap-2" disabled={loginMutation.isPending}>
                                     <GoogleIcon /> Đăng nhập với Google
                                 </Button>
                             </div>
@@ -178,7 +111,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                     autoComplete="username"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    disabled={isLoading}
+                                    disabled={loginMutation.isPending}
                                 />
                             </div>
 
@@ -202,7 +135,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                         autoComplete="current-password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        disabled={isLoading}
+                                        disabled={loginMutation.isPending}
                                         className="pr-10" // Padding right cho icon
                                     />
                                     <Button
@@ -241,9 +174,9 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                 </label>
                             </div>
 
-                            <Button type="submit" className="w-full" disabled={isLoading}>
-                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                {isLoading ? "Đang xử lý..." : "Đăng nhập"}
+                            <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+                                {loginMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                {loginMutation.isPending ? "Đang xử lý..." : "Đăng nhập"}
                             </Button>
                         </div>
                     </form>

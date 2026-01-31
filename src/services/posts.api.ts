@@ -109,6 +109,29 @@ export const postsApi = {
         return httpClient<any>(`/posts/categories/${id}`, { method: 'DELETE' });
     },
 
+    // --- POST DELETION & RESTORE ---
+
+    /**
+     * Xóa mềm bài viết (Chuyển vào thùng rác)
+     */
+    softDelete: (id: string) => {
+        return httpClient(`/posts/${id}`, { method: 'DELETE' });
+    },
+
+    /**
+     * Xóa vĩnh viễn bài viết
+     */
+    hardDelete: (id: string) => {
+        return httpClient(`/posts/${id}/permanent`, { method: 'DELETE' });
+    },
+
+    /**
+     * Khôi phục bài viết từ thùng rác
+     */
+    restore: (id: string) => {
+        return httpClient(`/posts/${id}/restore`, { method: 'PUT' });
+    },
+
     getTrash: (params: {
         page?: number;
         limit?: number;
@@ -120,5 +143,47 @@ export const postsApi = {
         if (params.search) query.append('search', params.search);
 
         return httpClient<any>(`/posts/trash?${query.toString()}`, { method: 'GET' });
-    }
+    },
+
+    /**
+     * Upload ảnh cho bài viết
+     * @param file - File ảnh cần upload
+     * @returns Promise với URL ảnh đã upload
+     */
+    uploadImage: async (file: File): Promise<{ url: string }> => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await httpClient<{ statusCode: number; message: string; data: { url: string } }>(
+            '/posts/images/upload',
+            {
+                method: 'POST',
+                body: formData,
+                // Không set Content-Type, để browser tự set với boundary
+            }
+        );
+
+        return response.data;
+    },
+
+    /**
+     * Xóa ảnh khỏi storage bằng URL (Body)
+     * @param url - URL đầy đủ của ảnh
+     */
+    deleteImage: async (url: string): Promise<void> => {
+        await httpClient('/posts/images', {
+            method: 'DELETE',
+            body: JSON.stringify({ url }),
+        });
+    },
+
+    /**
+     * Xóa ảnh khỏi storage bằng Filename (Path)
+     * @param filename - Tên file (ví dụ: abc-123.webp)
+     */
+    deleteImageById: async (filename: string): Promise<void> => {
+        await httpClient(`/posts/images/id/${filename}`, {
+            method: 'DELETE'
+        });
+    },
 };

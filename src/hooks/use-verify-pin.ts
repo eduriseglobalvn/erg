@@ -1,0 +1,106 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { authApi, httpClient } from '@/services';
+import { toast } from 'sonner';
+
+interface VerifyPinDto {
+    email: string;
+    pin: string;
+}
+
+interface ResendPinDto {
+    email: string;
+}
+
+/**
+ * Hook cho OTP verification (activation)
+ */
+export function useVerifyPinMutation() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (data: VerifyPinDto) => {
+            const res = await authApi.verifyPin(data);
+            return res;
+        },
+        onSuccess: async (res: any) => {
+            // Lưu Token vào LocalStorage để Auto Login
+            if (res?.accessToken) {
+                localStorage.setItem('accessToken', res.accessToken);
+                localStorage.setItem('refreshToken', res.refreshToken);
+                if (res.user) {
+                    localStorage.setItem('user', JSON.stringify(res.user));
+                    if (res.user.id) localStorage.setItem('userId', res.user.id);
+                }
+            }
+
+            toast.success('Kích hoạt thành công!');
+
+            // Gọi /sessions/current để lấy permissions
+            try {
+                const sessionRes: any = await httpClient('/sessions/current', {
+                    method: 'GET',
+                    requireAuth: true,
+                });
+                const sessionData = sessionRes.data || sessionRes;
+
+                if (sessionData.user) {
+                    localStorage.setItem('user', JSON.stringify(sessionData.user));
+
+                    if (sessionData.accessControl) {
+                        const permissions = sessionData.accessControl.permissions || [];
+                        const roles = sessionData.accessControl.roles || [];
+
+                        localStorage.setItem('permissions', JSON.stringify(permissions));
+                        localStorage.setItem('roles', JSON.stringify(roles));
+                    }
+                }
+
+                // Invalidate auth cache
+                queryClient.invalidateQueries({ queryKey: ['auth'] });
+
+                // Redirect về trang chủ
+                window.location.href = '/';
+            } catch (e) {
+                console.error('Failed to fetch session:', e);
+                window.location.href = '/';
+            }
+        },
+        onError: (error: any) => {
+            toast.error(error.message || 'Mã xác thực không chính xác');
+        }
+    });
+}
+
+/**
+ * Hook cho nút "Gửi lại mã PIN"
+ */
+export function useResendPinMutation() {
+    return useMutation({
+        mutationFn: async (email: string) => {
+            await authApi.resendPin(email);
+        },
+        onSuccess: () => {
+            toast.success('Đã gửi lại mã PIN mới');
+        },
+        onError: (error: any) => {
+            toast.error(error.message || 'Không thể gửi lại mã');
+        }
+    });
+}
+
+/**
+ * Hook cho reset password
+ */
+export function useResetPasswordMutation() {
+    return useMutation({
+        mutationFn: async (data: { email: string; pin: string; newPassword: string }) => {
+            await authApi.resetPassword(data);
+        },
+        onSuccess: () => {
+            toast.success('Mật khẩu đã được thay đổi thành công!');
+        },
+        onError: (error: any) => {
+            toast.error(error.message || 'Đổi mật khẩu thất bại');
+        }
+    });
+}

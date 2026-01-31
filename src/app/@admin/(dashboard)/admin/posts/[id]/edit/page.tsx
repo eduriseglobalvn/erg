@@ -3,12 +3,13 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { useQuery, useMutation } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/admin/ui/button"
 import { Sparkles, ArrowUp, StopCircle, X, ChevronLeft } from "lucide-react"
 import { SimpleEditor } from "@/components/admin/shared/editor/tiptap-templates/simple/simple-editor"
 import { PostSidebar } from "@/components/admin/shared/post-sidebar"
 import { useAiWriter } from "@/hooks/use-ai-writer"
+import { useImageTracker } from "@/hooks/use-image-tracker"
 import { postsApi } from "@/services/posts.api"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
@@ -19,6 +20,7 @@ export default function EditPostPage() {
     const params = useParams()
     const router = useRouter()
     const id = params.id as string
+    const queryClient = useQueryClient()
 
     const [editorInstance, setEditorInstance] = useState<any>(null);
     const [title, setTitle] = useState("");
@@ -34,13 +36,15 @@ export default function EditPostPage() {
         status: "draft"
     });
 
+    // Image tracking hook
+    const { updateImages, getDeletedImages, cleanupDeletedImages } = useImageTracker();
+
     // 1. Fetch Post Data
     const { data: fetchedPost, isLoading } = useQuery({
         queryKey: ['post', id],
         queryFn: () => postsApi.getOne(id).then(res => res.data),
         enabled: !!id,
-        // Ngăn refetch lung tung làm gián đoạn việc gõ
-        staleTime: Infinity,
+        // Bỏ staleTime Infinity để đảm bảo dữ liệu mới nhất được fetch
     })
 
     const { isGenerating, progress, generateFullPost, refineText } = useAiWriter(editorInstance);
@@ -59,15 +63,38 @@ export default function EditPostPage() {
 
             if (editorInstance) {
                 editorInstance.commands.setContent(fetchedPost.content || "");
+                // Track initial images
+                updateImages(fetchedPost.content || "");
                 hasInitialized.current = true;
             }
         }
-    }, [fetchedPost, editorInstance])
+    }, [fetchedPost, editorInstance, updateImages])
 
     // 3. Update Mutation
     const updateMutation = useMutation({
-        mutationFn: (data: any) => postsApi.update(id, data),
+        mutationFn: async (data: any) => {
+            // Lấy content hiện tại
+            const currentContent = editorInstance?.getHTML() || "";
+
+            // Tìm ảnh bị xóa
+            const deletedImages = getDeletedImages(currentContent);
+
+            // Cleanup ảnh bị xóa (không chờ, chạy background)
+            if (deletedImages.length > 0) {
+                cleanupDeletedImages(deletedImages);
+            }
+
+            // Update danh sách ảnh mới
+            updateImages(currentContent);
+
+            // Gọi API update post
+            return postsApi.update(id, data);
+        },
         onSuccess: () => {
+            // QUAN TRỌNG: Xóa cache cũ để lần sau vào lại sẽ thấy data mới
+            queryClient.invalidateQueries({ queryKey: ['post', id] });
+            queryClient.invalidateQueries({ queryKey: ['posts'] }); // Invalidate cả trang danh sách
+
             toast.success("Đã cập nhật bài viết thành công!")
             router.push('/admin/posts')
         },

@@ -3,20 +3,17 @@ import { NextConfig } from 'next'
 const nextConfig: NextConfig = {
     output: 'standalone',
 
-    // Proxy API calls to backend (Bypass AdBlock bằng Same-Origin Request)
-    async rewrites() {
-        // Lấy BACKEND_URL từ environment variable
-        const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
-        return [
-            {
-                // Proxy toàn bộ /api sang Backend và giữ nguyên tiền tố /api
-                // Đảm bảo không nhân đôi /api nếu frontend đã gọi /api/...
-                source: '/api/:path*',
-                destination: `${backendUrl}/api/:path*`,
-            },
-        ];
-    },
+    // Proxy API calls to backend - DISABLED, using Route Handler instead
+    // async rewrites() {
+    //     const backendUrl = String(process.env.BACKEND_URL || 'http://localhost:3003');
+    //     console.log('[Next.js Rewrites] Backend URL:', backendUrl);
+    //     return [
+    //         {
+    //             source: '/api/:path*',
+    //             destination: `${backendUrl}/api/:path*`,
+    //         },
+    //     ];
+    // },
 
     // Cấu hình Headers cho Production
     allowedDevOrigins: ['erg.edu.local', '*.erg.edu.local', 'erg.edu.vn', '*.erg.edu.vn'],

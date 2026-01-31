@@ -9,6 +9,7 @@ import {
 import {
     HERO_SLIDES, TRAINING_FIELDS, CORE_VALUES, WHY_CHOOSE_US, TESTIMONIALS, LATEST_NEWS
 } from '@/mocks/main.constants';
+import { NewsCard } from '@/components/shared/news-card';
 
 // --- DECORATIVE COMPONENTS ---
 const DotGrid = ({ className }: { className?: string }) => (
@@ -258,25 +259,15 @@ export default function Home() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {LATEST_NEWS.map((news) => (
-                            <div key={news.id} className="group cursor-pointer flex flex-col h-full">
-                                <div className="rounded-xl overflow-hidden mb-5 relative aspect-video shadow-md">
-                                    <img
-                                        src={news.image}
-                                        alt={news.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    />
-                                    <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur px-3 py-1.5 rounded-lg text-xs font-bold text-[var(--erg-blue)] shadow-sm flex flex-col items-center text-center leading-tight min-w-[50px]">
-                                        <span className="text-[var(--erg-red)] text-lg block">{news.date.split('/')[0]}</span>
-                                        <span className="text-[10px] text-gray-500 uppercase">Tháng {news.date.split('/')[1]}</span>
-                                    </div>
-                                </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-[var(--erg-blue)] transition-colors line-clamp-2">
-                                    {news.title}
-                                </h3>
-                                <p className="text-gray-500 text-sm line-clamp-2 mb-4 flex-grow">
-                                    {news.summary}
-                                </p>
-                            </div>
+                            <NewsCard
+                                key={news.id}
+                                title={news.title}
+                                excerpt={news.summary}
+                                date={news.date}
+                                thumbnail={news.image}
+                                slug={news.slug}
+                                categoryName="Tin tức"
+                            />
                         ))}
                     </div>
                 </div>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2, Award, BookOpen, GraduationCap, FileText } from 'lucide-react';
 import RoadmapSection from '@/components/tinhocquocgia/RoadmapSection';
+import { CourseCard } from '@/components/cards/course-card';
 
 const NationalCertificateCarousel = () => {
     const images = [
@@ -141,135 +142,63 @@ export default function NationalITContent() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-500 flex flex-col h-full">
-                            <div className="h-48 bg-gradient-to-br from-blue-600 to-blue-400 flex items-center justify-center relative overflow-hidden flex-shrink-0">
-                                <div className="text-center text-white p-4">
-                                    <span className="block text-3xl font-bold mb-1">CƠ BẢN</span>
-                                    <span className="text-sm opacity-90">Basic IT Skills</span>
-                                </div>
-                                <div className="absolute bottom-0 right-0 p-4 opacity-20">
-                                    <FileText size={80} color="white" />
-                                </div>
-                            </div>
+                        <CourseCard
+                            id="thcb"
+                            code="Mã lớp: THCB"
+                            displayTitle="CƠ BẢN"
+                            subtitle="Basic IT Skills"
+                            title="Kỹ năng sử dụng CNTT Cơ Bản"
+                            description="Dành cho người mới bắt đầu, trang bị kiến thức nền tảng về máy tính và tin học văn phòng."
+                            icon={<FileText size={80} color="white" />}
+                            points={[
+                                "Windows: Quản lý tập tin, thư mục (Explorer).",
+                                "MS Word (IU03): Soạn thảo, định dạng văn bản, bảng biểu.",
+                                "MS Excel (IU04): Hàm chuỗi, ngày tháng, tính toán cơ bản.",
+                                "MS PowerPoint (IU05): Thiết kế slide, hiệu ứng trình chiếu."
+                            ]}
+                            href="/cntt-co-ban"
+                            headerGradient="from-blue-600 to-blue-400"
+                            btnColor="border-blue-600 text-blue-600 hover:bg-blue-600"
+                            modules="Nội dung (Mô đun IU01 - IU06):"
+                        />
 
-                            <div className="p-6 flex flex-col flex-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider">Mã lớp: THCB</span>
-                                </div>
-                                <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2">Kỹ năng sử dụng CNTT Cơ Bản</h3>
-                                <p className="text-gray-600 mb-4 text-sm">Dành cho người mới bắt đầu, trang bị kiến thức nền tảng về máy tính và tin học văn phòng.</p>
+                        <CourseCard
+                            id="thnc"
+                            code="Mã lớp: THNC"
+                            displayTitle="NÂNG CAO"
+                            subtitle="Advanced IT Skills"
+                            title="Kỹ năng sử dụng CNTT Nâng Cao"
+                            description="Chuyên sâu về văn phòng, xử lý dữ liệu phức tạp. Yêu cầu đã có kiến thức cơ bản."
+                            icon={<Award size={80} color="white" />}
+                            points={[
+                                "Word Nâng cao (IU07): Trộn thư (Mail Merge), Mục lục tự động, Section break.",
+                                "Excel Nâng cao (IU08): PivotTable, VLOOKUP nâng cao, Công thức mảng, Bảo mật.",
+                                "PPT Nâng cao (IU09): Slide Master, Trigger, Chèn đa phương tiện."
+                            ]}
+                            href="/cntt-nang-cao"
+                            headerGradient="from-purple-600 to-indigo-500"
+                            btnColor="border-purple-600 text-purple-600 hover:bg-purple-600"
+                            modules="Nội dung (Mô đun IU07 - IU09):"
+                        />
 
-                                <div className="space-y-3 mb-6 border-t border-gray-100 pt-4 flex-1">
-                                    <p className="font-semibold text-sm text-gray-700">Nội dung (Mô đun IU01 - IU06):</p>
-                                    <ul className="space-y-2">
-                                        <li className="flex items-start gap-2 text-sm text-gray-600">
-                                            <CheckCircle2 size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
-                                            <span><strong>Windows:</strong> Quản lý tập tin, thư mục (Explorer).</span>
-                                        </li>
-                                        <li className="flex items-start gap-2 text-sm text-gray-600">
-                                            <CheckCircle2 size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
-                                            <span><strong>MS Word (IU03):</strong> Soạn thảo, định dạng văn bản, bảng biểu.</span>
-                                        </li>
-                                        <li className="flex items-start gap-2 text-sm text-gray-600">
-                                            <CheckCircle2 size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
-                                            <span><strong>MS Excel (IU04):</strong> Hàm chuỗi, ngày tháng, tính toán cơ bản.</span>
-                                        </li>
-                                        <li className="flex items-start gap-2 text-sm text-gray-600">
-                                            <CheckCircle2 size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
-                                            <span><strong>MS PowerPoint (IU05):</strong> Thiết kế slide, hiệu ứng trình chiếu.</span>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <Link href="/cntt-co-ban" className="block w-full py-3 text-center rounded-lg border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-600 hover:text-white transition-all mt-auto">
-                                    Chi Tiết & Đăng Ký
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-purple-500 flex flex-col h-full">
-                            <div className="h-48 bg-gradient-to-br from-purple-600 to-indigo-500 flex items-center justify-center relative overflow-hidden flex-shrink-0">
-                                <div className="text-center text-white p-4">
-                                    <span className="block text-3xl font-bold mb-1">NÂNG CAO</span>
-                                    <span className="text-sm opacity-90">Advanced IT Skills</span>
-                                </div>
-                                <div className="absolute bottom-0 right-0 p-4 opacity-20">
-                                    <Award size={80} color="white" />
-                                </div>
-                            </div>
-
-                            <div className="p-6 flex flex-col flex-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold uppercase tracking-wider">Mã lớp: THNC</span>
-                                </div>
-                                <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2">Kỹ năng sử dụng CNTT Nâng Cao</h3>
-                                <p className="text-gray-600 mb-4 text-sm">Chuyên sâu về văn phòng, xử lý dữ liệu phức tạp. Yêu cầu đã có kiến thức cơ bản.</p>
-
-                                <div className="space-y-3 mb-6 border-t border-gray-100 pt-4 flex-1">
-                                    <p className="font-semibold text-sm text-gray-700">Nội dung (Mô đun IU07 - IU09):</p>
-                                    <ul className="space-y-2">
-                                        <li className="flex items-start gap-2 text-sm text-gray-600">
-                                            <CheckCircle2 size={16} className="text-purple-500 mt-0.5 flex-shrink-0" />
-                                            <span><strong>Word Nâng cao (IU07):</strong> Trộn thư (Mail Merge), Mục lục tự động, Section break.</span>
-                                        </li>
-                                        <li className="flex items-start gap-2 text-sm text-gray-600">
-                                            <CheckCircle2 size={16} className="text-purple-500 mt-0.5 flex-shrink-0" />
-                                            <span><strong>Excel Nâng cao (IU08):</strong> PivotTable, VLOOKUP nâng cao, Công thức mảng, Bảo mật.</span>
-                                        </li>
-                                        <li className="flex items-start gap-2 text-sm text-gray-600">
-                                            <CheckCircle2 size={16} className="text-purple-500 mt-0.5 flex-shrink-0" />
-                                            <span><strong>PPT Nâng cao (IU09):</strong> Slide Master, Trigger, Chèn đa phương tiện.</span>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <Link href="/cntt-nang-cao" className="block w-full py-3 text-center rounded-lg border-2 border-purple-600 text-purple-600 font-bold hover:bg-purple-600 hover:text-white transition-all mt-auto">
-                                    Chi Tiết & Đăng Ký
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-orange-500 flex flex-col h-full">
-                            <div className="h-48 bg-gradient-to-br from-orange-500 to-red-400 flex items-center justify-center relative overflow-hidden flex-shrink-0">
-                                <div className="text-center text-white p-4">
-                                    <span className="block text-3xl font-bold mb-1">LUYỆN THI</span>
-                                    <span className="text-sm opacity-90">Exam Preparation</span>
-                                </div>
-                                <div className="absolute bottom-0 right-0 p-4 opacity-20">
-                                    <CheckCircle2 size={80} color="white" />
-                                </div>
-                            </div>
-
-                            <div className="p-6 flex flex-col flex-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-bold uppercase tracking-wider">Cấp tốc</span>
-                                </div>
-                                <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-2">Ôn Thi & Cấp Chứng Chỉ</h3>
-                                <p className="text-gray-600 mb-4 text-sm">Dành cho đối tượng đã có kiến thức, cần hệ thống hóa để thi lấy bằng nhanh chóng.</p>
-
-                                <div className="space-y-3 mb-6 border-t border-gray-100 pt-4 flex-1">
-                                    <p className="font-semibold text-sm text-gray-700">Quyền lợi:</p>
-                                    <ul className="space-y-2">
-                                        <li className="flex items-start gap-2 text-sm text-gray-600">
-                                            <CheckCircle2 size={16} className="text-orange-500 mt-0.5 flex-shrink-0" />
-                                            <span>Làm quen với phần mềm thi trắc nghiệm & thực hành.</span>
-                                        </li>
-                                        <li className="flex items-start gap-2 text-sm text-gray-600">
-                                            <CheckCircle2 size={16} className="text-orange-500 mt-0.5 flex-shrink-0" />
-                                            <span>Giải đề thi mẫu các năm gần nhất.</span>
-                                        </li>
-                                        <li className="flex items-start gap-2 text-sm text-gray-600">
-                                            <CheckCircle2 size={16} className="text-orange-500 mt-0.5 flex-shrink-0" />
-                                            <span>Tỷ lệ đậu cao. Hỗ trợ đăng ký thi ngay tại trung tâm.</span>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <Link href="/luyen-thi" className="block w-full py-3 text-center rounded-lg border-2 border-orange-500 text-orange-600 font-bold hover:bg-orange-500 hover:text-white transition-all mt-auto">
-                                    Đăng Ký Ôn Thi
-                                </Link>
-                            </div>
-                        </div>
+                        <CourseCard
+                            id="luyen-thi"
+                            code="Cấp tốc"
+                            displayTitle="LUYỆN THI"
+                            subtitle="Exam Preparation"
+                            title="Ôn Thi & Cấp Chứng Chỉ"
+                            description="Dành cho đối tượng đã có kiến thức, cần hệ thống hóa để thi lấy bằng nhanh chóng."
+                            icon={<CheckCircle2 size={80} color="white" />}
+                            points={[
+                                "Làm quen với phần mềm thi trắc nghiệm & thực hành.",
+                                "Giải đề thi mẫu các năm gần nhất.",
+                                "Tỷ lệ đậu cao. Hỗ trợ đăng ký thi ngay tại trung tâm."
+                            ]}
+                            href="/luyen-thi"
+                            headerGradient="from-orange-500 to-red-400"
+                            btnColor="border-orange-500 text-orange-600 hover:bg-orange-500"
+                            modules="Quyền lợi:"
+                        />
                     </div>
                 </div>
             </section>

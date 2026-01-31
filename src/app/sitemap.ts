@@ -7,9 +7,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const domain = process.env.NEXT_PUBLIC_DOMAIN || 'https://erg.edu.vn';
 
     try {
-        console.log(`[${new Date().toISOString()}] [Sitemap] Fetching from: ${apiUrl}/sitemap/data`);
+        console.log(`[${new Date().toISOString()}] [Sitemap] Fetching from: ${apiUrl}/api/sitemap/data`);
         // Fetch sitemap data from Backend
-        const response = await fetch(`${apiUrl}/sitemap/data`, {
+        const response = await fetch(`${apiUrl}/api/sitemap/data`, {
             cache: 'no-store',
         });
 

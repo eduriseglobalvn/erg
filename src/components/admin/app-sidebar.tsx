@@ -127,9 +127,27 @@ const data = {
             items: [], // Sẽ được đổ từ API
         },
         {
-            title: "Lấy bài viết từ web", // Thay cho "Web Crawler" cho dễ hiểu
-            url: "/admin/automation/crawler",
+            title: "Lấy bài viết từ web",
+            url: "/admin/crawler",
             icon: Globe,
+            items: [
+                {
+                    title: "Bảng tổng quan",
+                    url: "/admin/crawler",
+                },
+                {
+                    title: "Nguồn RSS",
+                    url: "/admin/crawler/rss",
+                },
+                {
+                    title: "Cấu hình Selector",
+                    url: "/admin/crawler/configs",
+                },
+                {
+                    title: "Lịch sử cào tin",
+                    url: "/admin/crawler/history",
+                },
+            ]
         },
         {
             title: "Duyệt tin đầu vào", // Nơi kiểm tra tin trước khi dùng
@@ -347,7 +365,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     // Dynamic categories for "Quản lý bài viết"
     const { data: categories } = useQuery({
         queryKey: ['categories'],
-        queryFn: () => postsApi.getCategories().then(res => res.data)
+        queryFn: () => postsApi.getCategories()
     })
 
     const navContent = React.useMemo(() => {

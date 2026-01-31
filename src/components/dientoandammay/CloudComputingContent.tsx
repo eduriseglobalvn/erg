@@ -16,6 +16,7 @@ import {
     Briefcase
 } from 'lucide-react';
 import CloudRoadmap from '@/components/dientoandammay/RoadmapSection';
+import { CourseCard } from '@/components/cards/course-card';
 
 const CloudCarousel = () => {
     const images = [
@@ -165,104 +166,59 @@ export default function CloudComputingContent() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-orange-400 flex flex-col h-full">
-                            <div className="h-56 bg-gradient-to-br from-orange-400 to-amber-500 relative flex items-center justify-center overflow-hidden flex-shrink-0">
-                                <div className="text-center z-10">
-                                    <Cloud size={64} className="text-white mx-auto mb-2 drop-shadow-md" />
-                                    <span className="text-2xl font-black text-white tracking-widest uppercase">AWS / Azure</span>
-                                </div>
-                                <Cloud size={180} className="text-white opacity-10 absolute -bottom-10 -right-10 rotate-12" />
-                                <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">
-                                    Foundation
-                                </div>
-                            </div>
+                        <CourseCard
+                            id="cloud-admin"
+                            displayTitle="AWS / Azure"
+                            subtitle="Foundation"
+                            title="Cloud Administrator"
+                            description="Nhập môn điện toán đám mây. Vận hành máy chủ ảo (EC2), mạng VPC và quản trị người dùng IAM trên AWS/Azure."
+                            icon={<Cloud size={64} className="text-white mx-auto mb-2 drop-shadow-md" />}
+                            points={[
+                                "Dịch vụ Core: EC2, S3, RDS",
+                                "Bảo mật & Phân quyền IAM"
+                            ]}
+                            href="/khoa-hoc/cloud-admin"
+                            headerGradient="from-orange-400 to-amber-500"
+                            btnColor="border-orange-500 text-orange-600 hover:bg-orange-500"
+                            modules="Chương trình đào tạo:"
+                            code="LEVEL: 01"
+                        />
 
-                            <div className="p-8 flex flex-col flex-1">
-                                <h3 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-orange-500 transition-colors">Cloud Administrator</h3>
-                                <p className="text-slate-500 mb-6 text-sm leading-relaxed">Nhập môn điện toán đám mây. Vận hành máy chủ ảo (EC2), mạng VPC và quản trị người dùng IAM trên AWS/Azure.</p>
+                        <CourseCard
+                            id="devops-engineer"
+                            displayTitle="DevOps"
+                            subtitle="Professional"
+                            title="DevOps Engineer"
+                            description="Làm chủ công nghệ Container và quy trình phát triển phần mềm hiện đại CI/CD tự động hóa."
+                            icon={<Container size={64} className="text-white mx-auto mb-2 drop-shadow-md" />}
+                            points={[
+                                "Docker & Kubernetes (K8s)",
+                                "Jenkins, GitLab CI Pipeline"
+                            ]}
+                            href="/khoa-hoc/devops-engineer"
+                            headerGradient="from-blue-600 to-cyan-500"
+                            btnColor="border-blue-600 text-blue-600 hover:bg-blue-600"
+                            modules="Chương trình đào tạo:"
+                            code="LEVEL: 02"
+                        />
 
-                                <div className="space-y-3 mb-8 pt-6 border-t border-slate-100 flex-1">
-                                    <div className="flex items-center gap-3 text-sm text-slate-700 font-medium">
-                                        <div className="p-1.5 bg-orange-100 rounded text-orange-600"><Cloud size={14} /></div>
-                                        <span>Dịch vụ Core: EC2, S3, RDS</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-sm text-slate-700 font-medium">
-                                        <div className="p-1.5 bg-orange-100 rounded text-orange-600"><ShieldCheck size={14} /></div>
-                                        <span>Bảo mật & Phân quyền IAM</span>
-                                    </div>
-                                </div>
-
-                                <Link href="/khoa-hoc/cloud-admin" className="block w-full py-3.5 text-center rounded-lg border-2 border-orange-500 text-orange-600 font-bold hover:bg-orange-500 hover:text-white transition-all mt-auto uppercase text-sm tracking-wide">
-                                    Xem Chi Tiết
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-blue-500 flex flex-col h-full">
-                            <div className="h-56 bg-gradient-to-br from-blue-600 to-cyan-500 relative flex items-center justify-center overflow-hidden flex-shrink-0">
-                                <div className="text-center z-10">
-                                    <Container size={64} className="text-white mx-auto mb-2 drop-shadow-md" />
-                                    <span className="text-2xl font-black text-white tracking-widest uppercase">DevOps</span>
-                                </div>
-                                <Container size={180} className="text-white opacity-10 absolute -bottom-10 -right-10 rotate-12" />
-                                <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">
-                                    Professional
-                                </div>
-                            </div>
-
-                            <div className="p-8 flex flex-col flex-1">
-                                <h3 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-blue-600 transition-colors">DevOps Engineer</h3>
-                                <p className="text-slate-500 mb-6 text-sm leading-relaxed">Làm chủ công nghệ Container và quy trình phát triển phần mềm hiện đại CI/CD tự động hóa.</p>
-
-                                <div className="space-y-3 mb-8 pt-6 border-t border-slate-100 flex-1">
-                                    <div className="flex items-center gap-3 text-sm text-slate-700 font-medium">
-                                        <div className="p-1.5 bg-blue-100 rounded text-blue-600"><Container size={14} /></div>
-                                        <span>Docker & Kubernetes (K8s)</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-sm text-slate-700 font-medium">
-                                        <div className="p-1.5 bg-blue-100 rounded text-blue-600"><Cpu size={14} /></div>
-                                        <span>Jenkins, GitLab CI Pipeline</span>
-                                    </div>
-                                </div>
-
-                                <Link href="/khoa-hoc/devops-engineer" className="block w-full py-3.5 text-center rounded-lg border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-600 hover:text-white transition-all mt-auto uppercase text-sm tracking-wide">
-                                    Xem Chi Tiết
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className="group rounded-2xl overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-purple-500 flex flex-col h-full">
-                            <div className="h-56 bg-gradient-to-br from-purple-600 to-fuchsia-500 relative flex items-center justify-center overflow-hidden flex-shrink-0">
-                                <div className="text-center z-10">
-                                    <Server size={64} className="text-white mx-auto mb-2 drop-shadow-md" />
-                                    <span className="text-2xl font-black text-white tracking-widest uppercase">Architect</span>
-                                </div>
-                                <Server size={180} className="text-white opacity-10 absolute -bottom-10 -right-10 rotate-12" />
-                                <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">
-                                    Expert
-                                </div>
-                            </div>
-
-                            <div className="p-8 flex flex-col flex-1">
-                                <h3 className="text-xl font-bold text-slate-800 mb-3 group-hover:text-purple-600 transition-colors">Solutions Architect</h3>
-                                <p className="text-slate-500 mb-6 text-sm leading-relaxed">Tư duy thiết kế hệ thống phân tán, chịu tải cao (High Availability) và tối ưu chi phí hạ tầng doanh nghiệp.</p>
-
-                                <div className="space-y-3 mb-8 pt-6 border-t border-slate-100 flex-1">
-                                    <div className="flex items-center gap-3 text-sm text-slate-700 font-medium">
-                                        <div className="p-1.5 bg-purple-100 rounded text-purple-600"><Server size={14} /></div>
-                                        <span>Microservices Design Patterns</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-sm text-slate-700 font-medium">
-                                        <div className="p-1.5 bg-purple-100 rounded text-purple-600"><Globe size={14} /></div>
-                                        <span>Terraform (IaC) & Security</span>
-                                    </div>
-                                </div>
-
-                                <Link href="/khoa-hoc/cloud-architect" className="block w-full py-3.5 text-center rounded-lg border-2 border-purple-500 text-purple-600 font-bold hover:bg-purple-500 hover:text-white transition-all mt-auto uppercase text-sm tracking-wide">
-                                    Xem Chi Tiết
-                                </Link>
-                            </div>
-                        </div>
+                        <CourseCard
+                            id="cloud-architect"
+                            displayTitle="Architect"
+                            subtitle="Expert"
+                            title="Solutions Architect"
+                            description="Tư duy thiết kế hệ thống phân tán, chịu tải cao (High Availability) và tối ưu chi phí hạ tầng doanh nghiệp."
+                            icon={<Server size={64} className="text-white mx-auto mb-2 drop-shadow-md" />}
+                            points={[
+                                "Microservices Design Patterns",
+                                "Terraform (IaC) & Security"
+                            ]}
+                            href="/khoa-hoc/cloud-architect"
+                            headerGradient="from-purple-600 to-fuchsia-500"
+                            btnColor="border-purple-500 text-purple-600 hover:bg-purple-500"
+                            modules="Chương trình đào tạo:"
+                            code="LEVEL: 03"
+                        />
                     </div>
                 </div>
             </section>

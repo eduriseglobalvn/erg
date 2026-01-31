@@ -42,7 +42,7 @@ export function PostSidebar({
     // 1. Fetch Categories
     const { data: categories } = useQuery({
         queryKey: ['categories'],
-        queryFn: () => postsApi.getCategories().then(res => res.data)
+        queryFn: () => postsApi.getCategories()
     })
 
     // [NEW] Tự động chọn chuyên mục đầu tiên nếu đang trống

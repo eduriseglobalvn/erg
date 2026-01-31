@@ -3,6 +3,7 @@
 import React from 'react';
 import { BookOpen, CheckCircle2, FileText, Award, Star } from 'lucide-react';
 import Link from 'next/link';
+import { CourseCard } from '@/components/cards/course-card';
 
 export default function CoursesPage() {
     // Dữ liệu nội dung bám sát tài liệu IU01 - IU09
@@ -65,7 +66,7 @@ export default function CoursesPage() {
             {/* 1. HERO SECTION */}
             <section className="bg-[var(--erg-blue)] text-white py-24 text-center relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10"
-                     style={{backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px'}}>
+                    style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
                 </div>
                 <div className="container mx-auto px-4 relative z-10">
                     <h1 className="text-4xl md:text-6xl font-extrabold mb-6 uppercase tracking-tight leading-tight">
@@ -79,63 +80,22 @@ export default function CoursesPage() {
 
             {/* 2. COURSE LISTING */}
             <section className="py-20 relative"
-                     style={{
-                         backgroundColor: '#ffffff',
-                         backgroundImage: `
+                style={{
+                    backgroundColor: '#ffffff',
+                    backgroundImage: `
                         linear-gradient(to right, rgba(229, 231, 235, 0.4) 1.5px, transparent 1.5px),
                         linear-gradient(to bottom, rgba(229, 231, 235, 0.4) 1.5px, transparent 1.5px)
                     `,
-                         backgroundSize: '80px 80px'
-                     }}
+                    backgroundSize: '80px 80px'
+                }}
             >
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
                         {courses.map((course) => (
-                            <div key={course.id} className="group rounded-2xl overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 flex flex-col h-full">
-                                {/* Header Card hiển thị tên đầy đủ */}
-                                <div className={`h-48 bg-gradient-to-br ${course.headerGradient} flex items-center justify-center relative overflow-hidden flex-shrink-0`}>
-                                    <div className="text-center text-white p-4 relative z-10">
-                                        <span className="block text-3xl font-bold uppercase mb-1">{course.displayTitle}</span>
-                                        <span className="text-xs opacity-90 italic">{course.id === 'thcb' ? 'Basic IT Skills' : course.id === 'thnc' ? 'Advanced IT Skills' : 'Exam Preparation'}</span>
-                                    </div>
-                                    <div className="absolute bottom-0 right-0 p-4">
-                                        {course.icon}
-                                    </div>
-                                </div>
-
-                                <div className="p-6 flex flex-col flex-1">
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <span className="px-3 py-1 rounded-full bg-gray-50 text-gray-500 text-[10px] font-bold uppercase tracking-wider border border-gray-100">
-                                            {course.code}
-                                        </span>
-                                    </div>
-                                    <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-[var(--erg-blue)] transition-colors">
-                                        {course.title}
-                                    </h3>
-                                    <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-                                        {course.description}
-                                    </p>
-
-                                    <div className="space-y-3 mb-8 border-t border-gray-100 pt-4 flex-1">
-                                        <h4 className="font-bold text-gray-700 text-xs uppercase mb-3 italic">{course.modules}</h4>
-                                        <ul className="space-y-2">
-                                            {course.points.map((point, i) => (
-                                                <li key={i} className="flex items-start gap-2 text-[13px] text-gray-600 font-medium leading-snug">
-                                                    <CheckCircle2 size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
-                                                    <span>{point}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-
-                                    <Link
-                                        href={`/khoa-hoc/${course.id}`}
-                                        className={`block w-full py-3 text-center rounded-lg border-2 font-bold transition-all mt-auto uppercase text-sm tracking-wide ${course.btnColor} hover:text-white shadow-sm active:scale-95`}
-                                    >
-                                        Chi Tiết & Đăng Ký
-                                    </Link>
-                                </div>
-                            </div>
+                            <CourseCard
+                                key={course.id}
+                                {...course}
+                            />
                         ))}
                     </div>
                 </div>

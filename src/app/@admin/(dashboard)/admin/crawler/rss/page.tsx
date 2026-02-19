@@ -117,24 +117,24 @@ const RssSourceDialog = React.memo(({
 
     const saveMutation = useMutation({
         mutationFn: async (data: Partial<RssSource>) => {
-            // Priority: Create Selective if new source and items selected
-            if (!source && selectedLinks.length > 0) {
+            const currentId = source?.id || (source as any)?._id;
+
+            // Priority: Create/Update Selective if items selected
+            if (selectedLinks.length > 0) {
                 return crawlerApi.createSelectiveRss({
                     feed: {
+                        id: currentId,
                         name: data.name!,
                         url: data.url!,
                         targetCategoryId: data.targetCategoryId!,
                         isActive: data.isActive!,
-                        // Include these just in case backend accepts them, or they will be ignored
-                        // (Typescript might complain if not in spec, but we passed "any" in createSelectiveRss for now or strict type)
-                        // Casting to any to avoid strict type mismatch if spec is partial
                     } as any,
                     selectedLinks
                 });
             }
             // Standard Create/Update
-            return source
-                ? crawlerApi.updateRssSource(source.id, data)
+            return currentId
+                ? crawlerApi.updateRssSource(currentId, data)
                 : crawlerApi.createRssSource(data);
         },
         onSuccess: () => {
@@ -145,10 +145,10 @@ const RssSourceDialog = React.memo(({
         onError: (err: any) => toast.error(err.message || "Lỗi khi lưu dữ liệu")
     });
 
-    const triggerMutation = useMutation({
-        mutationFn: (id: string) => crawlerApi.triggerRss(id),
-        onSuccess: () => toast.success("Đã kích hoạt cào tin thủ công"),
-        onError: (err: any) => toast.error(err.message || "Lỗi khi gọi cào tin")
+    const syncMutation = useMutation({
+        mutationFn: (id: string) => crawlerApi.syncRss(id),
+        onSuccess: () => toast.success("Đã kích hoạt đồng bộ tin tức ngay lập tức"),
+        onError: (err: any) => toast.error(err.message || "Lỗi khi gọi đồng bộ")
     });
 
     const handlePreview = async () => {
@@ -218,17 +218,15 @@ const RssSourceDialog = React.memo(({
                                         required
                                         className="bg-white dark:bg-zinc-950"
                                     />
-                                    {!source && (
-                                        <Button
-                                            type="button"
-                                            variant="secondary"
-                                            onClick={handlePreview}
-                                            disabled={isPreviewLoading || !formData.url}
-                                            className="shrink-0"
-                                        >
-                                            {isPreviewLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Check"}
-                                        </Button>
-                                    )}
+                                    <Button
+                                        type="button"
+                                        variant="secondary"
+                                        onClick={handlePreview}
+                                        disabled={isPreviewLoading || !formData.url}
+                                        className="shrink-0"
+                                    >
+                                        {isPreviewLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Check URL"}
+                                    </Button>
                                 </div>
                             </div>
                             <div className="grid gap-2">
@@ -342,14 +340,15 @@ const RssSourceDialog = React.memo(({
                     </div>
 
                     <DialogFooter className="flex justify-between items-center w-full mt-auto pt-4 border-t">
-                        {source && (
+                        {(source || formData.id) && (
                             <Button
                                 type="button"
                                 variant="outline"
                                 className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                                onClick={() => triggerMutation.mutate(source.id)}
+                                onClick={() => syncMutation.mutate((source?.id || formData.id) as string)}
+                                disabled={syncMutation.isPending}
                             >
-                                <Play className="mr-2 h-4 w-4" /> Cào thử
+                                {syncMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />} Đồng bộ ngay
                             </Button>
                         )}
                         <div className="flex gap-2 ml-auto">
@@ -534,10 +533,10 @@ export default function RssManagementPage() {
         }
     })
 
-    const triggerMutation = useMutation({
-        mutationFn: (id: string) => crawlerApi.triggerRss(id),
-        onSuccess: () => toast.success("Đã kích hoạt cào tin thủ công"),
-        onError: (err: any) => toast.error(err.message || "Lỗi khi gọi cào tin")
+    const syncMutation = useMutation({
+        mutationFn: (id: string) => crawlerApi.syncRss(id),
+        onSuccess: () => toast.success("Đã kích hoạt đồng bộ tin tức"),
+        onError: (err: any) => toast.error(err.message || "Lỗi khi gọi đồng bộ")
     })
 
     // 3. Handlers
@@ -625,7 +624,7 @@ export default function RssManagementPage() {
                                 </TableHeader>
                                 <TableBody>
                                     {sources.map((source) => (
-                                        <TableRow key={source.id} className="hover:bg-muted/30 transition-colors">
+                                        <TableRow key={source.id || (source as any)._id} className="hover:bg-muted/30 transition-colors">
                                             <TableCell>
                                                 <div className="flex flex-col gap-0.5">
                                                     <span className="font-bold text-foreground">{source.name}</span>
@@ -669,7 +668,8 @@ export default function RssManagementPage() {
                                                         size="sm"
                                                         className="h-8 px-3 flex items-center gap-1.5 font-bold"
                                                         onClick={() => {
-                                                            setPeekRssId(source.id);
+                                                            const id = source.id || (source as any)._id;
+                                                            setPeekRssId(id);
                                                             setPeekCategoryId(source.targetCategoryId);
                                                         }}
                                                     >
@@ -680,15 +680,15 @@ export default function RssManagementPage() {
                                                         variant="outline"
                                                         size="sm"
                                                         className="h-8 px-3 text-blue-600 border-blue-200 hover:bg-blue-50 flex items-center gap-1.5 font-bold"
-                                                        onClick={() => triggerMutation.mutate(source.id)}
-                                                        disabled={triggerMutation.isPending}
+                                                        onClick={() => syncMutation.mutate(source.id || (source as any)._id)}
+                                                        disabled={syncMutation.isPending}
                                                     >
-                                                        {triggerMutation.isPending && triggerMutation.variables === source.id ? (
+                                                        {syncMutation.isPending && syncMutation.variables === (source.id || (source as any)._id) ? (
                                                             <Loader2 className="h-3 w-3 animate-spin" />
                                                         ) : (
                                                             <Play className="h-3 w-3 fill-current" />
                                                         )}
-                                                        Cào ngay
+                                                        Đồng bộ ngay
                                                     </Button>
                                                     <Button
                                                         variant="ghost"
@@ -702,7 +702,7 @@ export default function RssManagementPage() {
                                                         variant="ghost"
                                                         size="icon"
                                                         className="h-8 w-8 text-destructive hover:bg-red-50"
-                                                        onClick={() => confirm("Bạn có chắc chắn muốn xóa nguồn này?") && deleteMutation.mutate(source.id)}
+                                                        onClick={() => confirm("Bạn có chắc chắn muốn xóa nguồn này?") && deleteMutation.mutate(source.id || (source as any)._id)}
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>

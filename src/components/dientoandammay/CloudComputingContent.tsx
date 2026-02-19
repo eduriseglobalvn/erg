@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import CloudRoadmap from '@/components/dientoandammay/RoadmapSection';
 import { CourseCard } from '@/components/cards/course-card';
+import { COURSES } from '@/constants/courses';
 
 const CloudCarousel = () => {
     const images = [
@@ -36,7 +37,7 @@ const CloudCarousel = () => {
 
     return (
         <div className={`relative w-full max-w-md aspect-[4/3] rounded-2xl shadow-2xl overflow-hidden border-4 border-white/10 bg-[#1e293b] group transition-colors duration-500 ${images[current].color}`}>
-            <div className="absolute inset-0 bg-[url('/grid-pattern.png')] opacity-10"></div>
+            <div className="absolute inset-0 bg-[url('https://media.erg.edu.vn/background/grid-pattern.png')] opacity-10"></div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent"></div>
 
             <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center z-10">
@@ -66,7 +67,7 @@ export default function CloudComputingContent() {
             <section className="relative bg-[#0b1120] text-white py-24 lg:py-32 overflow-hidden">
                 <div className="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-blue-900/20 to-transparent pointer-events-none"></div>
                 <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 w-full h-full bg-[url('/grid-pattern.png')] opacity-5 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-full h-full bg-[url('https://media.erg.edu.vn/background/grid-pattern.png')] opacity-5 pointer-events-none"></div>
 
                 <div className="container mx-auto px-4 relative z-10 flex flex-col lg:flex-row items-center gap-16">
                     <div className="lg:w-1/2 space-y-8 text-center lg:text-left">
@@ -153,78 +154,28 @@ export default function CloudComputingContent() {
 
             <CloudRoadmap />
 
-            <section id="khoa-hoc" className="py-24 bg-white">
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-16">
-                        <span className="text-blue-600 font-bold tracking-wider uppercase text-sm bg-blue-50 px-3 py-1 rounded-full">Chương Trình Đào Tạo</span>
-                        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mt-4">
-                            Hệ Thống Khóa Học <span className="text-blue-600">Chuyên Sâu</span>
-                        </h2>
-                        <p className="text-slate-500 mt-4 max-w-2xl mx-auto text-lg">
-                            Thiết kế bài bản từ nền tảng đến chuyên gia, tập trung vào thực hành và giải quyết bài toán thực tế của doanh nghiệp.
+            <section id="khoa-hoc" className="py-24 bg-white relative">
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="text-center mb-16 space-y-4">
+                        <h2 className="text-3xl lg:text-5xl font-bold text-slate-900 tracking-tight">Chương Trình Đào Tạo Thực Chiến</h2>
+                        <p className="text-slate-500 max-w-2xl mx-auto text-lg leading-relaxed">
+                            Lộ trình được thiết kế chuẩn hóa, tập trung vào kỹ năng thực hành Lab trên môi trường Cloud thật.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <CourseCard
-                            id="cloud-admin"
-                            displayTitle="AWS / Azure"
-                            subtitle="Foundation"
-                            title="Cloud Administrator"
-                            description="Nhập môn điện toán đám mây. Vận hành máy chủ ảo (EC2), mạng VPC và quản trị người dùng IAM trên AWS/Azure."
-                            icon={<Cloud size={64} className="text-white mx-auto mb-2 drop-shadow-md" />}
-                            points={[
-                                "Dịch vụ Core: EC2, S3, RDS",
-                                "Bảo mật & Phân quyền IAM"
-                            ]}
-                            href="/khoa-hoc/cloud-admin"
-                            headerGradient="from-orange-400 to-amber-500"
-                            btnColor="border-orange-500 text-orange-600 hover:bg-orange-500"
-                            modules="Chương trình đào tạo:"
-                            code="LEVEL: 01"
-                        />
-
-                        <CourseCard
-                            id="devops-engineer"
-                            displayTitle="DevOps"
-                            subtitle="Professional"
-                            title="DevOps Engineer"
-                            description="Làm chủ công nghệ Container và quy trình phát triển phần mềm hiện đại CI/CD tự động hóa."
-                            icon={<Container size={64} className="text-white mx-auto mb-2 drop-shadow-md" />}
-                            points={[
-                                "Docker & Kubernetes (K8s)",
-                                "Jenkins, GitLab CI Pipeline"
-                            ]}
-                            href="/khoa-hoc/devops-engineer"
-                            headerGradient="from-blue-600 to-cyan-500"
-                            btnColor="border-blue-600 text-blue-600 hover:bg-blue-600"
-                            modules="Chương trình đào tạo:"
-                            code="LEVEL: 02"
-                        />
-
-                        <CourseCard
-                            id="cloud-architect"
-                            displayTitle="Architect"
-                            subtitle="Expert"
-                            title="Solutions Architect"
-                            description="Tư duy thiết kế hệ thống phân tán, chịu tải cao (High Availability) và tối ưu chi phí hạ tầng doanh nghiệp."
-                            icon={<Server size={64} className="text-white mx-auto mb-2 drop-shadow-md" />}
-                            points={[
-                                "Microservices Design Patterns",
-                                "Terraform (IaC) & Security"
-                            ]}
-                            href="/khoa-hoc/cloud-architect"
-                            headerGradient="from-purple-600 to-fuchsia-500"
-                            btnColor="border-purple-500 text-purple-600 hover:bg-purple-500"
-                            modules="Chương trình đào tạo:"
-                            code="LEVEL: 03"
-                        />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {COURSES.dientoandammay.map((course) => (
+                            <CourseCard
+                                key={course.id}
+                                {...course}
+                            />
+                        ))}
                     </div>
                 </div>
             </section>
 
             <section className="py-24 bg-[#0b1120] text-white text-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('/grid-pattern.png')] opacity-10"></div>
+                <div className="absolute inset-0 bg-[url('https://media.erg.edu.vn/background/grid-pattern.png')] opacity-10"></div>
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent"></div>
 
                 <div className="container mx-auto px-4 relative z-10">

@@ -17,6 +17,11 @@ export interface CourseCardProps {
     icon?: React.ReactNode;
     subtitle?: string;
     href?: string;
+    price?: number;
+    rating?: {
+        average: number;
+        count: number;
+    };
 }
 
 export const CourseCard = ({

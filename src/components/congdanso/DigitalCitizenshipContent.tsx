@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, CheckCircle2, Brain, Globe, Shield, Activity } from 'lucide-react';
 import RoadmapSection from "@/components/congdanso/RoadmapSection";
 import { CourseCard } from '@/components/cards/course-card';
+import { COURSES } from '@/constants/courses';
 
 const CitizenshipCarousel = () => {
     const images = [
@@ -126,59 +127,12 @@ export default function DigitalCitizenshipContent() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <CourseCard
-                            id="kdc-tieu-hoc"
-                            displayTitle="01"
-                            subtitle="Lớp 1 - 5"
-                            title="Kỹ Năng Công Dân Số Tiểu Học"
-                            description="Khởi động hành trình số với sự tò mò và an toàn."
-                            icon={<div className="text-6xl font-black text-white/20 select-none">01</div>}
-                            points={[
-                                "Hoạt động hướng nghiệp",
-                                "Khởi nghiệp & Đổi mới sáng tạo",
-                                "Cân bằng thời gian sử dụng thiết bị"
-                            ]}
-                            href="/kdc-tieu-hoc"
-                            headerGradient="from-green-500 to-emerald-400"
-                            btnColor="border-green-500 text-green-600 hover:bg-green-500"
-                            modules="Điểm nổi bật:"
-                        />
-
-                        <CourseCard
-                            id="kdc-thcs"
-                            displayTitle="02"
-                            subtitle="Lớp 6 - 9"
-                            title="Kỹ Năng Công Dân Số THCS"
-                            description="Phát triển tư duy phản biện và trách nhiệm xã hội."
-                            icon={<div className="text-6xl font-black text-white/20 select-none">02</div>}
-                            points={[
-                                "Nhận diện tin giả (Fake News)",
-                                "Phòng chống bắt nạt mạng",
-                                "Bản quyền & Đạo đức số"
-                            ]}
-                            href="/kdc-thcs"
-                            headerGradient="from-blue-600 to-cyan-400"
-                            btnColor="border-blue-600 text-blue-600 hover:bg-blue-600"
-                            modules="Điểm nổi bật:"
-                        />
-
-                        <CourseCard
-                            id="kdc-thpt"
-                            displayTitle="03"
-                            subtitle="Lớp 10 - 12"
-                            title="Kỹ Năng Công Dân Số THPT"
-                            description="Làm chủ công nghệ, định hướng nghề nghiệp tương lai."
-                            icon={<div className="text-6xl font-black text-white/20 select-none">03</div>}
-                            points={[
-                                "Xây dựng thương hiệu cá nhân số",
-                                "Dấu chân số & Tuyển dụng",
-                                "Tham gia cộng đồng số toàn cầu"
-                            ]}
-                            href="/kdc-thpt"
-                            headerGradient="from-orange-500 to-red-400"
-                            btnColor="border-orange-500 text-orange-600 hover:bg-orange-500"
-                            modules="Điểm nổi bật:"
-                        />
+                        {COURSES.congdanso.map((course) => (
+                            <CourseCard
+                                key={course.id}
+                                {...course}
+                            />
+                        ))}
                     </div>
                 </div>
             </section>

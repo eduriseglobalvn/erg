@@ -4,17 +4,18 @@ import Header from "@/components/Header"; // Giả sử component Header đã đ
 import Footer from "@/components/Footer"; // Giả sử component Footer đã được tạo
 // import AdsPopup from "@/components/AdsPopup";
 import FloatingContact from "@/components/FloatingContact";
-import {THQG_MENU_ITEMS} from "@/constants/MenuItem";
+import { THQG_MENU_ITEMS } from "@/constants/MenuItem";
+
 
 export default function MainLayout({
-                                       children,
-                                   }: Readonly<{
+    children,
+}: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
         <>
             {/* CÁC COMPONENT DÙNG CHUNG CHO TẤT CẢ TRANG CỦA MAIN DOMAIN */}
-            <Header menuData={THQG_MENU_ITEMS}/>
+            <Header menuData={THQG_MENU_ITEMS} />
             {/*<AdsPopup />*/}
 
             {/* Nội dung trang (page.tsx) được bọc trong <(main)> */}

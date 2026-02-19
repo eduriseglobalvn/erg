@@ -1,120 +1,56 @@
-'use client';
-
 import React from 'react';
-import { BookOpen, CheckCircle2, FileText, Award, Star } from 'lucide-react';
-import Link from 'next/link';
-import { CourseCard } from '@/components/cards/course-card';
+import { Metadata } from 'next';
+import { COURSES } from '@/constants/courses';
+import { SchemaScript } from '@/components/seo/schema-script';
+import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
+import { headers } from 'next/headers';
+import CoursesPageContent from '@/components/tinhocquocgia/CoursesPageContent';
 
-export default function CoursesPage() {
-    // Dữ liệu nội dung bám sát tài liệu IU01 - IU09
-    const courses = [
-        {
-            id: 'thcb',
-            code: 'MÃ LỚP: THCB',
-            displayTitle: "CƠ BẢN", // Đã sửa từ CB thành CƠ BẢN
-            title: "Kỹ năng sử dụng CNTT Cơ bản",
-            description: "Dành cho người mới bắt đầu, trang bị kiến thức nền tảng về máy tính và tin học văn phòng.",
-            headerGradient: "from-blue-600 to-blue-400",
-            modules: "Nội dung (Mô đun IU01 - IU06):",
-            points: [
-                "Windows: Quản lý tập tin, thư mục (Explorer).",
-                "MS Word (IU03): Soạn thảo, định dạng văn bản, bảng biểu.",
-                "MS Excel (IU04): Hàm chuỗi, ngày tháng, tính toán cơ bản.",
-                "MS PowerPoint (IU05): Thiết kế slide, hiệu ứng trình chiếu."
-            ],
-            btnColor: "border-blue-600 text-blue-600 hover:bg-blue-600",
-            icon: <FileText size={80} className="text-white opacity-20" />
+export async function generateMetadata(): Promise<Metadata> {
+    const headerList = await headers();
+    const host = headerList.get('host') || 'tinhocquocgia.erg.edu.vn';
+
+    return {
+        title: 'Chương trình Đào tạo Tin học Quốc gia | ERG',
+        description: 'Danh sách các khóa học tin học chuẩn quốc gia Thông tư 03: CNTT Cơ bản, CNTT Nâng cao, Luyện thi cấp tốc.',
+        alternates: {
+            canonical: `https://${host}/khoa-hoc`,
         },
-        {
-            id: 'thnc',
-            code: 'MÃ LỚP: THNC',
-            displayTitle: "NÂNG CAO", // Đã sửa từ NC thành NÂNG CAO
-            title: "Kỹ năng sử dụng CNTT Nâng cao",
-            description: "Chuyên sâu về văn phòng, xử lý dữ liệu phức tạp. Yêu cầu đã có kiến thức cơ bản.",
-            headerGradient: "from-purple-600 to-indigo-500",
-            modules: "Nội dung (Mô đun IU07 - IU09):",
-            points: [
-                "Word Nâng cao (IU07): Trộn thư (Mail Merge), Mục lục tự động.",
-                "Excel Nâng cao (IU08): PivotTable, VLOOKUP nâng cao, Công thức mảng.",
-                "PPT Nâng cao (IU09): Slide Master, Trigger, Chèn đa phương tiện.",
-                "Kỹ năng kiểm tra và bảo mật bảng tính nâng cao."
-            ],
-            btnColor: "border-purple-600 text-purple-600 hover:bg-purple-600",
-            icon: <Star size={80} className="text-white opacity-20" />
+        openGraph: {
+            title: 'Chương trình Đào tạo Tin học Quốc gia | ERG',
+            description: 'Danh sách các khóa học tin học chuẩn quốc gia Thông tư 03: CNTT Cơ bản, CNTT Nâng cao, Luyện thi cấp tốc.',
+            type: 'website',
         },
-        {
-            id: 'luyenthi',
-            code: 'CẤP TỐC',
-            displayTitle: "LUYỆN THI",
-            title: "Ôn Thi & Cấp Chứng Chỉ",
-            description: "Dành cho đối tượng đã có kiến thức, cần hệ thống hóa để thi lấy bằng nhanh chóng.",
-            headerGradient: "from-orange-500 to-red-400",
-            modules: "Quyền lợi học viên:",
-            points: [
-                "Làm quen với phần mềm thi trắc nghiệm & thực hành.",
-                "Giải bộ đề thi sát hạch chuẩn quốc gia các năm gần nhất.",
-                "Mẹo làm bài đạt điểm tối đa và quản lý thời gian thi.",
-                "Tỷ lệ đậu cao. Hỗ trợ đăng ký thi ngay tại trung tâm."
-            ],
-            btnColor: "border-orange-500 text-orange-600 hover:bg-orange-500",
-            icon: <Award size={80} className="text-white opacity-20" />
-        }
-    ];
+    };
+}
+
+export default async function CoursesPage() {
+    const headerList = await headers();
+    const hostname = headerList.get('host') || 'tinhocquocgia.erg.edu.vn';
+    const courses = COURSES.tinhocquocgia;
+
+    const breadcrumbItems = generateBreadcrumbItems('/khoa-hoc', 'Chương trình đào tạo', 'Trang chủ');
 
     return (
-        <div className="min-h-screen bg-white">
-            {/* 1. HERO SECTION */}
-            <section className="bg-[var(--erg-blue)] text-white py-24 text-center relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10"
-                    style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
-                </div>
-                <div className="container mx-auto px-4 relative z-10">
-                    <h1 className="text-4xl md:text-6xl font-extrabold mb-6 uppercase tracking-tight leading-tight">
-                        Chương Trình <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400">Đào Tạo</span>
-                    </h1>
-                    <p className="text-blue-100 max-w-2xl mx-auto text-lg md:text-xl font-light">
-                        Đáp ứng đầy đủ chuẩn đầu ra Tin học cho sinh viên và người đi làm theo quy định của Bộ GD&ĐT.
-                    </p>
-                </div>
-            </section>
+        <>
+            {/* Course Schemas */}
+            {courses.map((course) => (
+                <SchemaScript
+                    key={course.id}
+                    type="Course"
+                    data={course}
+                    domain={hostname}
+                />
+            ))}
 
-            {/* 2. COURSE LISTING */}
-            <section className="py-20 relative"
-                style={{
-                    backgroundColor: '#ffffff',
-                    backgroundImage: `
-                        linear-gradient(to right, rgba(229, 231, 235, 0.4) 1.5px, transparent 1.5px),
-                        linear-gradient(to bottom, rgba(229, 231, 235, 0.4) 1.5px, transparent 1.5px)
-                    `,
-                    backgroundSize: '80px 80px'
-                }}
-            >
-                <div className="container mx-auto px-4 relative z-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-                        {courses.map((course) => (
-                            <CourseCard
-                                key={course.id}
-                                {...course}
-                            />
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/* Breadcrumb Schema */}
+            <SchemaScript
+                type="BreadcrumbList"
+                data={{ items: breadcrumbItems }}
+                domain={hostname}
+            />
 
-            {/* 3. FOOTER CTA */}
-            <section className="py-20 bg-white border-t border-gray-100">
-                <div className="container mx-auto px-4 text-center">
-                    <h2 className="text-3xl md:text-5xl font-bold text-[var(--erg-blue)] mb-6">
-                        Bạn Đã Sẵn Sàng?
-                    </h2>
-                    <p className="text-gray-600 mb-10 text-lg max-w-2xl mx-auto font-medium">
-                        Đừng để lỡ "thời điểm vàng". Đăng ký ngay để nhận lộ trình chi tiết cho con em mình.
-                    </p>
-                    <Link href="/lien-he" className="inline-block px-12 py-5 bg-[var(--erg-red)] text-white font-bold text-xl rounded-xl hover:bg-red-700 transition-all shadow-xl hover:shadow-red-200 transform hover:-translate-y-1 uppercase tracking-wider">
-                        Đăng Ký Tư Vấn Ngay
-                    </Link>
-                </div>
-            </section>
-        </div>
+            <CoursesPageContent courses={courses} />
+        </>
     );
 }

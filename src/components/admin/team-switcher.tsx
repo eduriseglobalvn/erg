@@ -48,7 +48,7 @@ export function TeamSwitcher({
         )}>
           {/* Logo Box */}
           <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary/5 p-1.5 shrink-0 shadow-sm border border-primary/10">
-            <img src="/erg.png" alt="Logo" className="size-full object-contain" />
+            <img src="https://media.erg.edu.vn/logo/erg.png" alt="Logo" className="size-full object-contain" />
           </div>
 
           {/* Text Content - Hidden when collapsed */}

@@ -3,22 +3,12 @@ import { NextConfig } from 'next'
 const nextConfig: NextConfig = {
     output: 'standalone',
 
-    // Proxy API calls to backend - DISABLED, using Route Handler instead
-    // async rewrites() {
-    //     const backendUrl = String(process.env.BACKEND_URL || 'http://localhost:3003');
-    //     console.log('[Next.js Rewrites] Backend URL:', backendUrl);
-    //     return [
-    //         {
-    //             source: '/api/:path*',
-    //             destination: `${backendUrl}/api/:path*`,
-    //         },
-    //     ];
-    // },
 
     // Cấu hình Headers cho Production
     allowedDevOrigins: ['erg.edu.local', '*.erg.edu.local', 'erg.edu.vn', '*.erg.edu.vn'],
     async headers() {
         return [
+            // === CORS Headers ===
             {
                 source: '/:path*',
                 headers: [
@@ -32,7 +22,27 @@ const nextConfig: NextConfig = {
                     { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
                 ],
             },
-        ]
+            // === Cache Headers cho static assets (1 năm, immutable) ===
+            {
+                source: '/_next/static/:path*',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=31536000, immutable',
+                    },
+                ],
+            },
+            // === Cache Headers cho public media (ảnh, fonts) ===
+            {
+                source: '/images/:path*',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=86400, stale-while-revalidate=604800',
+                    },
+                ],
+            },
+        ];
     },
 
     devIndicators: false,
@@ -50,8 +60,15 @@ const nextConfig: NextConfig = {
 
     images: {
         minimumCacheTTL: 60,
-        unoptimized: true,
-    }
+        unoptimized: false, // Enable optimization
+        formats: ['image/avif', 'image/webp'],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: '**',
+            },
+        ],
+    },
 
 }
 export default nextConfig

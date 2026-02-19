@@ -15,8 +15,8 @@ export function useAuth() {
                 userApi.getMe()
             ]);
 
-            const sessionData = sessionRes.data || sessionRes;
-            const userData = userRes.data || userRes;
+            const sessionData = (sessionRes as any).data || sessionRes;
+            const userData = (userRes as any).data || userRes;
 
             // Merge thông tin user từ /users/me vào session user
             const fullUser = {

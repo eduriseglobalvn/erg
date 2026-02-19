@@ -15,11 +15,12 @@ import {
     Check
 } from 'lucide-react';
 import { CourseCard } from '@/components/cards/course-card';
+import { COURSES } from '@/constants/courses';
 
 const KidsCodingCarousel = () => {
     const images = [
-        { src: "/util/scratch-banner.jpg", label: "Lập trình Scratch (Tiểu học)" },
-        { src: "/util/python-banner.jpg", label: "Lập trình Python (THCS)" },
+        { src: "https://media.erg.edu.vn/banner/scratch-banner.jpg", label: "Lập trình Scratch (Tiểu học)" },
+        { src: "https://media.erg.edu.vn/banner/python-banner.jpg", label: "Lập trình Python (THCS)" },
     ];
 
     const [current, setCurrent] = useState(0);
@@ -71,7 +72,7 @@ export default function KidsCodingContent() {
     return (
         <main className="min-h-screen">
             <section className="relative bg-[var(--erg-blue)] text-white py-20 lg:py-28 overflow-hidden">
-                <div className="absolute top-0 right-0 w-full h-full bg-[url('/pattern-grid.png')] opacity-5"></div>
+                <div className="absolute top-0 right-0 w-full h-full bg-[url('https://media.erg.edu.vn/background/pattern-grid.png')] opacity-5"></div>
                 <div className="absolute bottom-0 right-0 -mr-20 -mb-20 w-80 h-80 rounded-full bg-yellow-500 opacity-10 blur-3xl"></div>
 
                 <div className="container mx-auto px-4 relative z-10 flex flex-col md:flex-row items-center gap-12">
@@ -140,56 +141,22 @@ export default function KidsCodingContent() {
                 </div>
             </section>
 
-            <section id="khoa-hoc" className="py-20 bg-gray-50 overflow-hidden">
+            <section id="khoa-hoc" className="py-20 bg-gray-50">
                 <div className="container mx-auto px-4">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-[var(--erg-blue)] mb-4">
-                            CHƯƠNG TRÌNH ĐÀO TẠO
-                        </h2>
-                        <p className="text-gray-600 max-w-3xl mx-auto text-lg">
-                            Hai hướng tiếp cận công nghệ hoàn toàn độc lập dành cho học sinh Tiểu học & THCS.
-                            Tùy thuộc vào sở thích của bé (thích vẽ/sáng tạo hay thích toán/logic), ba mẹ hãy chọn chương trình phù hợp nhất.
-                        </p>
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+                        <div>
+                            <h2 className="text-3xl font-bold text-[var(--erg-blue)]">Chương Trình Đào Tạo</h2>
+                            <p className="text-gray-600 mt-2">Được thiết kế sinh động, trực quan phù hợp với độ tuổi.</p>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
-                        <CourseCard
-                            id="scratch"
-                            code="Tiểu học"
-                            displayTitle="SCRATCH"
-                            subtitle="Creative Coding"
-                            title="Lộ trình Sáng Tạo (Scratch)"
-                            description="Phù hợp với trẻ thích hình ảnh, âm thanh, vẽ tranh & kể chuyện. Bé tự tạo được trò chơi, thiệp điện tử, phim hoạt hình."
-                            points={[
-                                "Học tư duy Kéo - Thả (No-code)",
-                                "Tự làm Game & Phim hoạt hình",
-                                "Phát triển trí tưởng tượng phong phú"
-                            ]}
-                            href="/khoa-hoc/lap-trinh-scratch"
-                            headerGradient="from-orange-500 to-yellow-400"
-                            btnColor="border-orange-500 text-orange-600 hover:bg-orange-600"
-                            icon={<Palette />}
-                            modules="Lộ trình học tập:"
-                        />
-
-                        <CourseCard
-                            id="python-kids"
-                            code="THCS"
-                            displayTitle="PYTHON"
-                            subtitle="Logic & Data"
-                            title="Lộ trình Tư Duy (Python)"
-                            description="Phù hợp với trẻ thích toán học, giải đố. Tiếp cận ngôn ngữ lập trình thực tế số 1 thế giới chuẩn kỹ sư công nghệ."
-                            points={[
-                                "Lập trình dòng lệnh thực tế",
-                                "Giải quyết vấn đề & Thuật toán",
-                                "Nền tảng cho AI & Khoa học dữ liệu"
-                            ]}
-                            href="/khoa-hoc/lap-trinh-python-thieu-nhi"
-                            headerGradient="from-blue-600 to-indigo-500"
-                            btnColor="border-blue-600 text-blue-600 hover:bg-blue-600"
-                            icon={<Terminal />}
-                            modules="Lộ trình học tập:"
-                        />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {COURSES.tinhocthieunhi.map((course) => (
+                            <CourseCard
+                                key={course.id}
+                                {...course}
+                            />
+                        ))}
                     </div>
                     <div className="mt-12 text-center">
                         <div className="inline-flex items-center gap-2 text-gray-600 bg-white px-6 py-3 rounded-full border border-gray-200 shadow-sm text-sm font-medium">

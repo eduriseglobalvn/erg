@@ -19,9 +19,27 @@ export interface PostDetailResponse {
         metaTitle?: string;
         metaDescription?: string;
         canonicalUrl?: string;
-        schemaType?: string;
+        schemaType?: 'Article' | 'NewsArticle' | 'Course' | 'JobPosting' | string; // New field
         seoScore?: number;
         keywords?: string;
+        primaryImageId?: string;
+        relatedPostsIds?: string[];
+
+        // [NEW] Rich Snippets Data
+        introVideo?: {
+            name: string;
+            description: string;
+            thumbnailUrl: string;
+            uploadDate: string;
+            contentUrl: string;
+        };
+        rating?: {
+            average: number;
+            count: number;
+        };
+        alternates?: {
+            [key: string]: string; // e.g., "vi": "...", "en": "..."
+        };
 
         author?: {
             fullName: string;
@@ -185,5 +203,25 @@ export const postsApi = {
         await httpClient(`/posts/images/id/${filename}`, {
             method: 'DELETE'
         });
+    },
+
+    // --- PREVIEW SYSTEM ---
+
+    /**
+     * Tạo hoặc cập nhật bản xem trước (Snapshot/Live Preview)
+     * @param data - Dữ liệu bài viết (có thể kèm id để ghi đè)
+     */
+    createPreview: (data: any) => {
+        return httpClient<{ id: string }>('/posts/preview', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    },
+
+    /**
+     * Lấy dữ liệu xem trước bằng ID (từ Redis)
+     */
+    getPreview: (id: string) => {
+        return httpClient<PostDetailResponse>(`/posts/preview/${id}`);
     },
 };

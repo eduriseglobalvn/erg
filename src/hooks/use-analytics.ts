@@ -13,7 +13,9 @@ export function useAnalytics() {
             // Get visitId from sessionStorage
             const visitId = sessionStorage.getItem('erg_visit_id');
 
-            console.log(`%c[Analytics] 🖱️ Đang track hành vi: ${eventName}`, "color: #ff8c00; font-weight: bold;", metadata);
+            if (process.env.NODE_ENV === 'development') {
+                console.log(`%c[Analytics] 🖱️ Đang track hành vi: ${eventName}`, "color: #ff8c00; font-weight: bold;", metadata);
+            }
 
             if (!visitId) {
                 console.warn('[Analytics] ❌ Không thể track behavior: Chưa có visitId trong bộ nhớ');
@@ -29,7 +31,9 @@ export function useAnalytics() {
                     pathname: window.location.pathname,
                 }
             }).then(() => {
-                console.log(`%c[Analytics] ✅ Đã gửi behavior: ${eventName}`, "color: #ff8c00;");
+                if (process.env.NODE_ENV === 'development') {
+                    console.log(`%c[Analytics] ✅ Đã gửi behavior: ${eventName}`, "color: #ff8c00;");
+                }
             });
         } catch (error) {
             console.error('[Analytics] trackEvent error:', error);

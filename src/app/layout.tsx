@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
 import { QueryProvider } from "@/providers/query-provider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
     subsets: ["latin", "vietnamese"],
@@ -227,6 +228,7 @@ export default async function RootLayout(props: {
                 {/* props.children là bắt buộc trong cấu trúc Next.js nhưng sẽ rỗng ở đây */}
                 {/* {props.children} */}
                 <SpeedInsights />
+                <Analytics />
             </body>
         </html>
     );

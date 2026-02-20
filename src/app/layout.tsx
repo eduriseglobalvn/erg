@@ -6,6 +6,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { headers } from "next/headers";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
 import { QueryProvider } from "@/providers/query-provider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
     subsets: ["latin", "vietnamese"],
@@ -48,7 +49,9 @@ function getSubdomain(hostname: string, rootDomain: string) {
 
 export async function generateMetadata(): Promise<Metadata> {
     const headerList = await headers();
-    const hostname = (headerList.get("host") || "").split(":")[0];
+    // Vercel / serverless environments often set the real host in x-forwarded-host
+    const rawHost = headerList.get("x-forwarded-host") || headerList.get("host") || "";
+    const hostname = rawHost.split(":")[0];
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'erg.edu.local';
     const subdomain = getSubdomain(hostname, rootDomain);
 
@@ -126,9 +129,9 @@ export default async function RootLayout(props: {
 }) {
     // 1. Lấy Hostname thực tế từ Request
     const headerList = await headers();
-    let hostname = headerList.get("host") || "";
-
-    // 2. Lấy Root Domain (Quan trọng để tách subdomain)
+    // Vercel / serverless proxy thường giấu host thật vào x-forwarded-host
+    let rawHost = headerList.get("x-forwarded-host") || headerList.get("host") || "";
+    let hostname = rawHost.split(":")[0];
     // Local: erg.edu.local | Prod: erg.edu.vn
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'erg.edu.local';
 
@@ -223,6 +226,7 @@ export default async function RootLayout(props: {
 
                 {/* props.children là bắt buộc trong cấu trúc Next.js nhưng sẽ rỗng ở đây */}
                 {/* {props.children} */}
+                <SpeedInsights />
             </body>
         </html>
     );

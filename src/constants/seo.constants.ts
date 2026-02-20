@@ -16,7 +16,14 @@ export const SEO_DATA = {
             "chứng chỉ IC3", "lập trình thiếu nhi", "giáo dục công nghệ", "kỹ năng số",
             "trung tâm tin học uy tín", "học tin học văn phòng ở đâu", "luyện thi MOS cấp tốc",
             "đào tạo công nghệ thông tin", "tin học cho học sinh", "chứng chỉ tin học quốc tế",
-            "kỹ năng máy tính", "tin học ứng dụng", "edurise global", "erg edu vn"
+            "kỹ năng máy tính", "tin học ứng dụng", "edurise global", "erg edu vn",
+            // Brand variations
+            "trung tâm erg", "tin học erg", "ngoại ngữ tin học erg", "erg learning",
+            "trung tâm ngoại ngữ tin học erg", "luyện thi chứng chỉ quốc tế",
+            // General high-volume
+            "iig việt nam", "đăng ký thi iig", "trung tâm khảo thí iig",
+            "lịch thi mos iig", "địa điểm thi mos", "học tin học văn phòng tphcm",
+            "lớp tin học cho người đi làm", "khóa học tin học cấp tốc"
         ],
         ogImage: 'https://media.erg.edu.vn/logo/og-image.jpg'
     },
@@ -28,7 +35,11 @@ export const SEO_DATA = {
             "học AI cho học sinh", "trí tuệ nhân tạo phổ thông", "lập trình AI",
             "tư duy máy tính", "giáo dục AI", "AI cho thiếu nhi", "ứng dụng AI",
             "khóa học AI cơ bản", "trí tuệ nhân tạo cho trẻ em", "lập trình python ai",
-            "tương lai ngành AI", "kiến thức AI", "đào tạo trí tuệ nhân tạo"
+            "tương lai ngành AI", "kiến thức AI", "đào tạo trí tuệ nhân tạo",
+            // Expanded
+            "khóa học ai erg", "lớp học trí tuệ nhân tạo", "ai căn bản",
+            "học machine learning", "ứng dụng ai trong công việc",
+            "chatgpt cho người đi làm", "ai cho người bắt đầu", "khóa học prompt engineering"
         ],
         ogImage: 'https://media.erg.edu.vn/banner/ai-banner-1.jpg'
     },
@@ -41,7 +52,13 @@ export const SEO_DATA = {
             "chứng chỉ IC3 GS6", "MOS Excel", "MOS Word", "MOS PowerPoint",
             "thi chứng chỉ MOS ở đâu", "luyện thi IC3 cấp tốc", "MOS 2019", "MOS 365",
             "học tin học văn phòng chuẩn quốc tế", "certiportvietnam", "tin học MOS",
-            "bằng tin học quốc tế", "tin học văn phòng cho sinh viên"
+            "bằng tin học quốc tế", "tin học văn phòng cho sinh viên",
+            // Expanded - Exams
+            "luyện thi mos erg", "thi ic3 tại erg", "trung tâm khảo thí certiport",
+            "đăng ký thi mos", "thi mos excel", "thi mos word", "thi mos powerpoint",
+            "mos 2016", "đề thi mos", "tự học mos", "thi thử mos",
+            "chứng chỉ ic3 spark", "tin học cơ bản ic3", "luyện thi ic3",
+            "bằng tin học vô thời hạn", "chứng chỉ tin học 1000 năm"
         ],
         ogImage: 'https://media.erg.edu.vn/banner/mos.jpg'
     },
@@ -54,7 +71,12 @@ export const SEO_DATA = {
             "luyện thi công chức tin học", "chứng chỉ tin học bộ giáo dục",
             "chứng chỉ tin học theo thông tư 03", "thi bằng tin học cơ bản",
             "tin học văn phòng nâng cao", "đào tạo tin học quốc gia", "bằng tin học mẫu mới",
-            "chứng chỉ ứng dụng công nghệ thông tin"
+            "chứng chỉ ứng dụng công nghệ thông tin",
+            // Expanded
+            "chứng chỉ cntt erg", "thi tin học thông tư 03 erg",
+            "thi chứng chỉ công nghệ thông tin cơ bản", "thi tin học nâng cao",
+            "bằng tin học bộ giáo dục", "tin học thi công chức", "bằng a tin học", "bằng b tin học",
+            "luyện thi tin học cấp tốc", "chứng chỉ tin học lấy ngay"
         ],
         ogImage: 'https://media.erg.edu.vn/banner/cnttcb.jpg'
     },
@@ -66,7 +88,11 @@ export const SEO_DATA = {
             "lập trình scratch", "lập trình python cho trẻ em", "tin học thiếu nhi",
             "tư duy logic", "sáng tạo công nghệ", "robotics thiếu nhi",
             "học lập trình sớm", "khoa học máy tính cho bé", "lớp học scratch online",
-            "phát triển tư duy cho trẻ", "trại hè công nghệ", "bé học máy tính"
+            "phát triển tư duy cho trẻ", "trại hè công nghệ", "bé học máy tính",
+            // Expanded
+            "lập trình cho bé erg", "lớp học scratch erg", "khóa học python cho trẻ em",
+            "tin học học đường", "kỹ năng số cho trẻ", "giáo dục steam", "robotics cho bé",
+            "lớp tin học hè", "trại hè tin học"
         ],
         ogImage: 'https://media.erg.edu.vn/banner/scratch-banner.jpg'
     },
@@ -78,7 +104,10 @@ export const SEO_DATA = {
             "công dân số", "digital citizenship", "an toàn mạng",
             "kỹ năng số", "định danh số", "vắc xin số", "quy tắc ứng xử trên mạng",
             "an toàn thông tin cho học sinh", "kỹ năng dùng internet", "văn hóa số",
-            "trách nhiệm trên không gian mạng"
+            "trách nhiệm trên không gian mạng",
+            // Expanded
+            "kỹ năng số erg", "an toàn trực tuyến", "bảo vệ trẻ em trên mạng",
+            "kỹ năng sử dụng mạng xã hội", "tư duy số"
         ],
         ogImage: 'https://media.erg.edu.vn/logo/og-image.jpg'
     },
@@ -89,7 +118,10 @@ export const SEO_DATA = {
         keywords: [
             "học AWS", "học Azure", "điện toán đám mây", "devops cơ bản",
             "cloud computing", "kỹ sư hệ thống", "chứng chỉ AWS", "lộ trình devops",
-            "hạ tầng đám mây", "kiến trúc sư đám mây", "triển khai cloud"
+            "hạ tầng đám mây", "kiến trúc sư đám mây", "triển khai cloud",
+            // Expanded
+            "khóa học cloud erg", "aws azure erg", "chứng chỉ cloud computing",
+            "luyện thi chứng chỉ aws", "học cloud computing tphcm"
         ],
         ogImage: 'https://media.erg.edu.vn/logo/og-image.jpg'
     },
@@ -100,7 +132,10 @@ export const SEO_DATA = {
         keywords: [
             "tuyển dụng giáo viên tin học", "việc làm giáo dục", "tuyển dụng nhân sự",
             "đại sứ giáo dục", "đối tác trường học", "tuyển dụng IT", "việc làm edtech",
-            "tuyển dụng cộng tác viên giáo dục", "nhân sự edurise global"
+            "tuyển dụng cộng tác viên giáo dục", "nhân sự edurise global",
+            // Expanded
+            "tuyển dụng erg", "việc làm tại erg", "giáo viên tin học erg",
+            "tuyển dụng giảng viên tin học", "tuyển thực tập sinh cntt"
         ],
         ogImage: 'https://media.erg.edu.vn/logo/og-image.jpg'
     },

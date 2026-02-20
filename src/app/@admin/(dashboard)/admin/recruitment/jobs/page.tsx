@@ -6,45 +6,16 @@ import { recruitmentApi } from '@/services/recruitment.api'
 import { Job, JobStatus } from '@/types/recruitment'
 import { Button } from '@/components/admin/ui/button'
 import { Input } from '@/components/admin/ui/input'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/admin/ui/table'
+import { Switch } from '@/components/admin/ui/switch'
+import { DataTable } from '@/components/admin/data-table/data-table'
+import { ColumnDef } from '@tanstack/react-table'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/admin/ui/dialog'
 import { Label } from '@/components/admin/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/admin/ui/select'
 import { Textarea } from '@/components/admin/ui/textarea'
-import { Plus, Pencil, Trash2, Eye, PlusCircle, MinusCircle } from 'lucide-react'
-import { toast } from 'sonner'
-import Link from 'next/link'
-
-// Component Input mảng động (cho Description, Requirements, Benefits)
-function ArrayInput({ values, onChange, label }: { values: string[], onChange: (val: string[]) => void, label: string }) {
-    const addField = () => onChange([...values, ""]);
-    const removeField = (idx: number) => onChange(values.filter((_, i) => i !== idx));
-    const updateField = (idx: number, val: string) => {
-        const newValues = [...values];
-        newValues[idx] = val;
-        onChange(newValues);
-    }
-
-    return (
-        <div className="space-y-2">
-            <div className="flex justify-between items-center">
-                <Label>{label}</Label>
-                <Button type="button" variant="ghost" size="sm" onClick={addField}><PlusCircle className="w-4 h-4 mr-1" /> Thêm dòng</Button>
-            </div>
-            {values.map((val, idx) => (
-                <div key={idx} className="flex gap-2">
-                    <Textarea
-                        value={val}
-                        onChange={(e) => updateField(idx, e.target.value)}
-                        className="min-h-[60px]"
-                        placeholder={`Dòng ${idx + 1}...`}
-                    />
-                    <Button type="button" variant="destructive" size="icon" onClick={() => removeField(idx)}><MinusCircle className="w-4 h-4" /></Button>
-                </div>
-            ))}
-        </div>
-    )
-}
+import { Flame, Zap, Eye, Pencil, Trash2, Plus } from 'lucide-react'
+// Component Input mảng động (cho Description, Requirements, Benefits) -> Đã thay thế bằng Textarea
+// NOTE: Removed unused PlusCircle/MinusCircle imports
 
 export default function AdminJobsPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -84,6 +55,30 @@ export default function AdminJobsPage() {
         }
     });
 
+    const toggleHotMutation = useMutation({
+        mutationFn: (id: string) => recruitmentApi.adminToggleHot(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin-jobs'] });
+            toast.success('Cập nhật trạng thái HOT thành công');
+        }
+    });
+
+    const toggleUrgentMutation = useMutation({
+        mutationFn: (id: string) => recruitmentApi.adminToggleUrgent(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin-jobs'] });
+            toast.success('Cập nhật trạng thái GẤP thành công');
+        }
+    });
+
+    const toggleStatusMutation = useMutation({
+        mutationFn: ({ id, isActive }: { id: string, isActive: boolean }) => recruitmentApi.adminUpdateStatus(id, isActive),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['admin-jobs'] });
+            toast.success('Cập nhật trạng thái hiển thị thành công');
+        }
+    });
+
     const handleSave = () => {
         // Validate cơ bản
         if (!editingJob.title || !editingJob.slug) return toast.error("Vui lòng nhập tiêu đề và slug");
@@ -108,7 +103,11 @@ export default function AdminJobsPage() {
             summary: "",
             description: [""],
             requirements: [""],
-            benefits: [""]
+            benefits: [""],
+            isHot: false,
+            isUrgent: false,
+            isNew: true,
+            isActive: false
         });
         setIsDialogOpen(true);
     }
@@ -117,6 +116,98 @@ export default function AdminJobsPage() {
         setEditingJob(job);
         setIsDialogOpen(true);
     }
+
+    const columns: ColumnDef<Job>[] = [
+        {
+            accessorKey: 'title',
+            header: 'Tiêu đề',
+            cell: ({ row }) => (
+                <div className="max-w-[300px]">
+                    <div className="font-medium truncate" title={row.original.title}>{row.original.title}</div>
+                    <div className="text-xs text-gray-500 truncate">{row.original.slug}</div>
+                </div>
+            )
+        },
+        {
+            header: 'Attributes',
+            cell: ({ row }) => (
+                <div className="flex gap-2">
+                    <div className="flex flex-col items-center gap-1">
+                        <Flame className={`w-4 h-4 ${row.original.isHot ? 'text-orange-500' : 'text-gray-300'}`} />
+                        <Switch
+                            checked={row.original.isHot}
+                            onCheckedChange={() => toggleHotMutation.mutate(row.original.id)}
+                            className="scale-75"
+                        />
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                        <Zap className={`w-4 h-4 ${row.original.isUrgent ? 'text-yellow-500' : 'text-gray-300'}`} />
+                        <Switch
+                            checked={row.original.isUrgent}
+                            onCheckedChange={() => toggleUrgentMutation.mutate(row.original.id)}
+                            className="scale-75"
+                        />
+                    </div>
+                </div>
+            )
+        },
+        {
+            accessorKey: 'viewCount',
+            header: 'Views',
+            cell: ({ row }) => (
+                <div className="flex items-center gap-1 text-gray-600">
+                    <Eye className="w-3 h-3" />
+                    <span>{row.original.viewCount || 0}</span>
+                </div>
+            )
+        },
+        {
+            accessorKey: 'deadline',
+            header: 'Hạn nộp',
+            cell: ({ row }) => (
+                <div className="text-sm">{row.original.deadline}</div>
+            )
+        },
+        {
+            accessorKey: 'isActive',
+            header: 'Trạng thái',
+            cell: ({ row }) => (
+                <div className="flex items-center gap-2">
+                    <Switch
+                        checked={row.original.isActive}
+                        onCheckedChange={(checked) => toggleStatusMutation.mutate({ id: row.original.id, isActive: checked })}
+                    />
+                    <span className="text-xs text-gray-500">{row.original.isActive ? 'Public' : 'Draft'}</span>
+                </div>
+            )
+        },
+        {
+            id: 'actions',
+            cell: ({ row }) => (
+                <div className="flex gap-2 justify-end">
+                    <Button variant="outline" size="icon" asChild>
+                        <Link href={`/tuyen-dung/${row.original.slug}`} target="_blank">
+                            <Eye className="w-4 h-4" />
+                        </Link>
+                    </Button>
+                    <Button variant="outline" size="icon" onClick={() => openEdit(row.original)}>
+                        <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => {
+                            if (confirm('Bạn có chắc muốn xóa tin này?')) {
+                                deleteMutation.mutate(row.original.id);
+                            }
+                        }}
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </Button>
+                </div>
+            )
+        }
+    ];
 
     return (
         <div className="p-6 space-y-6">
@@ -127,55 +218,13 @@ export default function AdminJobsPage() {
                 </Button>
             </div>
 
-            <div className="bg-white rounded-lg border shadow-sm">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Tiêu đề</TableHead>
-                            <TableHead>Trạng thái</TableHead>
-                            <TableHead>Địa điểm</TableHead>
-                            <TableHead>Hạn nộp</TableHead>
-                            <TableHead className="text-right">Hành động</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading ? (
-                            <TableRow><TableCell colSpan={5} className="text-center py-8">Đang tải...</TableCell></TableRow>
-                        ) : jobs?.map((job) => (
-                            <TableRow key={job.id}>
-                                <TableCell className="font-medium">
-                                    <div className="line-clamp-1" title={job.title}>{job.title}</div>
-                                    <div className="text-xs text-muted-foreground">{job.slug}</div>
-                                </TableCell>
-                                <TableCell>
-                                    <span className={`px-2 py-1 rounded text-xs font-bold uppercase
-                                        ${job.status === JobStatus.HOT ? 'bg-red-100 text-red-600' :
-                                            job.status === JobStatus.NEW ? 'bg-blue-100 text-blue-600' : 'bg-gray-100'
-                                        }`}>
-                                        {job.status}
-                                    </span>
-                                </TableCell>
-                                <TableCell>{job.location}</TableCell>
-                                <TableCell>{job.deadline}</TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <Button size="icon" variant="ghost" asChild>
-                                            <Link href={`/tuyen-dung/${job.slug}`} target="_blank"><Eye className="w-4 h-4" /></Link>
-                                        </Button>
-                                        <Button size="icon" variant="ghost" onClick={() => openEdit(job)}>
-                                            <Pencil className="w-4 h-4 text-blue-500" />
-                                        </Button>
-                                        <Button size="icon" variant="ghost" onClick={() => {
-                                            if (confirm('Bạn có chắc chắn muốn xóa tin này?')) deleteMutation.mutate(job.id)
-                                        }}>
-                                            <Trash2 className="w-4 h-4 text-red-500" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+            <div className="bg-white rounded-lg border shadow-sm p-4">
+                <DataTable
+                    columns={columns}
+                    data={jobs || []}
+                    searchKey="title"
+                    loading={isLoading}
+                />
             </div>
 
             {/* Dialog Form Create/Edit */}
@@ -201,13 +250,21 @@ export default function AdminJobsPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Trạng thái</Label>
-                            <Select value={editingJob.status} onValueChange={(val: any) => setEditingJob(prev => ({ ...prev, status: val }))}>
-                                <SelectTrigger><SelectValue /></SelectTrigger>
-                                <SelectContent>
-                                    {Object.values(JobStatus).map(s => <SelectItem key={s} value={s}>{s.toUpperCase()}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
+                            <Label>Cấu hình Badge</Label>
+                            <div className="flex gap-4 pt-2">
+                                <div className="flex items-center gap-2">
+                                    <Switch checked={editingJob.isHot || false} onCheckedChange={(c) => setEditingJob(p => ({ ...p, isHot: c }))} />
+                                    <Label>HOT 🔥</Label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Switch checked={editingJob.isUrgent || false} onCheckedChange={(c) => setEditingJob(p => ({ ...p, isUrgent: c }))} />
+                                    <Label>GẤP ⚡</Label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Switch checked={editingJob.isNew || false} onCheckedChange={(c) => setEditingJob(p => ({ ...p, isNew: c }))} />
+                                    <Label>MỚI ✨</Label>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="space-y-2">
@@ -237,26 +294,44 @@ export default function AdminJobsPage() {
 
                         <div className="col-span-2 space-y-2">
                             <Label>Mô tả ngắn (Summary)</Label>
-                            <Textarea value={editingJob.summary} onChange={(e) => setEditingJob(prev => ({ ...prev, summary: e.target.value }))} />
+                            <Textarea
+                                value={editingJob.summary}
+                                onChange={(e) => setEditingJob(prev => ({ ...prev, summary: e.target.value }))}
+                                placeholder="Mô tả ngắn gọn về vị trí này..."
+                            />
                         </div>
 
-                        {/* Array Inputs */}
+                        {/* Bulk Text Areas for Arrays */}
                         <div className="col-span-2 space-y-4 border-t pt-4">
-                            <ArrayInput
-                                label="Mô tả công việc (Mỗi dòng là một ý)"
-                                values={editingJob.description || []}
-                                onChange={(val) => setEditingJob(prev => ({ ...prev, description: val }))}
-                            />
-                            <ArrayInput
-                                label="Yêu cầu ứng viên"
-                                values={editingJob.requirements || []}
-                                onChange={(val) => setEditingJob(prev => ({ ...prev, requirements: val }))}
-                            />
-                            <ArrayInput
-                                label="Quyền lợi được hưởng"
-                                values={editingJob.benefits || []}
-                                onChange={(val) => setEditingJob(prev => ({ ...prev, benefits: val }))}
-                            />
+                            <div className="space-y-2">
+                                <Label>Mô tả công việc (Mỗi dòng một ý - Enter để xuống dòng)</Label>
+                                <Textarea
+                                    value={editingJob.description?.join('\n') || ''}
+                                    onChange={(e) => setEditingJob(prev => ({ ...prev, description: e.target.value.split('\n') }))}
+                                    className="min-h-[150px] font-mono text-sm"
+                                    placeholder="- Tham gia phát triển dự án...&#10;- Phối hợp với team..."
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Yêu cầu ứng viên (Mỗi dòng một ý)</Label>
+                                <Textarea
+                                    value={editingJob.requirements?.join('\n') || ''}
+                                    onChange={(e) => setEditingJob(prev => ({ ...prev, requirements: e.target.value.split('\n') }))}
+                                    className="min-h-[150px] font-mono text-sm"
+                                    placeholder="- Có kinh nghiệm ReactJS...&#10;- Tốt nghiệp đại học..."
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Quyền lợi được hưởng (Mỗi dòng một ý)</Label>
+                                <Textarea
+                                    value={editingJob.benefits?.join('\n') || ''}
+                                    onChange={(e) => setEditingJob(prev => ({ ...prev, benefits: e.target.value.split('\n') }))}
+                                    className="min-h-[150px] font-mono text-sm"
+                                    placeholder="- Lương tháng 13...&#10;- BHXH đầy đủ..."
+                                />
+                            </div>
                         </div>
 
                     </div>

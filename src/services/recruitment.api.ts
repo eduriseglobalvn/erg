@@ -5,16 +5,37 @@ export const recruitmentApi = {
     // --- PUBLIC API ---
 
     // Lấy danh sách việc làm
-    getJobs: (params?: { status?: JobStatus; page?: number; limit?: number }) => {
-        // Convert params object to query string manually or let httpClient/axios handle it if configured
-        // For simplicity assuming httpClient handles param object or we construct query string
+    // Lấy danh sách việc làm
+    getJobs: async (params?: { status?: JobStatus; page?: number; limit?: number }) => {
         const query = new URLSearchParams(params as any).toString();
-        return httpClient<{ data: Job[]; meta?: any }>(`/recruitment/jobs?${query}`);
+        const endpoint = `/recruitment/jobs?${query}`;
+
+        // Server-side fetching
+        if (typeof window === 'undefined') {
+            const backendUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+            const url = `${backendUrl}/api${endpoint}`;
+            const res = await fetch(url, { next: { revalidate: 60 } });
+            if (!res.ok) throw new Error(`Failed to fetch jobs: ${res.status}`);
+            return res.json();
+        }
+
+        return httpClient<{ data: Job[]; meta?: any }>(endpoint);
     },
 
     // Lấy chi tiết việc làm theo Slug
-    getJobBySlug: (slug: string) => {
-        return httpClient<{ data: Job }>(`/recruitment/jobs/${slug}`);
+    getJobBySlug: async (slug: string) => {
+        const endpoint = `/recruitment/jobs/${slug}`;
+
+        // Server-side fetching
+        if (typeof window === 'undefined') {
+            const backendUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+            const url = `${backendUrl}/api${endpoint}`;
+            const res = await fetch(url, { next: { revalidate: 60 } });
+            if (!res.ok) throw new Error(`Failed to fetch job ${slug}: ${res.status}`);
+            return res.json();
+        }
+
+        return httpClient<{ data: Job }>(endpoint);
     },
 
     // Ứng tuyển (Upload CV)
@@ -64,6 +85,22 @@ export const recruitmentApi = {
 
     adminGetOneJob: (id: string) => {
         return httpClient<{ data: Job }>(`/recruitment/admin/jobs/${id}`);
+    },
+
+    // Toggle Flags
+    adminToggleHot: (id: string) => {
+        return httpClient<{ data: Job }>(`/recruitment/admin/jobs/${id}/toggle-hot`, { method: 'PATCH' });
+    },
+
+    adminToggleUrgent: (id: string) => {
+        return httpClient<{ data: Job }>(`/recruitment/admin/jobs/${id}/toggle-urgent`, { method: 'PATCH' });
+    },
+
+    adminUpdateStatus: (id: string, isActive: boolean) => {
+        return httpClient<{ data: Job }>(`/recruitment/admin/jobs/${id}/status`, {
+            method: 'PATCH',
+            body: JSON.stringify({ isActive })
+        });
     },
 
     // Quản lý Candidates

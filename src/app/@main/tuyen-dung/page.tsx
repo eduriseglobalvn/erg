@@ -3,7 +3,7 @@ import { Button } from '@/components/admin/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/admin/ui/card';
 import { recruitmentApi } from '@/services/recruitment.api';
 import { Job, JobStatus } from '@/types/recruitment';
-import { Briefcase, MapPin, Clock, ArrowRight } from 'lucide-react';
+import { Briefcase, MapPin, Clock, ArrowRight, Flame, Zap } from 'lucide-react';
 
 export const revalidate = 60; // ISR cache 60s
 
@@ -38,16 +38,28 @@ export default async function RecruitmentPage() {
                             <Card key={job.id} className="hover:shadow-lg transition-shadow border-t-4 border-t-transparent hover:border-t-blue-600 flex flex-col">
                                 <CardHeader>
                                     <div className="flex justify-between items-start mb-2">
-                                        <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded bg-gray-100 text-gray-600 
-                                            ${job.status === JobStatus.HOT ? 'bg-red-100 text-red-600' : ''}
-                                            ${job.status === JobStatus.NEW ? 'bg-blue-100 text-blue-600' : ''}
-                                            ${job.status === JobStatus.URGENT ? 'bg-orange-100 text-orange-600' : ''}
-                                        `}>
-                                            {job.status === JobStatus.HOT ? 'HOT JOB' :
-                                                job.status === JobStatus.NEW ? 'MỚI' :
-                                                    job.status === JobStatus.URGENT ? 'TUYỂN GẤP' :
-                                                        job.workType}
-                                        </span>
+                                        <div className="flex gap-1 flex-wrap">
+                                            {job.isHot && (
+                                                <span className="text-[10px] uppercase font-bold px-2 py-1 rounded bg-red-100 text-red-600 flex items-center gap-1">
+                                                    <Flame className="w-3 h-3" /> HOT
+                                                </span>
+                                            )}
+                                            {job.isUrgent && (
+                                                <span className="text-[10px] uppercase font-bold px-2 py-1 rounded bg-yellow-100 text-yellow-700 flex items-center gap-1">
+                                                    <Zap className="w-3 h-3" /> GẤP
+                                                </span>
+                                            )}
+                                            {job.isNew && (
+                                                <span className="text-[10px] uppercase font-bold px-2 py-1 rounded bg-blue-100 text-blue-600">
+                                                    MỚI
+                                                </span>
+                                            )}
+                                            {!job.isHot && !job.isUrgent && !job.isNew && (
+                                                <span className="text-[10px] uppercase font-bold px-2 py-1 rounded bg-gray-100 text-gray-600">
+                                                    {job.workType}
+                                                </span>
+                                            )}
+                                        </div>
                                         <span className="text-xs text-gray-400 font-medium">{job.location}</span>
                                     </div>
                                     <CardTitle className="text-xl font-bold text-gray-900 line-clamp-2 min-h-[56px]" title={job.title}>

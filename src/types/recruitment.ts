@@ -18,7 +18,8 @@ export interface Job {
     id: string;
     slug: string;
     title: string;
-    status: JobStatus;
+    /** @deprecated Use isHot, isNew, isUrgent instead */
+    status?: JobStatus;
     salary: string;
     quantity: number;
     workType: string;
@@ -29,6 +30,13 @@ export interface Job {
     requirements: string[];
     benefits: string[];
     isActive: boolean;
+
+    // New Flags
+    isHot: boolean;
+    isNew: boolean;
+    isUrgent: boolean;
+    viewCount: number;
+
     createdAt: string;
 }
 

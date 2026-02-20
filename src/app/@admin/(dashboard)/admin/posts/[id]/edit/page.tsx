@@ -15,6 +15,7 @@ import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { AiWriterBar } from "@/components/admin/shared/editor/tiptap-ui/ai-writer-bar"
+import { localSeoAnalyzer } from "@/utils/local-seo"
 
 export default function EditPostPage() {
     const params = useParams()
@@ -103,15 +104,75 @@ export default function EditPostPage() {
         }
     })
 
+    // [NEW] Draft Mutation - Lưu nháp mà không chuyển trang
+    const draftMutation = useMutation({
+        mutationFn: async (data: any) => {
+            const currentContent = editorInstance?.getHTML() || "";
+            updateImages(currentContent);
+            return postsApi.update(id, data);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['post', id] });
+            toast.success("Đã lưu bản nháp thành công!", { duration: 2000 })
+        },
+        onError: (error: any) => {
+            toast.error(error.message || "Lỗi khi lưu bản nháp")
+        }
+    })
+
     const handleSave = () => {
         if (!title.trim()) {
             toast.error("Vui lòng nhập tiêu đề bài viết")
             return
         }
+
+        const content = editorInstance?.getHTML() || "";
+        const seoResult = localSeoAnalyzer(
+            content,
+            title,
+            (postMetadata as any).metaDescription || "",
+            (postMetadata as any).keywords || ""
+        );
+
         updateMutation.mutate({
             ...postMetadata,
             title,
-            content: editorInstance?.getHTML() || "",
+            content,
+            focusKeyword: (postMetadata as any).keywords,
+            seoScore: seoResult.overallScore,
+            readabilityScore: seoResult.contentAnalysis.readabilityScore,
+            keywordDensity: seoResult.contentAnalysis.keywordDensity
+        })
+    }
+
+    // [NEW] Hàm xử lý lưu nháp
+    const handleSaveDraft = () => {
+        if (!title.trim()) {
+            setTitle("Bản nháp không tiêu đề"); // Tự đặt tên nếu trống
+        }
+
+        // Force status = draft
+        setPostMetadata(prev => ({ ...prev, status: "draft" }));
+
+        const content = editorInstance?.getHTML() || "";
+        const finalTitle = title || "Bản nháp không tiêu đề";
+
+        const seoResult = localSeoAnalyzer(
+            content,
+            finalTitle,
+            (postMetadata as any).metaDescription || "",
+            (postMetadata as any).keywords || ""
+        );
+
+        draftMutation.mutate({
+            ...postMetadata,
+            title: finalTitle,
+            content,
+            status: "draft", // Luôn là draft
+            focusKeyword: (postMetadata as any).keywords,
+            seoScore: seoResult.overallScore,
+            readabilityScore: seoResult.contentAnalysis.readabilityScore,
+            keywordDensity: seoResult.contentAnalysis.keywordDensity
         })
     }
 
@@ -217,7 +278,9 @@ export default function EditPostPage() {
                     post={{ ...postMetadata, id, title, content: "" }}
                     onUpdate={(data) => setPostMetadata(prev => ({ ...prev, ...data }))}
                     onSave={handleSave}
-                    isSaving={updateMutation.isPending}
+                    onSaveDraft={handleSaveDraft} // Truyền xuống Sidebar
+                    isSaving={updateMutation.isPending || draftMutation.isPending}
+                    editor={editorInstance}
                 />
             </aside>
         </div>

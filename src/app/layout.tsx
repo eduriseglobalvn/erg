@@ -1,18 +1,45 @@
 import React from "react";
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Lora, JetBrains_Mono, Oswald } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { headers } from "next/headers";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
 import { QueryProvider } from "@/providers/query-provider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const inter = Inter({ subsets: ["latin", "vietnamese"] });
+const inter = Inter({
+    subsets: ["latin", "vietnamese"],
+    variable: "--font-inter",
+    display: "swap",
+});
+
+const lora = Lora({
+    subsets: ["latin", "vietnamese"],
+    variable: "--font-lora",
+    display: "swap",
+});
+
+const jetBrainsMono = JetBrains_Mono({
+    subsets: ["latin"],
+    variable: "--font-jetbrains-mono",
+    display: "swap",
+});
+
+const oswald = Oswald({
+    subsets: ["latin", "vietnamese"],
+    variable: "--font-oswald",
+    display: "swap",
+});
 
 // Lấy BASE_URL từ env, fallback an toàn cho SEO
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://erg.edu.vn";
 
 import { SEO_DATA, BRAND_SUFFIX } from "@/constants/seo.constants";
+import { SchemaScript } from "@/components/seo/schema-script";
+import { MAIN_MENU_ITEMS } from "@/constants/MenuItem";
+import { Toaster } from "sonner";
+import { RedirectNotification } from "@/components/shared/redirect-notification";
 
 // Helper to get subdomain logic (shared with RootLayout)
 function getSubdomain(hostname: string, rootDomain: string) {
@@ -22,7 +49,9 @@ function getSubdomain(hostname: string, rootDomain: string) {
 
 export async function generateMetadata(): Promise<Metadata> {
     const headerList = await headers();
-    const hostname = (headerList.get("host") || "").split(":")[0];
+    // Vercel / serverless environments often set the real host in x-forwarded-host
+    const rawHost = headerList.get("x-forwarded-host") || headerList.get("host") || "";
+    const hostname = rawHost.split(":")[0];
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'erg.edu.local';
     const subdomain = getSubdomain(hostname, rootDomain);
 
@@ -39,25 +68,32 @@ export async function generateMetadata(): Promise<Metadata> {
     // Exclude admin from SEO
     const robots = subdomain === 'admin' ? { index: false, follow: false } : undefined;
 
+    // Dynamic Metadata Base
+    const baseUrl = subdomain && subdomain !== 'www'
+        ? `https://${subdomain}.erg.edu.vn`
+        : BASE_URL;
+
     return {
         icons: {
-            icon: [{ url: '/erg.png', sizes: '16x32', type: 'image/png' }],
-            apple: [{ url: '/erg.png' }],
+            icon: [{ url: 'https://media.erg.edu.vn/logo/erg.png', sizes: '16x32', type: 'image/png' }],
+            apple: [{ url: 'https://media.erg.edu.vn/logo/erg.png' }],
         },
-        metadataBase: new URL(BASE_URL),
+        metadataBase: new URL(baseUrl),
         robots,
         title: {
             default: title,
-            template: `%s | Edurise Global`,
+            // Nếu title con chưa có suffix, Next.js sẽ tự thêm. 
+            // Nhưng thiết kế mới: Page con sẽ tự define title tuyệt đối (absolute) để tránh lặp.
+            template: `%s | ${subdomain ? 'ERG' : 'Trung Tâm Ngoại Ngữ Tin Học ERG'}`,
         },
         description,
         keywords: keywords.join(", "),
         openGraph: {
             type: 'website',
             locale: 'vi_VN',
-            url: BASE_URL,
+            url: baseUrl,
             siteName: 'Edurise Global',
-            title: subdomain ? `${title} | Edurise Global` : title,
+            title: subdomain ? title : `${title} | Edurise Global`,
             description,
             images: [
                 {
@@ -93,9 +129,9 @@ export default async function RootLayout(props: {
 }) {
     // 1. Lấy Hostname thực tế từ Request
     const headerList = await headers();
-    let hostname = headerList.get("host") || "";
-
-    // 2. Lấy Root Domain (Quan trọng để tách subdomain)
+    // Vercel / serverless proxy thường giấu host thật vào x-forwarded-host
+    let rawHost = headerList.get("x-forwarded-host") || headerList.get("host") || "";
+    let hostname = rawHost.split(":")[0];
     // Local: erg.edu.local | Prod: erg.edu.vn
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'erg.edu.local';
 
@@ -110,70 +146,78 @@ export default async function RootLayout(props: {
 
     // 4. Quyết định hiển thị Slot nào dựa trên subdomain tĩnh
     let content;
+    let currentMenu = MAIN_MENU_ITEMS;
+
+    // Import thêm các menu constants
+    const {
+        THQT_MENU_ITEMS, THQG_MENU_ITEMS, THTN_MENU_ITEMS,
+        CDS_MENU_ITEMS, DTDM_MENU_ITEMS, AI_MENU_ITEMS, TUYEN_DUNG_MENU_ITEMS
+    } = await import("@/constants/MenuItem");
+
     switch (subdomain) {
-        case 'ai': content = props.ai; break;
-        case 'tinhocquocte': content = props.tinhocquocte; break;
-        case 'tinhocquocgia': content = props.tinhocquocgia; break;
-        case 'tinhocthieunhi': content = props.tinhocthieunhi; break;
-        case 'congdanso': content = props.congdanso; break;
-        case 'dientoandammay': content = props.dientoandammay; break;
-        case 'tuyendung': content = props.tuyendung; break;
+        case 'ai':
+            content = props.ai;
+            currentMenu = AI_MENU_ITEMS;
+            break;
+        case 'tinhocquocte':
+            content = props.tinhocquocte;
+            currentMenu = THQT_MENU_ITEMS;
+            break;
+        case 'tinhocquocgia':
+            content = props.tinhocquocgia;
+            currentMenu = THQG_MENU_ITEMS;
+            break;
+        case 'tinhocthieunhi':
+            content = props.tinhocthieunhi;
+            currentMenu = THTN_MENU_ITEMS;
+            break;
+        case 'congdanso':
+            content = props.congdanso;
+            currentMenu = CDS_MENU_ITEMS;
+            break;
+        case 'dientoandammay':
+            content = props.dientoandammay;
+            currentMenu = DTDM_MENU_ITEMS;
+            break;
+        case 'tuyendung':
+            content = props.tuyendung;
+            currentMenu = TUYEN_DUNG_MENU_ITEMS;
+            break;
         case 'admin': content = props.admin; break;
         case '':
         case 'www':
-            content = props.main; break;
+            content = props.main;
+            currentMenu = MAIN_MENU_ITEMS;
+            break;
         default:
             content = props.main; // Fallback về trang chủ nếu subdomain lạ
     }
 
     // --- SCHEMA DATA (JSON-LD) ---
-    const organizationSchema = {
-        "@context": "https://schema.org",
-        "@type": "EducationOrganization",
-        "name": "EDURISE GLOBAL",
-        "url": BASE_URL,
-        "logo": `${BASE_URL}/erg.png`,
-        "sameAs": [
-            "https://www.facebook.com/eduriseglobal",
-            "https://www.youtube.com/@eduriseglobal"
-        ],
-        "description": "Hệ thống đào tạo tin học quốc tế chuẩn MOS, IC3 và AI."
-    };
-
-    const navSchema = {
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        "itemListElement": [
-            { "@type": "SiteNavigationElement", "position": 1, "name": SEO_DATA.main.navName, "url": BASE_URL },
-            { "@type": "SiteNavigationElement", "position": 2, "name": SEO_DATA.tinhocquocte.navName, "url": BASE_URL.replace('://', '://tinhocquocte.') },
-            { "@type": "SiteNavigationElement", "position": 3, "name": SEO_DATA.ai.navName, "url": BASE_URL.replace('://', '://ai.') },
-            { "@type": "SiteNavigationElement", "position": 4, "name": SEO_DATA.tinhocquocgia.navName, "url": BASE_URL.replace('://', '://tinhocquocgia.') },
-            { "@type": "SiteNavigationElement", "position": 5, "name": SEO_DATA.tinhocthieunhi.navName, "url": BASE_URL.replace('://', '://tinhocthieunhi.') },
-            { "@type": "SiteNavigationElement", "position": 6, "name": SEO_DATA.congdanso.navName, "url": BASE_URL.replace('://', '://congdanso.') },
-            { "@type": "SiteNavigationElement", "position": 7, "name": SEO_DATA.dientoandammay.navName, "url": BASE_URL.replace('://', '://dientoandammay.') },
-            { "@type": "SiteNavigationElement", "position": 8, "name": SEO_DATA.tuyendung.navName, "url": BASE_URL.replace('://', '://tuyendung.') },
-            { "@type": "SiteNavigationElement", "position": 9, "name": "Liên hệ Tư vấn", "url": `${BASE_URL}/lien-he` }
-        ]
-    };
+    // Sử dụng SchemaScript component mới để quản lý tập trung
+    // Chỉ render các Schema cơ bản cấp Site tại đây. Các Schema chi tiết (Article, Course) sẽ nằm ở page.tsx
 
     return (
-        <html lang="vi" suppressHydrationWarning>
+        <html lang="vi" suppressHydrationWarning className={`${inter.variable} ${lora.variable} ${jetBrainsMono.variable} ${oswald.variable}`}>
             <head>
                 <GoogleAnalytics gaId="G-PF00V6RJDD" />
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-                />
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(navSchema) }}
-                />
             </head>
             <body
                 className={`${inter.className} bg-gray-50 text-slate-800 antialiased flex flex-col min-h-screen overflow-x-hidden`}
                 suppressHydrationWarning={true}
             >
                 <AnalyticsTracker />
+                <Toaster position="top-center" richColors />
+                <React.Suspense fallback={null}>
+                    <RedirectNotification />
+                </React.Suspense>
+
+                {/* Global Schemas */}
+                <SchemaScript type="Organization" data={{}} domain={hostname} />
+                <SchemaScript type="WebSite" data={{ name: SEO_DATA[subdomain as keyof typeof SEO_DATA]?.title || "Edurise Global" }} domain={hostname} />
+
+                {/* Sitelinks Navigation Schema */}
+                <SchemaScript type="SiteNavigationElement" data={currentMenu} domain={hostname} />
 
                 {/* Render Slot tương ứng */}
                 <QueryProvider>
@@ -182,6 +226,7 @@ export default async function RootLayout(props: {
 
                 {/* props.children là bắt buộc trong cấu trúc Next.js nhưng sẽ rỗng ở đây */}
                 {/* {props.children} */}
+                <SpeedInsights />
             </body>
         </html>
     );

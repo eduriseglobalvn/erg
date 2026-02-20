@@ -158,10 +158,16 @@ export const crawlerApi = {
     },
 
     // 4. Kích hoạt cào toàn bộ
-    triggerRss: (rssId: string) => {
+    triggerRss: (id: string) => {
         return httpClient<BaseResponse<any>>('/crawler/rss/trigger', {
             method: 'POST',
-            body: JSON.stringify({ rssId }),
+            body: JSON.stringify({ id }), // Backend now supports 'id' or 'rssId'
+        }).then(res => res.data);
+    },
+
+    syncRss: (id: string) => {
+        return httpClient<BaseResponse<any>>(`/crawler/rss/sync/${id}`, {
+            method: 'POST',
         }).then(res => res.data);
     },
 

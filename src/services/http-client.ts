@@ -72,7 +72,6 @@ export const httpClient = async <T>(
         url = `/api/${endpoint}`;
     }
 
-    console.log('[httpClient] Endpoint:', endpoint, '→ URL:', url);
 
     try {
         // --- BƯỚC 1: GỬI REQUEST LẦN ĐẦU ---

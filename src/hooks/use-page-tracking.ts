@@ -39,7 +39,9 @@ export function usePageTracking() {
                         else if (['danh-muc', 'category'].includes(first)) entityType = 'category';
                     }
 
-                    console.log(`%c[Analytics] 🚀 Khởi tạo phiên: ${entityType} | ${entityId}`, "color: #007bff; font-weight: bold;");
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log(`%c[Analytics] 🚀 Khởi tạo phiên: ${entityType} | ${entityId}`, "color: #007bff; font-weight: bold;");
+                    }
 
                     const response: any = await analyticsApi.trackSessionBegin({
                         url: window.location.href,
@@ -55,7 +57,9 @@ export function usePageTracking() {
                     if (vId) {
                         visitIdRef.current = vId;
                         sessionStorage.setItem('erg_visit_id', vId);
-                        console.log(`%c[Analytics] ✅ Đã nhận ID: ${vId}`, "color: #28a745; font-weight: bold;");
+                        if (process.env.NODE_ENV === 'development') {
+                            console.log(`%c[Analytics] ✅ Đã nhận ID: ${vId}`, "color: #28a745; font-weight: bold;");
+                        }
                     } else {
                         console.warn('[Analytics] ⚠️ Không tìm thấy ID trong response BE:', response);
                     }
@@ -71,7 +75,9 @@ export function usePageTracking() {
 
             const duration = Math.round((Date.now() - startTimeRef.current) / 1000);
 
-            console.log(`%c[Analytics] 🏁 Kết thúc phiên. ID: ${currentId} | Ở lại: ${duration}s`, "color: #dc3545; font-weight: bold;");
+            if (process.env.NODE_ENV === 'development') {
+                console.log(`%c[Analytics] 🏁 Kết thúc phiên. ID: ${currentId} | Ờ lại: ${duration}s`, "color: #dc3545; font-weight: bold;");
+            }
 
             analyticsApi.trackSessionFinish(currentId, duration);
 

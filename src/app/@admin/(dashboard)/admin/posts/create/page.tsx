@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { AiWriterBar } from "@/components/admin/shared/editor/tiptap-ui/ai-writer-bar"
+import { localSeoAnalyzer } from "@/utils/local-seo"
 
 export default function CreatePostPage() {
     const router = useRouter();
@@ -48,12 +49,53 @@ export default function CreatePostPage() {
             toast.error("Vui lòng nhập tiêu đề bài viết");
             return;
         }
+
+        const content = editorInstance?.getHTML() || "";
+        const seoResult = localSeoAnalyzer(
+            content,
+            title,
+            (postMetadata as any).metaDescription || "",
+            (postMetadata as any).keywords || ""
+        );
+
         createMutation.mutate({
             ...postMetadata,
             title,
-            content: editorInstance?.getHTML() || "",
+            content,
+            focusKeyword: (postMetadata as any).keywords,
+            seoScore: seoResult.overallScore,
+            readabilityScore: seoResult.contentAnalysis.readabilityScore,
+            keywordDensity: seoResult.contentAnalysis.keywordDensity
         });
     };
+
+    // [NEW] Cho trang Create: Lưu nháp cũng là tạo mới, nhưng force status=draft
+    const handleSaveDraft = () => {
+        if (!title.trim()) {
+            setTitle("Bản nháp mới");
+        }
+
+        const content = editorInstance?.getHTML() || "";
+        const finalTitle = title || "Bản nháp mới";
+
+        const seoResult = localSeoAnalyzer(
+            content,
+            finalTitle,
+            (postMetadata as any).metaDescription || "",
+            (postMetadata as any).keywords || ""
+        );
+
+        createMutation.mutate({
+            ...postMetadata,
+            title: finalTitle,
+            content,
+            status: "draft",
+            focusKeyword: (postMetadata as any).keywords,
+            seoScore: seoResult.overallScore,
+            readabilityScore: seoResult.contentAnalysis.readabilityScore,
+            keywordDensity: seoResult.contentAnalysis.keywordDensity
+        })
+    }
 
     const handleAiSuccess = (aiData: any) => {
         if (aiData.title) setTitle(aiData.title);
@@ -132,7 +174,9 @@ export default function CreatePostPage() {
                     post={{ ...postMetadata, title, content: "" }}
                     onUpdate={(data) => setPostMetadata(prev => ({ ...prev, ...data }))}
                     onSave={handleSave}
+                    onSaveDraft={handleSaveDraft}
                     isSaving={createMutation.isPending}
+                    editor={editorInstance}
                 />
             </aside>
         </div>

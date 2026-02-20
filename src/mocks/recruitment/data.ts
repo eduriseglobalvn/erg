@@ -5,7 +5,6 @@ export const MOCK_JOBS: Job[] = [
         id: "job-1",
         slug: "chuyen-vien-kinh-doanh-b2b",
         title: "Chuyên Viên Kinh Doanh B2B (Mảng Giáo Dục)",
-        status: JobStatus.HOT,
         salary: "15 - 25 Triệu",
         quantity: 5,
         workType: "Toàn thời gian",
@@ -28,13 +27,16 @@ export const MOCK_JOBS: Job[] = [
             "Môi trường làm việc trẻ trung, năng động."
         ],
         isActive: true,
+        isHot: true,
+        isUrgent: false,
+        isNew: true,
+        viewCount: 150,
         createdAt: new Date().toISOString()
     },
     {
         id: "job-2",
         slug: "fullstack-developer",
         title: "Senior Fullstack Developer (Next.js/Node.js)",
-        status: JobStatus.URGENT,
         salary: "$1500 - $2500",
         quantity: 2,
         workType: "Hybrid",
@@ -57,6 +59,10 @@ export const MOCK_JOBS: Job[] = [
             "Bảo hiểm sức khỏe cao cấp."
         ],
         isActive: true,
+        isHot: false,
+        isUrgent: true,
+        isNew: false,
+        viewCount: 320,
         createdAt: new Date().toISOString()
     }
 ];

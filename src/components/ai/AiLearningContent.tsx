@@ -12,11 +12,12 @@ import {
     GraduationCap
 } from 'lucide-react';
 import { CourseCard } from '@/components/cards/course-card';
+import { COURSES } from '@/constants/courses';
 
 const AiCarousel = () => {
     const images = [
-        { src: "/util/ai-banner-1.jpg", label: "Khám phá thế giới AI" },
-        { src: "/util/ai-banner-2.jpg", label: "Lập trình & Robot" },
+        { src: "https://media.erg.edu.vn/banner/ai-banner-1.jpg", label: "Khám phá thế giới AI" },
+        { src: "https://media.erg.edu.vn/banner/ai-banner-2.jpg", label: "Lập trình & Robot" },
     ];
 
     const [current, setCurrent] = useState(0);
@@ -70,7 +71,7 @@ export default function AiLearningContent() {
 
             {/* 1. HERO SECTION */}
             <section className="relative bg-gradient-to-br from-indigo-900 via-blue-800 to-indigo-900 text-white py-20 lg:py-28 overflow-hidden">
-                <div className="absolute top-0 right-0 w-full h-full bg-[url('/pattern-grid.png')] opacity-10"></div>
+                <div className="absolute top-0 right-0 w-full h-full bg-[url('https://media.erg.edu.vn/background/pattern-grid.png')] opacity-10"></div>
                 <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500 opacity-20 rounded-full blur-3xl"></div>
                 <div className="absolute top-20 right-20 w-72 h-72 bg-blue-400 opacity-10 rounded-full blur-3xl"></div>
 
@@ -149,30 +150,61 @@ export default function AiLearningContent() {
                         <h2 className="text-3xl md:text-4xl font-bold text-indigo-900 mb-4">
                             CHƯƠNG TRÌNH ĐÀO TẠO
                         </h2>
-                        <p className="text-gray-600 max-w-3xl mx-auto text-lg">
+                        <div className="w-24 h-1.5 bg-gradient-to-r from-indigo-600 to-blue-400 mx-auto rounded-full"></div>
+                        <p className="text-gray-600 max-w-3xl mx-auto text-lg mt-4">
                             Chúng tôi tiên phong mang đến chương trình giáo dục AI toàn diện, sử dụng bộ sách giáo khoa chuẩn mực để đảm bảo chất lượng giảng dạy tốt nhất.
                         </p>
                     </div>
 
-                    {/* SINGLE FEATURED CARD */}
-                    <div className="max-w-3xl mx-auto">
-                        <CourseCard
-                            id="hoc-cung-ai"
-                            code="Lớp 1 - 12"
-                            displayTitle="AI"
-                            subtitle="Future Intelligence"
-                            title="Chương trình Học Cùng AI"
-                            description="Trang bị kiến thức Trí tuệ nhân tạo bài bản cho học sinh phổ thông theo bộ sách 'Học cùng AI' (NXB Giáo dục Việt Nam)."
-                            points={[
-                                "Tiểu học: Làm quen Robot & Nhận diện",
-                                "THCS: Big Data & Máy học (Machine Learning)",
-                                "THPT: Thuật toán & Đạo đức AI chuyên sâu"
-                            ]}
-                            href="/khoa-hoc/hoc-cung-ai"
-                            headerGradient="from-indigo-600 to-blue-500"
-                            btnColor="border-indigo-600 text-indigo-600 hover:bg-indigo-600"
-                            icon={<Bot />}
-                        />
+                    <div className="max-w-4xl mx-auto">
+                        {/* Single Card Implementation */}
+                        <div className="flex flex-col md:flex-row bg-white rounded-3xl shadow-2xl overflow-hidden border border-indigo-100 transform hover:scale-[1.01] transition-all duration-500">
+                            {/* Left Side: Thumbnail/Visual */}
+                            <div className={`md:w-2/5 bg-gradient-to-br ${COURSES.ai[0].headerGradient} p-12 flex flex-col justify-center items-center text-white relative overflow-hidden text-center`}>
+                                <div className="absolute top-0 left-0 w-full h-full bg-[url('https://media.erg.edu.vn/background/pattern-dots.png')] opacity-20"></div>
+                                <div className="p-6 bg-white/20 backdrop-blur-md rounded-2xl mb-4 relative z-10 border border-white/30 shadow-xl">
+                                    <Bot size={80} className="text-white drop-shadow-lg" />
+                                </div>
+                                <span className="px-4 py-1.5 bg-white/20 backdrop-blur rounded-full text-sm font-bold border border-white/30 z-10">
+                                    {COURSES.ai[0].code}
+                                </span>
+                            </div>
+
+                            {/* Right Side: Details */}
+                            <div className="md:w-3/5 p-8 md:p-12 space-y-6">
+                                <div>
+                                    <h3 className="text-2xl md:text-3xl font-bold text-indigo-900 mb-4">
+                                        {COURSES.ai[0].title}
+                                    </h3>
+                                    <p className="text-gray-600 text-lg leading-relaxed">
+                                        {COURSES.ai[0].description}
+                                    </p>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <p className="font-bold text-indigo-900 uppercase tracking-widest text-sm">Điểm nổi bật của chương trình:</p>
+                                    <ul className="grid grid-cols-1 gap-4">
+                                        {COURSES.ai[0].points.map((point, idx) => (
+                                            <li key={idx} className="flex gap-4">
+                                                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mt-1">
+                                                    <Check size={14} className="stroke-[3]" />
+                                                </div>
+                                                <p className="text-gray-700 font-medium">{point}</p>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="pt-6">
+                                    <Link
+                                        href={COURSES.ai[0].href}
+                                        className="inline-flex items-center gap-2 px-10 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl transition-all shadow-xl shadow-indigo-100 active:scale-95 text-lg"
+                                    >
+                                        Đăng Ký Tham Gia Ngay <ArrowRight size={20} />
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Note footer */}

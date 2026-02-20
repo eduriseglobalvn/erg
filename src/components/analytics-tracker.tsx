@@ -27,7 +27,9 @@ export function AnalyticsTracker() {
                 }
 
                 if (eventName) {
-                    console.log(`%c[Analytics] 🎯 Click vào phần tử: ${eventName}`, "color: #ff8c00; font-style: italic;");
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log(`%c[Analytics] 🎯 Click vào phần tử: ${eventName}`, "color: #ff8c00; font-style: italic;");
+                    }
                     trackEvent(eventName, {
                         ...metadata,
                         element: trackableElement.tagName.toLowerCase(),

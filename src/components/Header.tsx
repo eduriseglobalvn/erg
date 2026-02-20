@@ -21,6 +21,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
+  const [menuItems, setMenuItems] = useState<MenuItemType[]>(menuData);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null);
@@ -30,12 +31,20 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
 
   const pathname = usePathname();
 
+
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     handleScroll();
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -105,7 +114,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
             <Link href="/" className="flex items-center gap-3 group">
               <div className="flex-shrink-0">
                 <Image
-                  src="/erg.png"
+                  src="https://media.erg.edu.vn/logo/erg.png"
                   alt="ERG Logo"
                   width={110}
                   height={60}
@@ -125,7 +134,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-6 xl:gap-10">
-              {menuData.map((item) => {
+              {menuItems.map((item) => {
                 const hasSubmenu = item.children && item.children.length > 0;
                 const isActive = pathname === item.path || (hasSubmenu && item.children?.some(sub => sub.path === pathname));
 
@@ -225,7 +234,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
             </div>
 
             <nav className="flex flex-col gap-3">
-              {menuData.map((item) => {
+              {menuItems.map((item) => {
                 const hasSubmenu = item.children && item.children.length > 0;
                 const isOpen = mobileSubmenuOpen === item.label;
 

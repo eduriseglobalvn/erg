@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, CheckCircle2, Award, BookOpen, GraduationCap, FileText } from 'lucide-react';
 import RoadmapSection from '@/components/tinhocquocgia/RoadmapSection';
 import { CourseCard } from '@/components/cards/course-card';
+import { COURSES } from '@/constants/courses';
 
 const NationalCertificateCarousel = () => {
     const images = [
@@ -142,63 +143,12 @@ export default function NationalITContent() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <CourseCard
-                            id="thcb"
-                            code="Mã lớp: THCB"
-                            displayTitle="CƠ BẢN"
-                            subtitle="Basic IT Skills"
-                            title="Kỹ năng sử dụng CNTT Cơ Bản"
-                            description="Dành cho người mới bắt đầu, trang bị kiến thức nền tảng về máy tính và tin học văn phòng."
-                            icon={<FileText size={80} color="white" />}
-                            points={[
-                                "Windows: Quản lý tập tin, thư mục (Explorer).",
-                                "MS Word (IU03): Soạn thảo, định dạng văn bản, bảng biểu.",
-                                "MS Excel (IU04): Hàm chuỗi, ngày tháng, tính toán cơ bản.",
-                                "MS PowerPoint (IU05): Thiết kế slide, hiệu ứng trình chiếu."
-                            ]}
-                            href="/cntt-co-ban"
-                            headerGradient="from-blue-600 to-blue-400"
-                            btnColor="border-blue-600 text-blue-600 hover:bg-blue-600"
-                            modules="Nội dung (Mô đun IU01 - IU06):"
-                        />
-
-                        <CourseCard
-                            id="thnc"
-                            code="Mã lớp: THNC"
-                            displayTitle="NÂNG CAO"
-                            subtitle="Advanced IT Skills"
-                            title="Kỹ năng sử dụng CNTT Nâng Cao"
-                            description="Chuyên sâu về văn phòng, xử lý dữ liệu phức tạp. Yêu cầu đã có kiến thức cơ bản."
-                            icon={<Award size={80} color="white" />}
-                            points={[
-                                "Word Nâng cao (IU07): Trộn thư (Mail Merge), Mục lục tự động, Section break.",
-                                "Excel Nâng cao (IU08): PivotTable, VLOOKUP nâng cao, Công thức mảng, Bảo mật.",
-                                "PPT Nâng cao (IU09): Slide Master, Trigger, Chèn đa phương tiện."
-                            ]}
-                            href="/cntt-nang-cao"
-                            headerGradient="from-purple-600 to-indigo-500"
-                            btnColor="border-purple-600 text-purple-600 hover:bg-purple-600"
-                            modules="Nội dung (Mô đun IU07 - IU09):"
-                        />
-
-                        <CourseCard
-                            id="luyen-thi"
-                            code="Cấp tốc"
-                            displayTitle="LUYỆN THI"
-                            subtitle="Exam Preparation"
-                            title="Ôn Thi & Cấp Chứng Chỉ"
-                            description="Dành cho đối tượng đã có kiến thức, cần hệ thống hóa để thi lấy bằng nhanh chóng."
-                            icon={<CheckCircle2 size={80} color="white" />}
-                            points={[
-                                "Làm quen với phần mềm thi trắc nghiệm & thực hành.",
-                                "Giải đề thi mẫu các năm gần nhất.",
-                                "Tỷ lệ đậu cao. Hỗ trợ đăng ký thi ngay tại trung tâm."
-                            ]}
-                            href="/luyen-thi"
-                            headerGradient="from-orange-500 to-red-400"
-                            btnColor="border-orange-500 text-orange-600 hover:bg-orange-500"
-                            modules="Quyền lợi:"
-                        />
+                        {COURSES.tinhocquocgia.map((course) => (
+                            <CourseCard
+                                key={course.id}
+                                {...course}
+                            />
+                        ))}
                     </div>
                 </div>
             </section>

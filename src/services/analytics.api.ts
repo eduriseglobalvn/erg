@@ -100,7 +100,9 @@ export const analyticsApi = {
         entityType?: string;
         entityId?: string;
     }): Promise<SessionStartResponse> => {
-        console.log('[Analytics] Starting session:', data);
+        if (process.env.NODE_ENV === 'development') {
+            console.log('[Analytics] Starting session:', data);
+        }
 
         const response = await fetch('/api/insight/session/begin', {
             method: 'POST',
@@ -127,7 +129,9 @@ export const analyticsApi = {
         const url = `/api/insight/session/${visitId}/finish`;
         const body = JSON.stringify({ duration });
 
-        console.log('[Analytics] Finishing session (PUT):', { visitId, duration });
+        if (process.env.NODE_ENV === 'development') {
+            console.log('[Analytics] Finishing session (PUT):', { visitId, duration });
+        }
 
         if (typeof window !== 'undefined') {
             fetch(url, {
@@ -148,7 +152,9 @@ export const analyticsApi = {
         eventType: string;
         metadata?: Record<string, any>;
     }) => {
-        console.log('[Analytics] Tracking behavior:', data);
+        if (process.env.NODE_ENV === 'development') {
+            console.log('[Analytics] Tracking behavior:', data);
+        }
 
         try {
             const response = await fetch('/api/insight/behavior', {

@@ -33,7 +33,11 @@ import {
     Briefcase,
     Users,
     UserCheck,
-    FileText
+    FileText,
+    Search,
+    Link as LinkIcon,
+    Activity,
+    Shield
 } from "lucide-react"
 
 import { NavUser } from "@/components/admin/nav-user"
@@ -222,6 +226,32 @@ const data = {
             url: "/admin/settings/ai-keys",
             icon: Sparkles,
         },
+    ],
+
+    // 5. QUẢN LÝ SEO & TRUYỀN THÔNG
+    navSeo: [
+        {
+            title: "Cấu hình SEO",
+            url: "#",
+            icon: Search,
+            items: [
+                {
+                    title: "Auto-Linking",
+                    url: "/admin/seo/keywords",
+                    icon: LinkIcon,
+                },
+                {
+                    title: "Theo dõi lỗi 404",
+                    url: "/admin/seo/404s",
+                    icon: Activity,
+                },
+                {
+                    title: "Quản lý Redirects",
+                    url: "/admin/seo/redirects",
+                    icon: Shield,
+                },
+            ]
+        }
     ]
 }
 
@@ -426,6 +456,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
                 {/* 2.5 Nhóm Quản lý Tuyển dụng */}
                 <NavMain items={data.navRecruitment} label="Quản lý tuyển dụng" pathname={pathname} />
+
+                {/* 3. Nhóm Quản lý SEO */}
+                <NavMain items={data.navSeo} label="Tối ưu hóa SEO" pathname={pathname} />
 
                 {/* 4. Nhóm Cài đặt hệ thống */}
                 <SidebarGroup>

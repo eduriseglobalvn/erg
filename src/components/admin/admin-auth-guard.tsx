@@ -108,10 +108,19 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
 
     // --- RENDER UI ---
 
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // ... (rest of useEffect logic remains same, but we need to ensure mounted is defined before the big useEffect if we put it there)
+    // Actually, simply adding the state at top and modifying the isChecking condition is enough.
+
     // 1. Đang kiểm tra -> Hiện Loading (Blur màn hình)
-    if (isChecking) {
+    if (isChecking && mounted) {
         return (
-            <div className="relative w-full h-full min-h-screen">
+            <div className="relative w-full h-full min-h-screen" suppressHydrationWarning>
                 {/* Lớp nền nội dung bị làm mờ để tránh giật layout */}
                 <div className="w-full h-full blur-md pointer-events-none select-none opacity-50 fixed inset-0 z-0 bg-white">
                     {/* Render children mờ ảo ở dưới để giữ layout (optional) */}

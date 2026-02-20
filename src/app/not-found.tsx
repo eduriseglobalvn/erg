@@ -1,15 +1,31 @@
 // src/app/not-found.tsx
+"use client"; // Chuyển thành Client Component để dùng useEffect
+
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { seoApi } from '@/services/seo.api';
 
 export default function NotFound() {
+
+    useEffect(() => {
+        // Tự động ghi Log 404 khi người dùng vào trang này
+        if (typeof window !== 'undefined') {
+            seoApi.log404({
+                url: window.location.pathname,
+                referrer: document.referrer,
+                userAgent: navigator.userAgent
+            }).catch(err => console.error("Failed to log 404:", err));
+        }
+    }, []);
+
     return (
         <div className="flex min-h-screen w-full flex-col items-center justify-center bg-slate-50 p-4 text-center">
             {/* Nền họa tiết - Dùng var(--erg-blue) trực tiếp */}
             <div className="absolute inset-0 z-0 opacity-5"
-                 style={{
-                     backgroundImage: 'radial-gradient(circle at 2px 2px, var(--erg-blue) 1px, transparent 0)',
-                     backgroundSize: '40px 40px'
-                 }}>
+                style={{
+                    backgroundImage: 'radial-gradient(circle at 2px 2px, var(--erg-blue) 1px, transparent 0)',
+                    backgroundSize: '40px 40px'
+                }}>
             </div>
 
             <div className="z-10 flex flex-col items-center max-w-2xl">
@@ -41,8 +57,8 @@ export default function NotFound() {
                             <rect x="15" y="50" width="70" height="80" rx="10" className="fill-[var(--erg-blue)]" />
                             <rect x="25" y="60" width="50" height="60" rx="5" fill="white" opacity="0.9" />
                             {/* Logo ngực áo */}
-                            <path d="M35 80 H65 V90 H35 Z" className="fill-[var(--erg-blue)]" opacity="0.3"/>
-                            <path d="M35 95 H55 V105 H35 Z" className="fill-[var(--erg-blue)]" opacity="0.3"/>
+                            <path d="M35 80 H65 V90 H35 Z" className="fill-[var(--erg-blue)]" opacity="0.3" />
+                            <path d="M35 95 H55 V105 H35 Z" className="fill-[var(--erg-blue)]" opacity="0.3" />
 
                             <rect x="10" y="0" width="80" height="50" rx="12" className="fill-[var(--erg-blue)]" />
                             <circle cx="35" cy="25" r="10" fill="white" />
@@ -50,7 +66,7 @@ export default function NotFound() {
                             <circle cx="35" cy="25" r="4" className="fill-[var(--erg-blue)]" />
                             <circle cx="65" cy="25" r="4" className="fill-[var(--erg-blue)]" />
 
-                            <path d="M85 70 C 110 70, 120 90, 130 110" className="stroke-[var(--erg-blue)]" strokeWidth="8" strokeLinecap="round" fill="none"/>
+                            <path d="M85 70 C 110 70, 120 90, 130 110" className="stroke-[var(--erg-blue)]" strokeWidth="8" strokeLinecap="round" fill="none" />
                         </g>
 
                         {/* Mũ cử nhân (Màu đỏ - var(--erg-red)) */}
@@ -63,7 +79,7 @@ export default function NotFound() {
 
                         {/* Kính lúp & Lỗi 404 */}
                         <g transform="translate(260, 180) rotate(20)">
-                            <circle cx="0" cy="0" r="40" className="stroke-[var(--erg-blue)]" strokeWidth="6" fill="white" opacity="0.5"/>
+                            <circle cx="0" cy="0" r="40" className="stroke-[var(--erg-blue)]" strokeWidth="6" fill="white" opacity="0.5" />
                             <rect x="-5" y="38" width="10" height="40" className="fill-[var(--erg-blue)]" rx="2" />
 
                             <g className="animate-pulse">
@@ -93,9 +109,9 @@ export default function NotFound() {
                     className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-[var(--erg-red)] px-8 py-3 font-bold text-white transition-all duration-300 hover:bg-red-700 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[var(--erg-red)]/50"
                     style={{ boxShadow: `0 4px 15px -3px rgba(204, 0, 34, 0.5)` }}
                 >
-          <span className="mr-2 transition-transform group-hover:-translate-x-1 text-xl">
-            📚
-          </span>
+                    <span className="mr-2 transition-transform group-hover:-translate-x-1 text-xl">
+                        📚
+                    </span>
                     Quay về Trang chủ ERG
                     <div className="absolute inset-0 -z-10 h-full w-full scale-0 rounded-full bg-white/20 transition-transform duration-300 group-hover:scale-150"></div>
                 </Link>

@@ -1,35 +1,64 @@
-
 import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { Calendar, ChevronRight, User, FolderOpen, Share2 } from 'lucide-react';
+import { notFound, permanentRedirect, redirect } from 'next/navigation';
+import { Calendar, User, FolderOpen, Share2 } from 'lucide-react';
 import { Button } from '@/components/admin/ui/button';
 import { PostContentRenderer } from '@/components/shared/post-content-renderer';
 import { RecentPostsSidebar } from '@/components/marketing/recent-posts-sidebar';
 import { Breadcrumb } from '@/components/shared/breadcrumb';
+import { draftMode } from 'next/headers';
+import { DraftBanner } from '@/components/shared/draft-banner';
+import { Reviews } from '@/components/shared/reviews';
+import { SchemaScript } from '@/components/seo/schema-script';
 
 // Import Interface
 import { PostDetailResponse } from '@/services/posts.api';
 
+interface PostFetchResult {
+    data: PostDetailResponse['data'] | null;
+    status: number;
+}
+
 // Fetch function for Server Component
-async function getPost(slug: string): Promise<PostDetailResponse['data'] | null> {
+async function getPost(slug: string, previewId?: string | null): Promise<PostFetchResult> {
     try {
         const apiUrl = process.env.BACKEND_URL || 'http://localhost:3000';
+
+        // [CASE] Nếu đang ở chế độ xem trước (Draft Mode)
+        if (previewId) {
+            if (process.env.NODE_ENV === 'development') {
+                console.log(`[Preview] Fetching preview data for ID: ${previewId}`);
+            }
+            const res = await fetch(`${apiUrl}/api/posts/preview/${previewId}?t=${Date.now()}`, {
+                cache: 'no-store',
+                headers: {
+                    'Pragma': 'no-cache',
+                    'Cache-Control': 'no-cache'
+                }
+            });
+            if (res.ok) {
+                const json = await res.json();
+                return { data: json.data, status: 200 };
+            }
+            return { data: null, status: res.status };
+        }
+
+        // [CASE] Luồng lấy dữ liệu từ DB (Production)
         const res = await fetch(`${apiUrl}/api/posts/slug/${slug}`, {
             next: { revalidate: 60 }, // ISR: Revalidate every 60 seconds
         });
 
         if (!res.ok) {
             console.error('Failed to fetch post:', res.status, res.statusText);
-            return null;
+            return { data: null, status: res.status };
         }
 
         const json = await res.json();
-        return json.data;
+        return { data: json.data, status: 200 };
     } catch (error) {
         console.error('Error fetching post:', error);
-        return null;
+        return { data: null, status: 500 };
     }
 }
 
@@ -52,9 +81,24 @@ async function getRecentPosts(): Promise<any[]> {
 const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN || 'https://erg.edu.vn';
 
 // 1. Generate Metadata for SEO
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: {
+    params: Promise<{ slug: string }>,
+    searchParams: Promise<{ previewId?: string }>
+}): Promise<Metadata> {
     const { slug } = await params;
-    const post = await getPost(slug);
+    const { previewId } = await searchParams;
+
+    const isDraft = (await draftMode()).isEnabled;
+    const { data: post, status } = await getPost(slug, isDraft ? previewId : null);
+
+    // [HANDLE 410] Bài viết đã xóa
+    if (status === 410) {
+        return {
+            title: 'Bài viết đã bị xóa | Edurise Global',
+            description: 'Nội dung bạn tìm kiếm không còn tồn tại hoặc đã bị xóa khỏi hệ thống.',
+            robots: { index: false, follow: false }, // QUAN TRỌNG: Noindex
+        };
+    }
 
     if (!post) {
         return {
@@ -74,8 +118,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     ] : [];
 
     return {
-        title: seoTitle,
+        title: isDraft ? `[PREVIEW] ${seoTitle}` : seoTitle,
         description: seoDesc,
+        robots: isDraft ? { index: false, follow: false } : undefined,
         alternates: {
             canonical: post.canonicalUrl || `${DOMAIN}/tin-tuc/${post.slug}`,
         },
@@ -100,47 +145,57 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
 }
 
-// 2. Main Page Component
-export default async function PostDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+// [NEW] ISR Revalidation: 10 phút cập nhật 1 lần
+export const revalidate = 600;
+
+export default async function PostDetailPage({
+    params,
+    searchParams
+}: {
+    params: Promise<{ slug: string }>,
+    searchParams: Promise<{ previewId?: string }>
+}) {
     const { slug } = await params;
+    const { previewId } = await searchParams;
+    const isDraft = (await draftMode()).isEnabled;
 
     // Parallel Fetching
-    const [post, recentPosts] = await Promise.all([
-        getPost(slug),
+    const [{ data: post, status }, recentPosts] = await Promise.all([
+        getPost(slug, isDraft ? previewId : null),
         getRecentPosts()
     ]);
 
-    if (!post) {
-        notFound();
+    // [HANDLE 410] Giao diện bài viết đã xóa
+    if (status === 410) {
+        return (
+            <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-4">
+                <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                    <FolderOpen size={40} className="text-gray-400" />
+                </div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                    Bài viết đã bị xóa
+                </h1>
+                <p className="text-gray-500 max-w-md mb-8">
+                    Nội dung bạn đang tìm kiếm đã bị xóa vĩnh viễn khỏi hệ thống của chúng tôi.
+                    Vui lòng quay lại trang chủ hoặc tìm kiếm bài viết khác.
+                </p>
+                <Button asChild className="bg-[#00008b] hover:bg-blue-800">
+                    <Link href="/tin-tuc">Xem tin tức khác</Link>
+                </Button>
+            </div>
+        );
     }
 
-    // JSON-LD Structured Data
-    const jsonLd = {
-        '@context': 'https://schema.org',
-        '@type': post.schemaType || 'Article',
-        headline: post.metaTitle || post.title,
-        description: post.metaDescription || post.excerpt,
-        image: post.thumbnailUrl ? [post.thumbnailUrl] : [],
-        datePublished: post.publishedAt || post.createdAt,
-        dateModified: post.updatedAt,
-        author: [{
-            '@type': 'Person',
-            name: post.author?.fullName || 'Edurise Global',
-            url: post.author?.socialLinks?.linkedin || undefined
-        }],
-        publisher: {
-            '@type': 'Organization',
-            name: 'Edurise Global',
-            logo: {
-                '@type': 'ImageObject',
-                url: `${DOMAIN}/logo.png`
-            }
-        },
-        mainEntityOfPage: {
-            '@type': 'WebPage',
-            '@id': post.canonicalUrl || `${DOMAIN}/tin-tuc/${post.slug}`
-        }
-    };
+    if (!post) {
+        // [SEO] Redirect 302 về trang danh sách có kèm thông báo
+        redirect('/tin-tuc?reason=not-found');
+    }
+
+    const breadcrumbItems = [
+        { label: 'Trang chủ', href: '/' },
+        { label: post.category?.name || 'Tin tức', href: `/tin-tuc/danh-muc/${post.category?.slug || ''}` },
+        { label: post.title, href: `/tin-tuc/${post.slug}` }
+    ];
 
     const formatDate = (dateString?: string) => {
         if (!dateString) return '';
@@ -159,11 +214,13 @@ export default async function PostDetailPage({ params }: { params: Promise<{ slu
 
     return (
         <article className="min-h-screen bg-white pb-24">
-            {/* Inject JSON-LD */}
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-            />
+            {/* SEO Schemas */}
+            <SchemaScript type="NewsArticle" data={post} domain="erg.edu.vn" />
+            <SchemaScript type="BreadcrumbList" data={{ items: breadcrumbItems }} domain="erg.edu.vn" />
+
+            {/* Render Slot tương ứng */}
+            {/* Thanh thông báo bản nháp */}
+            {isDraft && <DraftBanner />}
 
             {/* Breadcrumb Section */}
             <div className="bg-gray-50 border-b">
@@ -226,15 +283,10 @@ export default async function PostDetailPage({ params }: { params: Promise<{ slu
                             <PostContentRenderer content={post.content} />
                         </div>
 
-                        {/* Comments Placeholder */}
+
+                        {/* Reviews System */}
                         <div className="mt-20 pt-10 border-t border-gray-100">
-                            <div className="bg-[#0088cc] text-white px-6 py-2 rounded-t-lg font-bold inline-block">
-                                Ý kiến khách hàng
-                            </div>
-                            <div className="bg-gray-50 border border-t-0 rounded-b-lg p-10 text-center">
-                                <p className="text-gray-400 italic">Chưa có bình luận nào cho bài viết này. Hãy là người đầu tiên để lại ý kiến của bạn!</p>
-                                <Button className="mt-4 bg-[#00008b] hover:bg-blue-800">Viết bình luận</Button>
-                            </div>
+                            <Reviews targetId={post.id} targetType="post" />
                         </div>
                     </div>
 

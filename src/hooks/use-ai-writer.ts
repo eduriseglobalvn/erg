@@ -101,15 +101,46 @@ export function useAiWriter(editor: any) {
                         clearInterval(intervalRef.current);
                         setProgress(95);
 
-                        const postId = statusData.result?.postId;
-                        if (!postId) throw new Error("Không tìm thấy nội dung bài viết sau khi xử lý");
+                        // [OPTIMIZATION] Kiểm tra dữ liệu trực tiếp từ AI status trước
+                        // Nhiều lúc Backend trả về data ({title, content}) ngay trong status
+                        const resultData = statusData.data || statusData.result;
+                        let actualPostData = null;
 
-                        const postRes: any = await postsApi.getOne(postId);
-                        if (!postRes || (postRes.status && postRes.status >= 400)) {
-                            throw new Error("Không thể lấy dữ liệu bài viết đã tạo");
+                        if (resultData?.content && resultData?.title) {
+                            console.log("[useAiWriter] Sử dụng dữ liệu trực tiếp từ AI status");
+                            actualPostData = resultData;
+                        } else {
+                            // Nếu không có data trực tiếp, mới dùng postId để fetch bài viết
+                            const postId = resultData?.postId || statusData.postId;
+                            if (!postId) throw new Error("AI đã hoàn thành nhưng không tìm thấy ID bài viết");
+
+                            console.log("[useAiWriter] Đang fetch bài viết AI vừa tạo:", postId);
+
+                            // [FIX 404] Thử fetch lại 3 lần (mỗi lần cách nhau 2s) nếu gặp lỗi 404
+                            // Do đôi khi DB chưa kịp sync xong bài viết mới tạo từ AI Worker
+                            let retries = 0;
+                            const maxRetries = 3;
+
+                            while (retries < maxRetries) {
+                                try {
+                                    const postRes: any = await postsApi.getOne(postId);
+                                    actualPostData = postRes.data || postRes;
+                                    break; // Thành công thì thoát loop
+                                } catch (err: any) {
+                                    retries++;
+                                    if (retries >= maxRetries) {
+                                        console.error("[useAiWriter] Lỗi fetch bài viết sau 3 lần thử:", err);
+                                        throw new Error("Không thể lấy dữ liệu bài viết (404 Not Found). Backend có vẻ chưa lưu xong dữ liệu.");
+                                    }
+                                    console.warn(`[useAiWriter] Thử lại lần ${retries}/${maxRetries} sau 2s...`);
+                                    await new Promise(r => setTimeout(r, 2000));
+                                }
+                            }
                         }
 
-                        const actualPostData = postRes.data || postRes;
+                        if (!actualPostData) {
+                            throw new Error("Không tìm thấy nội dung bài viết sau khi AI xử lý");
+                        }
 
                         // === BẮT ĐẦU QUY TRÌNH HIỂN THỊ ===
                         toast.dismiss(toastId);

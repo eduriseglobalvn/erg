@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2, Award, Users, Globe, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Award, Users, Globe, ShieldCheck } from 'lucide-react';
 import RoadmapSection from '@/components/tinhocquocte/RoadmapSection';
 import { CourseCard } from '@/components/cards/course-card';
+import { COURSES } from '@/constants/courses';
 
 const CertificateCarousel = () => {
     const images = [
@@ -56,6 +57,8 @@ const CertificateCarousel = () => {
 };
 
 export default function InternationalItContent() {
+    const courses = COURSES.tinhocquocte;
+
     return (
         <main className="min-h-screen">
             {/* 1. HERO SECTION */}
@@ -142,53 +145,12 @@ export default function InternationalItContent() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <CourseCard
-                            id="ic3-gs6-spark"
-                            code="Tiểu học"
-                            displayTitle="SPARK"
-                            subtitle="Primary Skills"
-                            title="IC3 Spark GS6"
-                            description="Học máy tính từ bước đầu tiên, nâng cao nhận thức và kỹ năng số."
-                            points={[
-                                "Level 1: Các khái niệm cơ bản",
-                                "Level 2: Kỹ năng thực hành"
-                            ]}
-                            href="/ic3-gs6-spark"
-                            headerGradient="from-blue-400 to-cyan-300"
-                            btnColor="border-blue-500 text-blue-600 hover:bg-blue-600"
-                        />
-
-                        <CourseCard
-                            id="ic3-gs6"
-                            code="THCS"
-                            displayTitle="GS6"
-                            subtitle="Digital Literacy"
-                            title="IC3 GS6"
-                            description="Chuẩn đánh giá năng lực CNTT theo tiêu chuẩn toàn cầu mới nhất."
-                            points={[
-                                "3 Cấp độ năng lực",
-                                "7 Chuyên đề trọng tâm"
-                            ]}
-                            href="/ic3-gs6"
-                            headerGradient="from-teal-500 to-emerald-400"
-                            btnColor="border-teal-500 text-teal-600 hover:bg-teal-500"
-                        />
-
-                        <CourseCard
-                            id="mos"
-                            code="THPT & Đại học"
-                            displayTitle="MOS"
-                            subtitle="Expert Skills"
-                            title="Microsoft Office (MOS)"
-                            description="Chứng chỉ tin học văn phòng quốc tế do Microsoft cấp."
-                            points={[
-                                "Word, Excel, PowerPoint...",
-                                "Cấp độ: Specialist, Expert"
-                            ]}
-                            href="/mos"
-                            headerGradient="from-[#F25022] to-orange-500"
-                            btnColor="border-orange-500 text-orange-600 hover:bg-orange-500"
-                        />
+                        {courses.map((course) => (
+                            <CourseCard
+                                key={course.id}
+                                {...course}
+                            />
+                        ))}
                     </div>
                 </div>
             </section>

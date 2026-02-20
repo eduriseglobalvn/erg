@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/admin/ui/button"
 import { UserNav } from "@/components/admin/shared/user-nav"
 import { Input } from "@/components/admin/ui/input"
+import { NotificationBell } from "@/components/admin/NotificationBell"
 
 export function AdminHeader() {
     const { setTheme, theme } = useTheme()
@@ -73,6 +74,9 @@ export function AdminHeader() {
                     <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                     <span className="sr-only">Toggle theme</span>
                 </Button>
+
+                {/* Notification Bell */}
+                <NotificationBell />
 
                 {/* User Dropdown */}
                 <UserNav />

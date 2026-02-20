@@ -17,7 +17,7 @@ const FooterWaveFix = () => {
                     <div className="flex flex-col items-start">
                         <div className="flex items-center gap-2 mb-6">
                             <div className="p-1">
-                                <Image src="/erg.png" alt="Edurise Global Logo" width={100} height={45} className="object-contain" />
+                                <Image src="https://media.erg.edu.vn/logo/erg.png" alt="Edurise Global Logo" width={100} height={45} className="object-contain" />
                             </div>
                             <span className="text-xl font-extrabold text-[#00008b] tracking-tight">Edurise Global</span>
                         </div>

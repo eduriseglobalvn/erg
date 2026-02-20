@@ -48,7 +48,9 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
         const url = new URL(request.url);
         const backendUrl = `${BACKEND_URL}/api/${path}${url.search}`;
 
-        console.log('[API Proxy]', request.method, backendUrl);
+        if (process.env.NODE_ENV === 'development') {
+            console.log('[API Proxy]', request.method, backendUrl);
+        }
 
         const headers = new Headers(request.headers);
         headers.delete('host');
@@ -64,7 +66,9 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
             body: body,
         });
 
-        console.log('[API Proxy] Backend response:', response.status, response.statusText);
+        if (process.env.NODE_ENV === 'development') {
+            console.log('[API Proxy] Backend response:', response.status, response.statusText);
+        }
 
         const responseHeaders = new Headers(response.headers);
         responseHeaders.delete('transfer-encoding');

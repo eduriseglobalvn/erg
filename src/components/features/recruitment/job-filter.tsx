@@ -5,47 +5,61 @@ import {
     Filter, Search, MapPin, DollarSign, Clock, Calendar,
     Users, Briefcase, CheckSquare, Square, Flame, Zap, Sparkles, ChevronLeft, ChevronRight
 } from 'lucide-react';
-import { JOB_LISTINGS } from '@/mocks/jobs.mock';
 import { JobCard } from '@/components/cards/job-card';
+import { useQuery } from '@tanstack/react-query';
+import { recruitmentApi } from '@/services/recruitment.api';
 
 export default function JobFilter() {
     // --- STATE QUẢN LÝ BỘ LỌC ---
     const [selectedSalaries, setSelectedSalaries] = useState<string[]>([]);
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
     const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+    const [sort, setSort] = useState("newest");
+    const [page, setPage] = useState(1);
+    const [searchInput, setSearchInput] = useState("");
+
+    // Custom hook useDebounce (if doesn't exist, we will use inline, but assuming we can do simple timeout or let's just use simple state for now since we don't know if useDebounce exists. Let's use a local effect)
 
     const salaryOptions = ["Thỏa thuận", "Dưới 10 triệu", "10 - 20 triệu", "Trên 20 triệu"];
     const typeOptions = ["Toàn thời gian", "Bán thời gian", "Thực tập", "Freelance"];
     const locationOptions = ["TP Hồ Chí Minh", "Hà Nội", "Đà Nẵng"];
 
-    // Toggle Filter
+    // Use a simple local debounce for search
+    const [debouncedSearch, setDebouncedSearch] = useState(searchInput);
+    React.useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(searchInput);
+            setPage(1); // reset page on search
+        }, 500);
+        return () => clearTimeout(handler);
+    }, [searchInput]);
+
+    // Handle filter toggle
     const toggleFilter = (item: string, selectedItems: string[], setSelectedItems: React.Dispatch<React.SetStateAction<string[]>>) => {
         if (selectedItems.includes(item)) {
             setSelectedItems(selectedItems.filter(i => i !== item));
         } else {
             setSelectedItems([...selectedItems, item]);
         }
+        setPage(1); // Reset page on filter change
     };
 
-    // --- LOGIC LỌC DỮ LIỆU ---
-    const filteredJobs = useMemo(() => {
-        return JOB_LISTINGS.filter(job => {
-            // 1. Lương
-            const matchSalary = selectedSalaries.length === 0 || selectedSalaries.some(s => {
-                if (s === "Thỏa thuận") return job.salary.toLowerCase().includes("thỏa thuận");
-                return true;
-            });
-            // 2. Hình thức
-            const matchType = selectedTypes.length === 0 || selectedTypes.some(t => {
-                if (t === "Toàn thời gian") return job.workSchedule.toLowerCase().includes("thứ hai") || job.slug.includes("full");
-                return true;
-            });
-            // 3. Địa điểm
-            const matchLocation = selectedLocations.length === 0 || selectedLocations.some(l => job.location.includes(l));
+    // --- FETCH DATA ---
+    const { data, isLoading, isFetching } = useQuery({
+        queryKey: ['public-jobs', { debouncedSearch, selectedSalaries, selectedTypes, selectedLocations, sort, page }],
+        queryFn: () => recruitmentApi.getJobs({
+            search: debouncedSearch,
+            salary: selectedSalaries,
+            workType: selectedTypes,
+            location: selectedLocations,
+            sort,
+            page,
+            limit: 6 // 6 items per page for better UI grid
+        }).then(res => res.data)
+    });
 
-            return matchSalary && matchType && matchLocation;
-        });
-    }, [selectedSalaries, selectedTypes, selectedLocations]);
+    const jobs = Array.isArray(data) ? data : (data?.items || []);
+    const meta = data?.meta || { total: jobs.length, page: 1, limit: 6, totalPages: 1 };
 
     return (
         <React.Fragment>
@@ -78,10 +92,14 @@ export default function JobFilter() {
                         <Search className="ml-4 md:ml-6 text-gray-400 shrink-0" size={24} />
                         <input
                             type="text"
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
                             placeholder="Nhập vị trí (VD: Giáo viên tin học, IT...)"
                             className="flex-1 px-4 py-3 bg-transparent border-none focus:outline-none text-gray-800 placeholder-gray-400 text-base md:text-lg"
                         />
-                        <button className="bg-[#cc0022] hover:bg-red-700 text-white rounded-full px-8 md:px-12 py-3 md:py-4 font-bold transition-all shrink-0 shadow-lg shadow-red-900/20 whitespace-nowrap text-base md:text-lg">
+                        <button
+                            className="bg-[#cc0022] hover:bg-red-700 text-white rounded-full px-8 md:px-12 py-3 md:py-4 font-bold transition-all shrink-0 shadow-lg shadow-red-900/20 whitespace-nowrap text-base md:text-lg"
+                        >
                             Tìm kiếm
                         </button>
                     </div>
@@ -98,7 +116,7 @@ export default function JobFilter() {
                             <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
                                 <h3 className="font-bold text-lg flex items-center gap-2 text-[#00008b]"><Filter size={20} /> Bộ lọc</h3>
                                 <button
-                                    onClick={() => { setSelectedSalaries([]); setSelectedTypes([]); setSelectedLocations([]) }}
+                                    onClick={() => { setSelectedSalaries([]); setSelectedTypes([]); setSelectedLocations([]); setPage(1); }}
                                     className="text-xs text-gray-500 hover:text-[#cc0022] hover:underline"
                                 >
                                     Xóa tất cả
@@ -161,22 +179,29 @@ export default function JobFilter() {
                         {/* Toolbar */}
                         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
                             <p className="text-gray-600 text-sm mb-2 sm:mb-0">
-                                Tìm thấy <span className="font-bold text-[#00008b] text-base">{filteredJobs.length}</span> việc làm
+                                Tìm thấy <span className="font-bold text-[#00008b] text-base">{meta.total}</span> việc làm
                             </p>
                             <div className="flex items-center gap-2">
                                 <span className="text-sm text-gray-500">Sắp xếp:</span>
-                                <select className="bg-gray-50 border border-gray-200 text-sm rounded-md px-3 py-1.5 focus:outline-none focus:border-[#00008b] cursor-pointer">
-                                    <option>Mới nhất</option>
-                                    <option>Lương cao nhất</option>
-                                    <option>Việc làm Hot</option>
+                                <select
+                                    className="bg-gray-50 border border-gray-200 text-sm rounded-md px-3 py-1.5 focus:outline-none focus:border-[#00008b] cursor-pointer"
+                                    value={sort}
+                                    onChange={(e) => { setSort(e.target.value); setPage(1); }}
+                                >
+                                    <option value="newest">Mới nhất</option>
+                                    <option value="oldest">Cũ nhất</option>
                                 </select>
                             </div>
                         </div>
 
                         {/* --- GRID VIEW: NGANG 3 --- */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                            {filteredJobs.length > 0 ? (
-                                filteredJobs.map((job) => (
+                        <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 transition-opacity duration-300 ${isFetching ? 'opacity-50' : 'opacity-100'}`}>
+                            {isLoading ? (
+                                Array.from({ length: 6 }).map((_, i) => (
+                                    <div key={i} className="bg-gray-100 animate-pulse h-64 rounded-xl"></div>
+                                ))
+                            ) : jobs.length > 0 ? (
+                                jobs.map((job) => (
                                     <JobCard
                                         key={job.id}
                                         {...job}
@@ -187,7 +212,7 @@ export default function JobFilter() {
                                     <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                                     <p className="text-gray-500">Không tìm thấy công việc phù hợp.</p>
                                     <button
-                                        onClick={() => { setSelectedSalaries([]); setSelectedTypes([]); setSelectedLocations([]) }}
+                                        onClick={() => { setSelectedSalaries([]); setSelectedTypes([]); setSelectedLocations([]); setSearchInput(""); setPage(1); }}
                                         className="mt-2 text-[#cc0022] font-bold text-sm hover:underline"
                                     >
                                         Xóa bộ lọc
@@ -197,13 +222,40 @@ export default function JobFilter() {
                         </div>
 
                         {/* Pagination */}
-                        {filteredJobs.length > 0 && (
+                        {meta.totalPages > 1 && (
                             <div className="mt-10 flex justify-center gap-2">
-                                <button className="w-8 h-8 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-50 text-sm"><ChevronLeft size={16} /></button>
-                                <button className="w-8 h-8 rounded bg-[#00008b] text-white flex items-center justify-center font-bold shadow-sm text-sm">1</button>
-                                <button className="w-8 h-8 rounded border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 font-medium text-sm">2</button>
-                                <button className="w-8 h-8 rounded border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 font-medium text-sm">3</button>
-                                <button className="w-8 h-8 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 text-sm"><ChevronRight size={16} /></button>
+                                <button
+                                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                                    disabled={page === 1}
+                                    className="w-8 h-8 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-50 text-sm"
+                                >
+                                    <ChevronLeft size={16} />
+                                </button>
+
+                                {Array.from({ length: meta.totalPages }).map((_, idx) => {
+                                    const pageNum = idx + 1;
+                                    const isActive = pageNum === page;
+                                    return (
+                                        <button
+                                            key={pageNum}
+                                            onClick={() => setPage(pageNum)}
+                                            className={`w-8 h-8 rounded flex items-center justify-center font-medium text-sm transition-colors ${isActive
+                                                ? 'bg-[#00008b] text-white shadow-sm font-bold'
+                                                : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                                                }`}
+                                        >
+                                            {pageNum}
+                                        </button>
+                                    );
+                                })}
+
+                                <button
+                                    onClick={() => setPage(p => Math.min(meta.totalPages, p + 1))}
+                                    disabled={page === meta.totalPages}
+                                    className="w-8 h-8 rounded border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-50 text-sm"
+                                >
+                                    <ChevronRight size={16} />
+                                </button>
                             </div>
                         )}
 

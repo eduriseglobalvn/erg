@@ -1,4 +1,4 @@
-import {EmployerInfo, JobDetail, JobSummary} from "@/mocks/types";
+import { EmployerInfo, JobDetail, JobSummary } from "@/mocks/types";
 
 // --- BƯỚC 1: TẠO KHO DỮ LIỆU CHI TIẾT (DATABASE) ---
 // Key của object này (ví dụ: 'nhan-vien-it') PHẢI TRÙNG KHỚP với slug
@@ -44,7 +44,7 @@ const JOB_DATABASE: Record<string, JobDetail> = {
 
     // 1. Job Giáo viên / Trợ giảng
     'giao-vien': {
-        status:"hot",
+        status: "hot",
         employer: "Trunng tâm tin học ERG",
         title: "Tuyển dụng Giáo viên tin học",
         postDate: "30/12/2025",
@@ -82,7 +82,7 @@ const JOB_DATABASE: Record<string, JobDetail> = {
         }
     },
     'tro-giang': {
-        status:"new",
+        status: "new",
         employer: "Trunng tâm tin học ERG",
         title: "Tuyển dụng Trợ giảng",
         postDate: "12/12/2025",
@@ -120,7 +120,7 @@ const JOB_DATABASE: Record<string, JobDetail> = {
         }
     },
     'nhan-vien-giao-vu': {
-        status:"urgent",
+        status: "urgent",
         employer: "Trunng tâm tin học ERG",
         title: "Tuyển dụng Nhân viên giáo vụ",
         postDate: "12/12/2025",
@@ -163,7 +163,7 @@ const JOB_DATABASE: Record<string, JobDetail> = {
 
 
     'nhan-vien-it': {
-        status:"hot",
+        status: "hot",
         employer: "Trung tâm tin học ERG",
         title: "Nhân viên IT Helpdesk / Quản trị mạng",
         postDate: "10/12/2025",
@@ -204,11 +204,11 @@ const JOB_DATABASE: Record<string, JobDetail> = {
 };
 
 export const EMPLOYER_INFO: EmployerInfo = {
-    name : "Trung tâm Tin học ERG",
-    nameOfOrganization: "EDURISE  GLOBAL CO., LTD",
+    name: "Trung tâm Tin học ERG",
+    nameOfOrganization: "CÔNG TY TNHH EDURISE GLOBAL",
     tax: "0319007722",
     mainAddress: "Tầng 6 Toà nhà 83B Hoàng Sa – Phường Tân Định – TP Hồ Chí Minh",
-    location:"Trung tâm tin học ERG, 40-42 Bình Phú – Phường Bình Phú – TP Hồ Chí Minh.",
+    location: "Trung tâm tin học ERG, 40-42 Bình Phú – Phường Bình Phú – TP Hồ Chí Minh.",
     fieldOfActivity: [
         "Cung cấp giải pháp CNTT, Hoạt động chuyên môn, khoa học và công nghệ khác chưa phân đầu vào, Hoạt động các trung tâm, đại lý tư vấn, giới thiệu lao động và việc làm.",
         "Đào tạo sơ cấp.",

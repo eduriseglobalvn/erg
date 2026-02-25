@@ -1,0 +1,82 @@
+{
+    "Dashboard": {
+        "title": "Dashboard",
+        "welcome": "Hello, {name}!",
+        "stats": {
+            "posts": "Posts",
+            "jobs": "Job Postings",
+            "candidates": "Candidates",
+            "views": "Views"
+        }
+    },
+    "Posts": {
+        "title": "Post Management",
+        "create": "Create New Post",
+        "edit": "Edit Post",
+        "delete": "Delete Post",
+        "status": {
+            "published": "Published",
+            "draft": "Draft",
+            "archived": "Archived"
+        },
+        "columns": {
+            "title": "Title",
+            "category": "Category",
+            "author": "Author",
+            "status": "Status",
+            "createdAt": "Created At"
+        }
+    },
+    "Jobs": {
+        "title": "Job Management",
+        "create": "Create Job",
+        "columns": {
+            "title": "Position",
+            "workType": "Schedule / Type",
+            "deadline": "Post Date - Deadline",
+            "location": "Location",
+            "status": "Status"
+        },
+        "form": {
+            "title": "Title",
+            "salary": "Salary",
+            "quantity": "Quantity",
+            "workType": "Work Type",
+            "deadline": "Deadline",
+            "location": "Location",
+            "postDate": "Post Date",
+            "workSchedule": "Work Schedule",
+            "description": "Job Description",
+            "requirements": "Requirements",
+            "benefits": "Benefits",
+            "isActive": "Active",
+            "isHot": "Hot",
+            "isUrgent": "Urgent",
+            "isNew": "New"
+        }
+    },
+    "Candidates": {
+        "title": "Candidate Management",
+        "status": {
+            "pending": "Pending",
+            "reviewing": "Reviewing",
+            "approved": "Approved",
+            "rejected": "Rejected"
+        }
+    },
+    "SEO": {
+        "title": "SEO Management",
+        "keywords": "Keywords",
+        "notFound": "404 Pages",
+        "redirects": "Redirects"
+    },
+    "Auth": {
+        "login": "Login",
+        "logout": "Logout",
+        "email": "Email",
+        "password": "Password",
+        "forgotPassword": "Forgot password?",
+        "changePassword": "Change Password",
+        "otp": "OTP Code"
+    }
+}

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Button } from '@/components/admin/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/admin/ui/card';
 import { recruitmentApi } from '@/services/recruitment.api';
-import { Job, JobStatus } from '@/types/recruitment';
+import { Job } from '@/types/recruitment';
 import { Briefcase, MapPin, Clock, ArrowRight, Flame, Zap } from 'lucide-react';
 
 export const revalidate = 60; // ISR cache 60s
@@ -11,7 +11,7 @@ export default async function RecruitmentPage() {
     let jobs: Job[] = [];
     try {
         const res = await recruitmentApi.getJobs();
-        jobs = res.data || [];
+        jobs = Array.isArray(res.data) ? res.data : (res.data?.items || []);
     } catch (e) {
         console.error("Failed to fetch jobs", e);
     }
@@ -56,7 +56,7 @@ export default async function RecruitmentPage() {
                                             )}
                                             {!job.isHot && !job.isUrgent && !job.isNew && (
                                                 <span className="text-[10px] uppercase font-bold px-2 py-1 rounded bg-gray-100 text-gray-600">
-                                                    {job.workType}
+                                                    {job.workSchedule || job.workType}
                                                 </span>
                                             )}
                                         </div>

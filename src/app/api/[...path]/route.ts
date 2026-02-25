@@ -57,7 +57,7 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
         headers.delete('connection');
 
         const body = request.method !== 'GET' && request.method !== 'HEAD'
-            ? await request.text()
+            ? await request.arrayBuffer()
             : undefined;
 
         const response = await fetch(backendUrl, {

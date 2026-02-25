@@ -1,0 +1,68 @@
+{
+    "Header": {
+        "logoAlt": "Logo ERG",
+        "home": "Trang chủ",
+        "about": "Giới thiệu",
+        "courses": "Khóa học",
+        "news": "Tin tức",
+        "contact": "Liên hệ",
+        "recruitment": "Tuyển dụng",
+        "login": "Đăng nhập",
+        "search": "Tìm kiếm"
+    },
+    "Footer": {
+        "tagline": "Hệ thống giáo dục về công nghệ hàng đầu, cam kết mang lại chất lượng đào tạo tốt nhất cho thế hệ trẻ Việt Nam. Khơi dậy tiềm năng, kiến tạo tương lai.",
+        "address": "Số 40-42, Đường Bình Phú, Phường Bình Phú, TP. Hồ Chí Minh",
+        "email": "Email",
+        "phone": "Điện thoại",
+        "followUs": "Theo dõi chúng tôi",
+        "copyright": "© {year} Edurise Global. All rights reserved.",
+        "links": {
+            "privacy": "Chính sách bảo mật",
+            "terms": "Điều khoản sử dụng"
+        }
+    },
+    "Buttons": {
+        "readMore": "Xem thêm",
+        "viewAll": "Xem tất cả",
+        "apply": "Ứng Tuyển",
+        "submit": "Gửi",
+        "back": "Quay lại",
+        "register": "Đăng ký",
+        "contact": "Liên hệ ngay",
+        "learnMore": "Tìm hiểu thêm",
+        "loading": "Đang tải..."
+    },
+    "Common": {
+        "search": "Tìm kiếm",
+        "searchPlaceholder": "Tìm kiếm...",
+        "noResults": "Không tìm thấy kết quả",
+        "error": "Đã xảy ra lỗi",
+        "tryAgain": "Thử lại",
+        "loading": "Đang tải...",
+        "all": "Tất cả",
+        "close": "Đóng",
+        "save": "Lưu",
+        "cancel": "Hủy",
+        "confirm": "Xác nhận",
+        "delete": "Xóa",
+        "edit": "Chỉnh sửa",
+        "create": "Tạo mới",
+        "update": "Cập nhật",
+        "success": "Thành công",
+        "lang": {
+            "vi": "Tiếng Việt",
+            "en": "English"
+        }
+    },
+    "NotFound": {
+        "title": "Trang không tồn tại",
+        "description": "Xin lỗi, trang bạn tìm kiếm không tồn tại hoặc đã bị xóa.",
+        "backHome": "Về trang chủ"
+    },
+    "FloatingContact": {
+        "callNow": "Gọi ngay",
+        "zalo": "Zalo",
+        "facebook": "Facebook"
+    }
+}

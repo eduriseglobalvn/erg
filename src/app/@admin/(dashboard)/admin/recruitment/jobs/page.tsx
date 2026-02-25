@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { recruitmentApi } from '@/services/recruitment.api'
-import { Job, JobStatus } from '@/types/recruitment'
+import { Job } from '@/types/recruitment'
 import { Button } from '@/components/admin/ui/button'
 import { Input } from '@/components/admin/ui/input'
 import { Switch } from '@/components/admin/ui/switch'
@@ -27,7 +27,7 @@ export default function AdminJobsPage() {
     // Fetch Jobs
     const { data: jobs, isLoading } = useQuery({
         queryKey: ['admin-jobs'],
-        queryFn: () => recruitmentApi.adminGetJobs().then(res => res.data)
+        queryFn: () => recruitmentApi.adminGetJobs().then(res => res.data.items)
     });
 
     // Mutations
@@ -96,12 +96,13 @@ export default function AdminJobsPage() {
         setEditingJob({
             title: "",
             slug: "",
-            status: JobStatus.NEW,
             salary: "Thỏa thuận",
             quantity: 1,
             workType: "Toàn thời gian",
+            workSchedule: "",
             location: "Hà Nội",
             deadline: "",
+            postDate: "",
             summary: "",
             description: [""],
             requirements: [""],
@@ -109,7 +110,8 @@ export default function AdminJobsPage() {
             isHot: false,
             isUrgent: false,
             isNew: true,
-            isActive: false
+            isActive: false,
+            status: "normal"
         });
         setIsDialogOpen(true);
     }
@@ -164,10 +166,22 @@ export default function AdminJobsPage() {
             )
         },
         {
-            accessorKey: 'deadline',
-            header: 'Hạn nộp',
+            accessorKey: 'workSchedule',
+            header: 'Thời gian / Hình thức',
             cell: ({ row }) => (
-                <div className="text-sm">{row.original.deadline}</div>
+                <div className="text-sm">
+                    {row.original.workSchedule || row.original.workType}
+                </div>
+            )
+        },
+        {
+            accessorKey: 'deadline',
+            header: 'Ngày đăng - Hạn nộp',
+            cell: ({ row }) => (
+                <div className="text-sm">
+                    <div className="text-gray-500">Đăng: {row.original.postDate || '---'}</div>
+                    <div className="text-[#cc0022]">Hạn: {row.original.deadline}</div>
+                </div>
             )
         },
         {
@@ -287,6 +301,16 @@ export default function AdminJobsPage() {
                         <div className="space-y-2">
                             <Label>Hạn nộp</Label>
                             <Input value={editingJob.deadline} onChange={(e) => setEditingJob(prev => ({ ...prev, deadline: e.target.value }))} placeholder="dd/mm/yyyy" />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Ngày đăng (Post Date)</Label>
+                            <Input value={editingJob.postDate || ''} onChange={(e) => setEditingJob(prev => ({ ...prev, postDate: e.target.value }))} placeholder="dd/mm/yyyy" />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Thời gian làm việc (Work Schedule)</Label>
+                            <Input value={editingJob.workSchedule || ''} onChange={(e) => setEditingJob(prev => ({ ...prev, workSchedule: e.target.value }))} placeholder="VD: Từ thứ Hai đến thứ Bảy" />
                         </div>
 
                         <div className="col-span-2 space-y-2">

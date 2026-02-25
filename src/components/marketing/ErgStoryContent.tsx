@@ -2,8 +2,10 @@
 
 import React from 'react';
 import { BookOpen, TrendingUp, Globe, Lightbulb, Heart, Rocket, Quote } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function ErgStoryContent() {
+    const t = useTranslations('about.cauChuyenCuaErg');
     return (
         <div className="min-h-screen bg-white font-sans text-gray-800 pt-[70px] lg:pt-[135px]">
 
@@ -22,13 +24,13 @@ export default function ErgStoryContent() {
                 {/* Hero Content */}
                 <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto animate-fade-in-up">
                     <div className="inline-block bg-[#cc0022] px-4 py-1 rounded-full text-sm font-bold tracking-widest mb-4 uppercase">
-                        Về chúng tôi
+                        {t('subtitle')}
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                        CÂU CHUYỆN CỦA ERG
+                        {t('title').toUpperCase()}
                     </h1>
                     <p className="text-xl md:text-2xl font-light italic opacity-90">
-                        "Khơi nguồn trí tuệ – Dẫn lối tương lai"
+                        &quot;{t('quote')}&quot;
                     </p>
                 </div>
             </section>
@@ -215,14 +217,14 @@ export default function ErgStoryContent() {
                             rel="noopener noreferrer"
                             className="group relative bg-[#cc0022] hover:bg-[#b3001e] text-white font-bold py-6 px-12 rounded-2xl text-2xl shadow-2xl shadow-red-900/20 transition-all duration-300 hover:-translate-y-2 active:scale-95"
                         >
-                            Gia nhập đội ngũ ERG
+                            {t('cta.join')}
                         </a>
 
                         <a
                             href="/lien-he"
                             className="bg-white border-[3px] border-[#00008b] text-[#00008b] hover:bg-[#00008b] hover:text-white font-bold py-6 px-12 rounded-2xl text-2xl shadow-xl shadow-blue-900/10 transition-all duration-300 hover:-translate-y-2 active:scale-95"
                         >
-                            Liên hệ hợp tác
+                            {t('cta.contact')}
                         </a>
                     </div>
                 </div>

@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Phone, Facebook, Youtube, ChevronDown, Search, Globe } from 'lucide-react';
+import { Menu, X, Phone, Facebook, Youtube, ChevronDown, Search } from 'lucide-react';
+import { LanguageSwitcher } from '@/components/shared/language-switcher';
 
 // Import Menu mặc định
 import { MAIN_MENU_ITEMS } from '@/constants/MenuItem';
@@ -25,11 +26,17 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null);
-
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [currentLocale, setCurrentLocale] = useState('vi');
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
+
+  // Read locale from cookie on mount
+  useEffect(() => {
+    const match = document.cookie.match(/NEXT_LOCALE=([^;]+)/);
+    if (match) setCurrentLocale(match[1]);
+  }, []);
 
 
   useEffect(() => {
@@ -95,30 +102,19 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
                 <a href="#" className="hover:text-highlight transition-colors"><Youtube size={16} /></a>
               </div>
 
-              <div className="flex items-center gap-1 cursor-pointer hover:text-primary group relative">
-                <Globe size={14} />
-                <span>VN</span>
-                <ChevronDown size={12} />
-                <div className="absolute top-full right-0 mt-1 w-24 bg-white shadow-lg rounded border border-gray-100 hidden group-hover:block z-50">
-                  <div className="py-1">
-                    <div className="px-3 py-1 hover:bg-gray-50 text-highlight font-bold cursor-pointer">Tiếng Việt</div>
-                    <div className="px-3 py-1 hover:bg-gray-50 hover:text-primary cursor-pointer">English</div>
-                  </div>
-                </div>
-              </div>
+              <LanguageSwitcher currentLocale={currentLocale} />
             </div>
           </div>
 
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 relative w-[100px] h-[55px] md:w-[117px] md:h-[64px]">
                 <Image
                   src="https://media.erg.edu.vn/logo/erg.png"
                   alt="ERG Logo"
-                  width={110}
-                  height={60}
-                  className="object-contain w-auto h-[55px] md:h-[64px]"
+                  fill
+                  className="object-contain"
                   priority
                 />
               </div>

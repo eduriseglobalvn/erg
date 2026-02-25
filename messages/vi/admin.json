@@ -1,0 +1,82 @@
+{
+    "Dashboard": {
+        "title": "Bảng điều khiển",
+        "welcome": "Xin chào, {name}!",
+        "stats": {
+            "posts": "Bài viết",
+            "jobs": "Tin tuyển dụng",
+            "candidates": "Ứng viên",
+            "views": "Lượt xem"
+        }
+    },
+    "Posts": {
+        "title": "Quản lý bài viết",
+        "create": "Tạo bài viết mới",
+        "edit": "Chỉnh sửa bài viết",
+        "delete": "Xóa bài viết",
+        "status": {
+            "published": "Đã đăng",
+            "draft": "Bản nháp",
+            "archived": "Đã lưu trữ"
+        },
+        "columns": {
+            "title": "Tiêu đề",
+            "category": "Danh mục",
+            "author": "Tác giả",
+            "status": "Trạng thái",
+            "createdAt": "Ngày tạo"
+        }
+    },
+    "Jobs": {
+        "title": "Quản lý tin tuyển dụng",
+        "create": "Tạo tin tuyển dụng",
+        "columns": {
+            "title": "Vị Trí",
+            "workType": "Thời gian / Hình thức",
+            "deadline": "Ngày đăng - Hạn nộp",
+            "location": "Địa điểm",
+            "status": "Trạng thái"
+        },
+        "form": {
+            "title": "Tiêu đề",
+            "salary": "Mức lương",
+            "quantity": "Số lượng",
+            "workType": "Loại hình",
+            "deadline": "Hạn nộp (Deadline)",
+            "location": "Địa điểm",
+            "postDate": "Ngày đăng (Post Date)",
+            "workSchedule": "Thời gian làm việc (Work Schedule)",
+            "description": "Mô tả công việc",
+            "requirements": "Yêu cầu",
+            "benefits": "Quyền lợi",
+            "isActive": "Kích hoạt",
+            "isHot": "Hot",
+            "isUrgent": "Tuyển gấp",
+            "isNew": "Mới"
+        }
+    },
+    "Candidates": {
+        "title": "Quản lý ứng viên",
+        "status": {
+            "pending": "Chờ xét",
+            "reviewing": "Đang xem xét",
+            "approved": "Đã duyệt",
+            "rejected": "Từ chối"
+        }
+    },
+    "SEO": {
+        "title": "Quản lý SEO",
+        "keywords": "Từ khóa",
+        "notFound": "Trang 404",
+        "redirects": "Chuyển hướng"
+    },
+    "Auth": {
+        "login": "Đăng nhập",
+        "logout": "Đăng xuất",
+        "email": "Email",
+        "password": "Mật khẩu",
+        "forgotPassword": "Quên mật khẩu?",
+        "changePassword": "Đổi mật khẩu",
+        "otp": "Mã OTP"
+    }
+}

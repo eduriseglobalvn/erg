@@ -1,0 +1,17 @@
+{
+    "Page": {
+        "title": "Contact Us",
+        "subtitle": "We are always ready to support you",
+        "name": "Full Name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "message": "Message",
+        "subject": "Subject",
+        "send": "Send Message",
+        "sendSuccess": "Your message has been sent. We will respond as soon as possible.",
+        "address": "Address",
+        "workingHours": "Working Hours",
+        "weekdays": "Monday - Saturday",
+        "hours": "07:30 - 21:00"
+    }
+}

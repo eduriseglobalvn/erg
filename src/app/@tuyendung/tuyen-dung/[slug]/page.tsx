@@ -70,7 +70,7 @@ export default async function Page({ params }: Props) {
                 data={{
                     title: job.title,
                     description: (job.description || []).join(' '),
-                    datePosted: job.createdAt ? new Date(job.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                    datePosted: job.postDate ? job.postDate.split('/').reverse().join('-') : (job.createdAt ? new Date(job.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
                     validThrough: job.deadline ? (job.deadline.includes('/') ? job.deadline.split('/').reverse().join('-') : job.deadline) : '',
                     employmentType: 'FULL_TIME',
                     hiringOrganization: {

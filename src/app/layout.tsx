@@ -3,11 +3,13 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Lora, JetBrains_Mono, Oswald } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
 import { QueryProvider } from "@/providers/query-provider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getLocale } from 'next-intl/server';
 
 const inter = Inter({
     subsets: ["latin", "vietnamese"],
@@ -198,8 +200,13 @@ export default async function RootLayout(props: {
     // Sử dụng SchemaScript component mới để quản lý tập trung
     // Chỉ render các Schema cơ bản cấp Site tại đây. Các Schema chi tiết (Article, Course) sẽ nằm ở page.tsx
 
+    // Resolve locale from cookie
+    const cookieStore = await cookies();
+    const locale = cookieStore.get('NEXT_LOCALE')?.value || 'vi';
+    const messages = await getMessages();
+
     return (
-        <html lang="vi" suppressHydrationWarning className={`${inter.variable} ${lora.variable} ${jetBrainsMono.variable} ${oswald.variable}`}>
+        <html lang={locale} suppressHydrationWarning className={`${inter.variable} ${lora.variable} ${jetBrainsMono.variable} ${oswald.variable}`}>
             <head>
                 <GoogleAnalytics gaId="G-PF00V6RJDD" />
             </head>
@@ -207,28 +214,28 @@ export default async function RootLayout(props: {
                 className={`${inter.className} bg-gray-50 text-slate-800 antialiased flex flex-col min-h-screen overflow-x-hidden`}
                 suppressHydrationWarning={true}
             >
-                <AnalyticsTracker />
-                <Toaster position="top-center" richColors />
-                <React.Suspense fallback={null}>
-                    <RedirectNotification />
-                </React.Suspense>
+                <NextIntlClientProvider locale={locale} messages={messages}>
+                    <AnalyticsTracker />
+                    <Toaster position="top-center" richColors />
+                    <React.Suspense fallback={null}>
+                        <RedirectNotification />
+                    </React.Suspense>
 
-                {/* Global Schemas */}
-                <SchemaScript type="Organization" data={{}} domain={hostname} />
-                <SchemaScript type="WebSite" data={{ name: SEO_DATA[subdomain as keyof typeof SEO_DATA]?.title || "Edurise Global" }} domain={hostname} />
+                    {/* Global Schemas */}
+                    <SchemaScript type="Organization" data={{}} domain={hostname} />
+                    <SchemaScript type="WebSite" data={{ name: SEO_DATA[subdomain as keyof typeof SEO_DATA]?.title || "Edurise Global" }} domain={hostname} />
 
-                {/* Sitelinks Navigation Schema */}
-                <SchemaScript type="SiteNavigationElement" data={currentMenu} domain={hostname} />
+                    {/* Sitelinks Navigation Schema */}
+                    <SchemaScript type="SiteNavigationElement" data={currentMenu} domain={hostname} />
 
-                {/* Render Slot tương ứng */}
-                <QueryProvider>
-                    {content}
-                </QueryProvider>
+                    {/* Render Slot tương ứng */}
+                    <QueryProvider>
+                        {content}
+                    </QueryProvider>
 
-                {/* props.children là bắt buộc trong cấu trúc Next.js nhưng sẽ rỗng ở đây */}
-                {/* {props.children} */}
-                <SpeedInsights />
-                <Analytics />
+                    <SpeedInsights />
+                    <Analytics />
+                </NextIntlClientProvider>
             </body>
         </html>
     );

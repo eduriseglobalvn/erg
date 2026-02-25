@@ -1,8 +1,10 @@
 import { NextConfig } from 'next'
+import createNextIntlPlugin from 'next-intl/plugin'
+
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
 const nextConfig: NextConfig = {
     output: 'standalone',
-
 
     // Cấu hình Headers cho Production
     allowedDevOrigins: ['erg.edu.local', '*.erg.edu.local', 'erg.edu.vn', '*.erg.edu.vn'],
@@ -14,9 +16,7 @@ const nextConfig: NextConfig = {
                 headers: [
                     {
                         key: 'Access-Control-Allow-Origin',
-                        // LƯU Ý: Prod không cho phép liệt kê nhiều domain bằng dấu phẩy.
-                        // Nếu dùng nhiều domain, bạn nên dùng Middleware (xem mục 2).
-                        value: '*', // Allow all origins to resolve CORS issues, or set to specific domain
+                        value: '*',
                     },
                     { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS' },
                     { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
@@ -60,7 +60,7 @@ const nextConfig: NextConfig = {
 
     images: {
         minimumCacheTTL: 60,
-        unoptimized: false, // Enable optimization
+        unoptimized: false,
         formats: ['image/avif', 'image/webp'],
         remotePatterns: [
             {
@@ -69,6 +69,6 @@ const nextConfig: NextConfig = {
             },
         ],
     },
-
 }
-export default nextConfig
+
+export default withNextIntl(nextConfig)

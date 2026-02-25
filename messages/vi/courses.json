@@ -1,0 +1,89 @@
+{
+    "Common": {
+        "backToHome": "Về trang chủ",
+        "teachers": "Đội ngũ giáo viên",
+        "route": "Lộ trình",
+        "courses": "Khóa học",
+        "news": "Tin tức",
+        "contact": "Liên hệ",
+        "register": "Đăng ký học"
+    },
+    "Hero": {
+        "badge": "Chứng chỉ Quốc tế",
+        "cta": "Khám phá ngay"
+    },
+    "CourseList": {
+        "title": "Danh sách khóa học",
+        "subtitle": "Lựa chọn lộ trình phù hợp với bạn",
+        "duration": "Thời lượng",
+        "level": "Cấp độ",
+        "certificate": "Chứng chỉ",
+        "register": "Đăng ký học",
+        "detail": "Xem chi tiết",
+        "noCourses": "Chưa có khóa học nào."
+    },
+    "Route": {
+        "title": "Lộ trình học tập",
+        "subtitle": "Từ cơ bản đến nâng cao",
+        "step": "Bước {n}"
+    },
+    "Teachers": {
+        "title": "Đội ngũ giáo viên",
+        "subtitle": "Chuyên nghiệp, tận tâm, chuẩn quốc tế",
+        "experience": "Năm kinh nghiệm",
+        "certificate": "Chứng chỉ"
+    },
+    "Subdomains": {
+        "thqt": {
+            "name": "Tin học Quốc tế",
+            "desc": "IC3, MOS, IC3 Spark — Chứng chỉ quốc tế được công nhận toàn cầu"
+        },
+        "thqg": {
+            "name": "Tin học Quốc gia",
+            "desc": "CNTT Cơ bản, CNTT Nâng cao — Chuẩn quốc gia Bộ TT&TT"
+        },
+        "thtn": {
+            "name": "Tin học Thiếu nhi",
+            "desc": "Scratch, Python — Lập trình sáng tạo cho trẻ em"
+        },
+        "cds": {
+            "name": "Công dân số",
+            "desc": "Kỹ năng số thiết yếu cho mọi lứa tuổi"
+        },
+        "dtdm": {
+            "name": "Điện toán đám mây",
+            "desc": "Cloud Computing — Công nghệ của tương lai"
+        },
+        "ai": {
+            "name": "Học cùng AI",
+            "desc": "Ứng dụng trí tuệ nhân tạo trong học tập và công việc"
+        }
+    },
+    "tinhocquocte": {
+        "badge": "#1 Đào tạo tin học chuẩn quốc tế",
+        "heroDesc": "Trang bị kiến thức và kỹ năng sử dụng công nghệ theo tiêu chuẩn toàn cầu IC3 & MOS. Mở rộng cánh cửa tương lai cho thế hệ trẻ Việt Nam.",
+        "cta": {
+            "roadmap": "Xem Lộ Trình",
+            "courses": "Khám Phá Khóa Học"
+        },
+        "why": {
+            "standard": {
+                "title": "Chuẩn Quốc Tế",
+                "desc": "Giáo trình và chứng chỉ được công nhận toàn cầu bởi Microsoft & Certiport."
+            },
+            "team": {
+                "title": "Đội Ngũ Tâm Huyết",
+                "desc": "Giáo viên giàu kinh nghiệm, phương pháp giảng dạy hiện đại, tận tâm, sát sao từng học viên."
+            },
+            "quality": {
+                "title": "Cam Kết Chất Lượng",
+                "desc": "Lộ trình học tập rõ ràng, cam kết hỗ trợ học viên đạt kết quả cao nhất trong các kỳ thi."
+            }
+        },
+        "coursesTitle": "Các Chương Trình Đào Tạo",
+        "coursesSubtitle": "Được thiết kế phù hợp cho từng độ tuổi và nhu cầu",
+        "ctaTitle": "Sẵn sàng cho kỷ nguyên số?",
+        "ctaDesc": "Đăng ký tư vấn ngay hôm nay để nhận lộ trình học tập chi tiết phù hợp nhất với năng lực của bạn.",
+        "ctaButton": "Đăng Ký Tư Vấn Ngay"
+    }
+}

@@ -6,6 +6,7 @@ import { ArrowRight, Award, Users, Globe, ShieldCheck } from 'lucide-react';
 import RoadmapSection from '@/components/tinhocquocte/RoadmapSection';
 import { CourseCard } from '@/components/cards/course-card';
 import { COURSES } from '@/constants/courses';
+import { useTranslations } from 'next-intl';
 
 const CertificateCarousel = () => {
     const images = [
@@ -57,6 +58,8 @@ const CertificateCarousel = () => {
 };
 
 export default function InternationalItContent() {
+    const t = useTranslations('courses.tinhocquocte');
+    const tc = useTranslations('common.Buttons');
     const courses = COURSES.tinhocquocte;
 
     return (
@@ -69,7 +72,7 @@ export default function InternationalItContent() {
                 <div className="container mx-auto px-4 relative z-10 flex flex-col md:flex-row items-center gap-12">
                     <div className="md:w-1/2 space-y-6">
                         <span className="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/20 text-sm font-semibold backdrop-blur-sm text-[var(--erg-red)] bg-white">
-                            #1 Đào tạo tin học chuẩn quốc tế
+                            {t('badge')}
                         </span>
                         <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
                             LEARN TODAY, <br />
@@ -136,11 +139,11 @@ export default function InternationalItContent() {
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
                         <div>
-                            <h2 className="text-3xl font-bold text-[var(--erg-blue)]">Các Chương Trình Đào Tạo</h2>
-                            <p className="text-gray-600 mt-2">Được thiết kế phù hợp cho từng độ tuổi và nhu cầu</p>
+                            <h2 className="text-3xl font-bold text-[var(--erg-blue)]">{t('coursesTitle')}</h2>
+                            <p className="text-gray-600 mt-2">{t('coursesSubtitle')}</p>
                         </div>
                         <Link href="/khoa-hoc" className="flex items-center gap-2 text-[var(--erg-red)] font-bold hover:gap-3 transition-all">
-                            Xem tất cả <ArrowRight size={18} />
+                            {tc('viewAll')} <ArrowRight size={18} />
                         </Link>
                     </div>
 
@@ -158,15 +161,15 @@ export default function InternationalItContent() {
             {/* 5. CTA SECTION */}
             <section className="py-20 bg-[var(--erg-blue)] text-white text-center">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6">Sẵn sàng cho kỷ nguyên số?</h2>
-                    <p className="text-blue-100 mb-8 text-lg max-w-2xl mx-auto">Đăng ký tư vấn ngay hôm nay để nhận lộ trình học tập chi tiết phù hợp nhất với năng lực của bạn.</p>
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6">{t('ctaTitle')}</h2>
+                    <p className="text-blue-100 mb-8 text-lg max-w-2xl mx-auto">{t('ctaDesc')}</p>
                     <Link
                         href="/lien-he"
                         className="inline-block px-12 py-4 bg-[var(--erg-red)] text-white font-bold rounded-full text-lg hover:scale-105 transition-transform shadow-lg shadow-red-900/30"
                         data-analytics="click_register_consultation"
                         data-analytics-metadata='{"section": "footer", "subdomain": "tinhocquocte"}'
                     >
-                        Đăng Ký Tư Vấn Ngay
+                        {t('ctaButton')}
                     </Link>
                 </div>
             </section>

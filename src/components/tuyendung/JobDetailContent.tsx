@@ -11,11 +11,13 @@ import {
     CheckCircle2,
     AlertCircle,
     Info,
-    ArrowLeft
+    ArrowLeft,
+    MessageCircle
 } from 'lucide-react';
 import Link from 'next/link';
 import { Job } from '@/types/recruitment';
 import { EmployerInfo } from '@/mocks/types';
+import { useTranslations } from 'next-intl';
 
 // --- COMPONENT CON: INFO ITEM ---
 const InfoItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string | number }) => (
@@ -34,6 +36,7 @@ interface JobDetailContentProps {
 }
 
 const JobDetailContent = ({ job, employer }: JobDetailContentProps) => {
+    const t = useTranslations('recruitment.Detail');
     return (
         <div className="bg-gray-50 min-h-screen font-sans pb-20">
 
@@ -45,7 +48,7 @@ const JobDetailContent = ({ job, employer }: JobDetailContentProps) => {
                 {/* Breadcrumb / Back button */}
                 <div className="mb-6">
                     <Link href="/tuyen-dung" className="text-blue-100 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors w-fit">
-                        <ArrowLeft size={16} /> Quay lại danh sách việc làm
+                        <ArrowLeft size={16} /> {t('back')}
                     </Link>
                 </div>
 
@@ -62,20 +65,30 @@ const JobDetailContent = ({ job, employer }: JobDetailContentProps) => {
                             </span>
                             <span className="flex items-center">
                                 <Clock size={18} className="mr-1.5 text-blue-500" />
-                                {job.workType}
+                                {job.workSchedule || job.workType}
                             </span>
                         </div>
                     </div>
 
-                    <a
-                        href="http://zalo.me/0967689259"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-[#cc0022] hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-red-900/20 transition-all whitespace-nowrap flex items-center transform hover:scale-105 cursor-pointer"
-                    >
-                        <CheckCircle2 className="mr-2 w-5 h-5" />
-                        Nộp hồ sơ ngay
-                    </a>
+                    <div className="flex flex-col gap-2 w-fit ml-auto">
+                        <Link
+                            href={`/tuyen-dung/${job.slug}/ung-tuyen`}
+                            className="bg-[#cc0022] hover:bg-red-700 text-white font-bold py-2 px-6 rounded-xl shadow-lg shadow-red-900/10 transition-all whitespace-nowrap flex items-center justify-center transform hover:scale-105 cursor-pointer text-sm"
+                        >
+                            <CheckCircle2 className="mr-2 w-4 h-4" />
+                            {t('applyNow')}
+                        </Link>
+                        <a
+                            href="http://zalo.me/0967689259"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-white font-bold py-2 px-6 rounded-xl shadow-lg shadow-blue-900/10 transition-all whitespace-nowrap flex items-center justify-center transform hover:scale-105 cursor-pointer text-sm"
+                            style={{ backgroundColor: '#0068ff' }}
+                        >
+                            <MessageCircle className="mr-2 w-4 h-4 text-white" />
+                            <span className="text-white">{t('applyZalo')}</span>
+                        </a>
+                    </div>
                 </div>
 
                 {/* BODY CONTENT */}
@@ -87,30 +100,30 @@ const JobDetailContent = ({ job, employer }: JobDetailContentProps) => {
                         {/* Box 1: Thông tin tóm tắt */}
                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
                             <h3 className="text-lg font-bold text-[#00008b] mb-6 border-l-4 border-[#00008b] pl-3">
-                                Thông tin chung
+                                {t('generalInfo')}
                             </h3>
-
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-y-8 gap-x-4">
-                                <InfoItem icon={<Building2 size={20} />} label="Đơn vị" value={employer.name} />
-                                <InfoItem icon={<Users size={20} />} label="Số lượng tuyển" value={job.quantity} />
-                                <InfoItem icon={<Clock size={20} />} label="Hình thức" value={job.workType} />
-                                <InfoItem icon={<DollarSign size={20} />} label="Mức lương" value={job.salary} />
-                                <InfoItem icon={<MapPin size={20} />} label="Địa điểm" value={job.location} />
-                                <InfoItem icon={<Calendar size={20} />} label="Hạn nộp CV" value={job.deadline} />
+                                <InfoItem icon={<Building2 size={20} />} label={t('unit')} value={employer.name} />
+                                <InfoItem icon={<Users size={20} />} label={t('quantity')} value={job.quantity} />
+                                <InfoItem icon={<Clock size={20} />} label={t('workType')} value={job.workType} />
+                                <InfoItem icon={<DollarSign size={20} />} label={t('salary')} value={job.salary} />
+                                <InfoItem icon={<MapPin size={20} />} label={t('location')} value={job.location} />
+                                <InfoItem icon={<Calendar size={20} />} label={t('deadline')} value={job.deadline} />
+                                {job.postDate && <InfoItem icon={<CheckCircle2 size={20} />} label={t('postDate')} value={job.postDate} />}
                             </div>
                         </div>
 
                         {/* Box 2: Chi tiết công việc */}
                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
                             <h3 className="text-lg font-bold text-[#00008b] mb-8 border-b pb-4 uppercase tracking-wider">
-                                Chi tiết công việc
+                                {t('jobDetail')}
                             </h3>
 
                             <div className="space-y-10">
                                 <div>
                                     <h4 className="font-bold text-gray-800 mb-4 text-lg flex items-center">
                                         <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center mr-3 text-[#00008b]">1</div>
-                                        Mô tả công việc
+                                        {t('description')}
                                     </h4>
                                     <ul className="list-disc list-outside space-y-2 text-gray-600 pl-6 leading-relaxed">
                                         {(job.description || []).map((item, idx) => (
@@ -122,7 +135,7 @@ const JobDetailContent = ({ job, employer }: JobDetailContentProps) => {
                                 <div>
                                     <h4 className="font-bold text-gray-800 mb-4 text-lg flex items-center">
                                         <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center mr-3 text-[#00008b]">2</div>
-                                        Yêu cầu ứng viên
+                                        {t('requirements')}
                                     </h4>
                                     <ul className="list-disc list-outside space-y-2 text-gray-600 pl-6 leading-relaxed">
                                         {job.requirements.map((item, idx) => (
@@ -134,7 +147,7 @@ const JobDetailContent = ({ job, employer }: JobDetailContentProps) => {
                                 <div>
                                     <h4 className="font-bold text-gray-800 mb-4 text-lg flex items-center">
                                         <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center mr-3 text-[#00008b]">3</div>
-                                        Quyền lợi
+                                        {t('benefits')}
                                     </h4>
                                     <ul className="list-disc list-outside space-y-2 text-gray-600 pl-6 leading-relaxed">
                                         {job.benefits.map((item, idx) => (
@@ -153,18 +166,21 @@ const JobDetailContent = ({ job, employer }: JobDetailContentProps) => {
                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-4">
                             <h3 className="text-lg font-bold text-[#00008b] mb-4 flex items-center">
                                 <MapPin className="mr-2 text-[#cc0022]" size={20} />
-                                Địa điểm làm việc
+                                {t('workplace')}
                             </h3>
                             <p className="text-gray-700 text-sm font-medium mb-4 pl-1">
                                 {job.location}
                             </p>
-                            <div className="bg-orange-50 h-40 rounded-lg flex items-center justify-center border border-orange-200 relative overflow-hidden group cursor-pointer">
-                                {/* Hiệu ứng hover giả lập */}
-                                <div className="absolute inset-0 bg-white/30 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                <div className="text-center relative z-10">
-                                    <MapPin size={40} className="mx-auto mb-2 text-orange-500 opacity-80" />
-                                    <span className="text-xs text-orange-700 font-bold uppercase tracking-wide">Xem trên bản đồ</span>
-                                </div>
+                            <div className="h-64 rounded-lg overflow-hidden border border-gray-200">
+                                <iframe
+                                    src={`https://maps.google.com/maps?q=${encodeURIComponent('Số 40-42, Đường Bình Phú, Phường 11, Quận 6, TP. Hồ Chí Minh')}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
+                                    width="100%"
+                                    height="100%"
+                                    style={{ border: 0 }}
+                                    allowFullScreen
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                ></iframe>
                             </div>
                         </div>
 
@@ -172,24 +188,21 @@ const JobDetailContent = ({ job, employer }: JobDetailContentProps) => {
                         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                             <h3 className="text-lg font-bold text-[#00008b] mb-4 flex items-center border-b pb-3">
                                 <Building2 className="mr-2 text-blue-500" size={20} />
-                                Thông tin công ty
+                                {t('companyInfo')}
                             </h3>
-
                             <div className="space-y-4 text-sm text-gray-600">
                                 <div>
-                                    <p className="font-semibold text-gray-900 mb-1">Tên tổ chức:</p>
+                                    <p className="font-semibold text-gray-900 mb-1">{t('orgName')}:</p>
                                     <p>{employer.nameOfOrganization}</p>
                                 </div>
-
                                 <div>
-                                    <p className="font-semibold text-gray-900 mb-1">Trụ sở chính:</p>
+                                    <p className="font-semibold text-gray-900 mb-1">{t('mainAddress')}:</p>
                                     <p>{employer.mainAddress}</p>
                                 </div>
-
                                 <div>
                                     <p className="font-semibold text-gray-900 mb-2 flex items-center">
                                         <Info size={14} className="mr-1 text-blue-500" />
-                                        Lĩnh vực hoạt động:
+                                        {t('fieldOfActivity')}:
                                     </p>
                                     <ul className="list-disc list-outside ml-4 space-y-1 text-xs text-gray-500">
                                         {employer.fieldOfActivity.map((item, idx) => (

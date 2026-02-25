@@ -1,0 +1,57 @@
+{
+    "Hero": {
+        "badge": "Trung tâm đào tạo CNTT quốc tế",
+        "heading": "Kiến Tạo Tương Lai Số",
+        "subheading": "Cùng ERG mang chuẩn Tin học Quốc tế đến hàng triệu học sinh Việt Nam",
+        "ctaPrimary": "Khám phá khóa học",
+        "ctaSecondary": "Liên hệ tư vấn"
+    },
+    "Stats": {
+        "branches": "Chi nhánh",
+        "students": "Học viên",
+        "schools": "Trường đối tác",
+        "teachers": "Giáo viên đạt chuẩn"
+    },
+    "Courses": {
+        "title": "Chương trình đào tạo",
+        "subtitle": "Khám phá các lộ trình học tập chuẩn quốc tế",
+        "viewAll": "Xem tất cả khóa học"
+    },
+    "Jobs": {
+        "title": "Việc làm mới nhất",
+        "subtitle": "Cơ hội nghề nghiệp",
+        "viewAll": "Xem tất cả vị trí",
+        "noJobs": "Không có vị trí tuyển dụng nào."
+    },
+    "News": {
+        "title": "Tin tức & Sự kiện",
+        "subtitle": "Cập nhật mới nhất từ ERG",
+        "viewAll": "Xem tất cả tin tức"
+    },
+    "Why": {
+        "title": "Tại sao chọn ERG?",
+        "subtitle": "Bởi vì chúng tôi đồng hành cùng bạn",
+        "items": {
+            "quality": {
+                "title": "Chất lượng chuẩn quốc tế",
+                "desc": "Được công nhận bởi Certiport, Microsoft và các tổ chức quốc tế uy tín."
+            },
+            "teachers": {
+                "title": "Đội ngũ giáo viên giàu kinh nghiệm",
+                "desc": "100% giáo viên đạt chứng chỉ quốc tế."
+            },
+            "support": {
+                "title": "Hỗ trợ toàn diện",
+                "desc": "Tư vấn và hỗ trợ học viên trong suốt quá trình học."
+            }
+        }
+    },
+    "Partners": {
+        "title": "Đối tác của chúng tôi"
+    },
+    "CTA": {
+        "title": "Bắt đầu hành trình học tập ngay hôm nay",
+        "subtitle": "Đăng ký tư vấn miễn phí để được hỗ trợ chọn lộ trình phù hợp",
+        "button": "Đăng ký tư vấn"
+    }
+}

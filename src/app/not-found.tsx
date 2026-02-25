@@ -1,11 +1,13 @@
 // src/app/not-found.tsx
-"use client"; // Chuyển thành Client Component để dùng useEffect
+"use client";
 
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { seoApi } from '@/services/seo.api';
+import { useTranslations } from 'next-intl';
 
 export default function NotFound() {
+    const t = useTranslations('common.NotFound');
 
     useEffect(() => {
         // Tự động ghi Log 404 khi người dùng vào trang này
@@ -93,14 +95,14 @@ export default function NotFound() {
 
                 {/* --- TEXT --- */}
                 <h1 className="mb-3 text-4xl font-extrabold tracking-tight text-[var(--erg-blue)] sm:text-5xl">
-                    Oops! Trang kiến thức này đang "vắng mặt".
+                    {t('title')}
                 </h1>
                 <h2 className="text-xl font-semibold text-[var(--erg-blue)]/80">
-                    Lỗi 404 - Không tìm thấy tài liệu
+                    Lỗi 404
                 </h2>
 
                 <p className="mb-8 mt-4 text-lg text-slate-600 max-w-lg">
-                    Có vẻ như đường dẫn bạn đang tìm kiếm không tồn tại trong thư viện của ERG. Robot trợ giảng của chúng tôi đã lục tung chồng sách nhưng không thấy kết quả.
+                    {t('description')}
                 </p>
 
                 {/* --- BUTTON --- */}
@@ -112,7 +114,7 @@ export default function NotFound() {
                     <span className="mr-2 transition-transform group-hover:-translate-x-1 text-xl">
                         📚
                     </span>
-                    Quay về Trang chủ ERG
+                    {t('backHome')}
                     <div className="absolute inset-0 -z-10 h-full w-full scale-0 rounded-full bg-white/20 transition-transform duration-300 group-hover:scale-150"></div>
                 </Link>
             </div>

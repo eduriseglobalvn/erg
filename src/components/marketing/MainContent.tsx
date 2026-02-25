@@ -75,6 +75,7 @@ export default function MainContent() {
                             sizes="100vw"
                             className="object-cover"
                             priority={index === 0}
+                            fetchPriority={index === 0 ? "high" : "auto"}
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
                     </div>

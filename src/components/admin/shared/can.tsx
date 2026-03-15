@@ -25,7 +25,9 @@ interface CanProps {
  * </Can>
  */
 export const Can: React.FC<CanProps> = ({ permission, children, fallback = null }) => {
-    const hasPermission = usePermission(permission);
+    const { hasPermission, isLoading } = usePermission(permission);
+
+    if (isLoading) return null; // Or some skeleton
 
     return hasPermission ? <>{children}</> : <>{fallback}</>;
 };

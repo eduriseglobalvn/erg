@@ -7,8 +7,10 @@ import {
     MonitorPlay, GraduationCap, ArrowUpRight
 } from 'lucide-react';
 import { TRAINING_FIELDS } from "@/mocks/main.constants";
+import { useTranslations } from 'next-intl';
 
 export default function TrainingFieldsContent() {
+    const t = useTranslations('about.linhVucDaoTao');
     return (
         <main className="min-h-screen bg-gray-50 font-sans text-slate-800 pt-[70px] lg:pt-[135px]">
 
@@ -20,16 +22,13 @@ export default function TrainingFieldsContent() {
 
                 <div className="container mx-auto px-4 relative z-10 text-center text-white">
                     <span className="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-widest text-yellow-400 mb-6 backdrop-blur-sm">
-                        Chương trình đào tạo chuẩn quốc tế
+                        {t('badge')}
                     </span>
                     <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
-                        Khơi Nguồn Trí Tuệ <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
-                            Dẫn Lối Tương Lai
-                        </span>
+                        {t('heading')}
                     </h1>
                     <p className="text-blue-100 max-w-2xl mx-auto text-lg font-light leading-relaxed">
-                        Hệ thống đào tạo đa dạng từ Tin học văn phòng đến Công nghệ cao, giúp bạn tự tin làm chủ công nghệ và bứt phá trong sự nghiệp.
+                        {t('subheading')}
                     </p>
                 </div>
             </section>
@@ -56,7 +55,7 @@ export default function TrainingFieldsContent() {
             <div className="container mx-auto px-4 py-24">
                 <div className="mb-16 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: '#00008b' }}>
-                        Các Lĩnh Vực Đào Tạo
+                        {t('fields.title')}
                     </h2>
                     <div className="w-20 h-1.5 mx-auto rounded-full mb-6" style={{ backgroundColor: '#cc0022' }}></div>
                     <p className="text-gray-600 max-w-2xl mx-auto">
@@ -109,7 +108,7 @@ export default function TrainingFieldsContent() {
                                     className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider hover:gap-3 transition-all mt-auto group/btn w-fit"
                                     style={{ color: '#cc0022' }}
                                 >
-                                    Xem chi tiết
+                                    {t('fields.more')}
                                     <ArrowRight size={16} className="transform group-hover/btn:translate-x-1 transition-transform" />
                                 </Link>
                             </div>
@@ -151,17 +150,17 @@ export default function TrainingFieldsContent() {
             <section className="py-20 relative overflow-hidden" style={{ backgroundColor: '#00008b' }}>
                 <div className="container mx-auto px-4 text-center relative z-10">
                     <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                        Bạn chưa biết bắt đầu từ đâu?
+                        {t('cta.title')}
                     </h2>
                     <p className="text-blue-100 max-w-2xl mx-auto mb-10 text-lg">
-                        Đừng ngần ngại liên hệ với chúng tôi để được tư vấn lộ trình học tập phù hợp nhất với năng lực và mục tiêu của bạn.
+                        {t('cta.subtitle')}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link href="/lien-he" className="inline-block px-8 py-4 bg-[#cc0022] text-white font-bold rounded-full hover:bg-red-700 transition-all shadow-lg hover:shadow-red-900/30 hover:-translate-y-1">
-                            Đăng Ký Tư Vấn Ngay
+                            {t('cta.register')}
                         </Link>
                         <Link href="/tuyen-dung" className="inline-block px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold rounded-full hover:bg-white hover:text-[#00008b] transition-all">
-                            Xem Lịch Khai Giảng
+                            {t('cta.schedule')}
                         </Link>
                     </div>
                 </div>

@@ -14,10 +14,13 @@ import {
     RefreshCw,
     ShieldCheck,
     BarChart3,
-    Pencil
+    Pencil,
+    Zap,
+    RotateCcw
 } from "lucide-react"
 import { aiApi } from "@/services/ai.api"
-import { AIKeysChart } from "@/components/admin/settings/ai-keys-chart"
+import dynamic from "next/dynamic"
+const AIKeysChart = dynamic(() => import("@/components/admin/settings/ai-keys-chart").then(mod => mod.AIKeysChart), { ssr: false })
 import { Button } from "@/components/admin/ui/button"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/admin/ui/card"
@@ -25,6 +28,15 @@ import { Input } from "@/components/admin/ui/input"
 import { Progress } from "@/components/admin/ui/progress"
 import { Badge } from "@/components/admin/ui/badge"
 import { toast } from "sonner"
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer
+} from 'recharts'
 import {
     Dialog,
     DialogContent,
@@ -34,6 +46,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/admin/ui/dialog"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/admin/ui/select"
 import {
     Form,
     FormControl,
@@ -49,6 +70,7 @@ import * as z from "zod"
 const keySchema = z.object({
     key: z.string().min(10, "API Key quá ngắn, vui lòng kiểm tra lại"),
     label: z.string().min(2, "Nhãn gợi nhớ phải có ít nhất 2 ký tự"),
+    provider: z.string().optional(),
     projectId: z.string().optional(),
     maxDailyQuota: z.number().min(1, "Quota phải lớn hơn 0"),
 })
@@ -59,6 +81,7 @@ interface AIKey {
     id: string;
     key: string;
     label: string | null;
+    provider: string | null;
     projectId: string | null;
     status: 'active' | 'rate_limited' | 'quota_exceeded' | 'error';
     todayUsage: number;
@@ -117,6 +140,7 @@ export default function AIKeysPage() {
         defaultValues: {
             key: "",
             label: "",
+            provider: "gemini",
             projectId: "",
             maxDailyQuota: 1500,
         },
@@ -144,6 +168,7 @@ export default function AIKeysPage() {
         form.reset({
             key: "",
             label: "",
+            provider: "gemini",
             projectId: "",
             maxDailyQuota: 1500
         })
@@ -154,6 +179,7 @@ export default function AIKeysPage() {
         form.reset({
             key: key.key,
             label: key.label || "",
+            provider: key.provider || "gemini",
             projectId: key.projectId || "",
             maxDailyQuota: key.maxDailyQuota
         })
@@ -244,6 +270,35 @@ export default function AIKeysPage() {
                                             <FormLabel>Tên gợi nhớ (Label)</FormLabel>
                                             <FormControl>
                                                 <Input placeholder="VD: Project A - Account 1" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="provider"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>AI Provider</FormLabel>
+                                            <FormControl>
+                                                <Select onValueChange={field.onChange} defaultValue={field.value || 'gemini'}>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Chọn dịch vụ AI" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectGroup>
+                                                            <SelectLabel>Miễn phí (Free Models)</SelectLabel>
+                                                            <SelectItem value="gemini">Google Gemini (15 RPM / 1.5K RPD)</SelectItem>
+                                                            <SelectItem value="groq">Groq Llama 3 (30 RPM / 14.4K RPD)</SelectItem>
+                                                        </SelectGroup>
+                                                        <SelectGroup>
+                                                            <SelectLabel>Trả phí (Paid Models)</SelectLabel>
+                                                            <SelectItem value="openai">OpenAI GPT-4o-mini</SelectItem>
+                                                            <SelectItem value="claude">Anthropic Claude Haiku</SelectItem>
+                                                        </SelectGroup>
+                                                    </SelectContent>
+                                                </Select>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -343,6 +398,53 @@ export default function AIKeysPage() {
                 </Card>
             </div>
 
+            {/* Providers Health Grid (Dynamic from keys) */}
+            <div className="space-y-4 pt-4 border-t">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                        <Activity className="w-4 h-4 text-slate-400" /> Tình trạng Providers
+                    </h2>
+                    <span className="text-xs font-semibold px-2 py-1 bg-indigo-100/50 text-indigo-700 rounded-md">
+                        Tổng capacity: {totalQuota.toLocaleString()} req/ngày
+                    </span>
+                </div>
+
+                <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
+                    <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 text-sm">
+                        {['gemini', 'groq', 'openai', 'claude'].map(provider => {
+                            const providerKeys = keys.filter(k => k.provider === provider);
+                            const providerUsage = providerKeys.reduce((acc, k) => acc + k.todayUsage, 0);
+                            const providerQuota = providerKeys.reduce((acc, k) => acc + k.maxDailyQuota, 0);
+                            const isAvailable = providerKeys.some(k => k.status === 'active');
+                            const label = provider === 'gemini' ? 'Gemini' : provider === 'groq' ? 'Groq' : provider === 'openai' ? 'OpenAI' : 'Claude';
+
+                            return (
+                                <div key={provider} className="p-4 flex flex-col gap-2 relative">
+                                    <div className="flex items-center gap-1.5 font-semibold text-slate-800">
+                                        {providerKeys.length > 0 ? (
+                                            isAvailable ? (
+                                                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                            ) : (
+                                                <AlertCircle className="w-4 h-4 text-amber-500" />
+                                            )
+                                        ) : (
+                                            <div className="w-3 h-3 rounded-full bg-slate-200" />
+                                        )}
+                                        {label}
+                                    </div>
+                                    <div className="text-xs text-slate-500 font-medium">
+                                        {providerKeys.length} keys
+                                    </div>
+                                    <div className="text-[11px] bg-slate-50 text-slate-600 rounded p-1.5 font-mono text-center border">
+                                        {providerUsage.toLocaleString()} / {providerQuota.toLocaleString()}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+
             {/* Tracking Chart */}
             <AIKeysChart keys={keys} />
 
@@ -374,7 +476,13 @@ export default function AIKeysPage() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {keys.map((key: AIKey) => (
-                            <KeyCard key={key.id} keyData={key} onDelete={handleDelete} onEdit={openEdit} />
+                            <KeyCard
+                                key={key.id}
+                                keyData={key}
+                                onDelete={handleDelete}
+                                onEdit={openEdit}
+                                onReactChanged={() => refetch()}
+                            />
                         ))}
                     </div>
                 )}
@@ -393,12 +501,37 @@ export default function AIKeysPage() {
     )
 }
 
-function KeyCard({ keyData, onDelete, onEdit }: { keyData: AIKey, onDelete: (id: string) => void, onEdit: (key: AIKey) => void }) {
+function KeyCard({ keyData, onDelete, onEdit, onReactChanged }: { keyData: AIKey, onDelete: (id: string) => void, onEdit: (key: AIKey) => void, onReactChanged: () => void }) {
     const quotaPercent = (keyData.todayUsage / keyData.maxDailyQuota) * 100
     const isError = keyData.status === 'error' || keyData.status === 'quota_exceeded'
 
+    const queryClient = useQueryClient()
+
+    const testMutation = useMutation({
+        mutationFn: (id: string) => aiApi.testKey(id),
+        onSuccess: () => {
+            toast.success("Kiểm tra Key thành công! Key hoạt động tốt.");
+            onReactChanged();
+        },
+        onError: (err: any) => {
+            toast.error(err.message || "Key gặp lỗi khi kiểm tra.");
+            onReactChanged();
+        }
+    });
+
+    const reactivateMutation = useMutation({
+        mutationFn: (id: string) => aiApi.reactivateKey(id),
+        onSuccess: () => {
+            toast.success("Đã kích hoạt lại Key thành công!");
+            onReactChanged();
+        },
+        onError: (err: any) => {
+            toast.error(err.message || "Không thể kích hoạt lại Key.");
+        }
+    });
+
     return (
-        <Card className="relative group overflow-hidden border-2 hover:border-primary/30 transition-all shadow-sm flex flex-col">
+        <Card className="relative group overflow-hidden border-2 hover:border-primary/30 transition-all shadow-sm flex flex-col pt-1">
             {/* Background Icon */}
             <div className={`absolute -top-2 -right-2 p-3 ${isError ? 'text-destructive opacity-[0.08]' : 'text-primary opacity-[0.05]'}`}>
                 <ShieldCheck className="h-20 w-20 rotate-12" />
@@ -407,20 +540,44 @@ function KeyCard({ keyData, onDelete, onEdit }: { keyData: AIKey, onDelete: (id:
             <CardHeader className="pb-2 relative z-10">
                 <div className="flex justify-between items-start mb-2">
                     <StatusBadge keyData={keyData} />
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1">
+                        {isError && (
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-7 w-7 border-green-200 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                onClick={() => reactivateMutation.mutate(keyData.id)}
+                                title="Kích hoạt lại"
+                                disabled={reactivateMutation.isPending}
+                            >
+                                <RotateCcw className={`h-3.5 w-3.5 ${reactivateMutation.isPending ? 'animate-spin' : ''}`} />
+                            </Button>
+                        )}
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-7 w-7 border-blue-200 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            onClick={() => testMutation.mutate(keyData.id)}
+                            title="Kiểm tra Key"
+                            disabled={testMutation.isPending}
+                        >
+                            <Zap className={`h-3.5 w-3.5 ${testMutation.isPending ? 'animate-pulse' : ''}`} />
+                        </Button>
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/5"
+                            className="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => onEdit(keyData)}
+                            title="Chỉnh sửa"
                         >
                             <Pencil className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/5"
+                            className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/5 opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => onDelete(keyData.id)}
+                            title="Xóa Key"
                         >
                             <Trash2 className="h-3.5 w-3.5" />
                         </Button>
@@ -432,6 +589,9 @@ function KeyCard({ keyData, onDelete, onEdit }: { keyData: AIKey, onDelete: (id:
                         <h4 className="font-bold text-[15px] truncate" title={keyData.label || 'Chưa đặt tên'}>
                             {keyData.label || 'API Key Content'}
                         </h4>
+                        <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-bold bg-primary/10 text-primary">
+                            {keyData.provider === 'groq' ? 'Groq' : keyData.provider === 'openai' ? 'OpenAI' : keyData.provider === 'claude' ? 'Claude' : 'Gemini'}
+                        </span>
                         {keyData.projectId && (
                             <Badge variant="secondary" className="px-1.5 py-0 text-[9px] h-4 bg-zinc-100 text-zinc-600 border-none">
                                 {keyData.projectId}

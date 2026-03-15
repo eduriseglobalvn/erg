@@ -2,8 +2,14 @@
 import { httpClient } from './http-client';
 
 export const aiApi = {
-    // 1. Generate: Chỉ cần gửi topic, Token đã được httpClient tự lo
-    generate: (data: { topic: string; categoryId: string }) => {
+    // 1. Generate: Gửi topic + configs
+    generate: (data: {
+        topic: string;
+        categoryId: string;
+        template?: string;
+        length?: string;
+        provider?: string;
+    }) => {
         return httpClient<{ jobId: string }>('/ai-content/generate', {
             method: 'POST',
             body: JSON.stringify(data),
@@ -37,6 +43,7 @@ export const aiApi = {
                 id: string;
                 key: string;
                 label: string | null;
+                provider: string | null;
                 projectId: string | null;
                 status: 'active' | 'rate_limited' | 'quota_exceeded' | 'error';
                 todayUsage: number;
@@ -67,5 +74,13 @@ export const aiApi = {
         return httpClient<any>(`/ai-content/keys/${id}`, {
             method: 'DELETE',
         });
+    },
+
+    testKey: (id: string) => {
+        return httpClient<any>(`/ai-content/keys/${id}/test`, { method: 'POST' });
+    },
+
+    reactivateKey: (id: string) => {
+        return httpClient<any>(`/ai-content/keys/${id}/reactivate`, { method: 'POST' });
     }
 };

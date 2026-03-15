@@ -2,23 +2,41 @@
 
 import * as React from "react"
 import { useSeoAnalysis } from "@/hooks/use-seo"
+import { useQuery } from "@tanstack/react-query"
+import { seoApi } from "@/services/seo.api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card"
 import { Progress } from "@/components/admin/ui/progress"
 import { Badge } from "@/components/admin/ui/badge"
 import { ScrollArea } from "@/components/admin/ui/scroll-area"
 import {
-    CheckCircle2,
-    AlertCircle,
-    XCircle,
+    CopyCheck,
+    Link as LinkIcon,
+    Loader2,
+    Sparkles,
+    ChevronDown,
+    ChevronUp,
+    History,
     Search,
     FileText,
     Settings,
-    ChevronRight,
     Lightbulb,
-    CopyCheck,
-    Link as LinkIcon,
-    Loader2
+    ChevronRight,
+    CheckCircle2,
+    AlertCircle,
+    XCircle
 } from "lucide-react"
+import {
+    LineChart,
+    Line,
+    ResponsiveContainer,
+    YAxis
+} from 'recharts'
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "@/components/admin/ui/collapsible"
+import { aiApi } from "@/services/ai.api"
 import { cn } from "@/lib/utils"
 
 import { localSeoAnalyzer } from "@/utils/local-seo"
@@ -41,6 +59,13 @@ interface SeoAnalysisPanelProps {
 export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPanelProps) {
     // 1. Fetch API Data (Lấy dữ liệu gốc/lịch sử)
     const { data: serverAnalysis, isLoading, isError } = useSeoAnalysis(postId)
+
+    // 2. Fetch Score History
+    const { data: scoreHistory } = useQuery({
+        queryKey: ['seoTrends', postId],
+        queryFn: () => seoApi.getTrends(postId),
+        enabled: !!postId
+    })
 
     // 2. Tính toán Local Data (Nếu có liveData)
     const analysis = React.useMemo(() => {
@@ -113,12 +138,6 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
         return "text-red-500"
     }
 
-    const getScoreBg = (score: number) => {
-        if (score >= 80) return "bg-green-500"
-        if (score >= 50) return "bg-amber-500"
-        return "bg-red-500"
-    }
-
     // [NEW] Hooks for Actions
     const { mutate: checkDuplicate, isPending: isCheckingDuplicate } = useCheckSeoDuplicate()
     const { mutate: applyAutolinks, isPending: isApplyingLinks } = useApplySeoAutolinks()
@@ -142,6 +161,25 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
                 toast.success("Đã tự động gắn link nội bộ thành công! Vui lòng reload để thấy thay đổi.")
             }
         })
+    }
+
+    const [isAIOptimizing, setIsAIOptimizing] = React.useState(false)
+
+    const handleAIOptimize = async (instruction: string) => {
+        if (!liveData?.content) return;
+        setIsAIOptimizing(true);
+        try {
+            await aiApi.refine({
+                text: instruction === 'content' ? liveData.content :
+                    instruction === 'title' ? liveData.title : liveData.metaDescription,
+                instruction: `Tối ưu SEO cho ${instruction}: Chứa từ khóa chính "${liveData.keyword}", hấp dẫn, chuẩn kỹ thuật.`
+            });
+            toast.info("AI đã tạo gợi ý tối ưu. Hãy kiểm tra nội dung bài viết.");
+        } catch (e) {
+            toast.error("Không thể tối ưu bằng AI.");
+        } finally {
+            setIsAIOptimizing(false);
+        }
     }
 
     return (
@@ -180,6 +218,31 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
                             </Button>
                         </div>
 
+                        {/* [NEW] Score History Sparkline */}
+                        {scoreHistory && scoreHistory.length > 1 && (
+                            <div className="pt-2 border-t mt-2">
+                                <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
+                                    <span className="flex items-center gap-1"><History className="w-3 h-3" /> Lịch sử điểm số</span>
+                                    <span>{scoreHistory.length} lần sửa</span>
+                                </div>
+                                <div className="h-10 w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <LineChart data={scoreHistory}>
+                                            <YAxis domain={[0, 100]} hide />
+                                            <Line
+                                                type="monotone"
+                                                dataKey="score"
+                                                stroke="#4f46e5"
+                                                strokeWidth={2}
+                                                dot={false}
+                                                animationDuration={1000}
+                                            />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                        )}
+
                         <p className="text-[11px] text-muted-foreground italic">
                             {overallScore >= 80
                                 ? "✨ Tuyệt vời! Bài viết của bạn đã tối ưu SEO cực tốt."
@@ -196,16 +259,20 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
                         <AnalysisCategory
                             title="Metadata & Headings"
                             icon={<Search className="w-4 h-4" />}
+                            defaultOpen={true}
+                            action={<Button variant="ghost" size="icon" className="h-6 w-6" title="AI Optimize Title" onClick={() => handleAIOptimize('title')} disabled={isAIOptimizing}><Sparkles className="w-3 h-3 text-indigo-500" /></Button>}
                         >
                             <CheckItem
                                 label="Tiêu đề (Title)"
                                 status={titleAnalysis.length >= 40 && titleAnalysis.length <= 60 ? 'success' : 'warning'}
                                 message={`${titleAnalysis.length} ký tự (Tối ưu: 40-60)`}
+                                suggestions={titleAnalysis.suggestions}
                             />
                             <CheckItem
                                 label="Mô tả (Meta Description)"
                                 status={metaAnalysis.length >= 120 && metaAnalysis.length <= 160 ? 'success' : 'warning'}
                                 message={`${metaAnalysis.length} ký tự (Tối ưu: 120-160)`}
+                                suggestions={metaAnalysis.suggestions}
                             />
                             <CheckItem
                                 label="Cấu trúc Headings"
@@ -220,6 +287,7 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
                         <AnalysisCategory
                             title="Phân tích nội dung"
                             icon={<FileText className="w-4 h-4" />}
+                            action={<Button variant="ghost" size="icon" className="h-6 w-6" title="AI Optimize Content" onClick={() => handleAIOptimize('content')} disabled={isAIOptimizing}><Sparkles className="w-3 h-3 text-indigo-500" /></Button>}
                         >
                             <CheckItem
                                 label="Độ dài bài viết"
@@ -288,33 +356,63 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
     )
 }
 
-function AnalysisCategory({ title, icon, children }: { title: string, icon: React.ReactNode, children: React.ReactNode }) {
+function AnalysisCategory({ title, icon, children, defaultOpen = false, action }: { title: string, icon: React.ReactNode, children: React.ReactNode, defaultOpen?: boolean, action?: React.ReactNode }) {
+    const [isOpen, setIsOpen] = React.useState(defaultOpen)
     return (
-        <div className="space-y-3">
-            <div className="flex items-center gap-2 px-1">
-                <span className="text-muted-foreground">{icon}</span>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80">{title}</h3>
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="space-y-3">
+            <div className="flex items-center justify-between px-1">
+                <CollapsibleTrigger asChild>
+                    <div className="flex items-center gap-2 cursor-pointer group">
+                        <span className="text-muted-foreground group-hover:text-foreground transition-colors">{icon}</span>
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground/80 group-hover:text-foreground transition-colors">{title}</h3>
+                        {isOpen ? <ChevronUp className="w-3 h-3 text-muted-foreground" /> : <ChevronDown className="w-3 h-3 text-muted-foreground" />}
+                    </div>
+                </CollapsibleTrigger>
+                {action}
             </div>
-            <div className="bg-white dark:bg-zinc-900 border rounded-xl overflow-hidden shadow-sm">
-                <div className="divide-y divide-border">
-                    {children}
+            <CollapsibleContent>
+                <div className="bg-white dark:bg-zinc-900 border rounded-xl overflow-hidden shadow-sm">
+                    <div className="divide-y divide-border">
+                        {children}
+                    </div>
                 </div>
-            </div>
-        </div>
+            </CollapsibleContent>
+        </Collapsible>
     )
 }
 
-function CheckItem({ label, status, message }: { label: string, status: 'success' | 'warning' | 'error', message: string }) {
+function CheckItem({ label, status, message, suggestions }: { label: string, status: 'success' | 'warning' | 'error', message: string, suggestions?: string[] }) {
     const Icon = status === 'success' ? CheckCircle2 : status === 'warning' ? AlertCircle : XCircle
     const colorClass = status === 'success' ? 'text-green-500' : status === 'warning' ? 'text-amber-500' : 'text-red-500'
+    const [showSuggestions, setShowSuggestions] = React.useState(false)
 
     return (
-        <div className="p-3 flex items-start gap-3 transition-colors hover:bg-gray-50/50 dark:hover:bg-white/5">
-            <Icon className={cn("w-4 h-4 mt-0.5 shrink-0", colorClass)} />
-            <div className="space-y-0.5">
-                <p className="text-xs font-bold text-foreground">{label}</p>
-                <p className="text-[10px] text-muted-foreground leading-snug">{message}</p>
+        <div className="p-3 flex flex-col transition-colors hover:bg-gray-50/50 dark:hover:bg-white/5">
+            <div className="flex items-start gap-3">
+                <Icon className={cn("w-4 h-4 mt-0.5 shrink-0", colorClass)} />
+                <div className="flex-1 space-y-0.5">
+                    <p className="text-xs font-bold text-foreground">{label}</p>
+                    <p className="text-[10px] text-muted-foreground leading-snug">{message}</p>
+                </div>
+                {suggestions && suggestions.length > 0 && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => setShowSuggestions(!showSuggestions)}
+                    >
+                        <Lightbulb className={cn("w-3.5 h-3.5", showSuggestions ? "text-amber-500" : "text-slate-400")} />
+                    </Button>
+                )}
             </div>
+            {showSuggestions && suggestions && (
+                <div className="mt-2 ml-7 p-2 bg-amber-50/50 rounded border border-amber-100 text-[10px] text-amber-900 border-dashed">
+                    <p className="font-bold mb-1 flex items-center gap-1"><Sparkles className="w-3 h-3" /> Gợi ý tối ưu:</p>
+                    <ul className="list-disc list-inside space-y-1">
+                        {suggestions.map((s, i) => <li key={i}>{s}</li>)}
+                    </ul>
+                </div>
+            )}
         </div>
     )
 }

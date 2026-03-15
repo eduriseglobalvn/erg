@@ -61,11 +61,40 @@ export const userApi = {
 
     // --- ADMIN AREA ---
 
+    // 5.5 Admin tạo User mới
+    // POST /users
+    createUser: (data: any) => {
+        return httpClient<User>('/users', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
+
     // 6. Lấy danh sách users (Admin)
-    // GET /users?page=1&limit=10
-    getAllUsers: (page = 1, limit = 10) => {
-        return httpClient<PaginatedResult<User>>(`/users?page=${page}&limit=${limit}`, {
+    // GET /users?page=1&limit=10&search=keyword
+    getAllUsers: (page = 1, limit = 10, search?: string) => {
+        let url = `/users?page=${page}&limit=${limit}`;
+        if (search) {
+            url += `&search=${encodeURIComponent(search)}`;
+        }
+        return httpClient<PaginatedResult<User>>(url, {
             method: 'GET',
+        });
+    },
+
+    // 7. Bulk Update Status (B-M11)
+    bulkUpdateStatus: (userIds: string[], status: 'ACTIVE' | 'BANNED' | 'BLOCKED') => {
+        return httpClient('/users/bulk-status', {
+            method: 'POST',
+            body: JSON.stringify({ userIds, status }),
+        });
+    },
+
+    // 8. Bulk Delete (B-M11)
+    bulkDelete: (userIds: string[]) => {
+        return httpClient('/users/bulk-delete', {
+            method: 'POST',
+            body: JSON.stringify({ userIds }),
         });
     }
 };

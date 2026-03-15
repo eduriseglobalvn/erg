@@ -23,9 +23,12 @@ export const handleLogoutWithCache = () => {
             globalQueryClient.removeQueries();
         }
 
-        // 2. Xóa localStorage
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        // 2. Gọi API logout qua proxy để XEM NHƯ proxy sẽ xóa HttpOnly cookie
+        fetch('/api/auth/logout', { method: 'POST' }).catch(() => { });
+
+        // 3. Cả accessToken và refreshToken (cùng với isLoggedIn flag) sẽ bị proxy xóa thông qua cookie expiration 
+
+        // 4. Xóa các localStorage info khác
         localStorage.removeItem('userId');
         localStorage.removeItem('user');
         localStorage.removeItem('permissions');

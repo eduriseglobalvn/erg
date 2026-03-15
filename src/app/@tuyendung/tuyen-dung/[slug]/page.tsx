@@ -15,8 +15,13 @@ interface Props {
     params: Promise<{ slug: string }>;
 }
 
+import { generateFullMetadata } from '@/utils/seo/seo-metadata';
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params;
+    const headerList = await headers();
+    const host = headerList.get('host') || 'tuyendung.erg.edu.vn';
+
     let job;
     try {
         const res = await recruitmentApi.getJobBySlug(slug);
@@ -31,15 +36,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         };
     }
 
-    return {
+    return generateFullMetadata({
         title: job.title,
         description: job.summary,
-        openGraph: {
-            title: `${job.title} | Tuyển dụng ERG`,
-            description: job.summary,
-            type: 'article',
-        },
-    };
+        path: `/tuyen-dung/${slug}`,
+        host,
+        type: 'website',
+    });
 }
 
 export default async function Page({ params }: Props) {
@@ -70,7 +73,7 @@ export default async function Page({ params }: Props) {
                 data={{
                     title: job.title,
                     description: (job.description || []).join(' '),
-                    datePosted: job.createdAt ? new Date(job.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                    datePosted: job.postDate ? job.postDate.split('/').reverse().join('-') : (job.createdAt ? new Date(job.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
                     validThrough: job.deadline ? (job.deadline.includes('/') ? job.deadline.split('/').reverse().join('-') : job.deadline) : '',
                     employmentType: 'FULL_TIME',
                     hiringOrganization: {
@@ -83,11 +86,13 @@ export default async function Page({ params }: Props) {
                             addressCountry: 'VN'
                         }
                     },
-                    baseSalary: {
-                        currency: 'VND',
-                        value: 0, // Thỏa thuận
-                        repeatFrequency: 'MONTH'
-                    }
+                    ...(job.baseSalary && job.baseSalary > 0 && {
+                        baseSalary: {
+                            currency: 'VND',
+                            value: job.baseSalary,
+                            repeatFrequency: 'MONTH'
+                        }
+                    })
                 }}
                 domain={host}
             />

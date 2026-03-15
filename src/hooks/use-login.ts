@@ -23,44 +23,19 @@ export function useLoginMutation() {
         onSuccess: async (res: any, variables) => {
             const data = res.data || res;
 
-            if (data && data.accessToken) {
-                // Lưu tokens vào localStorage
-                localStorage.setItem('accessToken', data.accessToken);
-                localStorage.setItem('refreshToken', data.refreshToken);
+            if (data) {
+                // Access token và Refresh token đã được Next.js proxy set qua HttpOnly cookies.
+                // Đồng thời proxy cũng set flag "isLoggedIn=true" (non-HttpOnly) để client check.
 
-                if (data.user) {
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    if (data.user.id) localStorage.setItem('userId', data.user.id);
-                }
-
-                // Ghi nhớ email nếu user chọn
-                if (variables.rememberMe) {
-                    localStorage.setItem('rememberedEmail', variables.email);
-                } else {
-                    localStorage.removeItem('rememberedEmail');
-                }
-
-                // Fetch session data để lấy permissions
+                // Dữ liệu User, Roles và Permissions sẽ được load tự động qua useAuth
                 try {
-                    const sessionRes: any = await httpClient('/sessions/current', {
+                    // Fetch auth status immediately để pre-warm cache
+                    await httpClient('/sessions/current', {
                         method: 'GET',
                         requireAuth: true,
                     });
-                    const sessionData = sessionRes.data || sessionRes;
 
-                    if (sessionData.user) {
-                        localStorage.setItem('user', JSON.stringify(sessionData.user));
-
-                        if (sessionData.accessControl) {
-                            const permissions = sessionData.accessControl.permissions || [];
-                            const roles = sessionData.accessControl.roles || [];
-
-                            localStorage.setItem('permissions', JSON.stringify(permissions));
-                            localStorage.setItem('roles', JSON.stringify(roles));
-                        }
-                    }
-
-                    // Invalidate auth queries để re-fetch
+                    // Invalidate auth queries để re-fetch và load data
                     queryClient.invalidateQueries({ queryKey: ['auth'] });
 
                     toast.success('Đăng nhập thành công!');

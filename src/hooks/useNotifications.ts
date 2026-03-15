@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { notificationApi } from '@/services/notification.api';
 import { Notification } from '@/types/notification';
+import { usePolling } from '@/hooks/use-polling';
 
 export function useNotifications(autoRefresh = true, interval = 30000) {
     const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -52,6 +53,14 @@ export function useNotifications(autoRefresh = true, interval = 30000) {
         }
     }, [fetchNotifications, fetchUnreadCount]);
 
+    const refreshData = useCallback(() => {
+        fetchNotifications();
+        fetchUnreadCount();
+    }, [fetchNotifications, fetchUnreadCount]);
+
+    // Use custom polling hook
+    usePolling(refreshData, autoRefresh ? interval : null);
+
     useEffect(() => {
         const init = async () => {
             setLoading(true);
@@ -60,16 +69,7 @@ export function useNotifications(autoRefresh = true, interval = 30000) {
         };
 
         init();
-
-        if (autoRefresh) {
-            const intervalId = setInterval(() => {
-                fetchNotifications();
-                fetchUnreadCount();
-            }, interval);
-
-            return () => clearInterval(intervalId);
-        }
-    }, [autoRefresh, interval, fetchNotifications, fetchUnreadCount]);
+    }, [fetchNotifications, fetchUnreadCount]);
 
     return {
         notifications,

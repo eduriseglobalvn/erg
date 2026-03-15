@@ -185,3 +185,17 @@ export interface SeoAnalysisDraftResult {
     readabilityScore: number;
     suggestions: string[];
 }
+
+/**
+ * SEO Dashboard Data
+ */
+export interface SeoDashboardData {
+    health: SeoHealth;
+    performance: SeoPerformance;
+    trends: SeoTrendData[];
+    topIssues: Array<{
+        issue: string;
+        count: number;
+        severity: 'high' | 'medium' | 'low';
+    }>;
+}

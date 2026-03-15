@@ -35,24 +35,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     redirectTo = "/403",
 }) => {
     const router = useRouter();
-    const hasPermission = usePermission(permission);
-    const [isChecking, setIsChecking] = useState(true);
+    const { hasPermission, isLoading } = usePermission(permission);
 
     useEffect(() => {
-        // Đợi một chút để hook usePermission load xong
-        const timer = setTimeout(() => {
-            setIsChecking(false);
-
-            if (!hasPermission) {
-                router.push(redirectTo);
-            }
-        }, 100);
-
-        return () => clearTimeout(timer);
-    }, [hasPermission, router, redirectTo]);
+        if (!isLoading && !hasPermission) {
+            router.push(redirectTo);
+        }
+    }, [hasPermission, isLoading, router, redirectTo]);
 
     // Đang kiểm tra permission
-    if (isChecking) {
+    if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>

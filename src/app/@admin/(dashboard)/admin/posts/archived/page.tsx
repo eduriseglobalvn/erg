@@ -13,7 +13,7 @@ export default function ArchivedPostsPage() {
             </div>
 
             <div className="w-full">
-                <PostsTable status="achired" />
+                <PostsTable status="archived" />
             </div>
         </div>
     )

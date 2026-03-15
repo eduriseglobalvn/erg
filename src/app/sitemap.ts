@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         // Xử lý cả port (localhost:3000) và protocol (https)
         const protocol = (host.includes('localhost') || host.includes('.local')) ? 'http' : 'https';
         const domain = `${protocol}://${host}`;
+        let dynamicUrls: any[] = [];
 
         if (process.env.NODE_ENV === 'development') {
             console.log(`[${new Date().toISOString()}] [Sitemap] Fetching for domain: ${domain}`);
@@ -26,7 +27,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         if (!response.ok) {
             console.error('Failed to fetch sitemap data:', response.status);
-            return [];
+            // Fallthrough logic inside to output sitemapEntries
+        } else {
+            const json = await response.json();
+            const urls = json.data?.urls || [];
+            dynamicUrls = urls;
         }
 
         const json = await response.json();
@@ -112,13 +117,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         const sitemapEntries: MetadataRoute.Sitemap = [];
 
+        const deployDate = new Date(process.env.BUILD_DATE || new Date().toISOString());
+
         // 3. Xử lý logic Root Domain (Gộp tất cả entry points của subdomains)
         if (isRoot) {
             // Thêm các trang tĩnh của @main
             PAGES_CONFIG.main.forEach(route => {
                 sitemapEntries.push({
                     url: `${domain}${route.path}`,
-                    lastModified: new Date(),
+                    lastModified: deployDate, // [FIX E3.1]
                     changeFrequency: route.changefreq as any,
                     priority: route.priority
                 });
@@ -126,10 +133,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
             // Thêm entry points cho các subdomains khác
             Object.keys(PAGES_CONFIG).filter(k => k !== 'main').forEach(subKey => {
-                const subHost = isLocal ? `${subKey}.${rootDomain}:3000` : `${subKey}.${rootDomain}`;
+                const port = process.env.PORT || 3003;
+                const subHost = isLocal ? `${subKey}.localhost:${port}` : `${subKey}.${rootDomain}`;
                 sitemapEntries.push({
                     url: `${protocol}://${subHost}`,
-                    lastModified: new Date(),
+                    lastModified: deployDate, // [FIX E3.1]
                     changeFrequency: 'daily',
                     priority: 0.9
                 });
@@ -140,20 +148,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             subRoutes.forEach(route => {
                 sitemapEntries.push({
                     url: `${domain}${route.path}`,
-                    lastModified: new Date(),
+                    lastModified: deployDate, // [FIX E3.1]
                     changeFrequency: route.changefreq as any,
                     priority: route.priority
                 });
             });
         }
 
-        // Nếu BE không trả về URLs (như local đang bị), trả về sitemapEntries đã quét được
-        if (!urls || urls.length === 0) {
+        // Nếu BE không trả về URLs (mạng lỗi v.v.), trả về sitemapEntries tĩnh
+        if (!dynamicUrls || dynamicUrls.length === 0) {
             return sitemapEntries;
         }
 
         // 5. Kết hợp với dữ liệu động từ Backend
-        const dynamicEntries = urls.map((item: any) => {
+        const dynamicEntries = dynamicUrls.map((item: any) => {
             const loc = item.loc.startsWith('http') ? item.loc : `${domain}${item.loc.startsWith('/') ? item.loc : `/${item.loc}`}`;
             const urlObj = item.loc.startsWith('http') ? new URL(item.loc) : null;
             const path = urlObj ? urlObj.pathname : (item.loc.startsWith('/') ? item.loc : `/${item.loc}`);
@@ -197,6 +205,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     } catch (error) {
         console.error('Sitemap generation error:', error);
-        return [];
+        // [FIX E3.2] Fallback to minimum root static entries instead of returning empty array
+        const fallbackHost = 'erg.edu.vn';
+        const fallbackProtocol = 'https';
+        return [
+            {
+                url: `${fallbackProtocol}://${fallbackHost}`,
+                lastModified: new Date(process.env.BUILD_DATE || new Date().toISOString()),
+                changeFrequency: 'daily',
+                priority: 1
+            },
+            {
+                url: `${fallbackProtocol}://${fallbackHost}/tin-tuc`,
+                lastModified: new Date(process.env.BUILD_DATE || new Date().toISOString()),
+                changeFrequency: 'hourly',
+                priority: 0.8
+            }
+        ];
     }
 }

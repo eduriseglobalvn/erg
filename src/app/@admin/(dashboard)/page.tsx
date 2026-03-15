@@ -1,12 +1,19 @@
+"use client"
+
+import dynamic from "next/dynamic"
 import { StatsCards } from "@/components/admin/dashboard/stats-cards"
 import { SeoHealthCard } from "@/components/admin/dashboard/seo-health-card"
-import { VisitorsChart } from "@/components/admin/dashboard/visitors-chart"
-import { AnalyticsBarChart } from "@/components/admin/dashboard/analytics-bar-chart"
-import { AnalyticsPieChart } from "@/components/admin/dashboard/analytics-pie-chart"
-import { AnalyticsRadialChart } from "@/components/admin/dashboard/analytics-radial-chart"
 import { SeoStatsCards } from "@/components/admin/dashboard/seo-stats-cards"
-import { SeoTopQueriesChart } from "@/components/admin/dashboard/seo-top-queries-chart"
 import { SeoTopPerformingPosts } from "@/components/admin/dashboard/seo-top-performing-posts"
+
+import { Skeleton } from "@/components/admin/ui/skeleton"
+
+// Lazy load Recharts-heavy components (B-L3 optimization) with SSR disabled and Skeletons for CLS
+const VisitorsChart = dynamic(() => import("@/components/admin/dashboard/visitors-chart").then(mod => mod.VisitorsChart), { ssr: false, loading: () => <Skeleton className="h-[400px] w-full rounded-xl" /> })
+const AnalyticsBarChart = dynamic(() => import("@/components/admin/dashboard/analytics-bar-chart").then(mod => mod.AnalyticsBarChart), { ssr: false, loading: () => <Skeleton className="h-[350px] w-full rounded-xl" /> })
+const AnalyticsPieChart = dynamic(() => import("@/components/admin/dashboard/analytics-pie-chart").then(mod => mod.AnalyticsPieChart), { ssr: false, loading: () => <Skeleton className="h-[350px] w-full rounded-xl" /> })
+const AnalyticsRadialChart = dynamic(() => import("@/components/admin/dashboard/analytics-radial-chart").then(mod => mod.AnalyticsRadialChart), { ssr: false, loading: () => <Skeleton className="h-[350px] w-full rounded-xl" /> })
+const SeoTopQueriesChart = dynamic(() => import("@/components/admin/dashboard/seo-top-queries-chart").then(mod => mod.SeoTopQueriesChart), { ssr: false, loading: () => <Skeleton className="h-[350px] w-full rounded-xl" /> })
 
 export default function AdminPage() {
     return (

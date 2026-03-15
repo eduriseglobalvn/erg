@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Calendar, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface NewsCardProps {
@@ -17,10 +18,12 @@ export const NewsCard = ({ title, excerpt, date, thumbnail, slug, categoryName }
     return (
         <article className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group border border-gray-100 flex flex-col h-full">
             <Link href={`/tin-tuc/${slug}`} className="relative h-56 overflow-hidden block">
-                <img
+                <Image
                     src={thumbnail}
                     alt={title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
             </Link>
 

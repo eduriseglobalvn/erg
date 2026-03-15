@@ -3,8 +3,6 @@ import { recruitmentApi } from '@/services/recruitment.api';
 import { JobDetailClient } from './client'; // Client component for interactivity
 import { Briefcase, MapPin, Clock, DollarSign, Calendar } from 'lucide-react';
 
-export const revalidate = 60;
-
 export default async function JobDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     let job;

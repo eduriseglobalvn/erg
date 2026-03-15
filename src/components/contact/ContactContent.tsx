@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { MapPin, Send } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const ERG_BLUE = '#00008b';
 const ERG_RED = '#cc0022';
@@ -16,6 +17,7 @@ const INTEREST_TOPICS = [
 ];
 
 export default function ContactContent() {
+    const t = useTranslations('contact.Page');
     return (
         <div className="font-sans text-slate-800 bg-white min-h-screen flex flex-col lg:flex-row pt-[70px] lg:pt-[135px]">
 
@@ -25,7 +27,7 @@ export default function ContactContent() {
 
                     {/* Header */}
                     <h1 className="text-4xl lg:text-5xl font-bold mb-4 tracking-tight" style={{ color: ERG_BLUE }}>
-                        Liên hệ tư vấn
+                        {t('title')}
                     </h1>
                     <div
                         className="w-34 h-1.5 rounded-full mb-4"
@@ -33,7 +35,7 @@ export default function ContactContent() {
                     >
                     </div>
                     <p className="text-gray-500 text-lg mb-10 leading-relaxed">
-                        Để lại thông tin bên dưới, chuyên viên tư vấn của ERG sẽ liên hệ hỗ trợ bạn lộ trình học tập phù hợp nhất trong vòng 24h.
+                        {t('subtitle')}
                     </p>
 
                     {/* Form */}
@@ -46,7 +48,7 @@ export default function ContactContent() {
                         {/* Row: Họ & Tên */}
                         <div className="grid grid-cols-2 gap-5">
                             <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-gray-700">Họ</label>
+                                <label className="text-sm font-semibold text-gray-700">{t('name')}</label>
                                 <input
                                     type="text"
                                     placeholder="Nguyễn"
@@ -54,7 +56,7 @@ export default function ContactContent() {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-gray-700">Tên</label>
+                                <label className="text-sm font-semibold text-gray-700">{t('name')}</label>
                                 <input
                                     type="text"
                                     placeholder="Văn A"
@@ -75,7 +77,7 @@ export default function ContactContent() {
 
                         {/* Số điện thoại */}
                         <div className="space-y-1.5">
-                            <label className="text-sm font-semibold text-gray-700">Số điện thoại</label>
+                            <label className="text-sm font-semibold text-gray-700">{t('phone')}</label>
                             <input
                                 type="tel"
                                 placeholder="0912 345 678"
@@ -85,7 +87,7 @@ export default function ContactContent() {
 
                         {/* Checkbox Section */}
                         <div className="space-y-3 pt-2">
-                            <label className="text-sm font-bold text-gray-900">Chủ đề quan tâm</label>
+                            <label className="text-sm font-bold text-gray-900">{t('subject')}</label>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {INTEREST_TOPICS.map((item, idx) => (
                                     <label key={idx} className="flex items-start gap-3 cursor-pointer group p-2 rounded-md hover:bg-gray-50 transition-colors -ml-2">
@@ -108,10 +110,10 @@ export default function ContactContent() {
 
                         {/* Message */}
                         <div className="space-y-1.5">
-                            <label className="text-sm font-semibold text-gray-700">Lời nhắn</label>
+                            <label className="text-sm font-semibold text-gray-700">{t('message')}</label>
                             <textarea
                                 rows={3}
-                                placeholder="Để lại lời nhắn cho chúng tôi..."
+                                placeholder={t('message')}
                                 className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#00008b] focus:ring-4 focus:ring-[#00008b]/10 outline-none transition-all resize-none placeholder:text-gray-400"
                             ></textarea>
                         </div>
@@ -123,7 +125,7 @@ export default function ContactContent() {
                             style={{ backgroundColor: ERG_BLUE }}
                         >
                             <Send size={18} />
-                            Gửi tin nhắn
+                            {t('send')}
                         </button>
                     </form>
                 </div>

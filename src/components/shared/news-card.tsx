@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Calendar, ChevronRight, Flame, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export interface NewsCardProps {
     title: string;
@@ -35,6 +36,9 @@ export const NewsCard = ({
     // Nếu không có href truyền vào, mặc định là link nội bộ trang tin tức
     const targetHref = href || `/tin-tuc/${slug}`;
     const DEFAULT_IMAGE = 'https://media.erg.edu.vn/posts/default-thumbnail.webp';
+    const BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8f+F9PQAI8AKp26Y69QAAAABJRU5ErkJggg==";
+    const [hasError, setHasError] = useState(false);
+    const currentSrc = hasError ? DEFAULT_IMAGE : (thumbnail || DEFAULT_IMAGE);
 
     const CardLink = ({ children, className }: { children: React.ReactNode, className?: string }) => {
         const metadata = JSON.stringify({ title, slug: slug || href });
@@ -68,12 +72,15 @@ export const NewsCard = ({
     return (
         <article className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group border border-gray-100 flex flex-col h-full">
             <CardLink className="relative h-56 overflow-hidden block">
-                <img
-                    src={thumbnail || DEFAULT_IMAGE}
+                <Image
+                    src={currentSrc}
                     alt={title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                    onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_IMAGE; }}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    placeholder="blur"
+                    blurDataURL={BLUR_DATA_URL}
+                    onError={() => { setHasError(true); }}
                 />
                 {isNew && (
                     <div className="absolute top-3 left-3 flex items-center gap-1 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded shadow-md z-10">

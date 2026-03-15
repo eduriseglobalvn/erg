@@ -4,6 +4,8 @@ export enum NotificationType {
     CRAWL_COMPLETED = 'CRAWL_COMPLETED',
     CRAWL_FAILED = 'CRAWL_FAILED',
     CRAWL_BATCH_COMPLETED = 'CRAWL_BATCH_COMPLETED',
+    SYSTEM_ALERT = 'SYSTEM_ALERT',
+    USER_ACTION = 'USER_ACTION',
 }
 
 export enum NotificationStatus {
@@ -11,13 +13,23 @@ export enum NotificationStatus {
     READ = 'READ',
 }
 
+export enum NotificationPriority {
+    LOW = 'LOW',
+    MEDIUM = 'MEDIUM',
+    HIGH = 'HIGH',
+    URGENT = 'URGENT',
+}
+
 export interface Notification {
     id: string;
     userId: string;
     type: NotificationType;
     status: NotificationStatus;
+    priority?: NotificationPriority;
     title: string;
     message: string;
+    actionUrl?: string;
+    actionText?: string;
     metadata?: {
         postId?: string;
         jobId?: string;

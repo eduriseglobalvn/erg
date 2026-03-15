@@ -2,6 +2,8 @@ import React from 'react';
 import { Metadata } from 'next';
 import NewsList from '@/components/features/news/news-list';
 
+export const revalidate = 300;
+
 export const metadata: Metadata = {
     title: "Tin tức & Sự kiện | Tin học Quốc gia - Thông tư 03",
     description: "Cập nhật thông tin về kỳ thi Tin học Quốc gia, chứng chỉ ứng dụng CNTT cơ bản và nâng cao chuẩn Bộ GD&ĐT.",

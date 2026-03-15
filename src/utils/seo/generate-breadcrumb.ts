@@ -16,28 +16,46 @@ const SEGMENT_LABELS: Record<string, string> = {
 };
 
 /**
- * Tự động tạo Breadcrumb items từ URL path và page title
+ * Tự động tạo Breadcrumb items từ URL path và page title (Tối ưu SEO - Limit 60 ký tự cho Post Title)
  */
-export function generateBreadcrumbItems(pathname: string, pageTitle?: string, subdomainLabel: string = 'Trang chủ') {
+export function generateBreadcrumbItems(
+    pathname: string,
+    pageTitle?: string,
+    subdomainLabel: string = 'Trang chủ',
+    categoryName?: string
+) {
     const segments = pathname.split('/').filter(Boolean);
     const items: BreadcrumbItem[] = [{ label: subdomainLabel, href: '/' }];
 
     let currentPath = '';
+
+    // Xử lý các segment trung gian
     segments.forEach((seg, i) => {
         currentPath += `/${seg}`;
         const isLast = i === segments.length - 1;
 
-        // Nếu là segment cuối và có pageTitle, dùng pageTitle
-        // Nếu không, tra cứu trong SEGMENT_LABELS hoặc dùng chính segment đó
-        let label = SEGMENT_LABELS[seg] || seg.replace(/-/g, ' ');
-        if (isLast && pageTitle) {
-            label = pageTitle;
+        // Nếu là chuyên mục được truyền vào (đi kèm với bài viết/khóa học)
+        if (i === segments.length - 2 && categoryName) {
+            items.push({
+                label: categoryName,
+                href: currentPath
+            });
+            return;
         }
 
-        items.push({
-            label: label.charAt(0).toUpperCase() + label.slice(1),
-            href: isLast ? undefined : currentPath
-        });
+        // Nếu là segment cuối và có pageTitle, dùng pageTitle (cắt ngắn 60 ký tự theo chuẩn Google SERP)
+        let label = SEGMENT_LABELS[seg] || seg.replace(/-/g, ' ');
+        if (isLast && pageTitle) {
+            label = pageTitle.length > 60 ? pageTitle.substring(0, 57) + '...' : pageTitle;
+        }
+
+        // Chỉ thêm vào nếu không bị trùng với categoryName đã thêm trước đó
+        if (!categoryName || i !== segments.length - 2) {
+            items.push({
+                label: label.charAt(0).toUpperCase() + label.slice(1),
+                href: isLast ? undefined : currentPath
+            });
+        }
     });
 
     return items;

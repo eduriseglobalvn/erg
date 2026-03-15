@@ -145,5 +145,31 @@ export const SEO_DATA = {
         description: "Hệ thống quản trị nội dung website Trung Tâm Ngoại Ngữ Tin Học ERG.",
         keywords: ["quản trị hệ thống", "admin dashboard"],
         ogImage: 'https://media.erg.edu.vn/logo/og-image.jpg'
+    },
+    elearning: {
+        title: `Hệ thống ôn luyện trực tuyến MOS & IC3 | ${BRAND_SUFFIX}`,
+        navName: "E-learning",
+        description: "Nền tảng học và thi thử trực tuyến chuẩn quốc tế MOS, IC3 GS6 và IC3 Spark dành cho học sinh. Hệ thống bài tập đa dạng, bám sát đề thi thực tế.",
+        keywords: [
+            "ôn thi IC3 GS6 online", "luyện thi IC3 Spark", "kiểm tra tin học trực tuyến",
+            "ôn tập MOS online", "hệ thống e-learning erg", "học tin học trực tuyến",
+            "bài tập tin học 6", "ôn thi tin học tiểu học", "phần mềm luyện thi ic3 gs6",
+            "thi thử mos excel", "đề thi ic3 spark có đáp án", "luyện thi tin học erg"
+        ],
+        ogImage: 'https://media.erg.edu.vn/logo/og-image.jpg'
+    },
+    elerning: {
+        title: `Hệ thống ôn luyện trực tuyến MOS & IC3 | ${BRAND_SUFFIX}`,
+        navName: "E-learning",
+        description: "Nền tảng học và thi thử trực tuyến chuẩn quốc tế MOS, IC3 GS6 và IC3 Spark dành cho học sinh. Hệ thống bài tập đa dạng, bám sát đề thi thực tế.",
+        keywords: [
+            "elearning erg", "avstinhoc", "avstinhoc", "avstinhoc",
+            "elearning", "elearning erg", "erg tin hoc", "ergtinhoc",
+            "ôn thi IC3 GS6 online", "luyện thi IC3 Spark", "kiểm tra tin học trực tuyến",
+            "ôn tập MOS online", "hệ thống e-learning erg", "học tin học trực tuyến",
+            "bài tập tin học 6", "ôn thi tin học tiểu học", "phần mềm luyện thi ic3 gs6",
+            "thi thử mos excel", "đề thi ic3 spark có đáp án", "luyện thi tin học erg"
+        ],
+        ogImage: 'https://media.erg.edu.vn/logo/og-image.jpg'
     }
-};
+}

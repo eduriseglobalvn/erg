@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
     ArrowRight,
     Bot,
@@ -42,10 +43,12 @@ const AiCarousel = () => {
             </div>
 
             <div className="absolute inset-0 w-full h-full bg-white transition-opacity duration-500">
-                <img
+                <Image
                     src={images[current].src}
                     alt={images[current].label}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover"
                     onError={(e) => {
                         (e.target as HTMLImageElement).style.opacity = '0';
                     }}

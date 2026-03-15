@@ -1,0 +1,134 @@
+{
+    "Page": {
+        "title": "Cơ hội nghề nghiệp tại ERG",
+        "badge": "Tuyển dụng Giáo dục & CNTT",
+        "heading": "Kiến Tạo Tương Lai Số",
+        "subheading": "Gia nhập ERG để cùng mang chuẩn Tin học Quốc tế đến hàng triệu học sinh Việt Nam.",
+        "searchPlaceholder": "Nhập vị trí (VD: Giáo viên tin học, IT...)",
+        "search": "Tìm kiếm",
+        "noJobs": "Không tìm thấy công việc nào."
+    },
+    "Stats": {
+        "branches": "Chi nhánh",
+        "students": "Học viên",
+        "schools": "Đối tác trường học",
+        "teachers": "Giáo viên đạt chuẩn"
+    },
+    "Card": {
+        "workSchedule": "Thời gian làm việc",
+        "workType": "Loại hình",
+        "quantity": "Số lượng",
+        "deadline": "Hạn nộp",
+        "location": "Địa điểm",
+        "salary": "Mức lương",
+        "apply": "Ứng Tuyển",
+        "hot": "Hot",
+        "urgent": "Tuyển gấp",
+        "new": "Mới"
+    },
+    "Detail": {
+        "back": "Quay lại danh sách việc làm",
+        "applyNow": "Nộp hồ sơ ngay",
+        "applyZalo": "Ứng tuyển qua Zalo",
+        "generalInfo": "Thông tin chung",
+        "unit": "Đơn vị",
+        "quantity": "Số lượng tuyển",
+        "workType": "Hình thức",
+        "salary": "Mức lương",
+        "location": "Địa điểm",
+        "deadline": "Hạn nộp CV",
+        "postDate": "Ngày đăng",
+        "jobDetail": "Chi tiết công việc",
+        "description": "Mô tả công việc",
+        "requirements": "Yêu cầu ứng viên",
+        "benefits": "Quyền lợi",
+        "workplace": "Địa điểm làm việc",
+        "companyInfo": "Thông tin công ty",
+        "orgName": "Tên tổ chức",
+        "mainAddress": "Trụ sở chính",
+        "fieldOfActivity": "Lĩnh vực hoạt động"
+    },
+    "Filter": {
+        "title": "Bộ lọc tìm kiếm",
+        "salary": "Mức lương",
+        "type": "Loại hình",
+        "location": "Địa điểm",
+        "sort": "Sắp xếp",
+        "reset": "Đặt lại",
+        "apply": "Áp dụng",
+        "newest": "Mới nhất",
+        "oldest": "Cũ nhất",
+        "relevance": "Liên quan nhất"
+    },
+    "Track": {
+        "title": "Tra cứu kết quả ứng tuyển",
+        "placeholder": "Nhập mã theo dõi của bạn",
+        "submit": "Tra cứu",
+        "status": "Trạng thái",
+        "appliedPosition": "Vị trí ứng tuyển",
+        "submittedAt": "Thời gian nộp",
+        "notFound": "Không tìm thấy hồ sơ với mã này."
+    },
+    "Process": {
+        "title": "Lộ trình gia nhập Edurise Global",
+        "subtitle": "Hành trình gia nhập",
+        "steps": {
+            "apply": {
+                "title": "Ứng tuyển",
+                "desc": "Ứng viên tìm hiểu vị trí và gửi hồ sơ CV."
+            },
+            "screen": {
+                "title": "Sàng lọc hồ sơ",
+                "desc": "Bộ phận tuyển dụng chọn ứng viên phù hợp."
+            },
+            "test": {
+                "title": "Kiểm tra năng lực",
+                "desc": "Đánh giá tư duy logic và kiến thức chuyên môn."
+            },
+            "interview": {
+                "title": "Phỏng vấn",
+                "desc": "Gặp gỡ trực tiếp để đánh giá mức độ phù hợp."
+            },
+            "offer": {
+                "title": "Thỏa thuận hợp đồng",
+                "desc": "Trao đổi chi tiết về lương và phúc lợi."
+            },
+            "onboard": {
+                "title": "Hoàn thiện hồ sơ",
+                "desc": "Nộp giấy tờ cần thiết để chính thức gia nhập."
+            }
+        }
+    },
+    "Why": {
+        "title": "Môi trường tôn trọng & Phát triển không giới hạn",
+        "subtitle": "Tại sao chọn ERG?",
+        "benefits": {
+            "welfare": {
+                "title": "Phúc Lợi Toàn Diện",
+                "sub": "BHXH, Thưởng lễ tết, Du lịch"
+            },
+            "training": {
+                "title": "Đào Tạo Chuyên Sâu",
+                "sub": "Tài trợ thi chứng chỉ Quốc tế"
+            },
+            "culture": {
+                "title": "Văn Hóa Mở",
+                "sub": "Sếp lắng nghe, đồng nghiệp sẻ chia"
+            },
+            "facilities": {
+                "title": "Tiện Nghi",
+                "sub": "Laptop, PC cấu hình cao"
+            }
+        }
+    },
+    "CTA": {
+        "title": "Bạn đã sẵn sàng?",
+        "subtitle": "Nếu bạn chưa tìm thấy vị trí phù hợp, đừng ngần ngại gửi CV cho chúng tôi.",
+        "sendCV": "Gửi CV Ngay",
+        "zaloHR": "Chat Zalo HR"
+    },
+    "Van Hoa": {
+        "title": "Văn hóa ERG",
+        "subtitle": "Nơi bạn được là chính mình"
+    }
+}

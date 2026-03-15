@@ -16,6 +16,9 @@ export default async function DigitalCitizenshipPage() {
 
   return (
     <>
+      {/* WebSite Schema for Search Box */}
+      <SchemaScript type="WebSite" data={{ name: SEO_DATA.congdanso.title }} domain={hostname} />
+
       {/* Course Schemas */}
       {courses.map((course) => (
         <SchemaScript

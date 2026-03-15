@@ -12,8 +12,8 @@ export async function GET(request: NextRequest) {
     const slug = searchParams.get("slug");
     const secret = searchParams.get("secret");
 
-    // 1. Kiểm tra secret (Bảo mật)
-    const PREVIEW_SECRET = process.env.PREVIEW_SECRET || "erg_preview_secret_2026";
+    // 1. Kiểm tra secret (Bảo mật - chỉ dùng ENV)
+    const PREVIEW_SECRET = process.env.PREVIEW_SECRET;
 
     if (secret !== PREVIEW_SECRET || !id || !slug) {
         return new Response("Invalid request", { status: 401 });

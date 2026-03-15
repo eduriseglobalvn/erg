@@ -1,0 +1,17 @@
+{
+    "Page": {
+        "title": "Liên hệ với chúng tôi",
+        "subtitle": "Chúng tôi luôn sẵn sàng hỗ trợ bạn",
+        "name": "Họ và tên",
+        "email": "Email",
+        "phone": "Số điện thoại",
+        "message": "Nội dung",
+        "subject": "Chủ đề",
+        "send": "Gửi tin nhắn",
+        "sendSuccess": "Tin nhắn của bạn đã được gửi. Chúng tôi sẽ phản hồi sớm nhất.",
+        "address": "Địa chỉ",
+        "workingHours": "Giờ làm việc",
+        "weekdays": "Thứ Hai - Thứ Bảy",
+        "hours": "07:30 - 21:00"
+    }
+}

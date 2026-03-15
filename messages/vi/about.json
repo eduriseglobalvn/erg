@@ -1,0 +1,70 @@
+{
+    "tamNhinSuMenh": {
+        "title": "La bàn định hướng",
+        "vision": {
+            "label": "Tầm Nhìn (Vision)",
+            "text": "Trở thành tổ chức giáo dục công nghệ tiên phong, hàng đầu trong việc cung cấp các giải pháp đào tạo chuẩn quốc tế."
+        },
+        "mission": {
+            "label": "Sứ Mệnh (Mission)",
+            "text": "Nâng tầm tri thức và phổ cập kỹ năng số. Xóa bỏ khoảng cách số thông qua giáo dục chất lượng cao."
+        }
+    },
+    "giaTriCotLoi": {
+        "title": "GIÁ TRỊ CỐT LÕI",
+        "subtitle": "VĂN HÓA DOANH NGHIỆP",
+        "values": {
+            "quality": {
+                "title": "Chất lượng vượt trội",
+                "desc": "Cam kết chuẩn mực cao nhất trong đào tạo"
+            },
+            "integrity": {
+                "title": "Khách hàng là trung tâm",
+                "desc": "Trung thực và minh bạch trong mọi hoạt động"
+            },
+            "innovation": {
+                "title": "Sáng tạo đổi mới",
+                "desc": "Không ngừng cải tiến phương pháp giảng dạy"
+            },
+            "community": {
+                "title": "Trách nhiệm xã hội",
+                "desc": "Hợp tác và phát triển cộng đồng"
+            }
+        }
+    },
+    "cauChuyenCuaErg": {
+        "title": "Câu chuyện của ERG",
+        "subtitle": "Về chúng tôi",
+        "quote": "Khơi nguồn trí tuệ – Dẫn lối tương lai",
+        "cta": {
+            "join": "Gia nhập đội ngũ ERG",
+            "contact": "Liên hệ hợp tác"
+        }
+    },
+    "doiNguLanhDao": {
+        "title": "Đội ngũ lãnh đạo",
+        "subtitle": "Những người dẫn dắt ERG",
+        "position": "Chức vụ"
+    },
+    "doiTac": {
+        "title": "Đối tác chiến lược",
+        "subtitle": "ERG tự hào hợp tác với các tổ chức uy tín trên thế giới"
+    },
+    "linhVucDaoTao": {
+        "title": "Lĩnh vực đào tạo",
+        "subtitle": "Hệ sinh thái đào tạo CNTT toàn diện",
+        "badge": "Chương trình đào tạo chuẩn quốc tế",
+        "heading": "Khơi Nguồn Trí Tuệ — Dẫn Lối Tương Lai",
+        "subheading": "Hệ thống đào tạo đa dạng từ Tin học văn phòng đến Công nghệ cao, giúp bạn tự tin làm chủ công nghệ và bứt phá trong sự nghiệp.",
+        "fields": {
+            "title": "Các Lĩnh Vực Đào Tạo",
+            "more": "Xem chi tiết"
+        },
+        "cta": {
+            "title": "Bạn chưa biết bắt đầu từ đâu?",
+            "subtitle": "Đừng ngần ngại liên hệ với chúng tôi để được tư vấn lộ trình học tập phù hợp nhất.",
+            "register": "Đăng Ký Tư Vấn Ngay",
+            "schedule": "Xem Lịch Khai Giảng"
+        }
+    }
+}

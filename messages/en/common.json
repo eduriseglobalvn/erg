@@ -1,0 +1,68 @@
+{
+    "Header": {
+        "logoAlt": "ERG Logo",
+        "home": "Home",
+        "about": "About",
+        "courses": "Courses",
+        "news": "News",
+        "contact": "Contact",
+        "recruitment": "Careers",
+        "login": "Login",
+        "search": "Search"
+    },
+    "Footer": {
+        "tagline": "A leading technology education system committed to providing the best training quality for the young generation of Vietnam. Awakening potential, shaping the future.",
+        "address": "No. 40-42, Binh Phu Street, Binh Phu Ward, Ho Chi Minh City",
+        "email": "Email",
+        "phone": "Phone",
+        "followUs": "Follow us",
+        "copyright": "© {year} Edurise Global. All rights reserved.",
+        "links": {
+            "privacy": "Privacy Policy",
+            "terms": "Terms of Service"
+        }
+    },
+    "Buttons": {
+        "readMore": "Read more",
+        "viewAll": "View all",
+        "apply": "Apply Now",
+        "submit": "Submit",
+        "back": "Go back",
+        "register": "Register",
+        "contact": "Contact us",
+        "learnMore": "Learn more",
+        "loading": "Loading..."
+    },
+    "Common": {
+        "search": "Search",
+        "searchPlaceholder": "Search...",
+        "noResults": "No results found",
+        "error": "An error occurred",
+        "tryAgain": "Try again",
+        "loading": "Loading...",
+        "all": "All",
+        "close": "Close",
+        "save": "Save",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "delete": "Delete",
+        "edit": "Edit",
+        "create": "Create",
+        "update": "Update",
+        "success": "Success",
+        "lang": {
+            "vi": "Tiếng Việt",
+            "en": "English"
+        }
+    },
+    "NotFound": {
+        "title": "Page not found",
+        "description": "Sorry, the page you're looking for does not exist or has been removed.",
+        "backHome": "Back to home"
+    },
+    "FloatingContact": {
+        "callNow": "Call now",
+        "zalo": "Zalo",
+        "facebook": "Facebook"
+    }
+}

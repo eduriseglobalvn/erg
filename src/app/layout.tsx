@@ -85,8 +85,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
     return {
         icons: {
-            icon: [{ url: 'https://media.erg.edu.vn/logo/erg.png', sizes: '16x32', type: 'image/png' }],
-            apple: [{ url: 'https://media.erg.edu.vn/logo/erg.png' }],
+            shortcut: 'https://media.erg.edu.vn/logo/erg.png',
+            icon: [
+                { url: 'https://media.erg.edu.vn/logo/erg.png', sizes: '16x16', type: 'image/png' },
+                { url: 'https://media.erg.edu.vn/logo/erg.png', sizes: '32x32', type: 'image/png' },
+                { url: 'https://media.erg.edu.vn/logo/erg.png', sizes: '96x96', type: 'image/png' },
+            ],
+            apple: [{ url: 'https://media.erg.edu.vn/logo/erg.png', sizes: '180x180', type: 'image/png' }],
         },
         metadataBase: new URL(baseUrl),
         robots,

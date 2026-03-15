@@ -1,8 +1,7 @@
 // src/app/@elearning/layout.tsx
 import React from 'react';
-import Header from "@/components/Header"; // Component header hiện tại
-import Footer from "@/components/Footer"; // Component footer hiện tại
-import FloatingContact from "@/components/FloatingContact";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { ELEARNING_MENU_ITEMS } from "@/constants/MenuItem";
 import { ElearningModalManager } from "@/components/elearning/elearning-modal-manager";
 
@@ -13,15 +12,13 @@ export default function ElearningLayout({
 }>) {
     return (
         <>
-            {/* Các component dùng chung cho tất cả trang của elearning domain */}
-            <Header menuData={ELEARNING_MENU_ITEMS} />
+            {/* Header không có top bar, không có FloatingContact */}
+            <Header menuData={ELEARNING_MENU_ITEMS} hideTopBar />
 
-            {/* Nội dung trang (page.tsx) được bọc trong <main> */}
-            <main className="flex-grow pt-[70px] lg:pt-[100px] w-full max-w-[100vw] overflow-hidden min-h-screen bg-white">
+            <main className="flex-grow pt-[70px] lg:pt-[80px] w-full max-w-[100vw] overflow-hidden min-h-screen bg-white">
                 {children}
             </main>
 
-            <FloatingContact />
             <Footer />
             <ElearningModalManager />
         </>

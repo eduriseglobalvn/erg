@@ -16,3 +16,5 @@ export { recruitmentApi } from './recruitment.api';
 export { reviewsApi } from './reviews.api';
 export { seoLoggingApi } from './seo-logging.api';
 export { seoApi } from './seo.api';
+export { elearningApi } from './elearning.api';
+export type { ElearningCategoryData, ElearningLevelData, ElearningUnitData } from './elearning.api';

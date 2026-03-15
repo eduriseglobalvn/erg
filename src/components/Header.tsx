@@ -20,9 +20,10 @@ export interface MenuItemType {
 
 interface HeaderProps {
   menuData?: MenuItemType[];
+  hideTopBar?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
+const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar = false }) => {
   const [menuItems, setMenuItems] = useState<MenuItemType[]>(menuData);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -90,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
       >
         <div className="container mx-auto px-4 md:px-6">
           {/* ... (Phần Top Bar và Logo giữ nguyên code cũ) ... */}
-          <div className={`hidden lg:flex justify-between items-center text-xs font-medium text-gray-500 mb-2 border-b border-gray-100 pb-2 transition-all duration-300 ${isScrolled ? 'h-0 opacity-0 overflow-hidden mb-0 pb-0' : 'opacity-100'}`}>
+          <div className={`hidden lg:flex justify-between items-center text-xs font-medium text-gray-500 mb-2 border-b border-gray-100 pb-2 transition-all duration-300 ${hideTopBar || isScrolled ? 'h-0 opacity-0 overflow-hidden mb-0 pb-0' : 'opacity-100'}`}>
             <div className="flex gap-4">
               <span className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer">
                 <Phone size={14} className="text-highlight" /> Hotline: 0766.144.888

@@ -202,6 +202,12 @@ const data = {
             icon: GraduationCap,
             permission: "courses.read",
         },
+        {
+            title: "E-Learning",
+            url: "/admin/elearning",
+            icon: BookOpen,
+            permission: "courses.read",
+        },
     ],
 
     // 3. QUẢN LÝ TUYỂN DỤNG

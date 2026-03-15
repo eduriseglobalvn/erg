@@ -20,7 +20,7 @@ export function ElearningModalManager() {
 
         window.addEventListener('open-elearning-modal', handleOpenModal);
 
-        // Cũng trigger modal nếu URL có hash khi load trang
+        // Trigger modal nếu URL có hash khi load trang
         const hash = window.location.hash.replace('#', '');
         if (hash === 'primary' || hash === 'secondary') {
             const category = ELEARNING_DATA.find(c => c.id === hash);

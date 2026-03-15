@@ -253,11 +253,7 @@ export const ELEARNING_MENU_ITEMS = [
         path: "/",
     },
     {
-        label: "Tiểu Học",
-        path: "#primary",
-    },
-    {
-        label: "THCS",
+        label: "THCS (GS6)",
         path: "#secondary",
     },
     {

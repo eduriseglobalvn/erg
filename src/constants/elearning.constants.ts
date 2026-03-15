@@ -152,38 +152,52 @@ const SPARK_LEVEL_3_UNITS: ElearningUnit[] = [
 const GS6_LEVEL_1_UNITS: ElearningUnit[] = [
     {
         id: 'gs6-l1-u1',
-        title: "Thiết bị số",
-        description: "Cấu tạo và nguyên lý hoạt động của thiết bị.",
-        studyLink: GOOGLE_FORM_LINKS.DEFAULT_STUDY,
-        testLink: GOOGLE_FORM_LINKS.DEFAULT_TEST
+        title: "Phần 1",
+        description: "Ôn luyện IC3 GS6 Level 1 — Phần 1.",
+        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLSd-tNzg1tSu6BIKt6_pKm6SyLomVP4tN-NEHipn0z_Q9_zDEw/viewform?usp=header",
+        testLink: ""
     },
     {
         id: 'gs6-l1-u2',
-        title: "Hệ điều hành",
-        description: "Quản trị hệ thống và cài đặt môi trường.",
-        studyLink: GOOGLE_FORM_LINKS.DEFAULT_STUDY,
-        testLink: GOOGLE_FORM_LINKS.DEFAULT_TEST
+        title: "Phần 2",
+        description: "Ôn luyện IC3 GS6 Level 1 — Phần 2.",
+        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLSdftMlhuqn5piqRnFbdAGLZ6br1pY4LDYwYVx96SirGdzv40w/viewform?usp=header",
+        testLink: ""
     },
     {
         id: 'gs6-l1-u3',
-        title: "Tùy chỉnh máy tính",
-        description: "Cài đặt cá nhân hóa và quản lý người dùng.",
-        studyLink: GOOGLE_FORM_LINKS.DEFAULT_STUDY,
-        testLink: GOOGLE_FORM_LINKS.DEFAULT_TEST
+        title: "Phần 3",
+        description: "Ôn luyện IC3 GS6 Level 1 — Phần 3.",
+        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLSclY06gNvYXfKZbrW2kwgMrniJni87aApeQaFVkKJ02kf0sWg/viewform?usp=header",
+        testLink: ""
     },
     {
         id: 'gs6-l1-u4',
-        title: "Ứng dụng & Phần mềm",
-        description: "Quản lý vòng đời phần mềm trên PC.",
-        studyLink: GOOGLE_FORM_LINKS.DEFAULT_STUDY,
-        testLink: GOOGLE_FORM_LINKS.DEFAULT_TEST
+        title: "Phần 4",
+        description: "Ôn luyện IC3 GS6 Level 1 — Phần 4.",
+        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLSfvm4bHLdh-XZZp4dAM8MBh1OT6kX4qTQqupZ928kJHbHrRog/viewform?usp=header",
+        testLink: ""
     },
     {
         id: 'gs6-l1-u5',
-        title: "Bảo mật cơ bản",
-        description: "Phòng chống mã độc và bảo mật thiết bị.",
-        studyLink: GOOGLE_FORM_LINKS.DEFAULT_STUDY,
-        testLink: GOOGLE_FORM_LINKS.DEFAULT_TEST
+        title: "Phần 5",
+        description: "Ôn luyện IC3 GS6 Level 1 — Phần 5.",
+        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLScEPTkNAd0lnE5OakbJVpnwlun2nfAxIU9tG3cQOk4N2lXgmw/viewform?usp=header",
+        testLink: ""
+    },
+    {
+        id: 'gs6-l1-u6',
+        title: "Phần 6",
+        description: "Ôn luyện IC3 GS6 Level 1 — Phần 6.",
+        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLScEHhc8sLI_nYGHvqqjpnwoa2tXYLeHNQ7I5lBDmk3_W95XhQ/viewform?usp=header",
+        testLink: ""
+    },
+    {
+        id: 'gs6-l1-u7',
+        title: "Phần 7",
+        description: "Ôn luyện IC3 GS6 Level 1 — Phần 7.",
+        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLSf1lEhL7gP40fUy6mxCLpY4izAE3-LQkq_aarP1NRcHZJDFaw/viewform?usp=header",
+        testLink: ""
     }
 ];
 

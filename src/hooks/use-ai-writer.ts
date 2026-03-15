@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { aiApi, postsApi } from '@/services';
+import { localSeoAnalyzer } from '@/utils/local-seo';
 
 // 1. Định nghĩa lại kiểu dữ liệu trả về cho chắc chắn
 // (Khớp với JSON: { statusCode: 200, data: { ... } })
@@ -29,6 +30,13 @@ export function useAiWriter(editor: any) {
 
     // FIX LỖI 1: Dùng 'any' cho interval để tránh xung đột kiểu giữa Node và Browser
     const intervalRef = useRef<any>(null);
+
+    // CLEANUP LỖI MEMORY LEAK (B-H4)
+    useEffect(() => {
+        return () => {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        };
+    }, []);
 
     // --- HÀM MÔ PHỎNG HIỆU ỨNG GÕ CHỮ (NÂNG CẤP: CHUẨN ĐỊNH DẠNG) ---
     const typeIntoEditor = async (html: string, editor: any) => {
@@ -73,13 +81,24 @@ export function useAiWriter(editor: any) {
         }
     };
 
-    const generateFullPost = async (topic: string, categoryId: string, onSuccess: (data: any) => void) => {
+    const generateFullPost = async (
+        topic: string,
+        categoryId: string,
+        onSuccess: (data: any) => void,
+        config?: { template?: string; length?: string; provider?: string }
+    ) => {
         setIsGenerating(true);
         setProgress(5);
         const toastId = toast.loading('AI đang lên ý tưởng...');
 
         try {
-            const res: any = await aiApi.generate({ topic, categoryId });
+            const res: any = await aiApi.generate({
+                topic,
+                categoryId,
+                template: config?.template,
+                length: config?.length,
+                provider: config?.provider
+            });
             const jobId = res?.data?.jobId || res?.jobId;
 
             if (!jobId) throw new Error("Không lấy được Job ID từ Server");
@@ -107,7 +126,6 @@ export function useAiWriter(editor: any) {
                         let actualPostData = null;
 
                         if (resultData?.content && resultData?.title) {
-                            console.log("[useAiWriter] Sử dụng dữ liệu trực tiếp từ AI status");
                             actualPostData = resultData;
                         } else {
                             // Nếu không có data trực tiếp, mới dùng postId để fetch bài viết
@@ -152,6 +170,37 @@ export function useAiWriter(editor: any) {
                         // 2. Thực hiện gõ vào editor (hiệu ứng chảy chữ)
                         if (editor && actualPostData.content) {
                             await typeIntoEditor(actualPostData.content, editor);
+
+                            // 3. Tự động kiểm tra SEO sau khi AI viết bài
+                            const seoScore = localSeoAnalyzer(
+                                actualPostData.content,
+                                actualPostData.title || '',
+                                actualPostData.metaDescription || '',
+                                actualPostData.focusKeyword || ''
+                            );
+
+                            if (seoScore.overallScore < 50) {
+                                setTimeout(async () => {
+                                    const confirmRefine = window.confirm(
+                                        `Nội dung này chuẩn SEO khá thấp (Điểm: ${seoScore.overallScore}/100).\nBạn có muốn yêu cầu AI thử viết lại một bản khác tối ưu hơn không?`
+                                    );
+                                    if (confirmRefine) {
+                                        const refineToastId = toast.loading('Đang yêu cầu AI tối ưu lại nội dung...');
+                                        const instruction = `Tối ưu hóa nội dung chuẩn SEO, phân bổ lại từ khóa "${actualPostData.focusKeyword || 'chính'}" hợp lý, bổ sung thẻ H2/H3 và đoạn văn chất lượng. Trả về định dạng HTML.`;
+                                        const refined = await refineText(actualPostData.content, instruction);
+
+                                        if (refined) {
+                                            toast.dismiss(refineToastId);
+                                            toast.success('Đã tối ưu SEO xong!');
+                                            await typeIntoEditor(refined, editor);
+                                            onSuccess({ ...actualPostData, content: refined });
+                                        } else {
+                                            toast.dismiss(refineToastId);
+                                            toast.error('Lỗi khi tối ưu nội dung');
+                                        }
+                                    }
+                                }, 500);
+                            }
                         }
 
                         setProgress(100);
@@ -160,7 +209,17 @@ export function useAiWriter(editor: any) {
                     else if (statusData.state === 'failed') {
                         clearInterval(intervalRef.current);
                         toast.dismiss(toastId);
-                        toast.error(statusData.error || 'AI gặp lỗi trong quá trình xử lý');
+
+                        // Thông báo UI thân thiện cho AI Rate Limit / Quota
+                        if (statusData.status === 'rate_limited' || statusData.error?.includes('rate limit') || statusData.error?.includes('429')) {
+                            toast.warning('Đang chờ rate limit reset... Hệ thống sẽ tự động thử lại sau giây lát.', { duration: 5000 });
+                        } else if (statusData.status === 'quota_exceeded' || statusData.error?.includes('quota')) {
+                            toast.error('Đã hết quota AI hiện tại. Hệ thống đang tự động chuyển sang provider / key khác...', { duration: 5000 });
+                        } else if (statusData.status === 'all_providers_exhausted') {
+                            toast.error('Tất cả AI providers đều hết quota. Vui lòng thêm API key mới tại Cài đặt > AI Keys.', { duration: 8000 });
+                        } else {
+                            toast.error(statusData.error || 'AI gặp lỗi trong quá trình xử lý', { duration: 5000 });
+                        }
                         setIsGenerating(false);
                     }
                 } catch (err: any) {

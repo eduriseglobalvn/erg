@@ -13,7 +13,8 @@ import {
     SeoAuthUrl,
     SeoPerformance,
     SeoQueryPerformance,
-    SeoAnalysisDraftResult
+    SeoAnalysisDraftResult,
+    SeoDashboardData
 } from '@/types/seo';
 
 /**
@@ -137,7 +138,34 @@ export const seoApi = {
             body: JSON.stringify({ code })
         }),
 
-    // --- PHASE 4: TECHNICAL SEO ---
+    // --- PHASE 4: KEYWORD SUGGESTION & RESEARCH (NEW) ---
+    /**
+     * Lấy gợi ý từ khóa dựa trên Keyword chính và danh mục
+     */
+    getKeywordSuggestions: (keyword: string, category?: string, type?: 'post' | 'course') => {
+        const query = new URLSearchParams({ keyword });
+        if (category) query.append('category', category);
+        if (type) query.append('type', type);
+        return httpClient<any>(`/seo/keywords/suggest?${query.toString()}`);
+    },
+
+    /**
+     * Autocomplete từ khóa khi đang gõ
+     */
+    getKeywordAutocomplete: (q: string) =>
+        httpClient<any>(`/seo/keywords/autocomplete?q=${encodeURIComponent(q)}`),
+
+    /**
+     * Lấy Keyword đang hot trong category
+     */
+    getTrendingKeywords: (category?: string, period?: '7d' | '30d') => {
+        const query = new URLSearchParams();
+        if (category) query.append('category', category);
+        if (period) query.append('period', period);
+        return httpClient<any>(`/seo/keywords/trending?${query.toString()}`);
+    },
+
+    // --- PHASE 5: TECHNICAL SEO ---
 
     /**
      * Redirects Management
@@ -205,4 +233,9 @@ export const seoApi = {
             method: 'POST',
             body: JSON.stringify(data)
         }),
+
+    /**
+     * Get consolidated SEO Dashboard data
+     */
+    getDashboardData: () => httpClient<SeoDashboardData>('/seo/dashboard'),
 };

@@ -5,7 +5,7 @@ import { recruitmentApi } from '@/services/recruitment.api';
 import { Job } from '@/types/recruitment';
 import { Briefcase, MapPin, Clock, ArrowRight, Flame, Zap } from 'lucide-react';
 
-export const revalidate = 60; // ISR cache 60s
+import JobFilter from '@/components/features/recruitment/job-filter';
 
 export default async function RecruitmentPage() {
     let jobs: Job[] = [];

@@ -12,6 +12,18 @@
 
 interface CustomRequestInit extends RequestInit {
     requireAuth?: boolean;
+    signal?: AbortSignal;
+}
+
+export class ApiError extends Error {
+    constructor(
+        public message: string,
+        public status?: number,
+        public data?: any
+    ) {
+        super(message);
+        this.name = 'ApiError';
+    }
 }
 
 // --- BIẾN TOÀN CỤC ĐỂ QUẢN LÝ REFRESH TOKEN ---
@@ -38,13 +50,10 @@ export const httpClient = async <T>(
 ): Promise<T> => {
     const { requireAuth = true, ...fetchOptions } = options || {};
 
-    // Helper lấy token từ LocalStorage
-    const getAccessToken = () => localStorage.getItem('accessToken');
-    const getRefreshToken = () => localStorage.getItem('refreshToken');
     const getUserId = () => localStorage.getItem('userId'); // Cần lưu userId lúc login
 
     // Helper tạo headers
-    const createHeaders = (token: string | null) => {
+    const createHeaders = () => {
         const headers = new Headers(fetchOptions.headers);
 
         // Chỉ set JSON nếu không phải là FormData (để browser tự xử lý multipart)
@@ -52,9 +61,6 @@ export const httpClient = async <T>(
             headers.set('Content-Type', 'application/json');
         }
 
-        if (requireAuth && token) {
-            headers.set('Authorization', `Bearer ${token}`);
-        }
         return headers;
     };
 
@@ -77,7 +83,7 @@ export const httpClient = async <T>(
         // --- BƯỚC 1: GỬI REQUEST LẦN ĐẦU ---
         const response = await fetch(url, {
             ...fetchOptions,
-            headers: createHeaders(getAccessToken()),
+            headers: createHeaders(),
         });
 
         // Nếu thành công -> trả về data
@@ -95,11 +101,19 @@ export const httpClient = async <T>(
             if (isRefreshing) {
                 return new Promise((resolve, reject) => {
                     failedQueue.push({
-                        resolve: (newToken: string) => {
-                            // Khi có token mới, thực hiện lại request này
-                            const newHeaders = createHeaders(newToken);
+                        resolve: () => {
+                            // Khi proxy đã tự động renew cookie
+                            const newHeaders = createHeaders();
                             resolve(
-                                fetch(url, { ...fetchOptions, headers: newHeaders }).then((res) => res.json())
+                                fetch(url, { ...fetchOptions, headers: newHeaders }).then(async (res) => {
+                                    if (res.ok) {
+                                        const contentLength = res.headers.get('Content-Length');
+                                        if (contentLength === '0') return {};
+                                        return res.json();
+                                    }
+                                    const errorData = await res.json().catch(() => ({}));
+                                    throw new ApiError(errorData.message || `HTTP Error ${res.status}`, res.status, errorData);
+                                })
                             );
                         },
                         reject: (err: any) => reject(err),
@@ -109,34 +123,29 @@ export const httpClient = async <T>(
 
             // Nếu chưa ai refresh -> Mình xung phong đi refresh
             isRefreshing = true;
-            const refreshToken = getRefreshToken();
             const userId = getUserId();
 
-            if (refreshToken && userId) {
+            if (userId) { // Chúng ta không còn kiểm tra refreshToken ở client nữa vì nó nằm trong HttpOnly cookie
                 try {
-                    // ✅ Gọi API Refresh qua proxy
+                    // ✅ Gọi API Refresh qua proxy (Cookie refreshToken sẽ tự động gửi đi do same-origin)
                     const refreshResponse = await fetch('/api/auth/refresh', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId, refreshToken }),
+                        body: JSON.stringify({ userId }), // Không truyền refreshToken client-side
                     });
 
                     if (refreshResponse.ok) {
-                        const data = await refreshResponse.json();
-
-                        // 1. Lưu token mới vào LocalStorage
-                        localStorage.setItem('accessToken', data.accessToken);
-                        localStorage.setItem('refreshToken', data.refreshToken);
+                        // Cookie was updated by proxy
 
                         // 2. Giải phóng hàng chờ (báo cho các ông kia là có token rồi)
-                        processQueue(null, data.accessToken);
+                        processQueue(null);
                         isRefreshing = false;
 
                         // 3. Thực hiện lại request của chính mình
                         return httpClient<T>(endpoint, options);
                     } else {
                         // Refresh thất bại (RefreshToken hết hạn/bị thu hồi) -> ĐÁ RA
-                        throw new Error('Session expired');
+                        throw new ApiError('Session expired', 401);
                     }
                 } catch (error) {
                     processQueue(error, null);
@@ -147,14 +156,19 @@ export const httpClient = async <T>(
             } else {
                 // Không có refreshToken -> Logout luôn
                 handleLogout();
-                throw new Error('No refresh token available');
+                throw new ApiError('No refresh token available', 401);
             }
         }
 
         // Các lỗi khác (403, 404, 500...)
         const errorData = await response.json().catch(() => ({}));
-        // [MODIFIED] Trả về full errorData message để frontend handle logic
-        throw new Error(errorData.message || JSON.stringify(errorData) || `HTTP Error ${response.status}`);
+
+        // Trả về ApiError chuẩn hóa để frontend handle logic
+        throw new ApiError(
+            errorData.message || errorData.error || `HTTP Error ${response.status}`,
+            response.status,
+            errorData
+        );
 
     } catch (error) {
         throw error;

@@ -18,9 +18,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         return {
             title: `Ứng tuyển: ${job.title} | ERG Careers`,
             description: `Nộp hồ sơ ứng tuyển vị trí ${job.title} tại Edurise Global.`,
+            robots: { index: false, follow: true },
         };
     } catch {
-        return { title: 'Ứng tuyển | ERG Careers' };
+        return {
+            title: 'Ứng tuyển | ERG Careers',
+            robots: { index: false, follow: true },
+        };
     }
 }
 

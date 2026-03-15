@@ -25,7 +25,7 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
     ];
 
     const isPublicPage = publicPaths.some((path) => pathname.startsWith(path));
-    const token = typeof window !== 'undefined' ? localStorage.getItem("accessToken") : null;
+    const token = typeof window !== 'undefined' ? document.cookie.includes("isLoggedIn=true") : false;
 
     // Sử dụng useAuth hook với TanStack Query
     const { data: auth, isLoading: isChecking, isError } = useAuth();
@@ -70,10 +70,9 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
                 return;
             }
 
-            // Lưu permissions vào localStorage
+            // Xem xét permissions lưu trữ trên useAuth trực tiếp, bỏ localStorage
             if (auth.permissions || auth.roles) {
-                localStorage.setItem('permissions', JSON.stringify(auth.permissions));
-                localStorage.setItem('roles', JSON.stringify(auth.roles));
+                // Remove saving into localStorage, use useAuth directly
 
                 // Nếu user không có quyền gì cả -> Hiển thị dialog
                 if (auth.permissions.length === 0 && auth.roles.length === 0) {
@@ -95,14 +94,11 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
                 return;
             }
 
-            // Nếu đã hoàn thành hồ sơ mà vẫn ở trang onboarding -> Đẩy về home
             if (isCompleted && pathname === '/onboarding') {
                 router.push('/');
                 return;
             }
 
-            // Update user info in localStorage
-            localStorage.setItem('user', JSON.stringify(auth.user));
         }
     }, [auth, isError, pathname, router, isPublicPage, token]);
 

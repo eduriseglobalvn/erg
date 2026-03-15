@@ -4,6 +4,7 @@ import React from 'react';
 import {
     Heart, Users, Quote, Globe, Star, Lightbulb, CheckCircle2
 } from 'lucide-react';
+import Image from 'next/image';
 
 export default function CultureContent() {
     const CORE_VALUES = [
@@ -146,10 +147,12 @@ export default function CultureContent() {
                             </div>
 
                             <div className="w-full md:w-2/5 h-64 md:h-full min-h-[400px] relative">
-                                <img
+                                <Image
                                     src="https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
                                     alt="Ban lãnh đạo ERG"
-                                    className="absolute inset-0 w-full h-full object-cover opacity-90 mix-blend-overlay md:mix-blend-normal"
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, 40vw"
+                                    className="object-cover opacity-90 mix-blend-overlay md:mix-blend-normal"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-transparent to-[#00008b]"></div>
                             </div>
@@ -166,24 +169,24 @@ export default function CultureContent() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-auto md:h-[600px]">
-                    <div className="md:col-span-2 md:row-span-2 rounded-2xl overflow-hidden relative group shadow-lg cursor-pointer">
-                        <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Giờ học STEM" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-auto md:h-[600px] min-h-[600px]">
+                    <div className="md:col-span-2 md:row-span-2 rounded-2xl overflow-hidden relative group shadow-lg cursor-pointer min-h-[300px] md:min-h-0">
+                        <Image src="https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Giờ học STEM" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute bottom-6 left-6 text-white z-10"><h3 className="text-xl font-bold drop-shadow-lg">Giờ học STEM đầy cảm hứng</h3></div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                     </div>
-                    <div className="md:col-span-1 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-lg cursor-pointer">
-                        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Training" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <div className="md:col-span-1 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-lg cursor-pointer min-h-[250px] md:min-h-0">
+                        <Image src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Training" fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute bottom-4 left-4 text-white z-10"><h3 className="font-bold text-sm drop-shadow-lg">Đào tạo Giáo viên</h3></div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                     </div>
-                    <div className="md:col-span-1 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-lg cursor-pointer">
-                        <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Team Building" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <div className="md:col-span-1 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-lg cursor-pointer min-h-[250px] md:min-h-0">
+                        <Image src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Team Building" fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute bottom-4 left-4 text-white z-10"><h3 className="font-bold text-sm drop-shadow-lg">Team Building</h3></div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                     </div>
-                    <div className="md:col-span-2 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-lg cursor-pointer">
-                        <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Sự kiện" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <div className="md:col-span-2 md:row-span-1 rounded-2xl overflow-hidden relative group shadow-lg cursor-pointer min-h-[250px] md:min-h-0">
+                        <Image src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Sự kiện" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute bottom-4 left-4 text-white z-10"><h3 className="font-bold text-lg drop-shadow-lg">Hội thảo Công nghệ Giáo dục</h3></div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                     </div>

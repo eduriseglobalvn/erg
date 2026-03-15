@@ -12,6 +12,7 @@ export interface Job {
     title: string;
     slug: string;
     salary: string;
+    baseSalary?: number; // Dành cho SEO JobPostingSchema, e.g. 15000000
     quantity: number;
     workType: string;
     workSchedule?: string; // e.g. "Từ thứ Hai đến thứ Bảy"

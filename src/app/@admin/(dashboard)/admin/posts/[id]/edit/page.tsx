@@ -6,177 +6,41 @@ import { useParams, useRouter } from "next/navigation"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/admin/ui/button"
 import { Sparkles, ArrowUp, StopCircle, X, ChevronLeft } from "lucide-react"
-import { SimpleEditor } from "@/components/admin/shared/editor/tiptap-templates/simple/simple-editor"
+import dynamic from 'next/dynamic'
+const SimpleEditor = dynamic(
+    () => import('@/components/admin/shared/editor/tiptap-templates/simple/simple-editor').then(m => ({ default: m.SimpleEditor })),
+    { ssr: false, loading: () => <div className="h-64 animate-pulse rounded-md bg-muted" /> }
+)
 import { PostSidebar } from "@/components/admin/shared/post-sidebar"
 import { useAiWriter } from "@/hooks/use-ai-writer"
-import { useImageTracker } from "@/hooks/use-image-tracker"
+import { useEditPost } from "@/hooks/use-edit-post"
 import { postsApi } from "@/services/posts.api"
-import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { AiWriterBar } from "@/components/admin/shared/editor/tiptap-ui/ai-writer-bar"
-import { localSeoAnalyzer } from "@/utils/local-seo"
 
 export default function EditPostPage() {
     const params = useParams()
-    const router = useRouter()
     const id = params.id as string
-    const queryClient = useQueryClient()
 
-    const [editorInstance, setEditorInstance] = useState<any>(null);
-    const [title, setTitle] = useState("");
+    const [editorInstance, setEditorInstance] = useState<import('@tiptap/core').Editor | null>(null);
     const [showAiInput, setShowAiInput] = useState(false);
 
-    const hasInitialized = React.useRef(false);
-
-    const [postMetadata, setPostMetadata] = useState({
-        slug: "",
-        excerpt: "",
-        categoryId: "",
-        thumbnailUrl: null as string | null,
-        status: "draft"
-    });
-
-    // Image tracking hook
-    const { updateImages, getDeletedImages, cleanupDeletedImages } = useImageTracker();
-
-    // 1. Fetch Post Data
-    const { data: fetchedPost, isLoading } = useQuery({
-        queryKey: ['post', id],
-        queryFn: () => postsApi.getOne(id).then(res => res.data),
-        enabled: !!id,
-        // Bỏ staleTime Infinity để đảm bảo dữ liệu mới nhất được fetch
-    })
+    const {
+        fetchedPost,
+        isLoading,
+        title,
+        setTitle,
+        postMetadata,
+        setPostMetadata,
+        handleSave,
+        handleSaveDraft,
+        isSaving
+    } = useEditPost(id, editorInstance);
 
     const { isGenerating, progress, generateFullPost, refineText } = useAiWriter(editorInstance);
 
-    // 2. Populate state ONLY ONCE when data loaded
-    useEffect(() => {
-        if (fetchedPost && !hasInitialized.current) {
-            setTitle(fetchedPost.title || "");
-            setPostMetadata({
-                slug: fetchedPost.slug || "",
-                excerpt: fetchedPost.excerpt || "",
-                categoryId: fetchedPost.category?.id || "",
-                thumbnailUrl: (fetchedPost as any).thumbnailUrl || null,
-                status: (fetchedPost as any).status || "draft"
-            });
-
-            if (editorInstance) {
-                editorInstance.commands.setContent(fetchedPost.content || "");
-                // Track initial images
-                updateImages(fetchedPost.content || "");
-                hasInitialized.current = true;
-            }
-        }
-    }, [fetchedPost, editorInstance, updateImages])
-
-    // 3. Update Mutation
-    const updateMutation = useMutation({
-        mutationFn: async (data: any) => {
-            // Lấy content hiện tại
-            const currentContent = editorInstance?.getHTML() || "";
-
-            // Tìm ảnh bị xóa
-            const deletedImages = getDeletedImages(currentContent);
-
-            // Cleanup ảnh bị xóa (không chờ, chạy background)
-            if (deletedImages.length > 0) {
-                cleanupDeletedImages(deletedImages);
-            }
-
-            // Update danh sách ảnh mới
-            updateImages(currentContent);
-
-            // Gọi API update post
-            return postsApi.update(id, data);
-        },
-        onSuccess: () => {
-            // QUAN TRỌNG: Xóa cache cũ để lần sau vào lại sẽ thấy data mới
-            queryClient.invalidateQueries({ queryKey: ['post', id] });
-            queryClient.invalidateQueries({ queryKey: ['posts'] }); // Invalidate cả trang danh sách
-
-            toast.success("Đã cập nhật bài viết thành công!")
-            router.push('/admin/posts')
-        },
-        onError: (error: any) => {
-            toast.error(error.message || "Lỗi khi cập nhật bài viết")
-        }
-    })
-
-    // [NEW] Draft Mutation - Lưu nháp mà không chuyển trang
-    const draftMutation = useMutation({
-        mutationFn: async (data: any) => {
-            const currentContent = editorInstance?.getHTML() || "";
-            updateImages(currentContent);
-            return postsApi.update(id, data);
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['post', id] });
-            toast.success("Đã lưu bản nháp thành công!", { duration: 2000 })
-        },
-        onError: (error: any) => {
-            toast.error(error.message || "Lỗi khi lưu bản nháp")
-        }
-    })
-
-    const handleSave = () => {
-        if (!title.trim()) {
-            toast.error("Vui lòng nhập tiêu đề bài viết")
-            return
-        }
-
-        const content = editorInstance?.getHTML() || "";
-        const seoResult = localSeoAnalyzer(
-            content,
-            title,
-            (postMetadata as any).metaDescription || "",
-            (postMetadata as any).keywords || ""
-        );
-
-        updateMutation.mutate({
-            ...postMetadata,
-            title,
-            content,
-            focusKeyword: (postMetadata as any).keywords,
-            seoScore: seoResult.overallScore,
-            readabilityScore: seoResult.contentAnalysis.readabilityScore,
-            keywordDensity: seoResult.contentAnalysis.keywordDensity
-        })
-    }
-
-    // [NEW] Hàm xử lý lưu nháp
-    const handleSaveDraft = () => {
-        if (!title.trim()) {
-            setTitle("Bản nháp không tiêu đề"); // Tự đặt tên nếu trống
-        }
-
-        // Force status = draft
-        setPostMetadata(prev => ({ ...prev, status: "draft" }));
-
-        const content = editorInstance?.getHTML() || "";
-        const finalTitle = title || "Bản nháp không tiêu đề";
-
-        const seoResult = localSeoAnalyzer(
-            content,
-            finalTitle,
-            (postMetadata as any).metaDescription || "",
-            (postMetadata as any).keywords || ""
-        );
-
-        draftMutation.mutate({
-            ...postMetadata,
-            title: finalTitle,
-            content,
-            status: "draft", // Luôn là draft
-            focusKeyword: (postMetadata as any).keywords,
-            seoScore: seoResult.overallScore,
-            readabilityScore: seoResult.contentAnalysis.readabilityScore,
-            keywordDensity: seoResult.contentAnalysis.keywordDensity
-        })
-    }
-
-    const handleAiSuccess = (aiData: any) => {
+    const handleAiSuccess = (aiData: { title?: string, content?: string, slug?: string, excerpt?: string, category?: { id: string }, categoryId?: string, thumbnailUrl?: string }) => {
         if (aiData.title) setTitle(aiData.title);
         if (editorInstance && aiData.content) {
             editorInstance.commands.setContent(aiData.content);
@@ -279,7 +143,7 @@ export default function EditPostPage() {
                     onUpdate={(data) => setPostMetadata(prev => ({ ...prev, ...data }))}
                     onSave={handleSave}
                     onSaveDraft={handleSaveDraft} // Truyền xuống Sidebar
-                    isSaving={updateMutation.isPending || draftMutation.isPending}
+                    isSaving={isSaving}
                     editor={editorInstance}
                 />
             </aside>

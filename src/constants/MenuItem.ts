@@ -1,8 +1,8 @@
 // src/constants/menu.ts
 
 // 1. CẤU HÌNH DOMAIN (Giữ nguyên)
-const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 
-                    (process.env.NODE_ENV === 'production' ? 'erg.edu.vn' : 'erg.edu.local');
+const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN ||
+    (process.env.NODE_ENV === 'production' ? 'erg.edu.vn' : 'erg.edu.local');
 const isDev = process.env.NODE_ENV === 'development';
 const PROTOCOL = isDev ? 'http' : 'https';
 const PORT = isDev ? ':3000' : '';
@@ -26,6 +26,8 @@ export const TRAINING_PROGRAMS = [
 // Đây là nơi bạn định nghĩa các trang chức năng như Tuyển dụng, Admin, v.v.
 export const FUNCTIONAL_SUBDOMAINS = [
     { label: "Tuyển dụng", subdomain: "tuyendung" },
+    { label: "E-Learning", subdomain: "elearning" },
+    { label: "E-Learning (Alias)", subdomain: "elerning" },
 ];
 
 // 3. EXPORT DANH SÁCH SUBDOMAIN (CẬP NHẬT)
@@ -244,3 +246,22 @@ export const TUYEN_DUNG_MENU_ITEMS = [
     { label: "LIÊN HỆ", path: "/lien-he" },
 
 ]
+
+export const ELEARNING_MENU_ITEMS = [
+    {
+        label: "Trang Chủ",
+        path: "/",
+    },
+    {
+        label: "Tiểu Học",
+        path: "#primary",
+    },
+    {
+        label: "THCS",
+        path: "#secondary",
+    },
+    {
+        label: "Tìm hiểu về IC3 GS6 và MOS",
+        path: "/tim-hieu-ve-ic3-gs6-va-mos",
+    },
+];

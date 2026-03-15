@@ -6,6 +6,8 @@ import { SchemaScript } from '@/components/seo/schema-script';
 import { headers } from 'next/headers';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 
+import { generateFullMetadata } from '@/utils/seo/seo-metadata';
+
 
 export default async function NationalITPage() {
   const headerList = await headers();

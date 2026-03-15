@@ -13,8 +13,8 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
                     queries: {
                         staleTime: 60 * 1000, // 1 minute default
                         gcTime: 5 * 60 * 1000, // 5 minutes garbage collection
-                        refetchOnWindowFocus: true, // Auto refetch khi focus window
-                        refetchOnReconnect: true, // Auto refetch khi reconnect
+                        refetchOnWindowFocus: false, // Tắt auto refetch khi focus window (tránh network storm)
+                        refetchOnReconnect: false, // Tắt auto refetch khi reconnect
                         retry: 1, // Retry 1 lần nếu fail
                     },
                     mutations: {
@@ -32,12 +32,18 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
     return (
         <QueryClientProvider client={queryClient}>
             {children}
-            {/* Only show DevTools in development */}
+        </QueryClientProvider>
+    )
+}
+
+export function QueryDevtools() {
+    return (
+        <>
             {process.env.NODE_ENV === 'development' && (
                 <ReactQueryDevtools
                     initialIsOpen={false}
                 />
             )}
-        </QueryClientProvider>
-    )
+        </>
+    );
 }

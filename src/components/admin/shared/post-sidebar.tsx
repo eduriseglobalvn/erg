@@ -6,7 +6,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/admin/ui/input"
 import { Button } from "@/components/admin/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/admin/ui/tabs"
-import { SeoAnalysisPanel } from "@/components/admin/seo/SeoAnalysisPanel"
+import dynamic from 'next/dynamic'
+
+const SeoAnalysisPanel = dynamic(
+    () => import('@/components/admin/seo/SeoAnalysisPanel').then(mod => ({ default: mod.SeoAnalysisPanel })),
+    { ssr: false, loading: () => <div className="p-4 text-center text-sm text-muted-foreground animate-pulse">Đang tải công cụ phân tích...</div> }
+)
+const KeywordSuggestionPanel = dynamic(
+    () => import('@/components/seo/keyword-suggestion-panel').then(mod => ({ default: mod.KeywordSuggestionPanel })),
+    { ssr: false, loading: () => <div className="p-4 text-center text-sm text-muted-foreground animate-pulse">Đang tải gợi ý từ khóa...</div> }
+)
+import { KeywordTagInput } from "@/components/seo/keyword-tag-input"
 import {
     ImagePlus,
     X,
@@ -22,6 +32,7 @@ import { useQuery } from "@tanstack/react-query"
 import { postsApi } from "@/services/posts.api"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { enablePreview } from "@/actions/preview.action"
 
 interface PostData {
     id?: string;
@@ -35,6 +46,10 @@ interface PostData {
     metaDescription?: string;
     keywords?: string;
     schemaType?: string;
+    focusKeyword?: string;
+    canonicalUrl?: string;
+    noindex?: boolean;
+    nofollow?: boolean;
     thumbnailUrl?: string | null;
     status?: string;
 }
@@ -114,10 +129,8 @@ export function PostSidebar({
             setCurrentPreviewId(previewId);
 
             if (isFirstTime && previewWindow) {
-                const PREVIEW_SECRET = "erg_preview_secret_2026";
                 const slug = post.slug || "preview-temp";
-                const mainDomain = process.env.NEXT_PUBLIC_DOMAIN || "https://erg.edu.vn";
-                const previewUrl = `${mainDomain}/api/preview?id=${previewId}&slug=${slug}&secret=${PREVIEW_SECRET}`;
+                const previewUrl = await enablePreview(previewId, slug);
                 previewWindow.location.href = previewUrl;
                 toast.success("Đang mở trang xem trước...");
             } else {
@@ -162,6 +175,7 @@ export function PostSidebar({
                             variant="outline"
                             className="w-full bg-white dark:bg-black text-[11px] px-2 flex gap-1.5 items-center font-bold h-9 border-zinc-200 dark:border-zinc-800"
                             onClick={onSaveDraft || onSave}
+                            disabled={isSaving}
                         >
                             <DraftingCompass className="w-3.5 h-3.5" />
                             Lưu nháp
@@ -353,6 +367,71 @@ export function PostSidebar({
                                         <SelectItem value="VideoObject">Video</SelectItem>
                                     </SelectContent>
                                 </Select>
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label className="text-xs font-bold">Từ khóa chính (Focus Keyword)</Label>
+                                <Input
+                                    placeholder="VD: học lập trình cho trẻ em"
+                                    className="bg-white dark:bg-black h-9 text-sm"
+                                    value={post.focusKeyword || ""}
+                                    onChange={(e) => onUpdate({ focusKeyword: e.target.value })}
+                                />
+                            </div>
+
+                            {/* Gợi ý Keyword theo Trend */}
+                            <div className="pt-2">
+                                <KeywordSuggestionPanel
+                                    focusKeyword={post.focusKeyword || ""}
+                                    type="post"
+                                    onAddKeywords={(kws) => {
+                                        const currentWords = post.keywords ? post.keywords.split(',').map(s => s.trim()) : [];
+                                        const totalWords = Array.from(new Set([...currentWords, ...kws])).filter(Boolean);
+                                        onUpdate({ keywords: totalWords.join(', ') });
+                                        toast.success(`Đã thêm ${kws.length} từ khóa chuẩn SEO!`);
+                                    }}
+                                />
+                            </div>
+
+                            <div className="grid gap-2 border-t pt-2 mt-2">
+                                <Label className="text-xs font-bold">Từ khóa chi tiết đã chọn</Label>
+                                <KeywordTagInput
+                                    value={post.keywords ? post.keywords.split(',').map(s => s.trim()).filter(Boolean) : []}
+                                    onChange={(newKeywords) => onUpdate({ keywords: newKeywords.join(', ') })}
+                                    placeholder="Nhập thẻ từ khóa thủ công..."
+                                />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label className="text-xs font-bold">Canonical URL (tùy chọn)</Label>
+                                <Input
+                                    placeholder="https://erg.edu.vn/tin-tuc/..."
+                                    className="bg-white dark:bg-black h-9 text-sm"
+                                    value={post.canonicalUrl || ""}
+                                    onChange={(e) => onUpdate({ canonicalUrl: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label className="text-xs font-bold">Robots</Label>
+                                <div className="flex gap-4">
+                                    <label className="flex items-center gap-2 text-sm">
+                                        <input
+                                            type="checkbox"
+                                            checked={post.noindex || false}
+                                            onChange={(e) => onUpdate({ noindex: e.target.checked })}
+                                        />
+                                        noindex
+                                    </label>
+                                    <label className="flex items-center gap-2 text-sm">
+                                        <input
+                                            type="checkbox"
+                                            checked={post.nofollow || false}
+                                            onChange={(e) => onUpdate({ nofollow: e.target.checked })}
+                                        />
+                                        nofollow
+                                    </label>
+                                </div>
                             </div>
 
                             <div className="grid gap-2">

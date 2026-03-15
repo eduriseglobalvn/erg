@@ -179,6 +179,7 @@ export function SeoRedirectsManager() {
                                     <Button
                                         variant="ghost"
                                         size="icon"
+                                        aria-label="Xóa quy tắc"
                                         className="text-red-500"
                                         onClick={() => handleDelete(item.id)}
                                         disabled={deleteMutation.isPending}

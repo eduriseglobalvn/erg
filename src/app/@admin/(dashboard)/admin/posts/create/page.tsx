@@ -5,99 +5,35 @@ import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/admin/ui/button"
 import { Sparkles, ArrowUp, StopCircle, X } from "lucide-react"
-import { SimpleEditor } from "@/components/admin/shared/editor/tiptap-templates/simple/simple-editor"
+import type { Editor } from "@tiptap/core"
+import dynamic from 'next/dynamic'
+const SimpleEditor = dynamic(
+    () => import('@/components/admin/shared/editor/tiptap-templates/simple/simple-editor').then(m => ({ default: m.SimpleEditor })),
+    { ssr: false, loading: () => <div className="h-64 animate-pulse rounded-md bg-muted" /> }
+)
 import { PostSidebar } from "@/components/admin/shared/post-sidebar"
 import { useAiWriter } from "@/hooks/use-ai-writer"
-import { postsApi } from "@/services/posts.api"
-import { toast } from "sonner"
+import { useCreatePost } from "@/hooks/use-create-post"
 import { motion, AnimatePresence } from "framer-motion"
-import Link from "next/link"
 import { AiWriterBar } from "@/components/admin/shared/editor/tiptap-ui/ai-writer-bar"
-import { localSeoAnalyzer } from "@/utils/local-seo"
 
 export default function CreatePostPage() {
-    const router = useRouter();
-    const [editorInstance, setEditorInstance] = useState<any>(null);
-    const [title, setTitle] = useState("");
+    const [editorInstance, setEditorInstance] = useState<Editor | null>(null);
     const [showAiInput, setShowAiInput] = useState(false);
 
-    const [postMetadata, setPostMetadata] = useState({
-        slug: "",
-        excerpt: "",
-        categoryId: "",
-        thumbnailUrl: null as string | null,
-        status: "draft"
-    });
+    const {
+        title,
+        setTitle,
+        postMetadata,
+        setPostMetadata,
+        handleSave,
+        handleSaveDraft,
+        isSaving
+    } = useCreatePost(editorInstance);
 
     const { isGenerating, progress, generateFullPost, refineText } = useAiWriter(editorInstance);
 
-    // Create Mutation
-    const createMutation = useMutation({
-        mutationFn: (data: any) => postsApi.create(data),
-        onSuccess: (res: any) => {
-            const id = res.data?.id || res.id;
-            toast.success("Đã đăng bài viết thành công!");
-            router.push(`/admin/posts/${id}/edit`);
-        },
-        onError: (error: any) => {
-            toast.error(error.message || "Lỗi khi đăng bài viết");
-        }
-    })
-
-    const handleSave = () => {
-        if (!title.trim()) {
-            toast.error("Vui lòng nhập tiêu đề bài viết");
-            return;
-        }
-
-        const content = editorInstance?.getHTML() || "";
-        const seoResult = localSeoAnalyzer(
-            content,
-            title,
-            (postMetadata as any).metaDescription || "",
-            (postMetadata as any).keywords || ""
-        );
-
-        createMutation.mutate({
-            ...postMetadata,
-            title,
-            content,
-            focusKeyword: (postMetadata as any).keywords,
-            seoScore: seoResult.overallScore,
-            readabilityScore: seoResult.contentAnalysis.readabilityScore,
-            keywordDensity: seoResult.contentAnalysis.keywordDensity
-        });
-    };
-
-    // [NEW] Cho trang Create: Lưu nháp cũng là tạo mới, nhưng force status=draft
-    const handleSaveDraft = () => {
-        if (!title.trim()) {
-            setTitle("Bản nháp mới");
-        }
-
-        const content = editorInstance?.getHTML() || "";
-        const finalTitle = title || "Bản nháp mới";
-
-        const seoResult = localSeoAnalyzer(
-            content,
-            finalTitle,
-            (postMetadata as any).metaDescription || "",
-            (postMetadata as any).keywords || ""
-        );
-
-        createMutation.mutate({
-            ...postMetadata,
-            title: finalTitle,
-            content,
-            status: "draft",
-            focusKeyword: (postMetadata as any).keywords,
-            seoScore: seoResult.overallScore,
-            readabilityScore: seoResult.contentAnalysis.readabilityScore,
-            keywordDensity: seoResult.contentAnalysis.keywordDensity
-        })
-    }
-
-    const handleAiSuccess = (aiData: any) => {
+    const handleAiSuccess = (aiData: { title?: string, content?: string, slug?: string, excerpt?: string, category?: { id: string }, categoryId?: string, thumbnailUrl?: string }) => {
         if (aiData.title) setTitle(aiData.title);
         if (editorInstance && aiData.content) {
             editorInstance.commands.setContent(aiData.content);
@@ -115,9 +51,9 @@ export default function CreatePostPage() {
         setShowAiInput(false); // [NEW] Tự động đóng khung AI sau khi viết xong
     };
 
-    const handleStartAi = (topic: string) => {
+    const handleStartAi = (topic: string, config?: any) => {
         if (topic.trim()) {
-            generateFullPost(topic, postMetadata.categoryId || "DEFAULT_CAT_ID", handleAiSuccess);
+            generateFullPost(topic, postMetadata.categoryId || "DEFAULT_CAT_ID", handleAiSuccess, config);
         }
     }
 
@@ -175,7 +111,7 @@ export default function CreatePostPage() {
                     onUpdate={(data) => setPostMetadata(prev => ({ ...prev, ...data }))}
                     onSave={handleSave}
                     onSaveDraft={handleSaveDraft}
-                    isSaving={createMutation.isPending}
+                    isSaving={isSaving}
                     editor={editorInstance}
                 />
             </aside>

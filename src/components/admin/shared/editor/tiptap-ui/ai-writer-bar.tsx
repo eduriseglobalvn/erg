@@ -1,24 +1,39 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Sparkles, X, StopCircle, ArrowUp } from "lucide-react"
 import { Button } from "@/components/admin/ui/button"
+
+interface AiWriterConfig {
+    template: string;
+    length: string;
+    provider: string;
+}
 
 interface AiWriterBarProps {
     isGenerating: boolean;
     progress: number;
-    onStart: (topic: string) => void;
+    onStart: (topic: string, config?: AiWriterConfig) => void;
     onClose: () => void;
 }
 
 export function AiWriterBar({ isGenerating, progress, onStart, onClose }: AiWriterBarProps) {
     const [localTopic, setLocalTopic] = useState("");
+    const [showConfig, setShowConfig] = useState(false);
+
+    // Config states
+    const [config, setConfig] = useState<AiWriterConfig>({
+        template: "informative",
+        length: "medium",
+        provider: "auto"
+    });
 
     const handleStart = () => {
         if (localTopic.trim() && !isGenerating) {
-            onStart(localTopic);
+            onStart(localTopic, config);
             setLocalTopic(""); // Tự động xóa nội dung sau khi gửi
+            setShowConfig(false);
         }
     };
 
@@ -63,13 +78,23 @@ export function AiWriterBar({ isGenerating, progress, onStart, onClose }: AiWrit
 
                 <div className="flex items-center gap-1 pr-1">
                     {!isGenerating && (
-                        <Button size="icon" variant="ghost" className="rounded-full w-8 h-8" onClick={onClose}>
-                            <X className="w-4 h-4" />
-                        </Button>
+                        <>
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                className={`rounded-full w-8 h-8 ${showConfig ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' : 'text-gray-400'}`}
+                                onClick={() => setShowConfig(!showConfig)}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-settings-2"><path d="M20 7h-9" /><path d="M14 17H5" /><circle cx="17" cy="17" r="3" /><circle cx="7" cy="7" r="3" /></svg>
+                            </Button>
+                            <Button size="icon" variant="ghost" className="rounded-full w-8 h-8" onClick={onClose}>
+                                <X className="w-4 h-4" />
+                            </Button>
+                        </>
                     )}
                     <Button
                         size="icon"
-                        className={`rounded-full shrink-0 w-9 h-9 ${localTopic ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-100 dark:bg-[#2a2a2a] text-gray-300 dark:text-gray-600'}`}
+                        className={`rounded-full shrink-0 w-9 h-9 ${localTopic ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-md' : 'bg-gray-100 dark:bg-[#2a2a2a] text-gray-400 dark:text-gray-600'}`}
                         onClick={handleStart}
                         disabled={!localTopic || isGenerating}
                     >
@@ -77,6 +102,57 @@ export function AiWriterBar({ isGenerating, progress, onStart, onClose }: AiWrit
                     </Button>
                 </div>
             </div>
+
+            {/* AI Config Panel Dropdown */}
+            <AnimatePresence>
+                {showConfig && !isGenerating && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0, y: 10 }}
+                        animate={{ opacity: 1, height: 'auto', y: 0 }}
+                        exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                        className="mt-2 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-[#333] rounded-2xl shadow-xl overflow-hidden p-4 grid grid-cols-1 md:grid-cols-3 gap-4 mx-4 origin-bottom"
+                    >
+                        <div className="space-y-1.5">
+                            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Mẫu bài viết</label>
+                            <select
+                                className="w-full text-sm bg-gray-50 dark:bg-zinc-800 border-none rounded-lg h-9 px-3 outline-none"
+                                value={config.template}
+                                onChange={(e) => setConfig({ ...config, template: e.target.value })}
+                            >
+                                <option value="informative">Tin tức / Cung cấp thông tin</option>
+                                <option value="howto">Hướng dẫn Từng Bước (How-to)</option>
+                                <option value="listicle">Danh Sách (Top 10...)</option>
+                                <option value="comparison">So sánh tính năng</option>
+                            </select>
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Độ dài</label>
+                            <select
+                                className="w-full text-sm bg-gray-50 dark:bg-zinc-800 border-none rounded-lg h-9 px-3 outline-none"
+                                value={config.length}
+                                onChange={(e) => setConfig({ ...config, length: e.target.value })}
+                            >
+                                <option value="short">Ngắn (~800 từ)</option>
+                                <option value="medium">Vừa (~1500 từ)</option>
+                                <option value="long">Dài chuyên sâu (2500+ từ)</option>
+                            </select>
+                        </div>
+                        <div className="space-y-1.5">
+                            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Model Ưu Tiên</label>
+                            <select
+                                className="w-full text-sm bg-gray-50 dark:bg-zinc-800 border-none rounded-lg h-9 px-3 outline-none font-medium text-purple-700 dark:text-purple-400"
+                                value={config.provider}
+                                onChange={(e) => setConfig({ ...config, provider: e.target.value })}
+                            >
+                                <option value="auto">Tự động chọn (Khuyến nghị)</option>
+                                <option value="groq">Groq (Llama 3.3 - Nhanh nhất)</option>
+                                <option value="gemini">Gemini 2.0 (Cân bằng)</option>
+                                <option value="claude">Claude 3 (Viết hay nhất)</option>
+                            </select>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 }

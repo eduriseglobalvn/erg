@@ -3,6 +3,7 @@
 import React from 'react';
 import { BookOpen, TrendingUp, Globe, Lightbulb, Heart, Rocket, Quote } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 export default function ErgStoryContent() {
     const t = useTranslations('about.cauChuyenCuaErg');
@@ -13,10 +14,13 @@ export default function ErgStoryContent() {
             <section className="relative h-[500px] flex items-center justify-center overflow-hidden">
                 {/* Background with Overlay */}
                 <div className="absolute inset-0 z-0">
-                    <img
+                    <Image
                         src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2000&auto=format&fit=crop"
                         alt="Technology and Education"
-                        className="w-full h-full object-cover"
+                        fill
+                        priority
+                        sizes="100vw"
+                        className="object-cover"
                     />
                     <div className="absolute inset-0 bg-[#00008b]/80 mix-blend-multiply"></div>
                 </div>
@@ -68,9 +72,11 @@ export default function ErgStoryContent() {
                     {/* Cột Phải: Hình ảnh minh họa */}
                     <div className="lg:w-1/2">
                         <div className="relative rounded-2xl overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-all duration-500 group">
-                            <img
+                            <Image
                                 src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1000&auto=format&fit=crop"
                                 alt="Digital Transformation in Education"
+                                width={1000}
+                                height={667}
                                 className="w-full h-auto object-cover"
                             />
                             {/* Decorative Elements */}

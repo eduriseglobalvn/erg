@@ -54,7 +54,8 @@ export default function AdminJobsPage() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-jobs'] });
             toast.success("Đã xóa tin tuyển dụng");
-        }
+        },
+        onError: (err: any) => toast.error(err.message || "Lỗi khi xóa tin tuyển dụng")
     });
 
     const toggleHotMutation = useMutation({
@@ -201,17 +202,19 @@ export default function AdminJobsPage() {
             id: 'actions',
             cell: ({ row }) => (
                 <div className="flex gap-2 justify-end">
-                    <Button variant="outline" size="icon" asChild>
+                    <Button variant="outline" size="icon" asChild aria-label="Xem" title="Xem">
                         <Link href={`/tuyen-dung/${row.original.slug}`} target="_blank">
                             <Eye className="w-4 h-4" />
                         </Link>
                     </Button>
-                    <Button variant="outline" size="icon" onClick={() => openEdit(row.original)}>
+                    <Button variant="outline" size="icon" onClick={() => openEdit(row.original)} aria-label="Sửa" title="Sửa">
                         <Pencil className="w-4 h-4" />
                     </Button>
                     <Button
                         variant="destructive"
                         size="icon"
+                        aria-label="Xóa"
+                        title="Xóa"
                         onClick={() => {
                             if (confirm('Bạn có chắc muốn xóa tin này?')) {
                                 deleteMutation.mutate(row.original.id);

@@ -15,6 +15,7 @@ import {
 
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/admin/ui/label"
+import { motion, AnimatePresence } from "framer-motion"
 
 const Form = FormProvider
 
@@ -139,19 +140,23 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   const { error, formMessageId } = useFormField()
   const body = error ? String(error?.message ?? "") : props.children
 
-  if (!body) {
-    return null
-  }
-
   return (
-    <p
-      data-slot="form-message"
-      id={formMessageId}
-      className={cn("text-destructive text-sm", className)}
-      {...props}
-    >
-      {body}
-    </p>
+    <AnimatePresence>
+      {body && (
+        <motion.p
+          initial={{ opacity: 0, height: 0, marginTop: 0 }}
+          animate={{ opacity: 1, height: "auto", marginTop: 4 }}
+          exit={{ opacity: 0, height: 0, marginTop: 0 }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          data-slot="form-message"
+          id={formMessageId}
+          className={cn("text-destructive text-[13px] font-medium", className)}
+          {...(props as any)}
+        >
+          {body}
+        </motion.p>
+      )}
+    </AnimatePresence>
   )
 }
 

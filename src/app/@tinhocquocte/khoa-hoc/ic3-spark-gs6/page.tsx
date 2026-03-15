@@ -7,19 +7,23 @@ import { headers } from 'next/headers';
 import { pagesApi } from '@/services/pages.api';
 import { COURSES } from '@/constants/courses';
 import { REAL_IMAGES } from '@/mocks/imageGalerry';
+import { generateFullMetadata } from '@/utils/seo/seo-metadata';
+import { SEO_DATA } from '@/constants/seo.constants';
 
 export async function generateMetadata(): Promise<Metadata> {
     const pageData = await pagesApi.getPage('ic3-spark-gs6');
+    const headerList = await headers();
+    const host = headerList.get('host') || 'tinhocquocte.erg.edu.vn';
 
-    return {
+    const fallbackOgImage = SEO_DATA.tinhocquocte.ogImage;
+
+    return generateFullMetadata({
         title: pageData?.metaTitle || "IC3 Spark Global Standard 6 | Tin học Tiểu học ERG",
         description: pageData?.metaDescription || "Chứng chỉ tin học quốc tế IC3 Spark dành cho học sinh tiểu học. Xây dựng nền tảng công nghệ an toàn.",
-        openGraph: {
-            title: pageData?.metaTitle,
-            description: pageData?.metaDescription,
-            images: pageData?.thumbnail ? [pageData.thumbnail] : [],
-        }
-    };
+        images: pageData?.thumbnail ? [pageData.thumbnail] : [fallbackOgImage],
+        path: '/khoa-hoc/ic3-spark-gs6',
+        host,
+    });
 }
 
 export default async function Page() {

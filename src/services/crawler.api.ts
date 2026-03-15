@@ -102,6 +102,10 @@ export const crawlerApi = {
         return httpClient<BaseResponse<CrawlerStats>>('/crawler/stats').then(res => res.data);
     },
 
+    getActivePipelines: () => {
+        return httpClient<BaseResponse<any[]>>('/crawler/active-pipelines').then(res => res.data);
+    },
+
     getHistory: (page: number = 1, limit: number = 20) => {
         return httpClient<BaseResponse<CrawlHistoryResponse>>(`/crawler/history?page=${page}&limit=${limit}`).then(res => res.data);
     },

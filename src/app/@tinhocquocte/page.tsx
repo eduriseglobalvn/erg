@@ -7,6 +7,8 @@ import { SchemaScript } from '@/components/seo/schema-script';
 import { headers } from 'next/headers';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 
+export const revalidate = 300;
+
 
 export default async function InternationalItPage() {
   const headerList = await headers();

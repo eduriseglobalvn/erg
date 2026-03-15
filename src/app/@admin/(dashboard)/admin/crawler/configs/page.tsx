@@ -83,7 +83,7 @@ export default function ScraperConfigsPage() {
             toast.success(editingConfig ? "Đã cập nhật cấu hình domain" : "Đã thêm cấu hình domain mới")
             handleClose()
         },
-        onError: (err: any) => toast.error(err.message || "Lỗi khi lưu dữ liệu")
+        onError: (err: Error) => toast.error(err.message || "Lỗi khi lưu dữ liệu")
     })
 
     const deleteMutation = useMutation({
@@ -91,7 +91,8 @@ export default function ScraperConfigsPage() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['crawler', 'configs'] })
             toast.success("Đã xóa cấu hình")
-        }
+        },
+        onError: (err: any) => toast.error(err.message || "Lỗi khi xóa cấu hình")
     })
 
     // 3. Handlers
@@ -163,7 +164,7 @@ export default function ScraperConfigsPage() {
                                         <Label>Loại máy cào</Label>
                                         <Select
                                             value={formData.type}
-                                            onValueChange={val => setFormData({ ...formData, type: val as any })}
+                                            onValueChange={val => setFormData({ ...formData, type: val as "STATIC" | "DYNAMIC" })}
                                         >
                                             <SelectTrigger>
                                                 <SelectValue />
@@ -298,6 +299,8 @@ export default function ScraperConfigsPage() {
                                                             size="icon"
                                                             className="h-8 w-8"
                                                             onClick={() => handleEdit(config)}
+                                                            aria-label="Sửa"
+                                                            title="Sửa"
                                                         >
                                                             <Pencil className="h-4 w-4" />
                                                         </Button>
@@ -306,6 +309,8 @@ export default function ScraperConfigsPage() {
                                                             size="icon"
                                                             className="h-8 w-8 text-destructive hover:bg-red-50"
                                                             onClick={() => confirm("Xóa cấu hình này sẽ dùng Selector mặc định cho domain này. Tiếp tục?") && deleteMutation.mutate(config.id)}
+                                                            aria-label="Xóa"
+                                                            title="Xóa"
                                                         >
                                                             <Trash2 className="h-4 w-4" />
                                                         </Button>
@@ -339,11 +344,11 @@ function TooltipLabel({ label, value }: { label: string, value?: string }) {
 function SelectorTester() {
     const [url, setUrl] = React.useState("")
     const [type, setType] = React.useState<'STATIC' | 'DYNAMIC'>('STATIC')
-    const [result, setResult] = React.useState<any>(null)
+    const [result, setResult] = React.useState<{ message: string } | null>(null)
     const [loading, setLoading] = React.useState(false)
     const [categoryId, setCategoryId] = React.useState<string | undefined>(undefined)
 
-    const { data: categories = [] } = useQuery({
+    const { data: categories = [] } = useQuery<{ id: string | number, name: string }[]>({
         queryKey: ['categories'],
         queryFn: () => postsApi.getCategories()
     })
@@ -356,8 +361,8 @@ function SelectorTester() {
             await crawlerApi.triggerUrl(url, type, categoryId)
             setResult({ message: "Đã thêm vào hàng đợi cào tin. Vui lòng kiểm tra Lịch sử cào tin để xem kết quả." })
             toast.success("Đã thêm vào hàng đợi")
-        } catch (err: any) {
-            toast.error(err.message || "Lỗi khi gọi API")
+        } catch (err: Error | unknown) {
+            toast.error((err as Error).message || "Lỗi khi gọi API")
         } finally {
             setLoading(false)
         }
@@ -393,7 +398,7 @@ function SelectorTester() {
                             <SelectValue placeholder="Chọn chuyên mục lưu bài" />
                         </SelectTrigger>
                         <SelectContent position="popper" className="max-h-[200px]">
-                            {categories.map((cat: any) => (
+                            {categories.map((cat: { id: string | number, name: string }) => (
                                 <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>
                             ))}
                         </SelectContent>

@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react'
 import parse, { DOMNode, Element } from 'html-react-parser'
+import { sanitizeHTML } from '@/utils/sanitize-html'
 import { TOCBox, TOCItem } from '@/components/shared/toc-box'
 
 export function PostContentRenderer({ content }: { content: string }) {
@@ -28,8 +29,10 @@ export function PostContentRenderer({ content }: { content: string }) {
         }
     }
 
+    const sanitizedContent = sanitizeHTML(content);
+
     return <div className="prose prose-stone dark:prose-invert max-w-none break-words">
-        {parse(content, options)}
+        {parse(sanitizedContent, options)}
     </div>
 }
 

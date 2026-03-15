@@ -6,9 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { recruitmentApi } from '@/services/recruitment.api';
 import { Job } from '@/types/recruitment';
-import { Upload, Send, CheckCircle2, AlertCircle, FileText, ArrowLeft } from 'lucide-react';
+import { Upload, Send, CheckCircle2, AlertCircle, FileText, ArrowLeft, Copy, Check, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -41,7 +40,8 @@ interface ApplyFormProps {
 export default function ApplyForm({ job }: ApplyFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
+    const [successData, setSuccessData] = useState<{ trackingCode: string } | null>(null);
+    const [copied, setCopied] = useState(false);
     const t = useTranslations('recruitment.Card'); // Reusing some keys
 
     const {
@@ -77,7 +77,8 @@ export default function ApplyForm({ job }: ApplyFormProps) {
 
             if (res.statusCode === 201 || res.statusCode === 200) {
                 const trackingCode = res.data.trackingCode;
-                router.push(`/tuyen-dung/theo-doi?code=${trackingCode}`);
+                // Show success screen with tracking code instead of immediate redirect
+                setSuccessData({ trackingCode });
             } else {
                 throw new Error(res.message || 'Có lỗi xảy ra khi nộp hồ sơ');
             }
@@ -88,6 +89,74 @@ export default function ApplyForm({ job }: ApplyFormProps) {
             setIsSubmitting(false);
         }
     };
+
+    const copyTrackingCode = async () => {
+        if (!successData) return;
+        try {
+            await navigator.clipboard.writeText(successData.trackingCode);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2500);
+        } catch {
+            // Fallback for older browsers
+            const el = document.getElementById('tracking-code-display');
+            if (el) { window.getSelection()?.selectAllChildren(el); }
+        }
+    };
+
+    // --- SUCCESS SCREEN ---
+    if (successData) {
+        return (
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-8 text-white text-center">
+                    <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-once">
+                        <CheckCircle2 size={44} className="text-white" />
+                    </div>
+                    <h2 className="text-2xl font-bold mb-2">Nộp hồ sơ thành công! 🎉</h2>
+                    <p className="text-green-50 text-sm">Chúng tôi đã nhận được hồ sơ của bạn cho vị trí <strong>{job.title}</strong></p>
+                </div>
+
+                <div className="p-8 space-y-6">
+                    <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 text-center">
+                        <p className="text-sm text-gray-600 mb-2 font-medium">Mã tra cứu hồ sơ của bạn:</p>
+                        <div className="flex items-center justify-center gap-3">
+                            <span
+                                id="tracking-code-display"
+                                className="text-3xl font-black text-[#00008b] tracking-widest select-all"
+                            >
+                                {successData.trackingCode}
+                            </span>
+                            <button
+                                onClick={copyTrackingCode}
+                                className="p-2 rounded-lg bg-white border border-blue-200 hover:bg-blue-100 transition-colors"
+                                title="Copy mã"
+                            >
+                                {copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} className="text-gray-500" />}
+                            </button>
+                        </div>
+                        {copied && <p className="text-xs text-green-600 mt-2 font-medium">Đã copy mã!</p>}
+                        <p className="text-xs text-gray-500 mt-3">Lưu lại mã này để tra cứu tiến độ xét duyệt hồ sơ</p>
+                    </div>
+
+                    <div className="text-sm text-gray-600 bg-yellow-50 rounded-xl p-4 border border-yellow-100">
+                        <p className="font-bold text-yellow-800 mb-1">📋 Các bước tiếp theo:</p>
+                        <ol className="list-decimal list-inside space-y-1 text-yellow-700">
+                            <li>HR sẽ xem xét hồ sơ trong vòng 3-5 ngày làm việc</li>
+                            <li>Chúng tôi sẽ liên hệ qua email hoặc điện thoại nếu phù hợp</li>
+                            <li>Dùng mã trên để theo dõi trạng thái hồ sơ bất cứ lúc nào</li>
+                        </ol>
+                    </div>
+
+                    <Link
+                        href={`/tuyen-dung/theo-doi?code=${successData.trackingCode}`}
+                        className="flex items-center justify-center gap-2 w-full bg-[#00008b] hover:bg-blue-900 text-white py-4 rounded-xl font-bold transition-all"
+                    >
+                        <ExternalLink size={18} />
+                        Theo dõi trạng thái hồ sơ
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">

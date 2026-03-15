@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, CheckCircle2, Brain, Globe, Shield, Activity } from 'lucide-react';
 import RoadmapSection from "@/components/congdanso/RoadmapSection";
 import { CourseCard } from '@/components/cards/course-card';
@@ -33,10 +34,12 @@ const CitizenshipCarousel = () => {
                 </div>
             </div>
             <div className="absolute inset-0 w-full h-full transition-opacity duration-500">
-                <img
+                <Image
                     src={images[current].src}
                     alt={images[current].label}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover"
                     onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
                 />
             </div>

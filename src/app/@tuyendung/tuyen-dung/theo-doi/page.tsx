@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
+import Image from 'next/image';
 import { recruitmentApi } from '@/services/recruitment.api';
 import { Candidate, CandidateStatus } from '@/types/recruitment';
 import {
@@ -260,7 +261,7 @@ function TrackingContent() {
 
             {!candidate && !isLoading && !error && (
                 <div className="mt-20 text-center animate-pulse">
-                    <img src="/images/searching.svg" alt="Search" className="w-56 h-56 mx-auto opacity-10 hidden md:block grayscale" />
+                    <Image src="/images/searching.svg" alt="Search" width={224} height={224} className="mx-auto opacity-10 hidden md:block grayscale" />
                     <p className="text-gray-400 mt-6 text-lg font-medium">Đang đợi bạn nhập mã tra cứu hồ sơ...</p>
                 </div>
             )}

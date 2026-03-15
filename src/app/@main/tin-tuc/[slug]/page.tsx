@@ -2,7 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, permanentRedirect, redirect } from 'next/navigation';
-import { Calendar, User, FolderOpen, Share2 } from 'lucide-react';
+import { Calendar, User, FolderOpen, Share2, Star } from 'lucide-react';
 import { Button } from '@/components/admin/ui/button';
 import { PostContentRenderer } from '@/components/shared/post-content-renderer';
 import { RecentPostsSidebar } from '@/components/marketing/recent-posts-sidebar';
@@ -11,6 +11,9 @@ import { draftMode } from 'next/headers';
 import { DraftBanner } from '@/components/shared/draft-banner';
 import { Reviews } from '@/components/shared/reviews';
 import { SchemaScript } from '@/components/seo/schema-script';
+import { AiSearchSummaryBox } from '@/components/seo/ai-search-summary';
+
+import { reviewsApi } from '@/services/reviews.api';
 
 // Import Interface
 import { PostDetailResponse } from '@/services/posts.api';
@@ -20,10 +23,26 @@ interface PostFetchResult {
     status: number;
 }
 
+// Fetch review stats for SSR
+async function getReviewStats(targetId: string) {
+    try {
+        const apiUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+        const res = await fetch(`${apiUrl}/api/reviews?targetId=${targetId}&limit=1`, {
+            next: { revalidate: 60 },
+        });
+
+        if (!res.ok) return null;
+        const json = await res.json();
+        return json.stats || null;
+    } catch (error) {
+        return null;
+    }
+}
+
 // Fetch function for Server Component
 async function getPost(slug: string, previewId?: string | null): Promise<PostFetchResult> {
     try {
-        const apiUrl = process.env.BACKEND_URL || 'http://localhost:3000';
+        const apiUrl = process.env.BACKEND_URL || 'http://localhost:3003';
 
         // [CASE] Nếu đang ở chế độ xem trước (Draft Mode)
         if (previewId) {
@@ -64,7 +83,7 @@ async function getPost(slug: string, previewId?: string | null): Promise<PostFet
 
 async function getRecentPosts(): Promise<any[]> {
     try {
-        const apiUrl = process.env.BACKEND_URL || 'http://localhost:3000';
+        const apiUrl = process.env.BACKEND_URL || 'http://localhost:3003';
         const res = await fetch(`${apiUrl}/api/posts?limit=5&sortBy=createdAt&order=DESC&status=published`, {
             next: { revalidate: 60 },
         });
@@ -146,7 +165,6 @@ export async function generateMetadata({ params, searchParams }: {
 }
 
 // [NEW] ISR Revalidation: 10 phút cập nhật 1 lần
-export const revalidate = 600;
 
 export default async function PostDetailPage({
     params,
@@ -164,6 +182,15 @@ export default async function PostDetailPage({
         getPost(slug, isDraft ? previewId : null),
         getRecentPosts()
     ]);
+
+    if (!post) {
+        // [SEO] Redirect 302 về trang danh sách có kèm thông báo
+        redirect('/tin-tuc?reason=not-found');
+    }
+
+    // [SSR] Fetch stats for schema and UI
+    const reviewStats = await getReviewStats(post.id);
+    const postWithRating = { ...post, rating: reviewStats };
 
     // [HANDLE 410] Giao diện bài viết đã xóa
     if (status === 410) {
@@ -215,22 +242,16 @@ export default async function PostDetailPage({
     return (
         <article className="min-h-screen bg-white pb-24">
             {/* SEO Schemas */}
-            <SchemaScript type="NewsArticle" data={post} domain="erg.edu.vn" />
+            <SchemaScript type="NewsArticle" data={postWithRating} domain="erg.edu.vn" />
             <SchemaScript type="BreadcrumbList" data={{ items: breadcrumbItems }} domain="erg.edu.vn" />
 
             {/* Render Slot tương ứng */}
             {/* Thanh thông báo bản nháp */}
             {isDraft && <DraftBanner />}
 
-            {/* Breadcrumb Section */}
             <div className="bg-gray-50 border-b">
                 <div className="container mx-auto px-4 py-3 md:px-8 max-w-7xl">
-                    <Breadcrumb
-                        items={[
-                            { label: 'Tin Tức', href: '/tin-tuc' },
-                            { label: post.title }
-                        ]}
-                    />
+                    <Breadcrumb items={breadcrumbItems} />
                 </div>
             </div>
 
@@ -257,6 +278,19 @@ export default async function PostDetailPage({
                                     {post.author.fullName}
                                 </div>
                             )}
+
+                            {/* [NEW] Rating Summary */}
+                            {reviewStats && reviewStats.count > 0 && (
+                                <div className="flex items-center gap-1.5 text-amber-500 bg-amber-50 px-3 py-1 rounded">
+                                    <div className="flex items-center">
+                                        {[1, 2, 3, 4, 5].map((s) => (
+                                            <Star key={s} size={12} className={s <= Math.round(reviewStats.average) ? "fill-amber-500" : "text-gray-300"} />
+                                        ))}
+                                    </div>
+                                    <span className="font-bold">{reviewStats.average.toFixed(1)}</span>
+                                    <span className="text-gray-400 text-xs mt-0.5">({reviewStats.count} đánh giá)</span>
+                                </div>
+                            )}
                         </div>
 
                         {/* Last Updated */}
@@ -271,15 +305,11 @@ export default async function PostDetailPage({
                             {post.title}
                         </h1>
 
-                        {/* Excerpt */}
-                        {post.excerpt && (
-                            <div className="text-lg text-gray-600 mb-10 leading-relaxed italic border-l-4 border-l-[#cc0022] pl-6 py-1 bg-gray-50 uppercase tracking-tight font-medium">
-                                {post.excerpt}
-                            </div>
-                        )}
+
 
                         {/* Main Content */}
                         <div className="post-content-container">
+                            <AiSearchSummaryBox post={post} />
                             <PostContentRenderer content={post.content} />
                         </div>
 

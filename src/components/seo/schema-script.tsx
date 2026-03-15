@@ -90,7 +90,7 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                 "@type": type,
                 "headline": data.title,
                 "description": data.excerpt || data.description || data.title,
-                "image": data.thumbnailUrl ? [data.thumbnailUrl] : (data.thumbnail ? [data.thumbnail] : []),
+                "image": data.thumbnailUrl ? [data.thumbnailUrl] : (data.thumbnail ? [data.thumbnail] : ["https://media.erg.edu.vn/logo/erg.png"]),
                 "datePublished": data.publishedAt || data.createdAt,
                 "dateModified": data.updatedAt || data.createdAt,
                 "author": [{
@@ -105,7 +105,16 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                         "@type": "ImageObject",
                         "url": "https://media.erg.edu.vn/logo/erg.png"
                     }
-                }
+                },
+                ...(data.rating && data.rating.count >= 3 && {
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": data.rating.average,
+                        "reviewCount": data.rating.count,
+                        "bestRating": 5,
+                        "worstRating": 1
+                    }
+                })
             };
             break;
 
@@ -114,13 +123,23 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                 "@context": "https://schema.org",
                 "@type": "Course",
                 "name": data.title,
-                "description": data.description,
+                "description": data.description || data.title,
+                "hasCourseInstance": {
+                    "@type": "CourseInstance",
+                    "courseMode": "Online", // Assuming default, can be extended if data provides it
+                    "courseWorkload": "PT40H",
+                    "instructor": {
+                        "@type": "Organization",
+                        "name": "Edurise Global",
+                        "url": `https://${domain}`
+                    }
+                },
                 "provider": {
                     "@type": "EducationalOrganization",
                     "name": "Edurise Global",
                     "sameAs": `https://${domain}`
                 },
-                ...(data.rating && {
+                ...(data.rating && data.rating.count >= 3 && {
                     "aggregateRating": {
                         "@type": "AggregateRating",
                         "ratingValue": data.rating.average,

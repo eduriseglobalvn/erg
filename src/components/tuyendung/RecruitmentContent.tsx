@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import {
     Search, MapPin, DollarSign, Clock,
@@ -19,10 +19,12 @@ export default function RecruitmentContent() {
     const t = useTranslations('recruitment');
     const tp = useTranslations('recruitment.Process');
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [searchInput, setSearchInput] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const { data, isLoading } = useQuery({
-        queryKey: ['public-home-jobs'],
-        queryFn: () => recruitmentApi.getJobs({ limit: 6 }).then(res => res.data)
+        queryKey: ['public-home-jobs', searchQuery],
+        queryFn: () => recruitmentApi.getJobs({ limit: 6, q: searchQuery || undefined }).then(res => res.data)
     });
 
     const jobs = Array.isArray(data) ? data : (data?.items || []);
@@ -60,8 +62,14 @@ export default function RecruitmentContent() {
                             type="text"
                             placeholder={t('Page.searchPlaceholder')}
                             className="flex-1 px-4 py-4 bg-transparent border-none focus:outline-none text-gray-800 placeholder-gray-400 text-lg"
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && setSearchQuery(searchInput)}
                         />
-                        <button className="bg-[#cc0022] hover:bg-red-700 text-white rounded-full px-10 py-4 font-bold transition-all shrink-0 hidden md:block shadow-lg shadow-red-200">
+                        <button
+                            onClick={() => setSearchQuery(searchInput)}
+                            className="bg-[#cc0022] hover:bg-red-700 text-white rounded-full px-10 py-4 font-bold transition-all shrink-0 hidden md:block shadow-lg shadow-red-200"
+                        >
                             {t('Page.search')}
                         </button>
                     </div>

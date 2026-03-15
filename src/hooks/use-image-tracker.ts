@@ -56,22 +56,14 @@ export function useImageTracker() {
     const cleanupDeletedImages = useCallback(async (deletedUrls: string[]) => {
         if (deletedUrls.length === 0) return;
 
-        console.log('--- START CLEANUP ---');
-        console.log('Images to delete:', deletedUrls);
-
         const deletePromises = deletedUrls.map(url => {
-            // Đảm bảo URL sạch, không có khoảng trắng dư thừa (nguyên nhân hay gây lỗi 400)
             const cleanUrl = url.trim();
-
-            console.log(`Sending DELETE for URL: "${cleanUrl}"`);
-
-            return postsApi.deleteImage(cleanUrl).catch(err => {
-                console.error(`Status 400/Error for URL ${cleanUrl}:`, err);
+            return postsApi.deleteImage(cleanUrl).catch(() => {
+                // Silently handle error in production or use a monitoring tool
             });
         });
 
         await Promise.allSettled(deletePromises);
-        console.log('--- END CLEANUP ---');
     }, []);
 
     return {

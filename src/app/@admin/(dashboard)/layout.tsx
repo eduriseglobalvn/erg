@@ -5,10 +5,11 @@ import {
 } from "@/components/admin/ui/sidebar"
 import { AdminHeader } from "@/components/admin/shared/admin-header"
 import { ThemeProvider } from "@/components/admin/theme-provider"
+import { SectionErrorBoundary } from "@/components/admin/shared/error-boundary"
 
 export default function AdminLayout({
-                                        children,
-                                    }: {
+    children,
+}: {
     children: React.ReactNode
 }) {
     return (
@@ -29,7 +30,9 @@ export default function AdminLayout({
 
                     {/* Nội dung trang quản trị */}
                     <div className="flex flex-1 flex-col gap-4 p-4 pt-0 mt-4">
-                        {children}
+                        <SectionErrorBoundary>
+                            {children}
+                        </SectionErrorBoundary>
                     </div>
                 </SidebarInset>
             </SidebarProvider>

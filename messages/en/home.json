@@ -1,0 +1,57 @@
+{
+    "Hero": {
+        "badge": "International IT Training Center",
+        "heading": "Building the Digital Future",
+        "subheading": "Together with ERG, bringing international IT standards to millions of Vietnamese students",
+        "ctaPrimary": "Explore courses",
+        "ctaSecondary": "Contact us"
+    },
+    "Stats": {
+        "branches": "Branches",
+        "students": "Students",
+        "schools": "Partner Schools",
+        "teachers": "Certified Teachers"
+    },
+    "Courses": {
+        "title": "Training Programs",
+        "subtitle": "Explore internationally certified learning paths",
+        "viewAll": "View all courses"
+    },
+    "Jobs": {
+        "title": "Latest Job Openings",
+        "subtitle": "Career opportunities",
+        "viewAll": "View all positions",
+        "noJobs": "No job openings available."
+    },
+    "News": {
+        "title": "News & Events",
+        "subtitle": "Latest updates from ERG",
+        "viewAll": "View all news"
+    },
+    "Why": {
+        "title": "Why choose ERG?",
+        "subtitle": "Because we grow with you",
+        "items": {
+            "quality": {
+                "title": "International Standards",
+                "desc": "Recognized by Certiport, Microsoft and reputable international organizations."
+            },
+            "teachers": {
+                "title": "Experienced Teachers",
+                "desc": "100% of teachers hold international certificates."
+            },
+            "support": {
+                "title": "Comprehensive Support",
+                "desc": "Advising and supporting students throughout the learning journey."
+            }
+        }
+    },
+    "Partners": {
+        "title": "Our Partners"
+    },
+    "CTA": {
+        "title": "Start your learning journey today",
+        "subtitle": "Register for a free consultation to find the right path for you",
+        "button": "Register for consultation"
+    }
+}

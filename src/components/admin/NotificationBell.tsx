@@ -1,12 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { Bell, CheckCircle, XCircle, Globe, AlertTriangle, X, Check } from "lucide-react"
+import { Bell, CheckCircle, XCircle, Globe, AlertTriangle, X, Check, Info, BellRing } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { formatDistanceToNow } from "date-fns"
 import { vi } from "date-fns/locale"
 import { useNotifications } from "@/hooks/useNotifications"
-import { Notification, NotificationType, NotificationStatus } from "@/types/notification"
+import { Notification, NotificationType, NotificationStatus, NotificationPriority } from "@/types/notification"
 import { Button } from "@/components/admin/ui/button"
 import { Badge } from "@/components/admin/ui/badge"
 import { ScrollArea } from "@/components/admin/ui/scroll-area"
@@ -29,8 +29,26 @@ const getNotificationIcon = (type: NotificationType) => {
             return <AlertTriangle className="h-5 w-5 text-orange-500" />
         case NotificationType.CRAWL_BATCH_COMPLETED:
             return <CheckCircle className="h-5 w-5 text-blue-500" />
+        case NotificationType.SYSTEM_ALERT:
+            return <AlertTriangle className="h-5 w-5 text-red-500" />
+        case NotificationType.USER_ACTION:
+            return <Info className="h-5 w-5 text-blue-500" />
         default:
             return <Bell className="h-5 w-5 text-gray-500" />
+    }
+}
+
+const getPriorityBorderInfo = (priority?: NotificationPriority) => {
+    switch (priority) {
+        case NotificationPriority.URGENT:
+            return "border-l-4 border-l-red-600"
+        case NotificationPriority.HIGH:
+            return "border-l-4 border-l-orange-500"
+        case NotificationPriority.MEDIUM:
+            return "border-l-4 border-l-blue-400"
+        case NotificationPriority.LOW:
+        default:
+            return "border-l-4 border-l-transparent"
     }
 }
 
@@ -38,7 +56,7 @@ interface NotificationItemProps {
     notification: Notification
     onMarkAsRead: (id: string) => void
     onDelete: (id: string) => void
-    onNavigate: (postId?: string) => void
+    onNavigate: (url: string) => void
 }
 
 const NotificationItem = ({ notification, onMarkAsRead, onDelete, onNavigate }: NotificationItemProps) => {
@@ -48,8 +66,10 @@ const NotificationItem = ({ notification, onMarkAsRead, onDelete, onNavigate }: 
         if (isUnread) {
             onMarkAsRead(notification.id)
         }
-        if (notification.metadata?.postId) {
-            onNavigate(notification.metadata.postId)
+        if (notification.actionUrl) {
+            onNavigate(notification.actionUrl)
+        } else if (notification.metadata?.postId) {
+            onNavigate(`/admin/posts/${notification.metadata.postId}`)
         }
     }
 
@@ -57,7 +77,8 @@ const NotificationItem = ({ notification, onMarkAsRead, onDelete, onNavigate }: 
         <div
             className={cn(
                 "group relative p-4 border-b transition-all hover:bg-muted/50 cursor-pointer",
-                isUnread ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200"
+                isUnread ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200",
+                getPriorityBorderInfo(notification.priority)
             )}
             onClick={handleClick}
         >
@@ -92,6 +113,20 @@ const NotificationItem = ({ notification, onMarkAsRead, onDelete, onNavigate }: 
                         {notification.message}
                     </p>
 
+                    {notification.actionUrl && (
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-2 h-7 text-xs font-semibold bg-white border-gray-200 transition-colors hover:bg-gray-100"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleClick();
+                            }}
+                        >
+                            {notification.actionText || 'Xem chi tiết'}
+                        </Button>
+                    )}
+
                     <div className="flex items-center gap-2 mt-2">
                         <span className="text-xs text-gray-400">
                             {formatDistanceToNow(new Date(notification.createdAt), {
@@ -117,21 +152,19 @@ export function NotificationBell() {
     const [isOpen, setIsOpen] = React.useState(false)
     const { notifications, unreadCount, loading, markAsRead, markAllAsRead, deleteNotification } = useNotifications(true, 30000)
 
-    const handleNavigate = (postId?: string) => {
-        if (postId) {
-            router.push(`/admin/posts/${postId}`)
-            setIsOpen(false)
-        }
+    const handleNavigate = (url: string) => {
+        router.push(url)
+        setIsOpen(false)
     }
 
     return (
         <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative">
-                    <Bell className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="relative h-10 w-10 overflow-hidden text-gray-500 hover:text-gray-900 transition-colors">
+                    {unreadCount > 0 ? <BellRing className="h-5 w-5 animate-pulse text-indigo-600" /> : <Bell className="h-5 w-5" />}
                     {unreadCount > 0 && (
                         <Badge
-                            className="absolute -top-1 -right-1 h-5 min-w-[20px] flex items-center justify-center p-0 px-1 bg-red-500 hover:bg-red-600 text-white border-2 border-white text-xs animate-pulse"
+                            className="absolute top-1 right-1 h-4 min-w-[16px] flex items-center justify-center p-0 px-1 bg-red-600 hover:bg-red-700 text-white border border-white text-[10px] font-bold shadow-md"
                         >
                             {unreadCount > 99 ? '99+' : unreadCount}
                         </Badge>

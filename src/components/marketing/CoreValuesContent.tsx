@@ -5,40 +5,44 @@ import {
     Heart, Star, Globe, Lightbulb, Users,
     ShieldCheck, Zap, ArrowRight
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function CoreValuesContent() {
+    const t = useTranslations('about.giaTriCotLoi');
+    const tc = useTranslations('common.Buttons');
+
     const values = [
         {
             id: 1,
-            title: "Trách nhiệm xã hội",
+            title: t('values.community.title'),
             content: "ERG đóng góp vào sự phát triển bền vững của xã hội thông qua các chương trình đào tạo quốc tế, nâng cao kỹ năng công nghệ cho cộng đồng.",
             icon: <Globe className="w-8 h-8 text-white" />,
             theme: "blue",
         },
         {
             id: 2,
-            title: "Chất lượng vượt trội",
+            title: t('values.quality.title'),
             content: "ERG cam kết mang lại những sản phẩm và dịch vụ với chất lượng tốt nhất thông qua việc đảm bảo tỷ lệ thành công tối ưu và trải nghiệm dịch vụ vượt trội.",
             icon: <Star className="w-8 h-8 text-white" />,
             theme: "red",
         },
         {
             id: 3,
-            title: "Hợp tác và phát triển",
+            title: t('values.community.desc'),
             content: "ERG xây dựng một môi trường làm việc đội nhóm, nơi mọi người cùng nhau chia sẻ kiến thức, kinh nghiệm và cùng nhau phát triển.",
             icon: <Users className="w-8 h-8 text-white" />,
             theme: "blue",
         },
         {
             id: 4,
-            title: "Khách hàng là trung tâm",
+            title: t('values.integrity.title'),
             content: "ERG đặt lợi ích và sự hài lòng của khách hàng làm ưu tiên hàng đầu trên các khía cạnh về sự thấu hiểu, cải tiến chất lượng, minh bạch hóa, giữ đúng cam kết.",
             icon: <Heart className="w-8 h-8 text-white" />,
             theme: "red",
         },
         {
             id: 5,
-            title: "Sáng tạo đổi mới",
+            title: t('values.innovation.title'),
             content: "Công nghệ không chỉ là công cụ, mà là động lực để chuyển hóa giáo dục. ERG thúc đẩy tinh thần đổi mới trong từng giải pháp, khuyến khích tư duy sáng tạo.",
             icon: <Lightbulb className="w-8 h-8 text-white" />,
             theme: "blue",
@@ -59,10 +63,10 @@ export default function CoreValuesContent() {
 
                 <div className="relative z-10 px-4 animate-fade-in-up">
                     <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-blue-50 border border-blue-100 text-[#00008b] text-base font-bold mb-6 shadow-sm">
-                        <ShieldCheck className="w-5 h-5" /> VĂN HÓA DOANH NGHIỆP
+                        <ShieldCheck className="w-5 h-5" /> {t('subtitle')}
                     </div>
                     <h1 className="text-4xl md:text-7xl font-extrabold text-[#00008b] mb-6 tracking-tight">
-                        GIÁ TRỊ CỐT LÕI
+                        {t('title')}
                     </h1>
                     <p className="text-lg md:text-2xl text-gray-500 max-w-3xl mx-auto font-light leading-relaxed">
                         5 trụ cột định hình phong cách làm việc và chất lượng đào tạo tại <span className="text-[#cc0022] font-bold">Edurise Global</span>.
@@ -167,7 +171,7 @@ export default function CoreValuesContent() {
                             Chúng tôi luôn chào đón những nhân tài chia sẻ cùng hệ giá trị để kiến tạo tương lai giáo dục.
                         </p>
                         <a href="https://tuyendung.erg.edu.vn" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-[#cc0022] hover:bg-red-700 text-white font-bold text-lg md:text-xl py-4 px-8 md:py-5 md:px-12 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 group transform hover:-translate-y-1">
-                            Xem cơ hội nghề nghiệp
+                            {tc('learnMore')}
                             <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform" />
                         </a>
                     </div>

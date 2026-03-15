@@ -5,6 +5,14 @@ export { userApi } from './users.api';
 export { postsApi } from './posts.api';
 export { aiApi } from './ai.api';
 export { sessionsApi } from './sessions.api';
-
-// Sau này có thêm user.api.ts thì thêm vào đây:
-// export * from './user.api';
+export { accessControlApi } from './access-control.api';
+export { analyticsApi } from './analytics.api';
+export { coursesApi } from './courses.api';
+export { crawlerApi } from './crawler.api';
+export { menuApi } from './menu.api';
+export { notificationApi } from './notification.api';
+export { pagesApi } from './pages.api';
+export { recruitmentApi } from './recruitment.api';
+export { reviewsApi } from './reviews.api';
+export { seoLoggingApi } from './seo-logging.api';
+export { seoApi } from './seo.api';

@@ -1,0 +1,89 @@
+{
+    "Common": {
+        "backToHome": "Back to home",
+        "teachers": "Teaching Staff",
+        "route": "Learning Path",
+        "courses": "Courses",
+        "news": "News",
+        "contact": "Contact",
+        "register": "Register"
+    },
+    "Hero": {
+        "badge": "International Certification",
+        "cta": "Explore now"
+    },
+    "CourseList": {
+        "title": "Course List",
+        "subtitle": "Choose the path that's right for you",
+        "duration": "Duration",
+        "level": "Level",
+        "certificate": "Certificate",
+        "register": "Register",
+        "detail": "View details",
+        "noCourses": "No courses available yet."
+    },
+    "Route": {
+        "title": "Learning Path",
+        "subtitle": "From beginner to advanced",
+        "step": "Step {n}"
+    },
+    "Teachers": {
+        "title": "Teaching Staff",
+        "subtitle": "Professional, dedicated, internationally certified",
+        "experience": "Years of Experience",
+        "certificate": "Certificate"
+    },
+    "Subdomains": {
+        "thqt": {
+            "name": "International IT",
+            "desc": "IC3, MOS, IC3 Spark — Globally recognized international certificates"
+        },
+        "thqg": {
+            "name": "National IT",
+            "desc": "Basic & Advanced IT — National standard by Ministry of Information"
+        },
+        "thtn": {
+            "name": "Kids Coding",
+            "desc": "Scratch, Python — Creative programming for children"
+        },
+        "cds": {
+            "name": "Digital Citizenship",
+            "desc": "Essential digital skills for all ages"
+        },
+        "dtdm": {
+            "name": "Cloud Computing",
+            "desc": "Cloud Computing — Technology of the future"
+        },
+        "ai": {
+            "name": "Learning with AI",
+            "desc": "Applying artificial intelligence in learning and work"
+        }
+    },
+    "tinhocquocte": {
+        "badge": "#1 International IT Training",
+        "heroDesc": "Equip yourself with knowledge and skills to use technology according to global IC3 & MOS standards. Opening the doors of tomorrow for the next generation of Vietnamese youth.",
+        "cta": {
+            "roadmap": "View Roadmap",
+            "courses": "Explore Courses"
+        },
+        "why": {
+            "standard": {
+                "title": "International Standard",
+                "desc": "Curriculum and certificates globally recognized by Microsoft & Certiport."
+            },
+            "team": {
+                "title": "Dedicated Team",
+                "desc": "Experienced teachers with modern teaching methods, dedicated and attentive to every student."
+            },
+            "quality": {
+                "title": "Quality Commitment",
+                "desc": "Clear learning roadmap, committed to supporting students achieve the highest results in exams."
+            }
+        },
+        "coursesTitle": "Training Programs",
+        "coursesSubtitle": "Designed to fit every age group and need",
+        "ctaTitle": "Ready for the digital era?",
+        "ctaDesc": "Register for consultation today to receive a detailed learning roadmap most suited to your abilities.",
+        "ctaButton": "Register for Consultation"
+    }
+}

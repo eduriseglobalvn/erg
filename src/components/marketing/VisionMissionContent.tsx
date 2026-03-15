@@ -2,8 +2,10 @@
 
 import React from 'react';
 import { Eye, Target, ArrowRight, CheckCircle2, BookOpen } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function VisionMissionContent() {
+    const t = useTranslations('about.tamNhinSuMenh');
     return (
         <div className="min-h-screen bg-white font-sans text-gray-800 overflow-x-hidden pt-[70px] lg:pt-[135px]">
 
@@ -26,10 +28,10 @@ export default function VisionMissionContent() {
 
                 <div className="relative z-10 text-center px-4 animate-fade-in-up">
                     <h4 className="text-[#cc0022] font-bold tracking-[0.2em] text-sm uppercase mb-4 bg-white/10 inline-block px-4 py-1 rounded-full backdrop-blur-sm border border-white/10">
-                        La bàn định hướng
+                        {t('title')}
                     </h4>
                     <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight leading-tight">
-                        TẦM NHÌN & SỨ MỆNH
+                        {t('vision.label').toUpperCase()} &amp; {t('mission.label').toUpperCase()}
                     </h1>
                     <div className="w-24 h-1.5 bg-[#cc0022] mx-auto rounded-full mb-6"></div>
                     <p className="text-xl text-blue-100 max-w-3xl mx-auto font-light leading-relaxed italic">
@@ -80,11 +82,11 @@ export default function VisionMissionContent() {
                         <div className="w-full lg:w-1/2">
                             <div className="flex items-center gap-3 mb-4">
                                 <span className="w-12 h-1 bg-[#cc0022]"></span>
-                                <span className="text-[#00008b] font-bold uppercase tracking-wider">Tầm Nhìn (Vision)</span>
+                                <span className="text-[#00008b] font-bold uppercase tracking-wider">{t('vision.label')}</span>
                             </div>
 
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight">
-                                Trở thành tổ chức giáo dục công nghệ <span className="text-[#00008b]">tiên phong</span>
+                                {t('vision.text').split('.')[0]}.
                             </h2>
 
                             <div className="space-y-6 text-lg text-gray-600 leading-relaxed text-justify">
@@ -150,11 +152,11 @@ export default function VisionMissionContent() {
                         <div className="w-full lg:w-1/2">
                             <div className="flex items-center gap-3 mb-4 justify-end lg:justify-start">
                                 <span className="w-12 h-1 bg-[#cc0022]"></span>
-                                <span className="text-[#00008b] font-bold uppercase tracking-wider">Sứ Mệnh (Mission)</span>
+                                <span className="text-[#00008b] font-bold uppercase tracking-wider">{t('mission.label')}</span>
                             </div>
 
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight text-right lg:text-left">
-                                Nâng tầm tri thức & <span className="text-[#cc0022]">Phổ cập kỹ năng số</span>
+                                {t('mission.text').split('.')[0]}.
                             </h2>
 
                             <div className="bg-white p-8 rounded-2xl shadow-sm border-l-4 border-[#cc0022]">

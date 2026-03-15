@@ -4,7 +4,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Phone, Facebook, Youtube, ChevronDown, Search, Globe } from 'lucide-react';
+import { Menu, X, Phone, Facebook, Youtube, ChevronDown, Search } from 'lucide-react';
+import { LanguageSwitcher } from '@/components/shared/language-switcher';
+import { SchemaScript } from '@/components/seo/schema-script';
 
 // Import Menu mặc định
 import { MAIN_MENU_ITEMS } from '@/constants/MenuItem';
@@ -25,11 +27,17 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<string | null>(null);
-
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [currentLocale, setCurrentLocale] = useState('vi');
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
+
+  // Read locale from cookie on mount
+  useEffect(() => {
+    const match = document.cookie.match(/NEXT_LOCALE=([^;]+)/);
+    if (match) setCurrentLocale(match[1]);
+  }, []);
 
 
   useEffect(() => {
@@ -67,6 +75,9 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
 
   return (
     <>
+      {/* Cấu trúc Header Mặc Định - Add Navigation Schema cho SEO */}
+      <SchemaScript type="SiteNavigationElement" data={menuItems} />
+
       {/* --- HEADER DESKTOP (Giữ nguyên) --- */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
@@ -95,30 +106,20 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
                 <a href="#" className="hover:text-highlight transition-colors"><Youtube size={16} /></a>
               </div>
 
-              <div className="flex items-center gap-1 cursor-pointer hover:text-primary group relative">
-                <Globe size={14} />
-                <span>VN</span>
-                <ChevronDown size={12} />
-                <div className="absolute top-full right-0 mt-1 w-24 bg-white shadow-lg rounded border border-gray-100 hidden group-hover:block z-50">
-                  <div className="py-1">
-                    <div className="px-3 py-1 hover:bg-gray-50 text-highlight font-bold cursor-pointer">Tiếng Việt</div>
-                    <div className="px-3 py-1 hover:bg-gray-50 hover:text-primary cursor-pointer">English</div>
-                  </div>
-                </div>
-              </div>
+              <LanguageSwitcher currentLocale={currentLocale} />
             </div>
           </div>
 
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 relative w-[100px] h-[55px] md:w-[117px] md:h-[64px]">
                 <Image
                   src="https://media.erg.edu.vn/logo/erg.png"
                   alt="ERG Logo"
-                  width={110}
-                  height={60}
-                  className="object-contain w-auto h-[55px] md:h-[64px]"
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100px, 117px"
                   priority
                 />
               </div>
@@ -142,6 +143,12 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
                   <div key={item.label} className="relative group py-4">
                     <Link
                       href={item.path}
+                      onClick={(e) => {
+                        if (item.path.startsWith('#')) {
+                          e.preventDefault();
+                          window.dispatchEvent(new CustomEvent('open-elearning-modal', { detail: item.path.substring(1) }));
+                        }
+                      }}
                       className={`flex items-center gap-1 text-lg font-bold uppercase tracking-wide transition-all duration-300 relative
                                 ${isActive ? 'text-highlight' : 'text-primary hover:text-highlight'}
                                 ${!hasSubmenu ? "after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[3px] after:bg-highlight after:transition-all after:duration-300 group-hover:after:w-full" : ''}
@@ -275,7 +282,15 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS }) => {
                       <Link
                         href={item.path}
                         className="block py-4 text-lg font-bold uppercase text-primary hover:text-highlight transition-colors"
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        onClick={(e) => {
+                          if (item.path.startsWith('#')) {
+                            e.preventDefault();
+                            window.dispatchEvent(new CustomEvent('open-elearning-modal', { detail: item.path.substring(1) }));
+                            setIsMobileMenuOpen(false);
+                          } else {
+                            setIsMobileMenuOpen(false);
+                          }
+                        }}
                       >
                         {item.label}
                       </Link>

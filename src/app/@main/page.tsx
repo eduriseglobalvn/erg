@@ -5,7 +5,6 @@ import { SEO_DATA } from '@/constants/seo.constants';
 import { SchemaScript } from '@/components/seo/schema-script';
 import { headers } from 'next/headers';
 
-
 export default async function Home() {
     const currentSeo = SEO_DATA.main;
     const headerList = await headers();

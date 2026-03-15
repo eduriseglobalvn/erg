@@ -7,6 +7,8 @@ import { SchemaScript } from '@/components/seo/schema-script';
 import { headers } from 'next/headers';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 
+export const revalidate = 300;
+
 
 export default async function AiLearningPage() {
   const headerList = await headers();
@@ -16,6 +18,9 @@ export default async function AiLearningPage() {
 
   return (
     <>
+      {/* WebSite Schema for Search Box */}
+      <SchemaScript type="WebSite" data={{ name: SEO_DATA.ai.title }} domain={hostname} />
+
       {/* Course Schemas */}
       {courses.map((course) => (
         <SchemaScript

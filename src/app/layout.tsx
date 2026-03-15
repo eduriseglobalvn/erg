@@ -3,11 +3,17 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Lora, JetBrains_Mono, Oswald } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
+import Link from 'next/link';
+import Image from 'next/image';
 import { QueryProvider } from "@/providers/query-provider";
+import { QueryDevtoolsWrapper } from "@/components/debug/query-devtools-wrapper";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getLocale } from 'next-intl/server';
+import NextTopLoader from 'nextjs-toploader';
 
 const inter = Inter({
     subsets: ["latin", "vietnamese"],
@@ -41,6 +47,8 @@ import { SchemaScript } from "@/components/seo/schema-script";
 import { MAIN_MENU_ITEMS } from "@/constants/MenuItem";
 import { Toaster } from "sonner";
 import { RedirectNotification } from "@/components/shared/redirect-notification";
+import { OfflineIndicator } from "@/components/shared/offline-indicator";
+import { SearchEngineMeta } from "@/components/seo/search-engine-meta";
 
 // Helper to get subdomain logic (shared with RootLayout)
 function getSubdomain(hostname: string, rootDomain: string) {
@@ -54,11 +62,12 @@ export async function generateMetadata(): Promise<Metadata> {
     const rawHost = headerList.get("x-forwarded-host") || headerList.get("host") || "";
     const hostname = rawHost.split(":")[0];
     const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'erg.edu.local';
-    const subdomain = getSubdomain(hostname, rootDomain);
+    const subdomain = getSubdomain(hostname, rootDomain).toLowerCase();
 
     // Xác định bộ dữ liệu SEO dựa trên subdomain
     // Phải ép kiểu subdomain về keyof typeof SEO_DATA hoặc fallback về main
     const seoKey = (subdomain && subdomain in SEO_DATA) ? (subdomain as keyof typeof SEO_DATA) : 'main';
+
     const currentSeo = SEO_DATA[seoKey];
 
     const title = currentSeo.title;
@@ -126,6 +135,7 @@ export default async function RootLayout(props: {
     congdanso: React.ReactNode;
     dientoandammay: React.ReactNode;
     tuyendung: React.ReactNode;
+    elearning: React.ReactNode;
     admin: React.ReactNode;
 }) {
     // 1. Lấy Hostname thực tế từ Request
@@ -139,11 +149,8 @@ export default async function RootLayout(props: {
     // Làm sạch hostname (bỏ port :3000 nếu có)
     hostname = hostname.split(":")[0];
 
-    // 3. Tách subdomain
-    let subdomain = "";
-    if (hostname.endsWith(`.${rootDomain}`)) {
-        subdomain = hostname.replace(`.${rootDomain}`, "");
-    }
+    // 3. Tách subdomain sử dụng helper
+    const subdomain = getSubdomain(hostname, rootDomain).toLowerCase();
 
     // 4. Quyết định hiển thị Slot nào dựa trên subdomain tĩnh
     let content;
@@ -152,7 +159,7 @@ export default async function RootLayout(props: {
     // Import thêm các menu constants
     const {
         THQT_MENU_ITEMS, THQG_MENU_ITEMS, THTN_MENU_ITEMS,
-        CDS_MENU_ITEMS, DTDM_MENU_ITEMS, AI_MENU_ITEMS, TUYEN_DUNG_MENU_ITEMS
+        CDS_MENU_ITEMS, DTDM_MENU_ITEMS, AI_MENU_ITEMS, TUYEN_DUNG_MENU_ITEMS, ELEARNING_MENU_ITEMS
     } = await import("@/constants/MenuItem");
 
     switch (subdomain) {
@@ -184,6 +191,11 @@ export default async function RootLayout(props: {
             content = props.tuyendung;
             currentMenu = TUYEN_DUNG_MENU_ITEMS;
             break;
+        case 'elearning':
+        case 'elerning':
+            content = props.elearning;
+            currentMenu = ELEARNING_MENU_ITEMS;
+            break;
         case 'admin': content = props.admin; break;
         case '':
         case 'www':
@@ -198,38 +210,48 @@ export default async function RootLayout(props: {
     // Sử dụng SchemaScript component mới để quản lý tập trung
     // Chỉ render các Schema cơ bản cấp Site tại đây. Các Schema chi tiết (Article, Course) sẽ nằm ở page.tsx
 
+    // Resolve locale from cookie
+    const cookieStore = await cookies();
+    const locale = cookieStore.get('NEXT_LOCALE')?.value || 'vi';
+    const messages = await getMessages();
+
     return (
-        <html lang="vi" suppressHydrationWarning className={`${inter.variable} ${lora.variable} ${jetBrainsMono.variable} ${oswald.variable}`}>
-            <head>
-                <GoogleAnalytics gaId="G-PF00V6RJDD" />
-            </head>
-            <body
-                className={`${inter.className} bg-gray-50 text-slate-800 antialiased flex flex-col min-h-screen overflow-x-hidden`}
-                suppressHydrationWarning={true}
-            >
-                <AnalyticsTracker />
-                <Toaster position="top-center" richColors />
-                <React.Suspense fallback={null}>
-                    <RedirectNotification />
-                </React.Suspense>
+        <QueryProvider>
+            <html lang={locale} suppressHydrationWarning className={`${inter.variable} ${lora.variable} ${jetBrainsMono.variable} ${oswald.variable}`}>
+                <head>
+                    <GoogleAnalytics gaId="G-PF00V6RJDD" />
+                    <SearchEngineMeta subdomain={subdomain} />
+                </head>
+                <body
+                    className={`${inter.className} bg-gray-50 text-slate-800 antialiased flex flex-col min-h-screen overflow-x-hidden`}
+                    suppressHydrationWarning={true}
+                >
+                    <QueryDevtoolsWrapper />
+                    <NextIntlClientProvider locale={locale} messages={messages}>
+                        <AnalyticsTracker />
+                        <Toaster position="top-center" richColors />
+                        <React.Suspense fallback={null}>
+                            <RedirectNotification />
+                        </React.Suspense>
+                        <OfflineIndicator />
 
-                {/* Global Schemas */}
-                <SchemaScript type="Organization" data={{}} domain={hostname} />
-                <SchemaScript type="WebSite" data={{ name: SEO_DATA[subdomain as keyof typeof SEO_DATA]?.title || "Edurise Global" }} domain={hostname} />
+                        {/* Global Schemas */}
+                        <SchemaScript type="Organization" data={{}} domain={hostname} />
+                        <SchemaScript type="WebSite" data={{ name: SEO_DATA[subdomain as keyof typeof SEO_DATA]?.title || "Edurise Global" }} domain={hostname} />
 
-                {/* Sitelinks Navigation Schema */}
-                <SchemaScript type="SiteNavigationElement" data={currentMenu} domain={hostname} />
+                        {/* Sitelinks Navigation Schema */}
+                        <SchemaScript type="SiteNavigationElement" data={currentMenu} domain={hostname} />
 
-                {/* Render Slot tương ứng */}
-                <QueryProvider>
-                    {content}
-                </QueryProvider>
+                        <NextTopLoader color="#00008b" showSpinner={false} />
 
-                {/* props.children là bắt buộc trong cấu trúc Next.js nhưng sẽ rỗng ở đây */}
-                {/* {props.children} */}
-                <SpeedInsights />
-                <Analytics />
-            </body>
-        </html>
+                        {/* Render Slot tương ứng */}
+                        {content}
+
+                        <SpeedInsights />
+                        <Analytics />
+                    </NextIntlClientProvider>
+                </body>
+            </html>
+        </QueryProvider>
     );
 }

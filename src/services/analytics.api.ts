@@ -104,21 +104,15 @@ export const analyticsApi = {
             console.log('[Analytics] Starting session:', data);
         }
 
-        const response = await fetch('/api/insight/session/begin', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (!response.ok) {
-            const errorData = await response.text();
-            console.error('[Analytics] Session begin error:', errorData);
-            throw new Error(`Analytics API error: ${response.statusText}`);
+        try {
+            return await httpClient<SessionStartResponse>('/api/insight/session/begin', {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+        } catch (error: any) {
+            console.error('[Analytics] Session begin error:', error);
+            throw new Error(`Analytics API error: ${error.message}`);
         }
-
-        return response.json();
     },
 
     /**
@@ -127,18 +121,17 @@ export const analyticsApi = {
      */
     trackSessionFinish: (visitId: string, duration: number) => {
         const url = `/api/insight/session/${visitId}/finish`;
-        const body = JSON.stringify({ duration });
 
         if (process.env.NODE_ENV === 'development') {
             console.log('[Analytics] Finishing session (PUT):', { visitId, duration });
         }
 
         if (typeof window !== 'undefined') {
-            fetch(url, {
+            httpClient(url, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: body,
-                keepalive: true
+                body: JSON.stringify({ duration }),
+                keepalive: true,
+                requireAuth: false // Public tracking usually doesn't need auth, or uses separate mechanism
             }).catch(err => console.warn('[Analytics] Session finish failed:', err));
         }
     },
@@ -157,17 +150,10 @@ export const analyticsApi = {
         }
 
         try {
-            const response = await fetch('/api/insight/behavior', {
+            await httpClient('/api/insight/behavior', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(data)
             });
-
-            if (!response.ok) {
-                console.error('[Analytics] Behavior tracking error:', await response.text());
-            }
         } catch (error) {
             console.error('[Analytics] Behavior tracking failed:', error);
         }

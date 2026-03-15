@@ -1,0 +1,70 @@
+{
+    "tamNhinSuMenh": {
+        "title": "The Guiding Compass",
+        "vision": {
+            "label": "Vision",
+            "text": "To become a pioneering technology education organization, leading in providing internationally standardized training solutions."
+        },
+        "mission": {
+            "label": "Mission",
+            "text": "To elevate knowledge and democratize digital skills. To bridge the digital divide through high-quality education."
+        }
+    },
+    "giaTriCotLoi": {
+        "title": "CORE VALUES",
+        "subtitle": "CORPORATE CULTURE",
+        "values": {
+            "quality": {
+                "title": "Superior Quality",
+                "desc": "Committed to the highest standards in training"
+            },
+            "integrity": {
+                "title": "Customer-Centric",
+                "desc": "Honest and transparent in all activities"
+            },
+            "innovation": {
+                "title": "Innovative Spirit",
+                "desc": "Continuously improving teaching methodologies"
+            },
+            "community": {
+                "title": "Social Responsibility",
+                "desc": "Collaboration and community development"
+            }
+        }
+    },
+    "cauChuyenCuaErg": {
+        "title": "The Story of ERG",
+        "subtitle": "About Us",
+        "quote": "Igniting intellect – Guiding the future",
+        "cta": {
+            "join": "Join the ERG Team",
+            "contact": "Contact for Partnership"
+        }
+    },
+    "doiNguLanhDao": {
+        "title": "Leadership Team",
+        "subtitle": "The people who lead ERG",
+        "position": "Position"
+    },
+    "doiTac": {
+        "title": "Strategic Partners",
+        "subtitle": "ERG is proud to partner with prestigious global organizations"
+    },
+    "linhVucDaoTao": {
+        "title": "Training Fields",
+        "subtitle": "A comprehensive IT training ecosystem",
+        "badge": "International Standard Training Programs",
+        "heading": "Ignite Intelligence — Guide the Future",
+        "subheading": "A diverse training system from office IT to advanced technology, helping you confidently master technology and excel in your career.",
+        "fields": {
+            "title": "Training Fields",
+            "more": "View Details"
+        },
+        "cta": {
+            "title": "Don't know where to start?",
+            "subtitle": "Don't hesitate to contact us for guidance on the most suitable learning path for your abilities and goals.",
+            "register": "Register for Consultation",
+            "schedule": "View Course Schedule"
+        }
+    }
+}

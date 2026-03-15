@@ -1,0 +1,134 @@
+{
+    "Page": {
+        "title": "Career opportunities at ERG",
+        "badge": "Education & IT Recruitment",
+        "heading": "Building the Digital Future",
+        "subheading": "Join ERG to bring international IT standards to millions of Vietnamese students.",
+        "searchPlaceholder": "Enter position (e.g. IT Teacher, Technician...)",
+        "search": "Search",
+        "noJobs": "No job openings found."
+    },
+    "Stats": {
+        "branches": "Branches",
+        "students": "Students",
+        "schools": "Partner Schools",
+        "teachers": "Certified Teachers"
+    },
+    "Card": {
+        "workSchedule": "Work schedule",
+        "workType": "Work type",
+        "quantity": "Openings",
+        "deadline": "Deadline",
+        "location": "Location",
+        "salary": "Salary",
+        "apply": "Apply Now",
+        "hot": "Hot",
+        "urgent": "Urgent",
+        "new": "New"
+    },
+    "Detail": {
+        "back": "Back to job list",
+        "applyNow": "Apply Now",
+        "applyZalo": "Apply via Zalo",
+        "generalInfo": "General Information",
+        "unit": "Unit",
+        "quantity": "Openings",
+        "workType": "Work Type",
+        "salary": "Salary",
+        "location": "Location",
+        "deadline": "Application Deadline",
+        "postDate": "Posted Date",
+        "jobDetail": "Job Details",
+        "description": "Job Description",
+        "requirements": "Requirements",
+        "benefits": "Benefits",
+        "workplace": "Workplace",
+        "companyInfo": "Company Information",
+        "orgName": "Organization Name",
+        "mainAddress": "Head Office",
+        "fieldOfActivity": "Fields of Activity"
+    },
+    "Filter": {
+        "title": "Filters",
+        "salary": "Salary",
+        "type": "Work Type",
+        "location": "Location",
+        "sort": "Sort by",
+        "reset": "Reset",
+        "apply": "Apply",
+        "newest": "Newest",
+        "oldest": "Oldest",
+        "relevance": "Most relevant"
+    },
+    "Track": {
+        "title": "Track your application",
+        "placeholder": "Enter your tracking code",
+        "submit": "Check status",
+        "status": "Status",
+        "appliedPosition": "Applied Position",
+        "submittedAt": "Submitted At",
+        "notFound": "No application found with this code."
+    },
+    "Process": {
+        "title": "Joining Edurise Global",
+        "subtitle": "The journey to join us",
+        "steps": {
+            "apply": {
+                "title": "Apply",
+                "desc": "Research the position and send your CV."
+            },
+            "screen": {
+                "title": "Resume Screening",
+                "desc": "Our recruitment team selects suitable candidates."
+            },
+            "test": {
+                "title": "Competency Test",
+                "desc": "Assess logical thinking and expertise."
+            },
+            "interview": {
+                "title": "Interview",
+                "desc": "Meet in person to assess cultural and skill fit."
+            },
+            "offer": {
+                "title": "Contract Negotiation",
+                "desc": "Discuss salary and benefits in detail."
+            },
+            "onboard": {
+                "title": "Complete Onboarding",
+                "desc": "Submit required documents to officially join."
+            }
+        }
+    },
+    "Why": {
+        "title": "Respectful Environment & Unlimited Growth",
+        "subtitle": "Why choose ERG?",
+        "benefits": {
+            "welfare": {
+                "title": "Comprehensive Benefits",
+                "sub": "Social insurance, Holiday bonuses, Travel"
+            },
+            "training": {
+                "title": "In-depth Training",
+                "sub": "Sponsored international certification exams"
+            },
+            "culture": {
+                "title": "Open Culture",
+                "sub": "Supportive management and collaborative colleagues"
+            },
+            "facilities": {
+                "title": "Modern Facilities",
+                "sub": "High-spec Laptop, Desktop"
+            }
+        }
+    },
+    "CTA": {
+        "title": "Ready to join us?",
+        "subtitle": "If you haven't found the right position, feel free to send us your CV.",
+        "sendCV": "Send Your CV",
+        "zaloHR": "Chat with HR on Zalo"
+    },
+    "Van Hoa": {
+        "title": "ERG Culture",
+        "subtitle": "Where you can be yourself"
+    }
+}

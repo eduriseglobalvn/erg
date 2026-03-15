@@ -2,8 +2,11 @@
 
 import React from 'react';
 import { BookOpen, TrendingUp, Globe, Lightbulb, Heart, Rocket, Quote } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 export default function ErgStoryContent() {
+    const t = useTranslations('about.cauChuyenCuaErg');
     return (
         <div className="min-h-screen bg-white font-sans text-gray-800 pt-[70px] lg:pt-[135px]">
 
@@ -11,10 +14,13 @@ export default function ErgStoryContent() {
             <section className="relative h-[500px] flex items-center justify-center overflow-hidden">
                 {/* Background with Overlay */}
                 <div className="absolute inset-0 z-0">
-                    <img
+                    <Image
                         src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2000&auto=format&fit=crop"
                         alt="Technology and Education"
-                        className="w-full h-full object-cover"
+                        fill
+                        priority
+                        sizes="100vw"
+                        className="object-cover"
                     />
                     <div className="absolute inset-0 bg-[#00008b]/80 mix-blend-multiply"></div>
                 </div>
@@ -22,13 +28,13 @@ export default function ErgStoryContent() {
                 {/* Hero Content */}
                 <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto animate-fade-in-up">
                     <div className="inline-block bg-[#cc0022] px-4 py-1 rounded-full text-sm font-bold tracking-widest mb-4 uppercase">
-                        Về chúng tôi
+                        {t('subtitle')}
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                        CÂU CHUYỆN CỦA ERG
+                        {t('title').toUpperCase()}
                     </h1>
                     <p className="text-xl md:text-2xl font-light italic opacity-90">
-                        "Khơi nguồn trí tuệ – Dẫn lối tương lai"
+                        &quot;{t('quote')}&quot;
                     </p>
                 </div>
             </section>
@@ -66,9 +72,11 @@ export default function ErgStoryContent() {
                     {/* Cột Phải: Hình ảnh minh họa */}
                     <div className="lg:w-1/2">
                         <div className="relative rounded-2xl overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-all duration-500 group">
-                            <img
+                            <Image
                                 src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1000&auto=format&fit=crop"
                                 alt="Digital Transformation in Education"
+                                width={1000}
+                                height={667}
                                 className="w-full h-auto object-cover"
                             />
                             {/* Decorative Elements */}
@@ -215,14 +223,14 @@ export default function ErgStoryContent() {
                             rel="noopener noreferrer"
                             className="group relative bg-[#cc0022] hover:bg-[#b3001e] text-white font-bold py-6 px-12 rounded-2xl text-2xl shadow-2xl shadow-red-900/20 transition-all duration-300 hover:-translate-y-2 active:scale-95"
                         >
-                            Gia nhập đội ngũ ERG
+                            {t('cta.join')}
                         </a>
 
                         <a
                             href="/lien-he"
                             className="bg-white border-[3px] border-[#00008b] text-[#00008b] hover:bg-[#00008b] hover:text-white font-bold py-6 px-12 rounded-2xl text-2xl shadow-xl shadow-blue-900/10 transition-all duration-300 hover:-translate-y-2 active:scale-95"
                         >
-                            Liên hệ hợp tác
+                            {t('cta.contact')}
                         </a>
                     </div>
                 </div>

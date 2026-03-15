@@ -2,6 +2,8 @@ import React from 'react';
 import { Metadata } from 'next';
 import NewsList from '@/components/features/news/news-list';
 
+export const revalidate = 300;
+
 export const metadata: Metadata = {
     title: "Tin tức & Sự kiện | Tin học Quốc tế MOS - IC3",
     description: "Cập nhật tin tức mới nhất về các kỳ thi MOS, IC3 và xu hướng công nghệ giáo dục quốc tế từ ERG.",

@@ -16,10 +16,10 @@ import { common, createLowlight } from 'lowlight'
 import { Toolbar } from './toolbar'
 import { HeadingWithAnchor } from './editor/tiptap-extension/heading-with-anchor'
 import { TableOfContentsNode } from './editor/tiptap-extension/table-of-contents-node'
-
 const lowlight = createLowlight(common)
 
 export default function SimpleEditor({ content, onChange }: { content: string, onChange: (html: string) => void }) {
+
     const editor = useEditor({
         extensions: [
             StarterKit.configure({

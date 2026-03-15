@@ -1,33 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useAuth } from "./use-auth";
 
 /**
  * Hook để kiểm tra permission của user hiện tại
  * @param permission - Tên permission cần check (vd: 'posts.create')
  * @returns boolean - true nếu user có permission, false nếu không
  */
-export const usePermission = (permission: string): boolean => {
-    const [hasPermission, setHasPermission] = useState(false);
+export const usePermission = (permission: string) => {
+    const { data: auth, isLoading } = useAuth();
+    const hasPermission = auth?.permissions?.includes(permission) || false;
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            try {
-                const permissionsStr = localStorage.getItem('permissions');
-                if (permissionsStr) {
-                    const permissions: string[] = JSON.parse(permissionsStr);
-                    setHasPermission(permissions.includes(permission));
-                } else {
-                    setHasPermission(false);
-                }
-            } catch (error) {
-                console.error('Failed to parse permissions:', error);
-                setHasPermission(false);
-            }
-        }
-    }, [permission]);
-
-    return hasPermission;
+    return { hasPermission, isLoading };
 };
 
 /**
@@ -36,26 +20,8 @@ export const usePermission = (permission: string): boolean => {
  * @returns boolean - true nếu user có role, false nếu không
  */
 export const useRole = (role: string): boolean => {
-    const [hasRole, setHasRole] = useState(false);
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            try {
-                const rolesStr = localStorage.getItem('roles');
-                if (rolesStr) {
-                    const roles: string[] = JSON.parse(rolesStr);
-                    setHasRole(roles.includes(role));
-                } else {
-                    setHasRole(false);
-                }
-            } catch (error) {
-                console.error('Failed to parse roles:', error);
-                setHasRole(false);
-            }
-        }
-    }, [role]);
-
-    return hasRole;
+    const { data: auth } = useAuth();
+    return auth?.roles?.includes(role) || false;
 };
 
 /**
@@ -63,23 +29,8 @@ export const useRole = (role: string): boolean => {
  * @returns string[] - Mảng các permissions
  */
 export const usePermissions = (): string[] => {
-    const [permissions, setPermissions] = useState<string[]>([]);
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            try {
-                const permissionsStr = localStorage.getItem('permissions');
-                if (permissionsStr) {
-                    setPermissions(JSON.parse(permissionsStr));
-                }
-            } catch (error) {
-                console.error('Failed to parse permissions:', error);
-                setPermissions([]);
-            }
-        }
-    }, []);
-
-    return permissions;
+    const { data: auth } = useAuth();
+    return auth?.permissions || [];
 };
 
 /**
@@ -87,21 +38,15 @@ export const usePermissions = (): string[] => {
  * @returns string[] - Mảng các roles
  */
 export const useRoles = (): string[] => {
-    const [roles, setRoles] = useState<string[]>([]);
+    const { data: auth } = useAuth();
+    return auth?.roles || [];
+};
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            try {
-                const rolesStr = localStorage.getItem('roles');
-                if (rolesStr) {
-                    setRoles(JSON.parse(rolesStr));
-                }
-            } catch (error) {
-                console.error('Failed to parse roles:', error);
-                setRoles([]);
-            }
-        }
-    }, []);
-
-    return roles;
+/**
+ * Hook tiện ích đồng bộ: Kiểm tra nhanh user có permission cụ thể hay không.
+ * (Hợp nhất theo yêu cầu useCanAccess của tài liệu)
+ * @param permission Tên quyền cần kiểm tra
+ */
+export const useCanAccess = (permission: string) => {
+    return usePermission(permission);
 };

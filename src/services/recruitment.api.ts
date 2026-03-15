@@ -1,14 +1,32 @@
 import { httpClient } from '@/services/http-client';
-import { Job, Candidate, JobStatus, CandidateStatus } from '@/types/recruitment';
+import { Job, Candidate, CandidateStatus } from '@/types/recruitment';
+
+export interface ApiResponse<T> {
+    statusCode: number;
+    message: string;
+    data: T;
+    errors?: any;
+    timestamp?: string;
+    path?: string;
+}
 
 export const recruitmentApi = {
     // --- PUBLIC API ---
 
-    // Lấy danh sách việc làm
-    // Lấy danh sách việc làm
-    getJobs: async (params?: { status?: JobStatus; page?: number; limit?: number }) => {
-        const query = new URLSearchParams(params as any).toString();
-        const endpoint = `/recruitment/jobs?${query}`;
+    // 1. Lấy danh sách việc làm đang mở (Active)
+    getJobs: async (searchParams?: Record<string, any>) => {
+        const queryParams = new URLSearchParams();
+        if (searchParams) {
+            Object.entries(searchParams).forEach(([key, value]) => {
+                if (Array.isArray(value)) {
+                    value.forEach(v => queryParams.append(key, String(v)));
+                } else if (value !== undefined && value !== null && value !== '') {
+                    queryParams.append(key, String(value));
+                }
+            });
+        }
+        const query = queryParams.toString();
+        const endpoint = `/recruitment/jobs${query ? `?${query}` : ''}`;
 
         // Server-side fetching
         if (typeof window === 'undefined') {
@@ -16,13 +34,13 @@ export const recruitmentApi = {
             const url = `${backendUrl}/api${endpoint}`;
             const res = await fetch(url, { next: { revalidate: 60 } });
             if (!res.ok) throw new Error(`Failed to fetch jobs: ${res.status}`);
-            return res.json();
+            return res.json() as Promise<ApiResponse<{ items: Job[]; meta: any }>>;
         }
 
-        return httpClient<{ data: Job[]; meta?: any }>(endpoint);
+        return httpClient<ApiResponse<{ items: Job[]; meta: any }>>(endpoint);
     },
 
-    // Lấy chi tiết việc làm theo Slug
+    // 2. Lấy chi tiết việc làm
     getJobBySlug: async (slug: string) => {
         const endpoint = `/recruitment/jobs/${slug}`;
 
@@ -32,85 +50,80 @@ export const recruitmentApi = {
             const url = `${backendUrl}/api${endpoint}`;
             const res = await fetch(url, { next: { revalidate: 60 } });
             if (!res.ok) throw new Error(`Failed to fetch job ${slug}: ${res.status}`);
-            return res.json();
+            return res.json() as Promise<ApiResponse<Job>>;
         }
 
-        return httpClient<{ data: Job }>(endpoint);
+        return httpClient<ApiResponse<Job>>(endpoint);
     },
 
-    // Ứng tuyển (Upload CV)
+    // 3. Nộp hồ sơ (Apply)
     applyJob: (formData: FormData) => {
-        // Note: httpClient wrapper usually sets Content-Type to json by default.
-        // Ensure the wrapper handles FormData correctly (removing Content-Type header to let browser set boundary)
-        // Or use native fetch for this specific multipart call if wrapper is rigid.
-        return httpClient<{ data: { trackingCode: string; message: string } }>('/recruitment/apply', {
+        return httpClient<ApiResponse<{ trackingCode: string; message: string }>>('/recruitment/apply', {
             method: 'POST',
             body: formData,
-            // headers: {} // Let browser set Content-Type for FormData
         });
     },
 
-    // Tra cứu hồ sơ
+    // 4. Theo dõi trạng thái hồ sơ (Tracking)
     trackCandidate: (code: string) => {
-        return httpClient<{ data: Candidate }>(`/recruitment/tracking/${code}`);
+        return httpClient<ApiResponse<Candidate>>(`/recruitment/tracking/${code}`);
     },
 
     // --- ADMIN API ---
 
-    // Quản lý Jobs
     adminGetJobs: (params?: { page?: number; limit?: number, q?: string }) => {
         const query = new URLSearchParams(params as any).toString();
-        return httpClient<{ data: Job[]; meta: any }>(`/recruitment/admin/jobs?${query}`);
+        return httpClient<ApiResponse<{ items: Job[]; meta: any }>>(`/recruitment/jobs?${query}`);
     },
 
     adminCreateJob: (data: Partial<Job>) => {
-        return httpClient<{ data: Job }>('/recruitment/admin/jobs', {
+        return httpClient<ApiResponse<Job>>('/recruitment/jobs', {
             method: 'POST',
             body: JSON.stringify(data),
         });
     },
 
     adminUpdateJob: (id: string, data: Partial<Job>) => {
-        return httpClient<{ data: Job }>(`/recruitment/admin/jobs/${id}`, {
-            method: 'PATCH',
+        return httpClient<ApiResponse<Job>>(`/recruitment/jobs/${id}`, {
+            method: 'PUT',
             body: JSON.stringify(data),
         });
     },
 
     adminDeleteJob: (id: string) => {
-        return httpClient<{ message: string }>(`/recruitment/admin/jobs/${id}`, {
+        return httpClient<ApiResponse<null>>(`/recruitment/jobs/${id}`, {
             method: 'DELETE',
         });
     },
 
     adminGetOneJob: (id: string) => {
-        return httpClient<{ data: Job }>(`/recruitment/admin/jobs/${id}`);
+        return httpClient<ApiResponse<Job>>(`/recruitment/jobs/${id}`);
     },
 
-    // Toggle Flags
+    // 2. Thao Tác Nhanh (Toggles)
     adminToggleHot: (id: string) => {
-        return httpClient<{ data: Job }>(`/recruitment/admin/jobs/${id}/toggle-hot`, { method: 'PATCH' });
+        return httpClient<ApiResponse<Job>>(`/recruitment/jobs/${id}/toggle-hot`, { method: 'PATCH' });
     },
 
     adminToggleUrgent: (id: string) => {
-        return httpClient<{ data: Job }>(`/recruitment/admin/jobs/${id}/toggle-urgent`, { method: 'PATCH' });
+        return httpClient<ApiResponse<Job>>(`/recruitment/jobs/${id}/toggle-urgent`, { method: 'PATCH' });
     },
 
     adminUpdateStatus: (id: string, isActive: boolean) => {
-        return httpClient<{ data: Job }>(`/recruitment/admin/jobs/${id}/status`, {
+        return httpClient<ApiResponse<Job>>(`/recruitment/jobs/${id}/status`, {
             method: 'PATCH',
             body: JSON.stringify({ isActive })
         });
     },
 
-    // Quản lý Candidates
+    // 3. Quản lý Candidates
     adminGetCandidates: (params?: { jobId?: string; status?: CandidateStatus; page?: number; limit?: number }) => {
         const query = new URLSearchParams(params as any).toString();
-        return httpClient<{ data: Candidate[]; meta: any }>(`/recruitment/admin/candidates?${query}`);
+        return httpClient<ApiResponse<Candidate[]>>(`/recruitment/admin/candidates?${query}`);
     },
 
     adminUpdateCandidateStatus: (id: string, status: CandidateStatus) => {
-        return httpClient<{ data: Candidate }>(`/recruitment/admin/candidates/${id}/status`, {
+        return httpClient<ApiResponse<Candidate>>(`/recruitment/admin/candidates/${id}/status`, {
             method: 'PATCH',
             body: JSON.stringify({ status }),
         });

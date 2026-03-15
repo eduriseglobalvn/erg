@@ -16,7 +16,7 @@ export default function PostsPage() {
                 </p>
             </div>
 
-            <div className="w-full">
+            <div className="w-full min-w-0 overflow-hidden">
                 <PostsTable />
             </div>
         </div>

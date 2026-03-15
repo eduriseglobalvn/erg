@@ -1,0 +1,15 @@
+{
+    "Page": {
+        "title": "Tin tức & Sự kiện",
+        "subtitle": "Cập nhật mới nhất từ ERG",
+        "readMore": "Đọc tiếp",
+        "publishedAt": "Ngày đăng",
+        "author": "Tác giả",
+        "category": "Chuyên mục",
+        "tags": "Tags",
+        "share": "Chia sẻ",
+        "relatedPosts": "Bài viết liên quan",
+        "noNews": "Chưa có bài viết nào.",
+        "backToList": "Quay lại danh sách tin tức"
+    }
+}

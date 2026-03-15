@@ -34,7 +34,7 @@ export function useAuth() {
         staleTime: 5 * 60 * 1000, // Cache 5 phút
         gcTime: 10 * 60 * 1000, // Garbage collection sau 10 phút
         retry: false, // Không retry nếu fail (để logout ngay)
-        enabled: typeof window !== 'undefined' && !!localStorage.getItem('accessToken')
+        enabled: typeof window !== 'undefined' && document.cookie.includes('isLoggedIn=true')
     });
 }
 

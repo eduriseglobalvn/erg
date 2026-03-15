@@ -10,13 +10,19 @@ import {
     Clock,
     Database,
     Zap,
-    ExternalLink
+    ExternalLink,
+    PlayCircle,
+    PlusCircle,
+    Settings,
+    LayoutDashboard
 } from "lucide-react"
 import { crawlerApi, CrawlerStats, CrawlHistoryItem } from "@/services/crawler.api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/admin/ui/card"
+import { Button } from "@/components/admin/ui/button"
 import { Progress } from "@/components/admin/ui/progress"
 import { Skeleton } from "@/components/admin/ui/skeleton"
 import { Badge } from "@/components/admin/ui/badge"
+import { PipelineStatus, PipelineStep } from "@/components/admin/crawler/pipeline-status"
 import {
     Table,
     TableBody,
@@ -28,29 +34,58 @@ import {
 import { format } from "date-fns"
 import { vi } from "date-fns/locale"
 
+import Link from "next/link"
+
 export default function CrawlerDashboardPage() {
     // 1. Fetch Stats
-    const { data: stats, isLoading: isLoadingStats } = useQuery<CrawlerStats>({
+    const { data: statsData, isLoading: isLoadingStats } = useQuery({
         queryKey: ['crawler', 'stats'],
-        queryFn: () => crawlerApi.getStats()
+        queryFn: () => crawlerApi.getStats(),
+        refetchInterval: 30000 // Poll stats every 30s
     })
+
+    const stats = statsData;
 
     // 2. Fetch Recent History
     const { data: historyData, isLoading: isLoadingHistory } = useQuery({
         queryKey: ['crawler', 'history', 'recent'],
-        queryFn: () => crawlerApi.getHistory(1, 10)
+        queryFn: () => crawlerApi.getHistory(1, 10),
+        refetchInterval: 15000 // Poll history every 15s
     })
 
     const history = historyData?.items || []
 
+    // 3. Fetch Active Pipelines
+    const { data: activePipelinesData, isLoading: isLoadingPipelines } = useQuery({
+        queryKey: ['crawler', 'pipelines', 'active'],
+        queryFn: () => crawlerApi.getActivePipelines(),
+        refetchInterval: 3000 // Poll pipelines every 3s for real-time feel
+    })
+
+    const pipelines = activePipelinesData || []
+
     return (
         <div className="flex flex-col gap-8 p-6 max-w-7xl mx-auto">
             {/* Header */}
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight text-primary uppercase mb-2">Crawler Dashboard</h1>
-                <p className="text-muted-foreground">
-                    Theo dõi tình trạng cào dữ liệu tự động từ các nguồn RSS và Website.
-                </p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight text-primary uppercase mb-2">Crawler Dashboard</h1>
+                    <p className="text-muted-foreground">
+                        Theo dõi tình trạng cào dữ liệu tự động từ các nguồn RSS và Website.
+                    </p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Link href="/admin/crawler/rss/wizard">
+                        <Button className="bg-blue-600 hover:bg-blue-700 shadow-md">
+                            <PlusCircle className="mr-2 h-4 w-4" /> Thêm RSS (Wizard)
+                        </Button>
+                    </Link>
+                    <Link href="/admin/crawler/rss">
+                        <Button variant="outline">
+                            <Settings className="mr-2 h-4 w-4" /> Quản lý Nguồn tin
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             {/* Stats Cards */}
@@ -114,7 +149,7 @@ export default function CrawlerDashboardPage() {
                     </CardHeader>
                     <CardContent className="space-y-2">
                         {isLoadingStats ? <Skeleton className="h-8 w-20" /> : (
-                            <div className="text-2xl font-bold">{stats?.totalHistory ? Math.round((stats.successCrawl / stats.totalHistory) * 100) : 0}%</div>
+                            <div className="text-2xl font-bold">{stats?.totalHistory ? Math.round((stats.successCrawl / stats.totalHistory!) * 100) : 0}%</div>
                         )}
                         <Progress value={stats?.totalHistory ? Math.round((stats.successCrawl / stats.totalHistory) * 100) : 0} className="h-1.5" />
                     </CardContent>
@@ -136,6 +171,45 @@ export default function CrawlerDashboardPage() {
 
             {/* Bottom Section: History & Health */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                {/* Active Pipelines Area */}
+                <Card className="lg:col-span-2 shadow-sm border-transparent bg-transparent">
+                    <CardHeader className="px-0 pt-0 flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2">
+                                <PlayCircle className="h-5 w-5 text-blue-600" />
+                                Pipeline đang xử lý
+                            </CardTitle>
+                            <CardDescription>Tiến trình tự động crawl dữ liệu trong thời gian thực</CardDescription>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="px-0 space-y-4">
+                        {isLoadingPipelines ? (
+                            <div className="space-y-2">
+                                <Skeleton className="h-24 w-full" />
+                                <Skeleton className="h-24 w-full" />
+                            </div>
+                        ) : pipelines.length === 0 ? (
+                            <div className="h-32 flex items-center justify-center text-muted-foreground italic border border-dashed rounded-lg bg-white">
+                                Không có pipeline nào đang chạy.
+                            </div>
+                        ) : (
+                            pipelines.map((p: any) => (
+                                <PipelineStatus
+                                    key={p.id}
+                                    url={p.url}
+                                    source={p.source}
+                                    status={p.status as any}
+                                    currentStep={p.step as any}
+                                    progress={p.progress}
+                                    timeStarted={p.time}
+                                    message={p.message}
+                                />
+                            ))
+                        )}
+                    </CardContent>
+                </Card>
+
                 {/* Recent History Table */}
                 <Card className="lg:col-span-2 shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between">
@@ -167,7 +241,7 @@ export default function CrawlerDashboardPage() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {history.map((item) => (
+                                        {history.map((item: any) => (
                                             <TableRow key={item.id} className="hover:bg-muted/50 transition-colors">
                                                 <TableCell className="max-w-[300px]">
                                                     <div className="flex flex-col gap-1">

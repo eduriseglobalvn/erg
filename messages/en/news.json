@@ -1,0 +1,15 @@
+{
+    "Page": {
+        "title": "News & Events",
+        "subtitle": "Latest updates from ERG",
+        "readMore": "Read more",
+        "publishedAt": "Published",
+        "author": "Author",
+        "category": "Category",
+        "tags": "Tags",
+        "share": "Share",
+        "relatedPosts": "Related Articles",
+        "noNews": "No articles yet.",
+        "backToList": "Back to news list"
+    }
+}

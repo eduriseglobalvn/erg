@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from 'next/image'
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import {
     Plus,
@@ -14,8 +15,10 @@ import {
     Calendar,
     Power,
     Send,
-    Eye
+    Eye,
+    Sparkles
 } from "lucide-react"
+import Link from "next/link"
 import { crawlerApi, RssSource, PeekResponse, PeekItem } from "@/services/crawler.api"
 import { postsApi } from "@/services/posts.api"
 import { Button } from "@/components/admin/ui/button"
@@ -59,6 +62,27 @@ import { vi } from "date-fns/locale"
  */
 import { Checkbox } from "@/components/admin/ui/checkbox"
 
+export interface RssPreviewItem {
+    title: string;
+    link: string;
+    pubDate?: string;
+    contentSnippet?: string;
+    thumbnail?: string | null;
+    isCrawled?: boolean;
+}
+
+export interface RssPreviewResponse {
+    title: string;
+    description?: string;
+    link?: string;
+    items: RssPreviewItem[];
+}
+
+export interface Category {
+    id: string | number;
+    name: string;
+}
+
 /**
  * RSS SOURCE DIALOG COMPONENT
  * Memoized to prevent unnecessary re-renders when parent state changes.
@@ -74,7 +98,7 @@ const RssSourceDialog = React.memo(({
     isOpen: boolean,
     onClose: () => void,
     source: RssSource | null,
-    categories: any[],
+    categories: Category[],
     isLoadingCats: boolean,
     onSuccess: () => void
 }) => {
@@ -88,7 +112,7 @@ const RssSourceDialog = React.memo(({
         autoPublish: false
     });
 
-    const [previewData, setPreviewData] = React.useState<any | null>(null);
+    const [previewData, setPreviewData] = React.useState<RssPreviewResponse | null>(null);
     const [selectedLinks, setSelectedLinks] = React.useState<string[]>([]);
     const [isPreviewLoading, setIsPreviewLoading] = React.useState(false);
 
@@ -142,7 +166,7 @@ const RssSourceDialog = React.memo(({
             toast.success(source ? "Đã cập nhật nguồn RSS" : (selectedLinks.length > 0 ? `Đã thêm nguồn và cào ${selectedLinks.length} bài` : "Đã thêm nguồn RSS mới"));
             onSuccess();
         },
-        onError: (err: any) => toast.error(err.message || "Lỗi khi lưu dữ liệu")
+        onError: (err: Error) => toast.error(err.message || "Lỗi khi lưu dữ liệu")
     });
 
     const syncMutation = useMutation({
@@ -180,7 +204,7 @@ const RssSourceDialog = React.memo(({
         );
     };
 
-    const updateField = (field: keyof RssSource, value: any) => {
+    const updateField = (field: keyof RssSource, value: string | boolean | undefined | number) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
@@ -307,7 +331,7 @@ const RssSourceDialog = React.memo(({
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {previewData.items.map((item: any, idx: number) => (
+                                            {previewData.items.map((item: RssPreviewItem, idx: number) => (
                                                 <TableRow key={idx} className={item.isCrawled ? "opacity-50" : ""}>
                                                     <TableCell className="py-2 px-3">
                                                         <Checkbox
@@ -319,7 +343,7 @@ const RssSourceDialog = React.memo(({
                                                     <TableCell className="py-2 px-2">
                                                         <div className="flex gap-2">
                                                             {item.thumbnail && (
-                                                                <img src={item.thumbnail} className="w-10 h-10 object-cover rounded shadow-sm" />
+                                                                <Image src={item.thumbnail} alt={item.title || ''} width={40} height={40} className="object-cover rounded shadow-sm" />
                                                             )}
                                                             <div className="flex flex-col gap-0.5">
                                                                 <p className="font-medium text-xs line-clamp-2" title={item.title}>{item.title}</p>
@@ -447,7 +471,7 @@ const PeekDialog = ({
                                     <TableRow key={idx}>
                                         <TableCell>
                                             {item.thumbnail ? (
-                                                <img src={item.thumbnail} alt="" className="h-10 w-16 object-cover rounded-sm bg-muted" />
+                                                <Image src={item.thumbnail} alt="" width={64} height={40} className="object-cover rounded-sm bg-muted" />
                                             ) : (
                                                 <div className="h-10 w-16 bg-muted rounded-sm flex items-center justify-center text-[10px] text-muted-foreground">No Img</div>
                                             )}
@@ -530,7 +554,8 @@ export default function RssManagementPage() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['crawler', 'rss'] })
             toast.success("Đã xóa nguồn RSS")
-        }
+        },
+        onError: (err: any) => toast.error(err.message || "Lỗi khi xóa nguồn RSS")
     })
 
     const syncMutation = useMutation({
@@ -582,9 +607,16 @@ export default function RssManagementPage() {
                     }}
                 />
 
-                <Button onClick={handleAdd} className="h-11 px-6 shadow-md transition-all hover:scale-[1.02]">
-                    <Plus className="mr-2 h-5 w-5" /> Thêm nguồn RSS
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" onClick={handleAdd} className="h-11 px-4 shadow-sm transition-all hover:scale-[1.02]">
+                        <Plus className="mr-2 h-4 w-4" /> Thủ công
+                    </Button>
+                    <Link href="/admin/crawler/rss/wizard">
+                        <Button className="h-11 px-6 shadow-md transition-all hover:scale-[1.02] bg-blue-600 hover:bg-blue-700">
+                            <Sparkles className="mr-2 h-5 w-5 text-amber-300" /> Thêm nhanh (Wizard)
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             <Card className="shadow-sm">
@@ -695,6 +727,8 @@ export default function RssManagementPage() {
                                                         size="icon"
                                                         className="h-8 w-8"
                                                         onClick={() => handleEdit(source)}
+                                                        aria-label="Sửa"
+                                                        title="Sửa"
                                                     >
                                                         <Pencil className="h-4 w-4" />
                                                     </Button>
@@ -703,6 +737,8 @@ export default function RssManagementPage() {
                                                         size="icon"
                                                         className="h-8 w-8 text-destructive hover:bg-red-50"
                                                         onClick={() => confirm("Bạn có chắc chắn muốn xóa nguồn này?") && deleteMutation.mutate(source.id || (source as any)._id)}
+                                                        aria-label="Xóa"
+                                                        title="Xóa"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>

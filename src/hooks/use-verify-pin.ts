@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi, httpClient } from '@/services';
+import { RateLimitError } from '@/services/http-client';
 import { toast } from 'sonner';
 
 interface VerifyPinDto {
@@ -66,6 +67,12 @@ export function useVerifyPinMutation() {
             }
         },
         onError: (error: any) => {
+            // Handle 429 rate limit
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(`Quá nhiều yêu cầu. Vui lòng thử lại sau ${retrySec} giây.`, { duration: Infinity });
+                return;
+            }
             toast.error(error.message || 'Mã xác thực không chính xác');
         }
     });
@@ -83,6 +90,12 @@ export function useResendPinMutation() {
             toast.success('Đã gửi lại mã PIN mới');
         },
         onError: (error: any) => {
+            // Handle 429 rate limit
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(`Quá nhiều yêu cầu. Vui lòng thử lại sau ${retrySec} giây.`, { duration: Infinity });
+                return;
+            }
             toast.error(error.message || 'Không thể gửi lại mã');
         }
     });
@@ -98,8 +111,18 @@ export function useResetPasswordMutation() {
         },
         onSuccess: () => {
             toast.success('Mật khẩu đã được thay đổi thành công!');
+            // BE sẽ revoke tất cả sessions → redirect về login với message
+            setTimeout(() => {
+                window.location.href = '/auth/login?reason=password_changed';
+            }, 1500);
         },
         onError: (error: any) => {
+            // Handle 429 rate limit
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(`Quá nhiều yêu cầu. Vui lòng thử lại sau ${retrySec} giây.`, { duration: Infinity });
+                return;
+            }
             toast.error(error.message || 'Đổi mật khẩu thất bại');
         }
     });

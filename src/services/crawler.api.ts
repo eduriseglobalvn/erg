@@ -31,9 +31,17 @@ export interface ScraperConfig {
 export interface CrawlHistoryItem {
     id: string;
     url: string;
-    status: 'SUCCESS' | 'FAILED' | 'PENDING';
+    status: 'SUCCESS' | 'FAILED' | 'PENDING' | 'REJECTED';
     errorMessage?: string;
     crawledAt: string;
+    // Phase 1.4 fields:
+    qualityScore?: number;
+    qualityReason?: string;
+    sourceType?: 'rss' | 'topic' | 'manual';
+    sourceName?: string;
+    // Phase 2.1 fields:
+    duplicateOf?: string | null;
+    dedupReason?: string | null;
 }
 
 export interface CrawlHistoryResponse {
@@ -86,6 +94,84 @@ export interface CreateSelectiveRequest {
         isActive: boolean;
     };
     selectedLinks: string[];
+}
+
+export interface AiQuotaResponse {
+    totalDaily: number;
+    usedToday: number;
+    remaining: number;
+    percentageUsed: number;
+    status: 'OK' | 'WARNING' | 'CRITICAL';
+    keys: Array<{ label: string; status: string; todayUsage: number; maxDaily: number }>;
+}
+
+export interface QualityStats {
+    totalToday: number;
+    passedCount: number;
+    failedCount: number;
+    passRate: number;
+    topRejectReasons: Array<{ reason: string; count: number }>;
+}
+
+// ─── Phase 2.1: Content Dedup ─────────────────────────────────────────────────
+
+export interface DedupStats {
+    totalFingerprints: number;
+    duplicatesDetectedToday: number;
+    dedupRate: number;
+}
+
+// ─── Phase 4.3: Content Blacklist ─────────────────────────────────────────────
+
+export interface ContentBlacklistItem {
+    id: string;
+    type: 'domain' | 'keyword' | 'pattern';
+    value: string;
+    reason?: string;
+    createdBy?: string;
+    isActive: boolean;
+    expiresAt?: string;
+    createdAt?: string;
+}
+
+// ─── Phase 4.2: Sitemap Support ───────────────────────────────────────────────
+
+export interface ParsedSitemapUrl {
+    url: string;
+    lastmod?: string;
+    priority?: number;
+    changefreq?: string;
+}
+
+export interface SitemapDiscoverResponse {
+    sitemaps: string[];
+}
+
+export interface SitemapParseResponse {
+    urls: ParsedSitemapUrl[];
+    total: number;
+}
+
+// ─── Phase 4.6: Batch Selector Tester ────────────────────────────────────────
+
+export interface BatchTestResult {
+    url: string;
+    status: 'SUCCESS' | 'FAILED';
+    title?: string;
+    contentLength?: number;
+    error?: string;
+}
+
+export interface SelectorSuggestion {
+    suggestedTitleSelector: string;
+    suggestedContentSelector: string;
+    suggestedThumbnailSelector: string;
+    suggestedAuthorSelector?: string;
+    suggestedDateSelector?: string;
+    confidence: number;
+    pageType: 'news' | 'blog' | 'forum' | 'ecommerce' | 'unknown';
+    cms: 'wordpress' | 'ghost' | 'custom' | 'unknown';
+    reasoning: string;
 }
 
 export interface BaseResponse<T> {
@@ -198,5 +284,84 @@ export const crawlerApi = {
         return httpClient<BaseResponse<any>>(`/crawler/configs/${id}`, {
             method: 'DELETE',
         }).then(res => res.data);
-    }
+    },
+
+    // 6. AI Quota & Quality Gate
+    getAiQuota: () => {
+        return httpClient<BaseResponse<AiQuotaResponse>>('/crawler/ai-quota').then(res => res.data);
+    },
+
+    getQualityStats: () => {
+        return httpClient<BaseResponse<QualityStats>>('/crawler/quality-stats').then(res => res.data);
+    },
+
+    // Phase 2.1: Content Dedup
+    getDedupStats: () => {
+        return httpClient<BaseResponse<DedupStats>>('/crawler/dedup-stats').then(res => res.data);
+    },
+
+    // Phase 4.3: Content Blacklist
+    getBlacklist: (type?: string) => {
+        const qs = type ? `?type=${type}` : '';
+        return httpClient<BaseResponse<ContentBlacklistItem[]>>(`/crawler/blacklist${qs}`).then(res => res.data);
+    },
+
+    createBlacklist: (data: {
+        type: string;
+        value: string;
+        reason?: string;
+        createdBy?: string;
+        expiresAt?: string;
+    }) => {
+        return httpClient<BaseResponse<ContentBlacklistItem>>('/crawler/blacklist', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        }).then(res => res.data);
+    },
+
+    updateBlacklist: (id: string, data: {
+        reason?: string;
+        isActive?: boolean;
+        expiresAt?: string;
+    }) => {
+        return httpClient<BaseResponse<ContentBlacklistItem>>(`/crawler/blacklist/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify(data),
+        }).then(res => res.data);
+    },
+
+    deleteBlacklist: (id: string) => {
+        return httpClient<BaseResponse<{ success: boolean }>>(`/crawler/blacklist/${id}`, {
+            method: 'DELETE',
+        }).then(res => res.data);
+    },
+
+    // Phase 4.2: Sitemap Support
+    discoverSitemaps: (domain: string) => {
+        return httpClient<BaseResponse<SitemapDiscoverResponse>>(
+            `/crawler/sitemap/discover?domain=${encodeURIComponent(domain)}`,
+        ).then(res => res.data);
+    },
+
+    parseSitemap: (url: string) => {
+        return httpClient<BaseResponse<SitemapParseResponse>>('/crawler/sitemap/parse', {
+            method: 'POST',
+            body: JSON.stringify({ url }),
+        }).then(res => res.data);
+    },
+
+    // Phase 4.6: Batch Selector Tester
+    testBatchSelectors: (urls: string[], type: 'STATIC' | 'DYNAMIC' = 'STATIC') => {
+        return httpClient<BaseResponse<BatchTestResult[]>>('/crawler/configs/test-batch', {
+            method: 'POST',
+            body: JSON.stringify({ urls, type }),
+        }).then(res => res.data);
+    },
+
+    analyzeSmartSelectors: (url: string) => {
+        return httpClient<BaseResponse<SelectorSuggestion>>('/crawler/smart-selector/analyze', {
+            method: 'POST',
+            body: JSON.stringify({ url }),
+        }).then(res => res.data);
+    },
 };

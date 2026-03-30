@@ -19,7 +19,7 @@ const getSubdomainSeoConfig = (subdomain: string) => {
 export function SearchEngineMeta({ subdomain }: { subdomain: string }) {
     const { data: configData } = useQuery({
         queryKey: ['seo-config', subdomain],
-        queryFn: () => seoApi.getConfig('webmaster_verification').then(res => res.data).catch(() => null)
+        queryFn: () => seoApi.getConfig('webmaster_verification', { requireAuth: false }).then(res => res.data).catch(() => null)
     });
 
     const defaultConfig = getSubdomainSeoConfig(subdomain);

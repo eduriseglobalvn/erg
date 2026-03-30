@@ -21,6 +21,10 @@ interface AiStatusData {
         postId: string;
         slug?: string;
     };
+    // [MỚI BE v2026-03] SEO scores từ Backend (thật, không phải 0)
+    seoScore?: number;
+    readabilityScore?: number;
+    keywordDensity?: number;
 }
 
 export function useAiWriter(editor: any) {
@@ -172,12 +176,16 @@ export function useAiWriter(editor: any) {
                             await typeIntoEditor(actualPostData.content, editor);
 
                             // 3. Tự động kiểm tra SEO sau khi AI viết bài
-                            const seoScore = localSeoAnalyzer(
-                                actualPostData.content,
-                                actualPostData.title || '',
-                                actualPostData.metaDescription || '',
-                                actualPostData.focusKeyword || ''
-                            );
+                            // [BE v2026-03] Ưu tiên dùng seoScore từ BE (thật), fallback local
+                            const beSeoScore = statusData.seoScore ?? 0;
+                            const seoScore = beSeoScore > 0
+                                ? { overallScore: beSeoScore, readabilityScore: statusData.readabilityScore ?? 0, keywordDensity: statusData.keywordDensity ?? 0 }
+                                : localSeoAnalyzer(
+                                    actualPostData.content,
+                                    actualPostData.title || '',
+                                    actualPostData.metaDescription || '',
+                                    actualPostData.focusKeyword || ''
+                                );
 
                             if (seoScore.overallScore < 50) {
                                 setTimeout(async () => {

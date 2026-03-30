@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(yarn install:*)",
+      "Bash(dir)",
+      "Bash(npx @next/codemod@canary middleware-to-proxy .)",
+      "Bash(npx @next/codemod@canary middleware-to-proxy . --force)"
+    ]
+  }
+}

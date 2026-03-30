@@ -105,6 +105,8 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
 
         const responseHeaders = new Headers(response.headers);
         responseHeaders.delete('transfer-encoding');
+        responseHeaders.delete('content-length');
+        responseHeaders.delete('content-encoding'); 
 
         let responseBody = await response.text();
 

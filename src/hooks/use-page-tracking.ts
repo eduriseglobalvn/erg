@@ -27,6 +27,13 @@ export function usePageTracking() {
                     let entityId = pathname === '/' ? 'home' : pathname.split('/').filter(Boolean).pop() || 'home';
 
                     const host = window.location.hostname;
+                    
+                    // Tự động skip tracking trên Admin domain hoặc hệ thống nội bộ
+                    const skipPaths = ['/admin', '/auth'];
+                    if (host.includes('admin') || skipPaths.some(p => pathname?.startsWith(p))) {
+                        return;
+                    }
+
                     if (pathname === '/' && !host.includes('www') && host.split('.').length > 2) {
                         entityId = host.split('.')[0] + '-home';
                     }

@@ -107,7 +107,8 @@ export const analyticsApi = {
         try {
             return await httpClient<SessionStartResponse>('/api/insight/session/begin', {
                 method: 'POST',
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                requireAuth: false
             });
         } catch (error: any) {
             console.error('[Analytics] Session begin error:', error);
@@ -152,7 +153,8 @@ export const analyticsApi = {
         try {
             await httpClient('/api/insight/behavior', {
                 method: 'POST',
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                requireAuth: false
             });
         } catch (error) {
             console.error('[Analytics] Behavior tracking failed:', error);

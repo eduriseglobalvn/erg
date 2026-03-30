@@ -1,0 +1,89 @@
+{
+    "title": "Training Programs",
+    "description": "We design flexible learning paths suitable for both school's official programs and accelerated exam preparation needs at the center.",
+    "tabs": {
+        "school": "Joint Training",
+        "center": "Intensive Exam Prep"
+    },
+    "note": "* {type, select, school {The roadmap is designed closely following the MoET program and international standards.} center {Intensive exam preparation classes guarantee a small number of students with dedicated teacher guidance.} other {}}",
+    "register": "Register Now",
+    "schoolSteps": [
+        {
+            "level": "Elementary school",
+            "sub": "5-year roadmap",
+            "certs": [
+                { "name": "IC3 Spark Level 1", "desc": "Introduction to hardware, software & OS." },
+                { "name": "IC3 Spark Level 2", "desc": "Key applications (Basic Word, Excel, PPT)." },
+                { "name": "IC3 Spark Level 3", "desc": "Online living & Digital safety." }
+            ]
+        },
+        {
+            "level": "Middle school",
+            "sub": "4-year roadmap",
+            "certs": [
+                { "name": "IC3 GS6 Level 1", "desc": "Basic IT & Digital Citizenship." },
+                { "name": "IC3 GS6 Level 2", "desc": "Application skills & Content creation." },
+                { "name": "IC3 GS6 Level 3", "desc": "System management & Cybersecurity." }
+            ]
+        },
+        {
+            "level": "High School",
+            "sub": "3-year roadmap",
+            "certs": [
+                { "name": "MOS Word", "desc": "Professional word processing." },
+                { "name": "MOS Excel", "desc": "Data calculation & analysis." },
+                { "name": "MOS PowerPoint", "desc": "Impressive presentation design." }
+            ]
+        },
+        {
+            "level": "University & Professional",
+            "sub": "In-depth",
+            "certs": [
+                { "name": "MOS Specialist", "desc": "Standard international office skills." },
+                { "name": "MOS Expert", "desc": "Advanced data & text processing." }
+            ]
+        }
+    ],
+    "centerSteps": [
+        {
+            "level": "Luyện Thi IC3 Spark",
+            "sub": "For Elementary",
+            "tag": "10 Weeks / 30 Sessions",
+            "certs": [
+                { "name": "Knowledge Systematization", "desc": "Condense knowledge from 3 levels in a short time." },
+                { "name": "Gmetrix Practice", "desc": "Practice on real exam simulation software." },
+                { "name": "Outcome Guarantee", "desc": "Achieve international IC3 Spark certification." }
+            ]
+        },
+        {
+            "level": "IC3 GS6 Exam Prep",
+            "sub": "For Middle School",
+            "tag": "10 Weeks / 30 Sessions",
+            "certs": [
+                { "name": "Tech Thinking", "desc": "Mastering Computer & Internet knowledge." },
+                { "name": "Practical Skills", "desc": "Proficient in basic Office manipulation." },
+                { "name": "Exam Strategy", "desc": "Optimize scores with closely matched exam questions." }
+            ]
+        },
+        {
+            "level": "MOS Exam Prep",
+            "sub": "High school & Student",
+            "tag": "10 Weeks / 30 Sessions",
+            "certs": [
+                { "name": "MOS Word/Excel/PPT", "desc": "Choose 1 of 3 subjects for in-depth training." },
+                { "name": "100% Practical", "desc": "Learn directly on computer, hands-on guidance." },
+                { "name": "Lifetime Certificate", "desc": "Own a globally valued Microsoft certificate." }
+            ]
+        },
+        {
+            "level": "Office IT",
+            "sub": "For Working Professionals",
+            "tag": "Flexible",
+            "certs": [
+                { "name": "Practical Application", "desc": "Processing text, spreadsheets for work." },
+                { "name": "Soft Skills", "desc": "Email, Calendar, Scientific file management." },
+                { "name": "Accelerated", "desc": "Training according to corporate or individual needs." }
+            ]
+        }
+    ]
+}

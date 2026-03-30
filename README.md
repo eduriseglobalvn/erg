@@ -19,7 +19,7 @@ Dự án được xây dựng trên nền tảng công nghệ hiện đại, t�
 -   **Language**: TypeScript
 -   **Styling**: Tailwind CSS
 -   **Icons**: Lucide React
--   **Runtime**: Node.js v20.19.4
+-   **Runtime**: Bun v1.2+ (Khuyến nghị) / Node.js v20.19.4+
 
 ## 🚀 Cài đặt và Chạy Local
 
@@ -33,9 +33,7 @@ Dự án được xây dựng trên nền tảng công nghệ hiện đại, t�
 
 2.  **Cài đặt dependencies:**
     ```bash
-    yarn install
-    # hoặc nếu dùng npm:
-    npm install
+    bun install
     ```
 
 3.  **Cấu hình Môi trường (Multi-domain):**
@@ -56,9 +54,7 @@ Dự án được xây dựng trên nền tảng công nghệ hiện đại, t�
 
 4.  **Chạy môi trường phát triển:**
     ```bash
-    yarn dev
-    # hoặc nếu dùng npm:
-    npm run dev
+    bun dev
     ```
     Truy cập http://localhost:3000 để xem kết quả.
 

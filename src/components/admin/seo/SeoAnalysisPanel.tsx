@@ -296,8 +296,8 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
                             />
                             <CheckItem
                                 label="Mật độ từ khóa"
-                                status={contentAnalysis.keywordDensity >= 0.5 && contentAnalysis.keywordDensity <= 2.5 ? 'success' : 'warning'}
-                                message={`${contentAnalysis.keywordDensity.toFixed(1)}% (Tối ưu: 0.5-2.5%)`}
+                                status={contentAnalysis.keywordDensity >= 1.5 && contentAnalysis.keywordDensity <= 3.5 ? 'success' : 'warning'}
+                                message={`${contentAnalysis.keywordDensity.toFixed(1)}% (Tối ưu: 1.5-3.5%)`}
                             />
                             <CheckItem
                                 label="Chỉ số dễ đọc"

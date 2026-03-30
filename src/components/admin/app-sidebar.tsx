@@ -160,6 +160,16 @@ const data = {
                     url: "/admin/crawler/history",
                     permission: "crawler.read",
                 },
+                {
+                    title: "Hot Topics",
+                    url: "/admin/crawler/trending",
+                    permission: "crawler.read",
+                },
+                {
+                    title: "Blacklist",
+                    url: "/admin/crawler/blacklist",
+                    permission: "system.settings",
+                },
             ]
         },
         {
@@ -287,6 +297,24 @@ const data = {
             url: "/admin/settings",
             icon: Settings2,
             permission: "settings.read",
+        },
+        {
+            title: "🤖 ERG Bot",
+            url: "/admin/bot",
+            icon: Bot,
+            permission: "posts.read",
+            items: [
+                {
+                    title: "Control Center",
+                    url: "/admin/bot",
+                    permission: "posts.read",
+                },
+                {
+                    title: "Kết nối Bot",
+                    url: "/admin/bot/link",
+                    permission: "posts.read",
+                },
+            ],
         },
     ],
 

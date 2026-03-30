@@ -1,5 +1,6 @@
 // src/services/index.ts
-export { httpClient, handleLogout } from './http-client';
+export { httpClient, handleLogout, ApiError, RateLimitError, getRateLimitInfo } from './http-client';
+export type { RateLimitHeaders } from './http-client';
 export { authApi } from './auth.api';
 export { userApi } from './users.api';
 export { postsApi } from './posts.api';
@@ -17,4 +18,5 @@ export { reviewsApi } from './reviews.api';
 export { seoLoggingApi } from './seo-logging.api';
 export { seoApi } from './seo.api';
 export { elearningApi } from './elearning.api';
+export { healthApi } from './health.api';
 export type { ElearningCategoryData, ElearningLevelData, ElearningUnitData } from './elearning.api';

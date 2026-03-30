@@ -143,8 +143,9 @@ export default async function RootLayout(props: {
     elearning: React.ReactNode;
     admin: React.ReactNode;
 }) {
-    // 1. Lấy Hostname thực tế từ Request
-    const headerList = await headers();
+    // 1. Lấy Hostname thực tế từ Request - Tối ưu song song theo chuẩn Vercel
+    const [headerList, cookieStore] = await Promise.all([headers(), cookies()]);
+    
     // Vercel / serverless proxy thường giấu host thật vào x-forwarded-host
     let rawHost = headerList.get("x-forwarded-host") || headerList.get("host") || "";
     let hostname = rawHost.split(":")[0];
@@ -215,8 +216,7 @@ export default async function RootLayout(props: {
     // Sử dụng SchemaScript component mới để quản lý tập trung
     // Chỉ render các Schema cơ bản cấp Site tại đây. Các Schema chi tiết (Article, Course) sẽ nằm ở page.tsx
 
-    // Resolve locale from cookie
-    const cookieStore = await cookies();
+    // Resolve locale and messages - Parallelized
     const locale = cookieStore.get('NEXT_LOCALE')?.value || 'vi';
     const messages = await getMessages();
 

@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 
 export default function TrainingFieldsContent() {
     const t = useTranslations('about.linhVucDaoTao');
+    const th = useTranslations('home.Training');
     return (
         <main className="min-h-screen bg-gray-50 font-sans text-slate-800 pt-[70px] lg:pt-[135px]">
 
@@ -37,10 +38,10 @@ export default function TrainingFieldsContent() {
             <div className="container mx-auto px-4 -mt-10 relative z-20">
                 <div className="bg-white rounded-2xl shadow-xl p-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center border border-gray-100">
                     {[
-                        { num: "8+", label: "Năm kinh nghiệm", icon: <Award className="w-6 h-6 text-[#cc0022]" /> },
-                        { num: "50+", label: "Khóa học chuyên sâu", icon: <BookOpen className="w-6 h-6 text-[#cc0022]" /> },
-                        { num: "20k+", label: "Học viên tiêu biểu", icon: <Users className="w-6 h-6 text-[#cc0022]" /> },
-                        { num: "100%", label: "Cam kết chất lượng", icon: <CheckCircle2 className="w-6 h-6 text-[#cc0022]" /> },
+                        { num: "8+", label: t('stats.experience'), icon: <Award className="w-6 h-6 text-[#cc0022]" /> },
+                        { num: "50+", label: t('stats.courses'), icon: <BookOpen className="w-6 h-6 text-[#cc0022]" /> },
+                        { num: "20k+", label: t('stats.students'), icon: <Users className="w-6 h-6 text-[#cc0022]" /> },
+                        { num: "100%", label: t('stats.quality'), icon: <CheckCircle2 className="w-6 h-6 text-[#cc0022]" /> },
                     ].map((stat, idx) => (
                         <div key={idx} className="flex flex-col items-center">
                             <div className="mb-3 bg-red-50 p-3 rounded-full">{stat.icon}</div>
@@ -59,61 +60,65 @@ export default function TrainingFieldsContent() {
                     </h2>
                     <div className="w-20 h-1.5 mx-auto rounded-full mb-6" style={{ backgroundColor: '#cc0022' }}></div>
                     <p className="text-gray-600 max-w-2xl mx-auto">
-                        Được thiết kế lộ trình bài bản, cập nhật xu hướng công nghệ mới nhất và cấp chứng chỉ có giá trị toàn cầu.
+                        {t('fields.description')}
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {TRAINING_FIELDS.map((item) => (
-                        <div
-                            key={item.id}
-                            className="group bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-2xl transition-all duration-300 flex flex-col md:flex-row gap-6 items-stretch relative overflow-hidden"
-                        >
-                            {/* Thanh màu trang trí bên trái khi hover */}
-                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#cc0022] transform scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-bottom"></div>
+                    {TRAINING_FIELDS.map((item, index) => {
+                        const fieldKeys = ['thqt', 'thqg', 'thtn', 'kns', 'dtdm', 'ai'] as const;
+                        const key = fieldKeys[index];
+                        return (
+                            <div
+                                key={item.id}
+                                className="group bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-2xl transition-all duration-300 flex flex-col md:flex-row gap-6 items-stretch relative overflow-hidden"
+                            >
+                                {/* Thanh màu trang trí bên trái khi hover */}
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#cc0022] transform scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-bottom"></div>
 
-                            {/* Image Area */}
-                            <div className="w-full md:w-5/12 h-56 md:h-auto shrink-0 relative overflow-hidden rounded-xl">
-                                <img
-                                    src={item.image}
-                                    alt={item.title}
-                                    className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
-                                />
-                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                    <span className="bg-white/90 backdrop-blur-sm text-[#00008b] p-3 rounded-full">
-                                        <ArrowUpRight size={24} />
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Content Area */}
-                            <div className="flex-1 py-1 pr-2 flex flex-col justify-between">
-                                <div>
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="px-2 py-1 rounded bg-blue-50 text-[#00008b] text-[10px] font-bold uppercase tracking-wider">
-                                            Chương trình
+                                {/* Image Area */}
+                                <div className="w-full md:w-5/12 h-56 md:h-auto shrink-0 relative overflow-hidden rounded-xl">
+                                    <img
+                                        src={item.image}
+                                        alt={th(`fields.${key}.title`)}
+                                        className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
+                                    />
+                                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                        <span className="bg-white/90 backdrop-blur-sm text-[#00008b] p-3 rounded-full">
+                                            <ArrowUpRight size={24} />
                                         </span>
                                     </div>
-                                    <h3 className="text-xl font-bold mb-3 transition-colors group-hover:text-[#cc0022]" style={{ color: '#00008b' }}>
-                                        {item.title}
-                                    </h3>
-                                    <p className="text-sm text-gray-600 leading-relaxed line-clamp-3 mb-4">
-                                        {item.description}
-                                    </p>
                                 </div>
 
-                                {/* Action Link */}
-                                <Link
-                                    href={item.link}
-                                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider hover:gap-3 transition-all mt-auto group/btn w-fit"
-                                    style={{ color: '#cc0022' }}
-                                >
-                                    {t('fields.more')}
-                                    <ArrowRight size={16} className="transform group-hover/btn:translate-x-1 transition-transform" />
-                                </Link>
+                                {/* Content Area */}
+                                <div className="flex-1 py-1 pr-2 flex flex-col justify-between">
+                                    <div>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="px-2 py-1 rounded bg-blue-50 text-[#00008b] text-[10px] font-bold uppercase tracking-wider">
+                                                {t('fields.programLabel')}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-xl font-bold mb-3 transition-colors group-hover:text-[#cc0022]" style={{ color: '#00008b' }}>
+                                            {th(`fields.${key}.title`)}
+                                        </h3>
+                                        <p className="text-sm text-gray-600 leading-relaxed line-clamp-3 mb-4">
+                                            {th(`fields.${key}.desc`)}
+                                        </p>
+                                    </div>
+
+                                    {/* Action Link */}
+                                    <Link
+                                        href={item.link}
+                                        className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider hover:gap-3 transition-all mt-auto group/btn w-fit"
+                                        style={{ color: '#cc0022' }}
+                                    >
+                                        {t('fields.more')}
+                                        <ArrowRight size={16} className="transform group-hover/btn:translate-x-1 transition-transform" />
+                                    </Link>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
 
@@ -125,22 +130,22 @@ export default function TrainingFieldsContent() {
                             <div className="w-16 h-16 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center text-[#00008b] mb-6">
                                 <GraduationCap size={32} />
                             </div>
-                            <h3 className="text-lg font-bold mb-3 text-gray-900">Giảng viên chuyên gia</h3>
-                            <p className="text-gray-500 text-sm leading-relaxed">Đội ngũ giảng viên giàu kinh nghiệm thực chiến, có chứng chỉ sư phạm quốc tế và tận tâm với học viên.</p>
+                            <h3 className="text-lg font-bold mb-3 text-gray-900">{t('why.teachers.title')}</h3>
+                            <p className="text-gray-500 text-sm leading-relaxed">{t('why.teachers.desc')}</p>
                         </div>
                         <div className="text-center px-4">
                             <div className="w-16 h-16 mx-auto bg-red-50 rounded-2xl flex items-center justify-center text-[#cc0022] mb-6">
                                 <MonitorPlay size={32} />
                             </div>
-                            <h3 className="text-lg font-bold mb-3 text-gray-900">Thực hành chuyên sâu</h3>
-                            <p className="text-gray-500 text-sm leading-relaxed">Thời lượng thực hành chiếm 70%, học trên dự án thực tế giúp học viên thành thạo kỹ năng ngay tại lớp.</p>
+                            <h3 className="text-lg font-bold mb-3 text-gray-900">{t('why.practice.title')}</h3>
+                            <p className="text-gray-500 text-sm leading-relaxed">{t('why.practice.desc')}</p>
                         </div>
                         <div className="text-center px-4">
                             <div className="w-16 h-16 mx-auto bg-yellow-50 rounded-2xl flex items-center justify-center text-yellow-600 mb-6">
                                 <Award size={32} />
                             </div>
-                            <h3 className="text-lg font-bold mb-3 text-gray-900">Chứng chỉ uy tín</h3>
-                            <p className="text-gray-500 text-sm leading-relaxed">Hỗ trợ thi và cấp các chứng chỉ Quốc tế (MOS, IC3) và Quốc gia, có giá trị trọn đời trên toàn cầu.</p>
+                            <h3 className="text-lg font-bold mb-3 text-gray-900">{t('why.award.title')}</h3>
+                            <p className="text-gray-500 text-sm leading-relaxed">{t('why.award.desc')}</p>
                         </div>
                     </div>
                 </div>

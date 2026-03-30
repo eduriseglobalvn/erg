@@ -86,6 +86,11 @@ export default function CrawlHistoryPage() {
                                     <SelectItem value="SUCCESS">Thành công</SelectItem>
                                     <SelectItem value="FAILED">Thất bại</SelectItem>
                                     <SelectItem value="PENDING">Đang chờ</SelectItem>
+                                    <SelectItem value="HIGH">Chất lượng cao</SelectItem>
+                                    <SelectItem value="MEDIUM">Chất lượng TB</SelectItem>
+                                    <SelectItem value="LOW">Chất lượng thấp</SelectItem>
+                                    <SelectItem value="REJECTED">Bị từ chối</SelectItem>
+                                    <SelectItem value="UNIQUE">Unique</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -109,7 +114,10 @@ export default function CrawlHistoryPage() {
                                 <Table>
                                     <TableHeader className="bg-muted/50 text-[11px] uppercase tracking-wider font-bold">
                                         <TableRow>
-                                            <TableHead className="w-[55%]">Thông tin bài viết / URL</TableHead>
+                                            <TableHead className="w-[45%]">Thông tin bài viết / URL</TableHead>
+                                            <TableHead>Chất lượng</TableHead>
+                                            <TableHead>Nguồn</TableHead>
+                                            <TableHead>Trùng lặp</TableHead>
                                             <TableHead>Trạng thái</TableHead>
                                             <TableHead className="text-right">Thời gian</TableHead>
                                         </TableRow>
@@ -136,6 +144,74 @@ export default function CrawlHistoryPage() {
                                                         )}
                                                     </div>
                                                 </TableCell>
+
+                                                {/* Quality Score Column */}
+                                                <TableCell>
+                                                    {item.qualityScore !== undefined ? (
+                                                        item.qualityScore >= 85 ? (
+                                                            <Badge className="bg-green-50 text-green-700 border-green-200 shadow-none gap-1 h-5 px-1.5">
+                                                                <span className="text-[10px]">🟢</span>
+                                                                <span className="text-[10px] font-semibold">Cao ({item.qualityScore})</span>
+                                                            </Badge>
+                                                        ) : item.qualityScore >= 70 ? (
+                                                            <Badge className="bg-amber-50 text-amber-700 border-amber-200 shadow-none gap-1 h-5 px-1.5">
+                                                                <span className="text-[10px]">🟡</span>
+                                                                <span className="text-[10px] font-semibold">TB ({item.qualityScore})</span>
+                                                            </Badge>
+                                                        ) : (
+                                                            <Badge variant="destructive" className="gap-1 h-5 px-1.5 shadow-none">
+                                                                <span className="text-[10px]">🔴</span>
+                                                                <span className="text-[10px] font-semibold">Thấp ({item.qualityScore})</span>
+                                                            </Badge>
+                                                        )
+                                                    ) : (
+                                                        <span className="text-[11px] text-muted-foreground italic">—</span>
+                                                    )}
+                                                </TableCell>
+
+                                                {/* Source Type Column */}
+                                                {/* Duplicate Column (Phase 2.1) */}
+                                                <TableCell>
+                                                    {item.duplicateOf ? (
+                                                        <div className="flex flex-col gap-0.5">
+                                                            <Badge className="bg-red-50 text-red-700 border-red-200 shadow-none gap-1 h-5 px-1.5 text-[10px] w-fit">
+                                                                <span>🔴</span>
+                                                                <span>Trùng lặp</span>
+                                                            </Badge>
+                                                            {item.dedupReason && (
+                                                                <span className="text-[10px] text-red-400 italic" title={item.dedupReason}>
+                                                                    {item.dedupReason.substring(0, 30)}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <Badge className="bg-green-50 text-green-700 border-green-200 shadow-none gap-1 h-5 px-1.5 text-[10px] w-fit">
+                                                            <span>🟢</span>
+                                                            <span>Unique</span>
+                                                        </Badge>
+                                                    )}
+                                                </TableCell>
+
+                                                <TableCell>
+                                                    {item.sourceType ? (
+                                                        item.sourceType === 'rss' ? (
+                                                            <Badge className="bg-blue-50 text-blue-700 border-blue-200 shadow-none h-5 px-1.5 text-[10px]">
+                                                                RSS{item.sourceName ? `: ${item.sourceName}` : ''}
+                                                            </Badge>
+                                                        ) : item.sourceType === 'topic' ? (
+                                                            <Badge className="bg-orange-50 text-orange-700 border-orange-200 shadow-none h-5 px-1.5 text-[10px]">
+                                                                Topic{item.sourceName ? `: ${item.sourceName}` : ''}
+                                                            </Badge>
+                                                        ) : (
+                                                            <Badge variant="outline" className="shadow-none h-5 px-1.5 text-[10px]">
+                                                                Manual
+                                                            </Badge>
+                                                        )
+                                                    ) : (
+                                                        <span className="text-[11px] text-muted-foreground italic">—</span>
+                                                    )}
+                                                </TableCell>
+
                                                 <TableCell>
                                                     <StatusBadge status={item.status} />
                                                 </TableCell>
@@ -199,6 +275,12 @@ function StatusBadge({ status }: { status: string }) {
             return (
                 <Badge variant="destructive" className="flex items-center gap-1 px-2 h-6 shadow-sm">
                     <XCircle className="h-3 w-3" /> Thất bại
+                </Badge>
+            )
+        case 'REJECTED':
+            return (
+                <Badge variant="outline" className="flex items-center gap-1 px-2 h-6 shadow-sm border-orange-300 text-orange-700 bg-orange-50">
+                    <XCircle className="h-3 w-3" /> Bị từ chối
                 </Badge>
             )
         default:

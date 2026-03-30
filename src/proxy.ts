@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 /**
- * Minimal middleware — does NOT redirect or rewrite URLs.
+ * Proxy (trước đây là middleware) — does NOT redirect or rewrite URLs.
  * next-intl locale is resolved purely via cookie/Accept-Language in getRequestConfig.
  * This keeps the existing subdomain routing untouched.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const response = NextResponse.next();
 
     // Security Headers (B-M12)

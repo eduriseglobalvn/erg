@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Phone, Facebook, Youtube, ChevronDown, Search } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from '@/components/shared/language-switcher';
 import { SchemaScript } from '@/components/seo/schema-script';
 
@@ -70,8 +71,27 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
     }
   }, [isSearchOpen]);
 
+  const tc = useTranslations('common.Header');
+
+  // Vercel Best Practice: Use stable lookups and hoist mapping logic where possible
+  const translateLabel = (label: string) => {
+    const keyMap: Record<string, string> = {
+      'GIỚI THIỆU': 'menu.introduction',
+      'LĨNH VỰC ĐÀO TẠO': 'menu.training_programs',
+      'TIN TỨC': 'menu.news',
+      'CƠ HỘI NGHỀ NGHIỆP': 'menu.careers',
+      'LIÊN HỆ': 'menu.contact',
+      'TUYỂN DỤNG': 'menu.recruitment',
+      'VĂN HÓA': 'menu.culture',
+      'CHÍNH SÁCH NHÂN SỰ': 'menu.policy',
+      'Trang Chủ': 'home',
+    };
+    const key = keyMap[label];
+    return key ? tc(key as any) : label;
+  };
+
   const toggleMobileSubmenu = (label: string) => {
-    setMobileSubmenuOpen(mobileSubmenuOpen === label ? null : label);
+    setMobileSubmenuOpen(prev => prev === label ? null : label);
   };
 
   return (
@@ -114,13 +134,14 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="flex-shrink-0 relative w-[100px] h-[55px] md:w-[117px] md:h-[64px]">
+              <div className="flex-shrink-0">
                 <Image
                   src="https://media.erg.edu.vn/logo/erg.png"
                   alt="ERG Logo"
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 768px) 100px, 117px"
+                  width={117}
+                  height={64}
+                  className="object-contain w-[100px] md:w-[117px]"
+                  style={{ width: 'auto', height: 'auto' }}
                   priority
                 />
               </div>
@@ -155,7 +176,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                                 ${!hasSubmenu ? "after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[3px] after:bg-highlight after:transition-all after:duration-300 group-hover:after:w-full" : ''}
                             `}
                     >
-                      {item.label}
+                      {translateLabel(item.label)}
                       {hasSubmenu && (
                         <ChevronDown
                           size={16}
@@ -178,7 +199,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                                     rel={isExternal ? "noopener noreferrer" : undefined}
                                     className="block px-6 py-3.5 text-base font-medium text-gray-600 hover:text-primary hover:bg-slate-50 transition-colors"
                                   >
-                                    {subItem.label}
+                                    {translateLabel(subItem.label)}
                                   </Link>
                                 </li>
                               );
@@ -197,7 +218,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                   <input
                     ref={searchInputRef}
                     type="text"
-                    placeholder="Tìm kiếm..."
+                    placeholder={`${tc('search')}...`}
                     className="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-gray-300 text-sm text-gray-700 bg-gray-50"
                   />
                 </div>
@@ -237,7 +258,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
 
             {/* Mobile Search */}
             <div className="mb-6 relative">
-              <input type="text" placeholder="Tìm kiếm..." className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-gray-200" />
+              <input type="text" placeholder={`${tc('search')}...`} className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-gray-200" />
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             </div>
 
@@ -255,7 +276,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                           className={`flex items-center justify-between w-full py-4 text-left text-lg font-bold uppercase transition-colors ${isOpen ? 'text-highlight' : 'text-primary'
                             }`}
                         >
-                          {item.label}
+                          {translateLabel(item.label)}
                           <ChevronDown size={20} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                         </button>
 
@@ -272,7 +293,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                                   className="block px-4 py-3 text-base font-medium text-gray-600 hover:text-primary hover:bg-white rounded-md transition-colors"
                                   onClick={() => setIsMobileMenuOpen(false)}
                                 >
-                                  {sub.label}
+                                  {translateLabel(sub.label)}
                                 </Link>
                               );
                             })}
@@ -293,7 +314,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                           }
                         }}
                       >
-                        {item.label}
+                        {translateLabel(item.label)}
                       </Link>
                     )}
                   </div>
@@ -302,13 +323,9 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
             </nav>
 
             <div className="mt-8 pt-6 border-t border-gray-100">
-              <div className="flex items-center justify-between mb-6 px-2">
-                <span className="text-gray-500 font-medium">Ngôn ngữ:</span>
-                <div className="flex items-center gap-2">
-                  <button className="text-highlight font-bold">VN</button>
-                  <span className="text-gray-300">|</span>
-                  <button className="text-gray-500 hover:text-primary">EN</button>
-                </div>
+              <div className="flex items-center justify-between mb-6 px-2 bg-slate-50/50 p-2 rounded-xl">
+                <span className="text-[#00008b] font-bold text-sm tracking-wide">{tc('language')}:</span>
+                <LanguageSwitcher currentLocale={currentLocale} />
               </div>
               <div className="flex justify-center gap-8">
                 <a href="#" className="text-primary hover:scale-110 transition-transform"><Facebook size={32} /></a>

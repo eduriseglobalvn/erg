@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect, useMemo } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Loader2, Eye, EyeOff } from "lucide-react"
 
@@ -28,12 +28,28 @@ const GoogleIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const loginMutation = useLoginMutation()
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [rememberMe, setRememberMe] = useState(true)
     const [showPassword, setShowPassword] = useState(false)
+
+    // [MỚI] Hiển thị message từ BE (password changed / session expired)
+    const reason = searchParams.get('reason')
+    const [dismissedReason, setDismissedReason] = React.useState<string | null>(null)
+    const showReasonBanner = reason && dismissedReason !== reason
+
+    const reasonMessage = React.useMemo(() => {
+        if (reason === 'password_changed') {
+            return { type: 'success' as const, text: 'Mật khẩu đã được thay đổi thành công. Vui lòng đăng nhập lại.' };
+        }
+        if (reason === 'session_expired') {
+            return { type: 'warning' as const, text: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.' };
+        }
+        return null;
+    }, [reason]);
 
     // Tự động điền Email nếu đã "Ghi nhớ" từ trước
     React.useEffect(() => {
@@ -79,6 +95,20 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                     <CardDescription>
                         Đăng nhập để quản lý hệ thống
                     </CardDescription>
+
+                    {/* [MỚI] Banner hiển thị khi bị logout do thay đổi mật khẩu hoặc hết phiên */}
+                    {showReasonBanner && reasonMessage && (
+                        <div
+                            className={cn(
+                                "mt-2 mx-auto max-w-sm rounded-lg px-4 py-2.5 text-sm text-center",
+                                reasonMessage.type === 'success'
+                                    ? "bg-green-50 text-green-800 border border-green-200"
+                                    : "bg-amber-50 text-amber-800 border border-amber-200"
+                            )}
+                        >
+                            {reasonMessage.text}
+                        </div>
+                    )}
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} method="POST" action="">

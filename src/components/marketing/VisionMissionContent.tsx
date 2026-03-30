@@ -35,7 +35,7 @@ export default function VisionMissionContent() {
                     </h1>
                     <div className="w-24 h-1.5 bg-[#cc0022] mx-auto rounded-full mb-6"></div>
                     <p className="text-xl text-blue-100 max-w-3xl mx-auto font-light leading-relaxed italic">
-                        "Khơi dậy tiềm năng con người, kiến tạo công dân số toàn cầu."
+                        {t('hero')}
                     </p>
                 </div>
             </section>
@@ -70,8 +70,8 @@ export default function VisionMissionContent() {
                                         <Eye className="w-8 h-8 text-[#00008b]" />
                                     </div>
                                     <div>
-                                        <span className="block text-xs text-gray-500 uppercase font-bold">Mục tiêu 2030</span>
-                                        <span className="block text-lg font-bold text-[#00008b]">Hệ sinh thái giáo dục số</span>
+                                        <span className="block text-xs text-gray-500 uppercase font-bold">{t('vision.target')}</span>
+                                        <span className="block text-lg font-bold text-[#00008b]">{t('vision.title')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -86,21 +86,18 @@ export default function VisionMissionContent() {
                             </div>
 
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight">
-                                {t('vision.text').split('.')[0]}.
+                                {t('vision.title')}
                             </h2>
 
                             <div className="space-y-6 text-lg text-gray-600 leading-relaxed text-justify">
                                 <p>
-                                    ERG định hướng trở thành hệ thống giáo dục công nghệ hàng đầu, tiên phong trong việc cung cấp các giải pháp đào tạo chuẩn quốc tế. Chúng tôi kiến tạo môi trường học tập không giới hạn, nơi công nghệ là đòn bẩy để khai phóng tư duy và kỹ năng.
-                                </p>
-                                <p>
-                                    Chúng tôi khao khát xây dựng một thế hệ nhân lực số ưu tú, không chỉ làm chủ công nghệ mà còn dẫn dắt sự đổi mới sáng tạo, góp phần đưa trí tuệ Việt vươn tầm thế giới trong kỷ nguyên 4.0.
+                                    {t('vision.text')}
                                 </p>
                             </div>
 
                             <div className="mt-10 grid grid-cols-2 gap-4">
-                                {['Chuẩn hóa quốc tế', 'Học tập trọn đời', 'Cộng đồng tri thức', 'Đổi mới sáng tạo'].map((tag, i) => (
-                                    <div key={i} className="flex items-center gap-2">
+                                {(t.raw('vision.tags') as string[]).map((tag, i) => (
+                                    <div key={tag} className="flex items-center gap-2">
                                         <CheckCircle2 className="w-5 h-5 text-[#cc0022]" />
                                         <span className="text-sm font-medium text-gray-700">{tag}</span>
                                     </div>
@@ -140,8 +137,8 @@ export default function VisionMissionContent() {
                                         <BookOpen className="w-8 h-8 text-white" />
                                     </div>
                                     <div>
-                                        <span className="block text-xs opacity-80 uppercase font-bold">Phương châm</span>
-                                        <span className="block text-lg font-bold">Thực học - Thực làm</span>
+                                        <span className="block text-xs opacity-80 uppercase font-bold">{t('mission.motto')}</span>
+                                        <span className="block text-lg font-bold">{t('mission.title')}</span>
                                     </div>
                                 </div>
                             </div>
@@ -156,24 +153,24 @@ export default function VisionMissionContent() {
                             </div>
 
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight text-right lg:text-left">
-                                {t('mission.text').split('.')[0]}.
+                                {t('mission.title')}
                             </h2>
 
                             <div className="bg-white p-8 rounded-2xl shadow-sm border-l-4 border-[#cc0022]">
                                 <p className="text-lg text-gray-600 leading-relaxed text-justify">
-                                    Sứ mệnh của ERG là xóa bỏ khoảng cách số thông qua giáo dục chất lượng cao. Chúng tôi cam kết cung cấp các chương trình đào tạo thực chiến, cập nhật xu hướng công nghệ mới nhất, giúp học viên không chỉ thành thạo kỹ năng mà còn phát triển tư duy giải quyết vấn đề, sẵn sàng chinh phục thị trường lao động toàn cầu.
+                                    {t('mission.text')}
                                 </p>
                             </div>
 
                             <div className="mt-8 flex flex-col sm:flex-row gap-6 justify-end lg:justify-start">
                                 <div className="text-center sm:text-left">
                                     <h3 className="text-4xl font-bold text-[#00008b]">10K+</h3>
-                                    <p className="text-sm text-gray-500 mt-1">Học viên tiêu biểu</p>
+                                    <p className="text-sm text-gray-500 mt-1">{t('mission.stats.students')}</p>
                                 </div>
                                 <div className="w-px h-12 bg-gray-300 hidden sm:block"></div>
                                 <div className="text-center sm:text-left">
                                     <h3 className="text-4xl font-bold text-[#00008b]">98%</h3>
-                                    <p className="text-sm text-gray-500 mt-1">Hài lòng về chất lượng</p>
+                                    <p className="text-sm text-gray-500 mt-1">{t('mission.stats.satisfaction')}</p>
                                 </div>
                             </div>
 
@@ -186,13 +183,13 @@ export default function VisionMissionContent() {
             <section className="py-16 bg-[#00008b] text-white text-center">
                 <div className="container mx-auto px-4">
                     <h2 className="text-2xl md:text-3xl font-bold mb-6">
-                        Triết lý giáo dục này được xây dựng trên 5 giá trị cốt lõi
+                        {t('cta.title')}
                     </h2>
                     <a
                         href="/gia-tri-cot-loi"
                         className="inline-flex items-center bg-[#cc0022] hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-all hover:scale-105"
                     >
-                        KHÁM PHÁ GIÁ TRỊ CỐT LÕI <ArrowRight className="ml-2 w-5 h-5" />
+                        {t('cta.button')} <ArrowRight className="ml-2 w-5 h-5" />
                     </a>
                 </div>
             </section>

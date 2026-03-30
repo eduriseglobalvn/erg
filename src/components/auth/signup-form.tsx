@@ -8,6 +8,7 @@ import { Loader2, Eye, EyeOff } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { authApi } from "@/services"
+import { RateLimitError } from "@/services/http-client"
 import { Button } from "@/components/admin/ui/button"
 import {
     Card, CardContent, CardDescription, CardHeader, CardTitle
@@ -47,9 +48,13 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
             // Chuyển sang trang OTP, đánh dấu là mode kích hoạt
             router.push(`/auth/otp?email=${encodeURIComponent(formData.email)}&mode=activation`)
         } catch (error: any) {
-            toast.error(error.message || "Đăng ký thất bại")
-        } finally {
-            setIsLoading(false)
+            // Handle 429 Rate Limit
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(`Quá nhiều yêu cầu. Vui lòng thử lại sau ${retrySec} giây.`, { duration: Infinity });
+                return;
+            }
+            toast.error(error.message || "Đăng ký thất bại");
         }
     }
 

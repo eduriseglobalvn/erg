@@ -55,17 +55,17 @@ export default function ErgStoryContent() {
                     {/* Cột Trái: Text */}
                     <div className="lg:w-1/2 space-y-6">
                         <h2 className="text-3xl font-bold text-[#00008b] relative pb-4">
-                            Khát vọng trong kỷ nguyên số
+                            {t('intro.title')}
                             <span className="absolute bottom-0 left-0 w-20 h-1 bg-[#cc0022]"></span>
                         </h2>
 
                         {/* Nội dung giữ nguyên từ ảnh */}
                         <p className="text-lg text-gray-700 leading-relaxed text-justify">
-                            Giữa làn sóng chuyển đổi số mạnh mẽ, khi giáo dục toàn cầu đối mặt với yêu cầu đổi mới để bắt nhịp thời đại, ERG (EduRise Global) ra đời với một khát vọng lớn: biến công nghệ trở thành chiếc cầu nối bền vững giữa tri thức và con người.
+                            {t('intro.content', { brand: 'ERG (EduRise Global)' })}
                         </p>
 
                         <div className="bg-white/80 backdrop-blur-sm border-l-4 border-[#00008b] p-6 italic text-gray-600 rounded-r-lg shadow-sm">
-                            "Chúng tôi không chỉ dạy công nghệ, chúng tôi dùng công nghệ để khai phóng tiềm năng con người."
+                            {t('intro.highlight')}
                         </div>
                     </div>
 
@@ -104,11 +104,11 @@ export default function ErgStoryContent() {
 
                         {/* Nội dung giữ nguyên từ ảnh */}
                         <h3 className="text-2xl md:text-3xl font-bold text-[#00008b] leading-relaxed mb-6">
-                            "Edu + Rise + Global" – ERG mang trong mình sứ mệnh khai phóng tiềm năng trí tuệ thông qua các giải pháp giáo dục thông minh và toàn diện.
+                            {t('breakdown.title', { brand: 'ERG' })}
                         </h3>
 
                         <p className="text-gray-600 text-lg leading-relaxed">
-                            Được sáng lập bởi những nhà giáo dục tâm huyết cùng đội ngũ chuyên gia công nghệ sâu sắc, ERG là sự giao thoa giữa tư duy giáo dục tiến bộ và năng lực sáng tạo đột phá trong kỷ nguyên số.
+                            {t('breakdown.subtitle', { brand: 'ERG' })}
                         </p>
                     </div>
 
@@ -120,9 +120,9 @@ export default function ErgStoryContent() {
                                 <BookOpen className="w-8 h-8 text-[#00008b]" />
                             </div>
                             <h4 className="text-2xl font-bold text-center text-[#00008b] mb-2">Edu</h4>
-                            <p className="text-center text-sm font-bold text-[#cc0022] uppercase tracking-wide mb-4">Education - Giáo dục</p>
+                            <p className="text-center text-sm font-bold text-[#cc0022] uppercase tracking-wide mb-4">{t('breakdown.items.edu.label')}</p>
                             <p className="text-gray-600 text-center">
-                                Nền tảng cốt lõi, nơi tri thức được truyền tải bằng sự tận tâm và phương pháp sư phạm hiện đại.
+                                {t('breakdown.items.edu.desc')}
                             </p>
                         </div>
 
@@ -132,9 +132,9 @@ export default function ErgStoryContent() {
                                 <TrendingUp className="w-8 h-8 text-[#cc0022]" />
                             </div>
                             <h4 className="text-2xl font-bold text-center text-[#cc0022] mb-2">Rise</h4>
-                            <p className="text-center text-sm font-bold text-[#00008b] uppercase tracking-wide mb-4">Rise - Vươn tầm</p>
+                            <p className="text-center text-sm font-bold text-[#00008b] uppercase tracking-wide mb-4">{t('breakdown.items.rise.label')}</p>
                             <p className="text-gray-600 text-center">
-                                Sự phát triển không ngừng, khát vọng vươn lên và đổi mới sáng tạo để thích ứng với thế giới biến động.
+                                {t('breakdown.items.rise.desc')}
                             </p>
                         </div>
 
@@ -144,9 +144,9 @@ export default function ErgStoryContent() {
                                 <Globe className="w-8 h-8 text-[#00008b]" />
                             </div>
                             <h4 className="text-2xl font-bold text-center text-[#00008b] mb-2">Global</h4>
-                            <p className="text-center text-sm font-bold text-[#cc0022] uppercase tracking-wide mb-4">Global - Toàn cầu</p>
+                            <p className="text-center text-sm font-bold text-[#cc0022] uppercase tracking-wide mb-4">{t('breakdown.items.global.label')}</p>
                             <p className="text-gray-600 text-center">
-                                Tầm nhìn quốc tế, đưa tiêu chuẩn giáo dục toàn cầu đến với người học Việt Nam.
+                                {t('breakdown.items.global.desc')}
                             </p>
                         </div>
                     </div>
@@ -162,7 +162,7 @@ export default function ErgStoryContent() {
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="text-center mb-16">
                         {/* Tăng từ text-3xl lên text-4xl hoặc 5xl */}
-                        <h2 className="text-5xl md:text-5xl font-extrabold mb-6">Điều Gì Tạo Nên ERG?</h2>
+                        <h2 className="text-5xl md:text-5xl font-extrabold mb-6">{t('features.title', { brand: 'ERG' })}</h2>
                         <div className="w-24 h-1.5 bg-[#cc0022] mx-auto"></div>
                     </div>
 
@@ -171,28 +171,28 @@ export default function ErgStoryContent() {
                         <div className="flex flex-col items-center text-center p-8 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
                             <Lightbulb className="w-14 h-14 text-[#ffcc00] mb-6" />
                             {/* Tiêu đề mục: Tăng từ text-xl lên text-2xl */}
-                            <h3 className="text-3xl font-bold mb-3">Tiên Phong</h3>
+                            <h3 className="text-3xl font-bold mb-3">{t('features.items.pioneer.title')}</h3>
                             {/* Nội dung: Tăng từ text-sm lên text-base hoặc text-lg */}
                             <p className="text-blue-100 text-base md:text-xl leading-relaxed">
-                                Luôn đi đầu trong việc áp dụng các công nghệ phương pháp giáo dục mới vào giảng dạy.
+                                {t('features.items.pioneer.desc')}
                             </p>
                         </div>
 
                         {/* Item 2 */}
                         <div className="flex flex-col items-center text-center p-8 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
                             <Heart className="w-14 h-14 text-[#cc0022] mb-6" />
-                            <h3 className="text-3xl font-bold mb-3">Tâm Huyết</h3>
+                            <h3 className="text-3xl font-bold mb-3">{t('features.items.heart.title')}</h3>
                             <p className="text-blue-100 text-base md:text-xl leading-relaxed">
-                                Đội ngũ giáo viên không chỉ là người truyền đạt kiến thức mà còn là người truyền lửa đam mê.
+                                {t('features.items.heart.desc')}
                             </p>
                         </div>
 
                         {/* Item 3 */}
                         <div className="flex flex-col items-center text-center p-8 border border-blue-400/30 rounded-xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors">
                             <Rocket className="w-14 h-14 text-blue-300 mb-6" />
-                            <h3 className="text-3xl font-bold mb-3">Đột Phá</h3>
+                            <h3 className="text-3xl font-bold mb-3">{t('features.items.rocket.title')}</h3>
                             <p className="text-blue-100 text-base md:text-xl leading-relaxed">
-                                Tạo ra những bước nhảy vọt về năng lực số cho học viên, mở ra cánh cửa sự nghiệp tương lai.
+                                {t('features.items.rocket.desc')}
                             </p>
                         </div>
                     </div>
@@ -212,7 +212,9 @@ export default function ErgStoryContent() {
                 <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
                     {/* Tiêu đề: Tăng size, tăng khoảng cách chữ và thêm font-extrabold để tạo sức nặng */}
                     <h2 className="text-5xl md:text-6xl font-extrabold text-[#00008b] mb-14 tracking-tight leading-tight">
-                        Hãy cùng chúng tôi <br className="hidden md:block" /> viết tiếp câu chuyện này
+                        {t.rich('cta.title', {
+                            br: () => <br className="hidden md:block" />
+                        })}
                     </h2>
 
                     {/* Nút bấm: Điều chỉnh padding, bo góc lớn hơn (xl) và shadow tinh tế hơn */}

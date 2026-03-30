@@ -243,8 +243,8 @@ export const TUYEN_DUNG_MENU_ITEMS = [
         label: "CHÍNH SÁCH NHÂN SỰ",
         path: "/chinh-sach",
     },
+    { label: "TIN TỨC", path: "/tin-tuc" },
     { label: "LIÊN HỆ", path: "/lien-he" },
-
 ]
 
 export const ELEARNING_MENU_ITEMS = [

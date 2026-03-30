@@ -1,4 +1,4 @@
-import { httpClient } from './http-client';
+import { httpClient, type CustomRequestInit } from './http-client';
 import {
     SeoHealth,
     SeoAnalysis,
@@ -217,12 +217,13 @@ export const seoApi = {
     /**
      * Global SEO Configuration
      */
-    getConfig: (key: string) => httpClient<any>(`/seo/config/${key}`),
+    getConfig: (key: string, options?: CustomRequestInit) => httpClient<any>(`/seo/config/${key}`, options),
 
-    updateConfig: (key: string, data: any) =>
+    updateConfig: (key: string, data: any, options?: CustomRequestInit) =>
         httpClient(`/seo/config/${key}`, {
             method: 'PUT',
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            ...options
         }),
 
     /**
@@ -231,7 +232,8 @@ export const seoApi = {
     log404: (data: { url: string, referrer?: string, userAgent?: string }) =>
         httpClient('/seo/404', {
             method: 'POST',
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            requireAuth: false
         }),
 
     /**

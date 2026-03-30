@@ -15,7 +15,7 @@ export function getGlobalQueryClient() {
 /**
  * Enhanced logout handler với cache clearing
  */
-export const handleLogoutWithCache = () => {
+export const handleLogoutWithCache = async () => {
     if (typeof window !== 'undefined') {
         // 1. Clear React Query cache
         if (globalQueryClient) {
@@ -23,18 +23,27 @@ export const handleLogoutWithCache = () => {
             globalQueryClient.removeQueries();
         }
 
-        // 2. Gọi API logout qua proxy để XEM NHƯ proxy sẽ xóa HttpOnly cookie
-        fetch('/api/auth/logout', { method: 'POST' }).catch(() => { });
+        // 2. Chờ API logout hoàn tất để server/proxy kịp xóa HttpOnly cookies
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (error) {
+            console.error('Logout API failed:', error);
+        }
 
-        // 3. Cả accessToken và refreshToken (cùng với isLoggedIn flag) sẽ bị proxy xóa thông qua cookie expiration 
+        // Force clear isLoggedIn cookie on client-side (fallback an toàn)
+        document.cookie = 'isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
-        // 4. Xóa các localStorage info khác
+        // 3. Xóa các localStorage info khác
         localStorage.removeItem('userId');
         localStorage.removeItem('user');
         localStorage.removeItem('permissions');
         localStorage.removeItem('roles');
 
-        // 3. Redirect
-        window.location.href = '/auth/login?reason=session_expired';
+        // 4. Redirect
+        const currentPath = window.location.pathname;
+        const currentSearch = window.location.search;
+        if (currentPath !== '/auth/login' || !currentSearch.includes('reason=session_expired')) {
+            window.location.href = '/auth/login?reason=session_expired';
+        }
     }
 };

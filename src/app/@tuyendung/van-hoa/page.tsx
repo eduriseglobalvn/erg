@@ -5,10 +5,15 @@ import { SchemaScript } from '@/components/seo/schema-script';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 import { headers } from 'next/headers';
 
-export const metadata: Metadata = {
-    title: 'Văn hóa Edurise Global | Kiến tạo tương lai giáo dục số',
-    description: 'Tìm hiểu về 5 giá trị cốt lõi, sứ mệnh và nhịp sống tại Edurise Global. Nơi mỗi giáo viên là một người truyền lửa.',
-};
+import { getTranslations } from 'next-intl/server';
+
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations('recruitment.Culture');
+    return {
+        title: t('seo.title'),
+        description: t('seo.description'),
+    };
+}
 
 export default async function Page() {
     const breadcrumbItems = generateBreadcrumbItems('/van-hoa', 'Văn hóa', 'Tuyển dụng');

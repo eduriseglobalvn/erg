@@ -16,16 +16,31 @@ const nextConfig: NextConfig = {
         const isDev = process.env.NODE_ENV === 'development';
         const cspHeader = `
             default-src 'self';
-            script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ""};
+            script-src 'self' 'unsafe-inline' https://www.googletagmanager.com ${isDev ? "'unsafe-eval'" : ""};
             style-src 'self' 'unsafe-inline';
             img-src 'self' blob: data: https:;
             font-src 'self' data: https:;
             object-src 'none';
             base-uri 'self';
             form-action 'self';
-            frame-ancestors 'none';
-            connect-src 'self' https: ws: wss:;
+            frame-src 'self' https://www.google.com https://maps.google.com;
+            frame-ancestors 'self';
+            connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https: ws: wss:;
         `.replace(/\s{2,}/g, ' ').trim();
+
+        const staticCacheHeaders = !isDev ? [
+            {
+                key: 'Cache-Control',
+                value: 'public, max-age=31536000, immutable',
+            },
+        ] : [];
+
+        const mediaCacheHeaders = !isDev ? [
+            {
+                key: 'Cache-Control',
+                value: 'public, max-age=86400, stale-while-revalidate=604800',
+            },
+        ] : [];
 
         return [
             // === Security & CORS Headers ===
@@ -38,7 +53,7 @@ const nextConfig: NextConfig = {
                     },
                     { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS' },
                     { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
-                    { key: 'X-Frame-Options', value: 'DENY' },
+                    { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
                     { key: 'X-Content-Type-Options', value: 'nosniff' },
                     { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
                     { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
@@ -46,39 +61,33 @@ const nextConfig: NextConfig = {
                     { key: 'Content-Security-Policy', value: cspHeader },
                 ],
             },
-            // === Cache Headers cho static assets (1 năm, immutable) ===
-            {
+            // === Cache Headers cho static assets (chỉ production) ===
+            // Warning: Next.js tự quản lý cache trong development
+            ...(staticCacheHeaders.length > 0 ? [{
                 source: '/_next/static/:path*',
-                headers: [
-                    {
-                        key: 'Cache-Control',
-                        value: 'public, max-age=31536000, immutable',
-                    },
-                ],
-            },
-            // === Cache Headers cho public media (ảnh, fonts) ===
-            {
+                headers: staticCacheHeaders,
+            }] : []),
+            // === Cache Headers cho public media (chỉ production) ===
+            ...(mediaCacheHeaders.length > 0 ? [{
                 source: '/images/:path*',
-                headers: [
-                    {
-                        key: 'Cache-Control',
-                        value: 'public, max-age=86400, stale-while-revalidate=604800',
-                    },
-                ],
-            },
+                headers: mediaCacheHeaders,
+            }] : []),
         ];
     },
 
     devIndicators: false,
+    compiler: {
+        removeConsole: process.env.NODE_ENV === 'production',
+    },
 
     // Tối ưu bundle size cho các thư viện nặng (Barrel imports)
     experimental: {
         optimizePackageImports: [
-            'recharts',
             'lucide-react',
-            '@tiptap/react',
+            'framer-motion',
+            '@radix-ui/react-icons',
             'lodash',
-            'framer-motion'
+            'date-fns'
         ],
     },
 
@@ -95,6 +104,9 @@ const nextConfig: NextConfig = {
             { protocol: 'https', hostname: 'media.erg.edu.vn' },
             { protocol: 'https', hostname: 'images.unsplash.com' },
             { protocol: 'https', hostname: 'moet.gov.vn' },
+            { protocol: 'https', hostname: 'cdn.giaoducthoidai.vn' },
+            { protocol: 'https', hostname: 'giaoducthoidai.vn' },
+            { protocol: 'https', hostname: 'giaoduc.edu.vn' },
             { protocol: 'https', hostname: '*.cdninstagram.com' },
             { protocol: 'https', hostname: 'randomuser.me' },
         ],

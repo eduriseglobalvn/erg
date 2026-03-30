@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi, httpClient } from '@/services';
+import { RateLimitError } from '@/services/http-client';
 import { toast } from 'sonner';
 
 interface LoginDto {
@@ -55,6 +56,16 @@ export function useLoginMutation() {
         onError: (error: any) => {
             const errorMessage = error.message || '';
             const lowered = errorMessage.toLowerCase();
+
+            // Xử lý 429 Rate Limit (BE trả khi đăng nhập sai quá nhiều lần)
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(
+                    `Đã đăng nhập sai quá nhiều lần. Vui lòng thử lại sau ${retrySec} giây.`,
+                    { duration: Infinity }
+                );
+                return;
+            }
 
             // Xử lý lỗi 403 Account not activated
             if (

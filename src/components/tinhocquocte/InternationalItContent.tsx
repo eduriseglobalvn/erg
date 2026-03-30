@@ -81,14 +81,14 @@ export default function InternationalItContent() {
                             </span>
                         </h1>
                         <p className="text-lg text-blue-100 max-w-lg leading-relaxed">
-                            Trang bị kiến thức và kỹ năng sử dụng công nghệ theo tiêu chuẩn toàn cầu IC3 & MOS. Mở rộng cánh cửa tương lai cho thế hệ trẻ Việt Nam.
+                            {t('heroDesc')}
                         </p>
                         <div className="flex flex-wrap gap-4 pt-4">
                             <Link href="/lo-trinh" className="px-8 py-3.5 bg-[var(--erg-red)] hover:bg-red-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-red-900/20 flex items-center gap-2">
-                                Xem Lộ Trình <ArrowRight size={18} />
+                                {t('cta.roadmap')} <ArrowRight size={18} />
                             </Link>
                             <Link href="/khoa-hoc" className="px-8 py-3.5 bg-white text-[var(--erg-blue)] hover:bg-blue-50 font-bold rounded-lg transition-all">
-                                Khám Phá Khóa Học
+                                {t('cta.courses')}
                             </Link>
                         </div>
                     </div>
@@ -106,18 +106,18 @@ export default function InternationalItContent() {
                         {[
                             {
                                 icon: <Globe className="w-10 h-10 text-[var(--erg-red)]" />,
-                                title: "Chuẩn Quốc Tế",
-                                desc: "Giáo trình và chứng chỉ được công nhận toàn cầu bởi Microsoft & Certiport."
+                                title: t('why.standard.title'),
+                                desc: t('why.standard.desc')
                             },
                             {
                                 icon: <Users className="w-10 h-10 text-[var(--erg-red)]" />,
-                                title: "Đội Ngũ Tâm Huyết",
-                                desc: "Giáo viên giàu kinh nghiệm, phương pháp giảng dạy hiện đại, tận tâm, sát sao từng học viên."
+                                title: t('why.team.title'),
+                                desc: t('why.team.desc')
                             },
                             {
                                 icon: <ShieldCheck className="w-10 h-10 text-[var(--erg-red)]" />,
-                                title: "Cam Kết Chất Lượng",
-                                desc: "Lộ trình học tập rõ ràng, cam kết hỗ trợ học viên đạt kết quả cao nhất trong các kỳ thi."
+                                title: t('why.quality.title'),
+                                desc: t('why.quality.desc')
                             }
                         ].map((item, i) => (
                             <div key={i} className="p-8 rounded-2xl border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 bg-white group">

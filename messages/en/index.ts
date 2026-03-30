@@ -6,6 +6,7 @@ import recruitment from './recruitment.json';
 import news from './news.json';
 import contact from './contact.json';
 import admin from './admin.json';
+import roadmap from './roadmap.json';
 
 const messages = {
     common,
@@ -16,6 +17,7 @@ const messages = {
     news,
     contact,
     admin,
+    roadmap,
 };
 
 export default messages;

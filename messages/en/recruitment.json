@@ -8,6 +8,9 @@
         "search": "Search",
         "noJobs": "No job openings found."
     },
+    "Jobs": {
+        "title": "Current Job Openings"
+    },
     "Stats": {
         "branches": "Branches",
         "students": "Students",
@@ -24,7 +27,8 @@
         "apply": "Apply Now",
         "hot": "Hot",
         "urgent": "Urgent",
-        "new": "New"
+        "new": "New",
+        "postDate": "Posted Date"
     },
     "Detail": {
         "back": "Back to job list",
@@ -119,6 +123,130 @@
                 "title": "Modern Facilities",
                 "sub": "High-spec Laptop, Desktop"
             }
+        },
+        "badges": {
+            "topEmployer": "Top Employer",
+            "eduTech": "In Education Tech"
+        }
+    },
+    "About": {
+        "title": "About ERG Recruitment",
+        "description": "Edurise Global (ERG) is a pioneer in the field of educational technology in Vietnam.",
+        "vision": {
+            "title": "Educational Ecosystem",
+            "desc": "We create an environment where technology and people blend to bring real value to the community."
+        },
+        "stats": {
+            "title": "Scale & Impact"
+        },
+        "missionTitle": "Our Mission",
+        "missionSub": "Connecting Knowledge, Unleashing Potential",
+        "pillarsTitle": "Career Advancement Pillars",
+        "pillarsCulture": "Culture & Values",
+        "pillarsPolicy": "Benefits & HR Policy",
+        "pillarsTraining": "Training & Development"
+    },
+    "Culture": {
+        "title": "ERG Culture",
+        "subtitle": "Our DNA",
+        "badge": "Corporate Culture",
+        "heading": "The EDURISE People",
+        "description": "At ERG, we don't just teach IT. We inspire the younger generation to master technology and build the future.",
+        "quote": "Edurise Global's goal doesn't stop at providing knowledge. We want to build an environment where every teacher is an inspirer, and every student has equal access to technology according to international standards.",
+        "director": "Mr. Bui Quoc Viet",
+        "position": "Director - EDURISE GLOBAL CO., LTD",
+        "values": {
+            "title": "5 Core Values",
+            "responsibility": {
+                "title": "Social Responsibility",
+                "desc": "Contribute to sustainable development through international training."
+            },
+            "quality": {
+                "title": "Superior Quality",
+                "desc": "Commitment to providing the most superior educational products."
+            },
+            "cooperation": {
+                "title": "Cooperation & Development",
+                "desc": "Build an open work environment, sharing and growing together."
+            },
+            "customer": {
+                "title": "Customer Centric",
+                "desc": "Put the interests of students and partners first."
+            },
+            "innovation": {
+                "title": "Creative Innovation",
+                "desc": "Technology is the driving force of transformation, encouraging breakthrough thinking."
+            }
+        },
+        "commitment": "Always accompanying the development of Vietnam's Education.",
+        "life": {
+            "title": "Edurise Life",
+            "sub": "The enthusiastic and creative moments of the ERG team.",
+            "stem": "Inspiring STEM classes",
+            "training": "Teacher Training",
+            "teambuilding": "Team Building",
+            "workshop": "Edu-Tech Workshops"
+        }
+    },
+    "HRPolicy": {
+        "title": "HR Policies & Benefits",
+        "description": "Edurise Global is committed to providing a fair, transparent working environment and worthy remuneration.",
+        "badge": "Stable Career",
+        "income": {
+            "title": "Competitive Income",
+            "list": [
+                "Negotiable salary based on teaching capacity & certifications (IC3, MOS).",
+                "Periodic performance bonuses.",
+                "Holiday, Tet bonuses, and 13th-month salary."
+            ]
+        },
+        "security": {
+            "title": "Work with Peace of Mind",
+            "list": [
+                "Full social, health, and unemployment insurance according to state regulations.",
+                "Annual leave policy according to Labor law.",
+                "Annual health check-ups."
+            ]
+        },
+        "environment": {
+            "title": "Modern Environment",
+            "list": [
+                "Work at the District 1 headquarters or modern Binh Phu branch.",
+                "Fully equipped with premium devices and original software.",
+                "Participate in vibrant Team Building activities."
+            ]
+        },
+        "training": {
+            "title": "Professional Training & Development",
+            "desc": "Learning never stops. We enhance teacher capacity according to international standards.",
+            "programs": {
+                "professional": {
+                    "title": "Professional Workshops",
+                    "desc": "Regular STEM, IC3, MOS teaching method training."
+                },
+                "tech": {
+                    "title": "Tech Updates",
+                    "desc": "Access AI, Programming applied to vivid lectures."
+                }
+            }
+        },
+        "careerPath": {
+            "title": "Career Path",
+            "step1": { "title": "Teacher / Staff", "sub": "Perform professional tasks" },
+            "step2": { "title": "Core Teacher / Leader", "sub": "Group lead, professional support" },
+            "step3": { "title": "Professional Head", "sub": "Program management, HR training" },
+            "step4": { "title": "Manager / Director Board", "sub": "Strategic planning" }
+        },
+        "regulations": {
+            "title": "Responsibilities & General Regulations",
+            "list": [
+                "Comply with organization's regulations and policies.",
+                "Fully participate in professional meetings and company events.",
+                "Draft lesson plans and teaching plans on schedule.",
+                "Ensure discipline and a positive learning environment.",
+                "Maintain equipment and assets well.",
+                "Support colleagues enthusiastically."
+            ]
         }
     },
     "CTA": {
@@ -126,9 +254,5 @@
         "subtitle": "If you haven't found the right position, feel free to send us your CV.",
         "sendCV": "Send Your CV",
         "zaloHR": "Chat with HR on Zalo"
-    },
-    "Van Hoa": {
-        "title": "ERG Culture",
-        "subtitle": "Where you can be yourself"
     }
 }

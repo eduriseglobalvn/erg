@@ -85,5 +85,40 @@
         "ctaTitle": "Sẵn sàng cho kỷ nguyên số?",
         "ctaDesc": "Đăng ký tư vấn ngay hôm nay để nhận lộ trình học tập chi tiết phù hợp nhất với năng lực của bạn.",
         "ctaButton": "Đăng Ký Tư Vấn Ngay"
+    },
+    "tinhocthieunhi": {
+        "heroBadge": "★ Khóa học tiêu chuẩn cho trẻ 6 - 15 tuổi",
+        "heroTitle1": "KHƠI DẬY ĐAM MÊ",
+        "heroTitle2": "CÔNG NGHỆ TƯƠNG LAI",
+        "heroDesc": "Trang bị tư duy máy tính, logic và kỹ năng giải quyết vấn đề thông qua Lập trình Scratch & Python. Bước đệm vững chắc để trở thành công dân số toàn cầu.",
+        "cta": {
+            "program": "Xem Chương Trình",
+            "consult": "Tư Vấn Miễn Phí"
+        },
+        "learning": {
+            "title": "Trẻ Em Sẽ Học Được Gì?",
+            "subtitle": "Phát triển toàn diện từ tư duy đến kỹ năng mềm",
+            "items": [
+                {
+                    "title": "Tư Duy Máy Tính",
+                    "desc": "Rèn luyện tính kiên trì, cẩn thận. Phát triển tư duy logic và cách diễn đạt ý tưởng chặt chẽ."
+                },
+                {
+                    "title": "Sáng Tạo & Độc Lập",
+                    "desc": "Tự do sáng tạo trò chơi riêng. Hình thành tính tự giác giải quyết công việc chưa hoàn thành."
+                },
+                {
+                    "title": "Kỹ Năng Mềm",
+                    "desc": "Biết phân chia, phối hợp làm việc nhóm. Rèn luyện kỹ năng thuyết trình, giải thích mạch lạc."
+                }
+            ]
+        },
+        "coursesTitle": "Chương Trình Đào Tạo",
+        "coursesSubtitle": "Được thiết kế sinh động, trực quan phù hợp với độ tuổi.",
+        "footerNote": "Cả hai chương trình đều được thiết kế chuẩn sư phạm cho học sinh {levels}",
+        "footerNoteBold": "Tiểu học & Trung học Cơ sở",
+        "ctaTitle": "Đầu tư cho tương lai của con ngay hôm nay",
+        "ctaDesc": "Để lại thông tin để được tư vấn lộ trình học lập trình phù hợp nhất với độ tuổi và năng lực của bé.",
+        "ctaButton": "Đăng Ký Học Thử"
     }
 }

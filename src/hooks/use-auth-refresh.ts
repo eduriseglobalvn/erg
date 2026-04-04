@@ -2,14 +2,15 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 /**
- * Hook để tự động sync permissions với server mỗi 5 phút
- * Chỉ chạy khi user đã authenticated
+ * Hook để tự động làm mới auth session cache mỗi 5 phút.
+ * Chỉ chạy khi user đã authenticated (có accessToken).
+ * Không sync permissions thực sự — chỉ invalidate TanStack Query cache.
  */
-export function usePermissionSync() {
+export function useAuthRefresh() {
     const queryClient = useQueryClient();
 
     useEffect(() => {
-        // Chỉ sync nếu có token
+        // Chỉ chạy khi có token
         const token = localStorage.getItem('accessToken');
         if (!token) return;
 

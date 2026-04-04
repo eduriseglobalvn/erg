@@ -89,10 +89,38 @@
       "status": "completed",
       "completed_at": "2026-04-04T01:40:14.893Z",
       "duration_ms": 216158
+    },
+    {
+      "agent_id": "a3ae762eeb4eb8b88",
+      "agent_type": "general-purpose",
+      "started_at": "2026-04-04T06:14:00.019Z",
+      "parent_mode": "none",
+      "status": "running"
+    },
+    {
+      "agent_id": "a1f6d9de09f852eae",
+      "agent_type": "general-purpose",
+      "started_at": "2026-04-04T06:13:59.923Z",
+      "parent_mode": "none",
+      "status": "running"
+    },
+    {
+      "agent_id": "a6aedac7df33e2ba5",
+      "agent_type": "general-purpose",
+      "started_at": "2026-04-04T06:14:00.165Z",
+      "parent_mode": "none",
+      "status": "running"
+    },
+    {
+      "agent_id": "a949ed89eea942ce3",
+      "agent_type": "general-purpose",
+      "started_at": "2026-04-04T06:14:00.236Z",
+      "parent_mode": "none",
+      "status": "running"
     }
   ],
-  "total_spawned": 7,
+  "total_spawned": 9,
   "total_completed": 10,
   "total_failed": 0,
-  "last_updated": "2026-04-04T01:51:54.282Z"
+  "last_updated": "2026-04-04T06:14:00.339Z"
 }

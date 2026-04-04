@@ -178,38 +178,44 @@
   "hotPaths": [
     {
       "path": "",
-      "accessCount": 9,
-      "lastAccessed": 1775266623051,
+      "accessCount": 14,
+      "lastAccessed": 1775283266484,
+      "type": "directory"
+    },
+    {
+      "path": "src",
+      "accessCount": 11,
+      "lastAccessed": 1775283256699,
       "type": "directory"
     },
     {
       "path": "src/hooks/use-page-tracking.ts",
-      "accessCount": 8,
-      "lastAccessed": 1775266779612,
+      "accessCount": 9,
+      "lastAccessed": 1775283257885,
       "type": "file"
     },
     {
-      "path": "src",
-      "accessCount": 7,
-      "lastAccessed": 1775229512533,
-      "type": "directory"
-    },
-    {
       "path": "src/components/admin/shared/protected-route.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1775267448305,
+      "accessCount": 6,
+      "lastAccessed": 1775283261272,
       "type": "file"
     },
     {
       "path": "src/hooks/use-permission.ts",
-      "accessCount": 4,
-      "lastAccessed": 1775266613294,
+      "accessCount": 6,
+      "lastAccessed": 1775283266102,
       "type": "file"
     },
     {
       "path": "src/hooks/use-auth.ts",
-      "accessCount": 3,
-      "lastAccessed": 1775229544031,
+      "accessCount": 4,
+      "lastAccessed": 1775283246158,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-permission-sync.ts",
+      "accessCount": 4,
+      "lastAccessed": 1775283247490,
       "type": "file"
     },
     {
@@ -219,27 +225,27 @@
       "type": "file"
     },
     {
-      "path": "src/hooks/use-permission-sync.ts",
-      "accessCount": 3,
-      "lastAccessed": 1775229554176,
-      "type": "file"
-    },
-    {
       "path": "src/hooks/use-login.ts",
       "accessCount": 3,
       "lastAccessed": 1775266683027,
       "type": "file"
     },
     {
-      "path": "src/app/layout.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1775229220887,
+      "path": "src/app/@admin/layout.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1775283246210,
       "type": "file"
     },
     {
       "path": "src/services/analytics.api.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775283265867,
+      "type": "file"
+    },
+    {
+      "path": "src/app/layout.tsx",
       "accessCount": 2,
-      "lastAccessed": 1775229488129,
+      "lastAccessed": 1775229220887,
       "type": "file"
     },
     {
@@ -261,12 +267,6 @@
       "type": "file"
     },
     {
-      "path": "src/app/@admin/layout.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1775266613398,
-      "type": "file"
-    },
-    {
       "path": "src/services/index.ts",
       "accessCount": 2,
       "lastAccessed": 1775266630054,
@@ -280,8 +280,8 @@
     },
     {
       "path": "package.json",
-      "accessCount": 1,
-      "lastAccessed": 1775229190584,
+      "accessCount": 2,
+      "lastAccessed": 1775283246003,
       "type": "file"
     },
     {

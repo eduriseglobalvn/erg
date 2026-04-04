@@ -16,6 +16,7 @@ import { useAiWriter } from "@/hooks/use-ai-writer"
 import { useCreatePost } from "@/hooks/use-create-post"
 import { motion, AnimatePresence } from "framer-motion"
 import { AiWriterBar } from "@/components/admin/shared/editor/tiptap-ui/ai-writer-bar"
+import { ProtectedRoute } from "@/components/admin/shared/protected-route"
 
 export default function CreatePostPage() {
     const [editorInstance, setEditorInstance] = useState<Editor | null>(null);
@@ -60,6 +61,7 @@ export default function CreatePostPage() {
     const isInputVisible = showAiInput || isGenerating;
 
     return (
+        <ProtectedRoute permission="posts.create">
         <div className="flex h-[calc(100vh-4rem)] w-full bg-white dark:bg-[#191919] overflow-hidden relative group">
 
             <main className="flex-1 flex flex-col min-w-0 relative h-full">
@@ -116,5 +118,6 @@ export default function CreatePostPage() {
                 />
             </aside>
         </div>
+        </ProtectedRoute>
     )
 }

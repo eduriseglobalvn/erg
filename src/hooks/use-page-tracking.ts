@@ -16,7 +16,7 @@ export function usePageTracking() {
     const startTimeRef = useRef<number>(Date.now());
 
     useEffect(() => {
-        // 1. Track    useEffect(() => {
+        // 1. Track khi vào trang
         const trackSessionBegin = async () => {
             startTimeRef.current = Date.now();
 
@@ -83,10 +83,16 @@ export function usePageTracking() {
             const duration = Math.round((Date.now() - startTimeRef.current) / 1000);
 
             if (process.env.NODE_ENV === 'development') {
-                console.log(`%c[Analytics] 🏁 Kết thúc phiên. ID: ${currentId} | Ờ lại: ${duration}s`, "color: #dc3545; font-weight: bold;");
+                console.log(`%c[Analytics] 🏁 Kết thúc phiên. ID: ${currentId} | Ở lại: ${duration}s`, "color: #dc3545; font-weight: bold;");
             }
 
-            analyticsApi.trackSessionFinish(currentId, duration);
+            // ✅ Dùng sendBeacon để đảm bảo gửi được khi đóng tab/trình duyệt
+            const blob = new Blob([JSON.stringify({ duration })], { type: 'application/json' });
+            const sent = navigator.sendBeacon(`/api/insight/session/${currentId}/finish`, blob);
+
+            if (process.env.NODE_ENV === 'development') {
+                console.log(`%c[Analytics] sendBeacon: ${sent ? '✅' : '⚠️ không gửi được'}`, "color: #dc3545; font-weight: bold;");
+            }
 
             // Chỉ xóa sau khi finish thành công
             visitIdRef.current = null;

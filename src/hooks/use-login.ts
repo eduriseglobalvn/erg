@@ -43,7 +43,14 @@ export function useLoginMutation() {
 
                     // Delay để browser kịp hiện popup "Lưu mật khẩu"
                     setTimeout(() => {
-                        window.location.href = '/';
+                        // ISSUE 1 FIX: Check isProfileCompleted → redirect phù hợp
+                        const sessionData = res?.data || res;
+                        const isCompleted = sessionData?.user?.isProfileCompleted;
+                        if (isCompleted === false) {
+                            window.location.href = '/onboarding';
+                        } else {
+                            window.location.href = '/';
+                        }
                     }, 500);
                 } catch (e) {
                     console.error('Failed to fetch session:', e);

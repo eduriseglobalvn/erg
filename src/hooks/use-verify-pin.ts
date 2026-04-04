@@ -24,14 +24,18 @@ export function useVerifyPinMutation() {
             return res;
         },
         onSuccess: async (res: any) => {
-            // Lưu Token vào LocalStorage để Auto Login
+            // ISSUE 3 FIX: Tokens đã được backend trả về HttpOnly cookies qua proxy
+            // Đồng thời lưu vào localStorage để httpClient đọc phục vụ refresh
+            // (thống nhất: verify-pin cũng dùng proxy HttpOnly cookies như login)
+            if (res?.user?.id) {
+                localStorage.setItem('userId', res.user.id);
+                if (res.user) localStorage.setItem('user', JSON.stringify(res.user));
+            }
+            if (res?.refreshToken) {
+                localStorage.setItem('refreshToken', res.refreshToken);
+            }
             if (res?.accessToken) {
                 localStorage.setItem('accessToken', res.accessToken);
-                localStorage.setItem('refreshToken', res.refreshToken);
-                if (res.user) {
-                    localStorage.setItem('user', JSON.stringify(res.user));
-                    if (res.user.id) localStorage.setItem('userId', res.user.id);
-                }
             }
 
             toast.success('Kích hoạt thành công!');
@@ -59,8 +63,13 @@ export function useVerifyPinMutation() {
                 // Invalidate auth cache
                 queryClient.invalidateQueries({ queryKey: ['auth'] });
 
-                // Redirect về trang chủ
-                window.location.href = '/';
+                // ISSUE 1 FIX: Check isProfileCompleted → redirect phù hợp
+                const isCompleted = sessionData?.user?.isProfileCompleted;
+                if (isCompleted === false) {
+                    window.location.href = '/onboarding';
+                } else {
+                    window.location.href = '/';
+                }
             } catch (e) {
                 console.error('Failed to fetch session:', e);
                 window.location.href = '/';

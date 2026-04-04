@@ -141,9 +141,14 @@ export const httpClient = async <T>(
     const isServer = typeof window === 'undefined';
     const { requireAuth = true, ...fetchOptions } = options || {};
 
-    const getUserId = () => {
+    const getRefreshToken = () => {
         if (isServer) return null;
-        return localStorage.getItem('userId');
+        return localStorage.getItem('refreshToken');
+    };
+
+    const getAccessToken = () => {
+        if (isServer) return null;
+        return localStorage.getItem('accessToken');
     };
 
     // Helper tạo headers
@@ -224,14 +229,14 @@ export const httpClient = async <T>(
             }
 
             isRefreshing = true;
-            const userId = getUserId();
+            const refreshToken = getRefreshToken();
 
-            if (userId) {
+            if (refreshToken) {
                 try {
                     const refreshResponse = await fetch('/api/auth/refresh', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId }),
+                        body: JSON.stringify({ refreshToken }),
                     });
 
                     if (refreshResponse.ok) {
@@ -254,6 +259,16 @@ export const httpClient = async <T>(
         }
 
         const errorData = await response.json().catch(() => ({}));
+
+        // ISSUE 2 FIX: Xử lý 403 BANNED / BLOCKED — logout ngay lập tức
+        if (response.status === 403 && !isServer) {
+            const msg = (errorData.message || '').toLowerCase();
+            if (msg.includes('banned') || msg.includes('blocked')) {
+                handleLogout();
+                throw new ApiError('Tài khoản đã bị khóa', 403, errorData);
+            }
+        }
+
         throw new ApiError(
             errorData.message || errorData.error || `HTTP Error ${response.status}`,
             response.status,

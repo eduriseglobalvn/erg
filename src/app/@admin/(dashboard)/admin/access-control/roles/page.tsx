@@ -26,6 +26,7 @@ import {
 import { Badge } from "@/components/admin/ui/badge";
 import { MoreHorizontal } from "lucide-react";
 import { PermissionGate } from "@/components/admin/shared/permission-gate";
+import { ProtectedRoute } from "@/components/admin/shared/protected-route";
 
 export default function RoleListPage() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -62,6 +63,7 @@ export default function RoleListPage() {
     );
 
     return (
+        <ProtectedRoute permission="roles.read">
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -175,5 +177,6 @@ export default function RoleListPage() {
                 </Table>
             </div>
         </div>
+        </ProtectedRoute>
     );
 }

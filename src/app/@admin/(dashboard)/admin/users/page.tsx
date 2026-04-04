@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 import { toast } from 'sonner';
 import { userApi } from "@/services/users.api";
+import { ProtectedRoute } from "@/components/admin/shared/protected-route";
 
 import { Button } from "@/components/admin/ui/button";
 import { Input } from "@/components/admin/ui/input";
@@ -182,6 +183,7 @@ export default function UsersPage() {
     };
 
     return (
+        <ProtectedRoute permission="users.read">
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 overflow-hidden">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
@@ -379,5 +381,6 @@ export default function UsersPage() {
                 />
             )}
         </div>
+        </ProtectedRoute>
     );
 }

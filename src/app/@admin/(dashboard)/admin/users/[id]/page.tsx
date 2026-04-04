@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Edit, ShieldPlus, Trash2, Ban } from "lucide-react";
 
 import { Button } from "@/components/admin/ui/button";
+import { ProtectedRoute } from "@/components/admin/shared/protected-route";
 import { Badge } from "@/components/admin/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/admin/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/admin/ui/avatar";
@@ -41,6 +42,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
     const user = MOCK_USER;
 
     return (
+        <ProtectedRoute permission="users.read">
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
             <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-4">
                 <Link href="/admin/users" className="hover:text-primary flex items-center">
@@ -128,5 +130,6 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                 </TabsContent>
             </Tabs>
         </div>
+        </ProtectedRoute>
     );
 }

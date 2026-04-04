@@ -1,5 +1,6 @@
 import { PostsTable } from "@/components/admin/posts/posts-table"
 import { Metadata } from "next"
+import { ProtectedRoute } from "@/components/admin/shared/protected-route"
 
 export const metadata: Metadata = {
     title: "Quản lý bài viết | ERG Admin",
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 
 export default function PostsPage() {
     return (
+        <ProtectedRoute permission="posts.read">
         <div className="flex flex-col gap-6 p-6">
             <div className="flex flex-col gap-2">
                 <h1 className="text-3xl font-bold tracking-tight text-primary">Quản lý bài viết</h1>
@@ -20,5 +22,6 @@ export default function PostsPage() {
                 <PostsTable />
             </div>
         </div>
+        </ProtectedRoute>
     )
 }

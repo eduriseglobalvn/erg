@@ -18,6 +18,7 @@ import { postsApi } from "@/services/posts.api"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { AiWriterBar } from "@/components/admin/shared/editor/tiptap-ui/ai-writer-bar"
+import { ProtectedRoute } from "@/components/admin/shared/protected-route"
 
 export default function EditPostPage() {
     const params = useParams()
@@ -68,18 +69,20 @@ export default function EditPostPage() {
 
     if (isLoading) {
         return (
+            <ProtectedRoute permission="posts.update">
             <div className="flex h-[calc(100vh-4rem)] w-full items-center justify-center bg-white dark:bg-[#191919]">
                 <div className="flex flex-col items-center gap-4">
                     <div className="h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
                     <p className="text-muted-foreground animate-pulse font-medium">Đang tải nội dung bài viết...</p>
                 </div>
             </div>
+            </ProtectedRoute>
         )
     }
 
     return (
+        <ProtectedRoute permission="posts.update">
         <div className="flex h-[calc(100vh-4rem)] w-full bg-white dark:bg-[#191919] overflow-hidden relative group">
-
             <main className="flex-1 flex flex-col min-w-0 relative h-full">
                 {/* Header Actions */}
                 <div className="h-14 border-b flex items-center justify-between px-6 bg-white dark:bg-[#191919] shrink-0">
@@ -142,11 +145,12 @@ export default function EditPostPage() {
                     post={{ ...postMetadata, id, title, content: "" }}
                     onUpdate={(data) => setPostMetadata(prev => ({ ...prev, ...data }))}
                     onSave={handleSave}
-                    onSaveDraft={handleSaveDraft} // Truyền xuống Sidebar
+                    onSaveDraft={handleSaveDraft}
                     isSaving={isSaving}
                     editor={editorInstance}
                 />
             </aside>
         </div>
+        </ProtectedRoute>
     )
 }

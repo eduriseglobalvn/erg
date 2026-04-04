@@ -1,5 +1,10 @@
 import { RoleForm } from "../role-form";
+import { ProtectedRoute } from "@/components/admin/shared/protected-route";
 
 export default function CreateRolePage() {
-    return <RoleForm />;
+    return (
+        <ProtectedRoute permission="roles.create">
+            <RoleForm />
+        </ProtectedRoute>
+    );
 }

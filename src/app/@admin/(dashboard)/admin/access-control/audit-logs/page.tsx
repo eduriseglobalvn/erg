@@ -4,6 +4,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { Search, History, Filter } from "lucide-react";
 import { Input } from "@/components/admin/ui/input";
+import { ProtectedRoute } from "@/components/admin/shared/protected-route";
 import {
     Table,
     TableBody,
@@ -31,6 +32,7 @@ export default function AuditLogsPage() {
     );
 
     return (
+        <ProtectedRoute permission="roles.read">
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
             <div className="flex items-center justify-between">
                 <div>
@@ -103,5 +105,6 @@ export default function AuditLogsPage() {
                 </Table>
             </div>
         </div>
+        </ProtectedRoute>
     );
 }

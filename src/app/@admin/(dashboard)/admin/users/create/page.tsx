@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userApi } from "@/services/users.api";
 import { accessControlApi } from "@/services/access-control.api";
+import { ProtectedRoute } from "@/components/admin/shared/protected-route";
 
 export default function CreateUserPage() {
     const router = useRouter();
@@ -87,6 +88,7 @@ export default function CreateUserPage() {
     const isPending = createMutation.isPending;
 
     return (
+        <ProtectedRoute permission="users.create">
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6 max-w-4xl mx-auto">
             <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-4">
                 <Link href="/admin/users" className="hover:text-primary flex items-center">
@@ -236,5 +238,6 @@ export default function CreateUserPage() {
                 </div>
             </form>
         </div>
+        </ProtectedRoute>
     );
 }

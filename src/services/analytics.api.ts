@@ -1,4 +1,5 @@
 import { httpClient } from "./http-client";
+import { devLog, devWarn } from "@/lib/dev-logger";
 
 // ========== Type Definitions ==========
 
@@ -25,7 +26,12 @@ export interface DashboardOverview {
 export interface SessionStartResponse {
     sessionId?: string;
     visitId?: string;
+    sessionInternalId?: string;
     timestamp: string;
+    data?: {
+        visitId?: string;
+        sessionInternalId?: string;
+    };
 }
 
 export interface PostSummaryResponse {
@@ -100,18 +106,19 @@ export const analyticsApi = {
         entityType?: string;
         entityId?: string;
     }): Promise<SessionStartResponse> => {
-        if (process.env.NODE_ENV === 'development') {
-            console.log('[Analytics] Starting session:', data);
-        }
+        devLog('[Analytics] Starting session:', data);
 
         try {
             return await httpClient<SessionStartResponse>('/api/insight/session/begin', {
                 method: 'POST',
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                requireAuth: false
             });
-        } catch (error: any) {
-            console.error('[Analytics] Session begin error:', error);
-            throw new Error(`Analytics API error: ${error.message}`);
+        } catch (error: unknown) {
+            devWarn('[Analytics] Session begin error:', error);
+            throw new Error(
+                `Analytics API error: ${error instanceof Error ? error.message : 'Unknown error'}`
+            );
         }
     },
 
@@ -122,17 +129,15 @@ export const analyticsApi = {
     trackSessionFinish: (visitId: string, duration: number) => {
         const url = `/api/insight/session/${visitId}/finish`;
 
-        if (process.env.NODE_ENV === 'development') {
-            console.log('[Analytics] Finishing session (PUT):', { visitId, duration });
-        }
+        devLog('[Analytics] Finishing session (PUT):', { visitId, duration });
 
         if (typeof window !== 'undefined') {
             httpClient(url, {
                 method: 'PUT',
                 body: JSON.stringify({ duration }),
                 keepalive: true,
-                requireAuth: false // Public tracking usually doesn't need auth, or uses separate mechanism
-            }).catch(err => console.warn('[Analytics] Session finish failed:', err));
+                requireAuth: false
+            }).catch((error) => devWarn('[Analytics] Session finish failed:', error));
         }
     },
 
@@ -143,19 +148,18 @@ export const analyticsApi = {
     trackBehavior: async (data: {
         sessionInternalId: string;
         eventType: string;
-        metadata?: Record<string, any>;
+        metadata?: Record<string, unknown>;
     }) => {
-        if (process.env.NODE_ENV === 'development') {
-            console.log('[Analytics] Tracking behavior:', data);
-        }
+        devLog('[Analytics] Tracking behavior:', data);
 
         try {
             await httpClient('/api/insight/behavior', {
                 method: 'POST',
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                requireAuth: false
             });
         } catch (error) {
-            console.error('[Analytics] Behavior tracking failed:', error);
+            devWarn('[Analytics] Behavior tracking failed:', error);
         }
     }
 };

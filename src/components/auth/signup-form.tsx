@@ -8,6 +8,7 @@ import { Loader2, Eye, EyeOff } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { authApi } from "@/services"
+import { RateLimitError } from "@/services/http-client"
 import { Button } from "@/components/admin/ui/button"
 import {
     Card, CardContent, CardDescription, CardHeader, CardTitle
@@ -15,7 +16,21 @@ import {
 import { Input } from "@/components/admin/ui/input"
 import { Label } from "@/components/admin/ui/label"
 
-export function SignupForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+interface SignupFormProps extends React.ComponentPropsWithoutRef<"div"> {
+    embedded?: boolean
+    onSwitchToLogin?: () => void
+    title?: string
+    description?: string
+}
+
+export function SignupForm({
+    className,
+    embedded = false,
+    onSwitchToLogin,
+    title = "Tạo tài khoản mới",
+    description = "Nhập thông tin bên dưới để tạo tài khoản của bạn",
+    ...props
+}: SignupFormProps) {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
     const [formData, setFormData] = useState({
@@ -47,9 +62,13 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
             // Chuyển sang trang OTP, đánh dấu là mode kích hoạt
             router.push(`/auth/otp?email=${encodeURIComponent(formData.email)}&mode=activation`)
         } catch (error: any) {
-            toast.error(error.message || "Đăng ký thất bại")
-        } finally {
-            setIsLoading(false)
+            // Handle 429 Rate Limit
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(`Quá nhiều yêu cầu. Vui lòng thử lại sau ${retrySec} giây.`, { duration: Infinity });
+                return;
+            }
+            toast.error(error.message || "Đăng ký thất bại");
         }
     }
 
@@ -61,10 +80,8 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Card>
                 <CardHeader className="text-center">
-                    <CardTitle className="text-xl">Tạo tài khoản mới</CardTitle>
-                    <CardDescription>
-                        Nhập thông tin bên dưới để tạo tài khoản của bạn
-                    </CardDescription>
+                    <CardTitle className="text-xl">{title}</CardTitle>
+                    <CardDescription>{description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit}>
@@ -163,15 +180,27 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
                     </form>
                     <div className="mt-4 text-center text-sm">
                         Đã có tài khoản?{" "}
-                        <Link href="/auth/login" className="underline underline-offset-4">
-                            Đăng nhập
-                        </Link>
+                        {embedded && onSwitchToLogin ? (
+                            <button
+                                type="button"
+                                onClick={onSwitchToLogin}
+                                className="underline underline-offset-4"
+                            >
+                                Đăng nhập
+                            </button>
+                        ) : (
+                            <Link href="/auth/login" className="underline underline-offset-4">
+                                Đăng nhập
+                            </Link>
+                        )}
                     </div>
                 </CardContent>
             </Card>
-            <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
-                Bằng việc tiếp tục, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> và <a href="#">Chính sách quyền riêng tư</a> của chúng tôi.
-            </div>
+            {!embedded && (
+                <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
+                    Bằng việc tiếp tục, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> và <a href="#">Chính sách quyền riêng tư</a> của chúng tôi.
+                </div>
+            )}
         </div>
     )
 }

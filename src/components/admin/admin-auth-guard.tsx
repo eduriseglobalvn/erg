@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { handleLogout } from "@/services/http-client";
+import { handleLogout, isAuthFailureError, isBackendUnavailableError } from "@/services/http-client";
 import { PermissionDeniedDialog } from "@/components/admin/shared/permission-denied-dialog";
 import { useAuth } from "@/hooks/use-auth";
+import { hasLoggedInCookie } from "@/lib/client-session";
 
 export default function AdminAuthGuard({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -21,35 +22,46 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
         "/auth/reset-password",
         "/auth/change-password",
         "/auth/otp",
+        "/auth/google",
         "/403"
     ];
 
     const isPublicPage = publicPaths.some((path) => pathname.startsWith(path));
-    const token = typeof window !== 'undefined' ? document.cookie.includes("isLoggedIn=true") : false;
+    const hasSessionCookie = hasLoggedInCookie();
 
     // Sử dụng useAuth hook với TanStack Query
-    const { data: auth, isLoading: isChecking, isError } = useAuth();
+    const { data: auth, isLoading: isChecking, isError, error } = useAuth();
+    const isBackendUnavailable = isBackendUnavailableError(error);
 
     useEffect(() => {
         // TRƯỜNG HỢP 1: Trang Public (Login, Register...)
         if (isPublicPage) {
             // Nếu đã có Token mà lại vào trang Login -> Đá về Dashboard luôn
-            if (token && auth) {
-                router.push("/");
+            if (hasSessionCookie && auth) {
+                router.replace("/");
             }
             return;
         }
 
         // TRƯỜNG HỢP 2: Trang Private - Không có token
-        if (!token) {
-            router.push("/auth/login");
+        if (!hasSessionCookie) {
+            router.replace("/auth/login");
             return;
         }
 
         // TRƯỜNG HỢP 3: Query failed (session expired/revoked)
         if (isError) {
-            console.error("Session revoked or expired");
-            handleLogout();
+            if (isBackendUnavailable) {
+                console.error("Backend is temporarily unavailable");
+                return;
+            }
+
+            if (isAuthFailureError(error) || !hasSessionCookie) {
+                console.error("Session revoked or expired");
+                handleLogout();
+                return;
+            }
+
             return;
         }
 
@@ -66,7 +78,7 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
 
             // Nếu user vẫn PENDING (chưa verify PIN) -> Redirect về verify
             if (userStatus === 'PENDING') {
-                router.push(`/auth/otp?email=${encodeURIComponent(auth.user.email)}&mode=activation`);
+                router.replace(`/auth/otp?email=${encodeURIComponent(auth.user.email)}&mode=activation`);
                 return;
             }
 
@@ -85,22 +97,34 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
                 return;
             }
 
-            // Check profile completion
+            // Check profile completion - Skip if admin or explicitly skipped
+            const adminRoles = ['ADMIN', 'SUPER_ADMIN', 'MANAGER', 'admin', 'super_admin'];
+            
+            // Safe check for roles and user email
+            const roles = auth?.roles || [];
+            const userRole = auth?.user?.role;
+            const userEmail = auth?.user?.email;
+
+            const isAdmin = 
+                roles.some((role: string) => adminRoles.includes(role)) || 
+                (userRole && adminRoles.includes(userRole)) ||
+                userEmail === 'admin@erg.edu.vn';
+
             const skipOnboarding = sessionStorage.getItem("skipOnboarding") === "true";
             const isCompleted = auth.user.isProfileCompleted;
 
-            if (!isCompleted && !skipOnboarding && pathname !== '/onboarding') {
-                router.push('/onboarding');
+            if (!isCompleted && !skipOnboarding && !isAdmin && pathname !== '/onboarding') {
+                router.replace('/onboarding');
                 return;
             }
 
-            if (isCompleted && pathname === '/onboarding') {
-                router.push('/');
+            if ((isCompleted || isAdmin) && pathname === '/onboarding') {
+                router.replace('/');
                 return;
             }
 
         }
-    }, [auth, isError, pathname, router, isPublicPage, token]);
+    }, [auth, error, hasSessionCookie, isBackendUnavailable, isError, pathname, router, isPublicPage]);
 
     // --- RENDER UI ---
 
@@ -140,6 +164,26 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
                     // Không cho đóng dialog bằng cách click ra ngoài (modal)
                     onOpenChange={() => { }}
                 />
+            </div>
+        );
+    }
+
+    if (!isPublicPage && hasSessionCookie && isBackendUnavailable) {
+        return (
+            <div className="min-h-screen w-full bg-gray-50 flex items-center justify-center p-6">
+                <div className="max-w-md w-full rounded-2xl border border-gray-200 bg-white p-6 shadow-sm text-center">
+                    <h2 className="text-lg font-semibold text-gray-900">Backend đang tạm thời chưa kết nối</h2>
+                    <p className="mt-2 text-sm text-gray-600">
+                        Phiên đăng nhập của bạn chưa bị xóa. Ứng dụng đang không kết nối được tới API nên mình chưa chuyển bạn về trang đăng nhập.
+                    </p>
+                    <button
+                        type="button"
+                        onClick={() => window.location.reload()}
+                        className="mt-4 inline-flex items-center justify-center rounded-lg bg-black px-4 py-2 text-sm font-medium text-white"
+                    >
+                        Thử lại
+                    </button>
+                </div>
             </div>
         );
     }

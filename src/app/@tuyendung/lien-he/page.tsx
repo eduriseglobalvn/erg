@@ -1,7 +1,6 @@
-'use client';
-
-import React, { useState } from 'react';
-import { MapPin, Send, UploadCloud, FileText, Mail, Phone } from 'lucide-react';
+import React from 'react';
+import { MapPin, Send, Mail, Phone } from 'lucide-react';
+import { RecruitmentCvUpload } from '@/components/tuyendung/recruitment-cv-upload';
 
 const ERG_BLUE = '#00008b';
 const ERG_RED = '#cc0022';
@@ -17,15 +16,6 @@ const JOB_CATEGORIES = [
 ];
 
 export default function RecruitmentContactPage() {
-    const [fileName, setFileName] = useState<string | null>(null);
-
-    // Xử lý giả lập chọn file
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setFileName(e.target.files[0].name);
-        }
-    };
-
     return (
         <div className="font-sans text-slate-800 bg-white min-h-screen flex flex-col lg:flex-row">
 
@@ -53,7 +43,7 @@ export default function RecruitmentContactPage() {
                     </div>
 
                     {/* Form */}
-                    <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+                    <form className="space-y-6">
 
                         {/* Row: Họ & Tên */}
                         <div className="grid grid-cols-2 gap-5">
@@ -99,40 +89,7 @@ export default function RecruitmentContactPage() {
                         </div>
 
                         {/* --- NEW: CV UPLOAD SECTION --- */}
-                        <div className="space-y-1.5">
-                            <label className="text-sm font-bold text-gray-700">CV / Hồ sơ năng lực <span className="text-red-500">*</span></label>
-                            <div className="relative">
-                                <input
-                                    type="file"
-                                    id="cv-upload"
-                                    className="hidden"
-                                    accept=".pdf,.doc,.docx"
-                                    onChange={handleFileChange}
-                                />
-                                <label
-                                    htmlFor="cv-upload"
-                                    className={`w-full border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all group ${fileName ? 'border-[#00008b] bg-blue-50/50' : 'border-gray-300 hover:border-[#00008b] hover:bg-gray-50'}`}
-                                >
-                                    {fileName ? (
-                                        <>
-                                            <FileText size={32} className="text-[#00008b] mb-2" />
-                                            <span className="text-sm font-bold text-gray-900">{fileName}</span>
-                                            <span className="text-xs text-blue-600 mt-1">Nhấn để thay đổi file</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div className="bg-gray-100 p-3 rounded-full mb-3 group-hover:bg-blue-100 transition-colors">
-                                                <UploadCloud size={24} className="text-gray-500 group-hover:text-[#00008b]" />
-                                            </div>
-                                            <p className="text-sm text-gray-600 font-medium">
-                                                <span className="text-[#00008b] font-bold">Tải lên CV</span> hoặc kéo thả vào đây
-                                            </p>
-                                            <p className="text-xs text-gray-400 mt-1">Hỗ trợ PDF, DOC, DOCX (Tối đa 5MB)</p>
-                                        </>
-                                    )}
-                                </label>
-                            </div>
-                        </div>
+                        <RecruitmentCvUpload />
 
                         {/* Message / Cover Letter */}
                         <div className="space-y-1.5">
@@ -160,7 +117,7 @@ export default function RecruitmentContactPage() {
             {/* --- 2. RIGHT SIDE: MAP & HR INFO --- */}
             <div className="lg:w-1/2 w-full relative bg-gray-100 lg:min-h-screen h-[500px] order-1 lg:order-2 border-l border-gray-200">
                 <iframe
-                    src="https://maps.google.com/maps?q=40-42%20B%C3%ACnh%20Ph%C3%BA%2C%20P%20B%C3%ACnh%20Ph%C3%BA%2C%20TP.%20H%E1%BB%93%20Ch%C3%AD%20Minh&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.8998521705817!2d106.62756084016806!3d10.742201459866777!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f005ce5dca9%3A0x973ca9cb9b1195ff!2zR3M0MC00MiBCw6xuaCBQaMO6!5e0!3m2!1sen!2s!4v1774510064238!5m2!1sen!2s"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
@@ -215,7 +172,7 @@ export default function RecruitmentContactPage() {
 
                     <div className="mt-6 pt-4 border-t border-gray-100">
                         <a
-                            href="https://maps.google.com/maps?q=40-42%20B%C3%ACnh%20Ph%C3%BA%2C%20P%20B%C3%ACnh%20Ph%C3%BA%2C%20TP.%20H%E1%BB%93%20Ch%C3%AD%20Minh&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                            href="https://maps.app.goo.gl/W2BjQrsrvmbLsri96"
                             target="_blank"
                             className="w-full py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-bold flex items-center justify-center gap-2 hover:bg-gray-50 hover:text-[#00008b] transition-all"
                         >

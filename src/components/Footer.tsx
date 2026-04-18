@@ -21,7 +21,7 @@ const FooterWaveFix = async () => {
                     <div className="flex flex-col items-start">
                         <div className="flex items-center gap-2 mb-6">
                             <div className="p-1">
-                                <Image src="https://media.erg.edu.vn/logo/erg.png" alt="Edurise Global Logo" width={100} height={45} className="object-contain" />
+                                <Image src="https://media.erg.edu.vn/logo/erg.png" alt="Edurise Global Logo" width={100} height={45} className="object-contain" style={{ width: 'auto', height: 'auto' }} />
                             </div>
                             <span className="text-xl font-extrabold text-[#00008b] tracking-tight">Edurise Global</span>
                         </div>
@@ -44,7 +44,7 @@ const FooterWaveFix = async () => {
                     {/* CỘT 2: Thông tin liên hệ */}
                     <div>
                         <h3 className="font-bold text-lg mb-8 uppercase tracking-wide text-[#00008b] relative inline-block">
-                            {t('phone')}
+                            {t('headquarters')}
                             <span className="absolute -bottom-2 left-0 w-12 h-1 bg-[#cc0022] rounded-full"></span>
                         </h3>
                         <ul className="space-y-6">
@@ -53,7 +53,7 @@ const FooterWaveFix = async () => {
                                     <MapPin size={20} />
                                 </div>
                                 <div>
-                                    <span className="text-slate-500 text-xs font-bold uppercase block mb-1">Trụ sở chính</span>
+                                    <span className="text-slate-500 text-xs font-bold uppercase block mb-1">{t('headquarters')}</span>
                                     <a
                                         href="https://maps.app.goo.gl/nkpn1e1KZJ1ZvrYg8"
                                         target="_blank"
@@ -69,7 +69,7 @@ const FooterWaveFix = async () => {
                                     <Phone size={20} />
                                 </div>
                                 <div>
-                                    <span className="text-slate-500 text-xs font-bold uppercase block mb-1">Hotline</span>
+                                    <span className="text-slate-500 text-xs font-bold uppercase block mb-1">{t('hotline')}</span>
                                     <a href="tel:0766144888" className="text-[#00008b] font-bold text-lg hover:text-[#cc0022] transition-colors">0766.144.888</a>
                                 </div>
                             </li>
@@ -88,7 +88,7 @@ const FooterWaveFix = async () => {
                     {/* CỘT 3: Chi nhánh */}
                     <div>
                         <h3 className="font-bold text-lg mb-8 uppercase tracking-wide text-[#00008b] relative inline-block">
-                            Chi nhánh
+                            {t('branch')}
                             <span className="absolute -bottom-2 left-0 w-12 h-1 bg-[#cc0022] rounded-full"></span>
                         </h3>
                         <ul className="space-y-6">
@@ -114,7 +114,7 @@ const FooterWaveFix = async () => {
                                     <Phone size={20} />
                                 </div>
                                 <div>
-                                    <span className="text-slate-500 text-xs font-bold uppercase block mb-1">Hotline</span>
+                                    <span className="text-slate-500 text-xs font-bold uppercase block mb-1">{t('hotline')}</span>
                                     <a href="tel:0967689259" className="text-[#00008b] font-bold text-lg hover:text-[#cc0022] transition-colors">0967.689.259</a>
                                 </div>
                             </li>

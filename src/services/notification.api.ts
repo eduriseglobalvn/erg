@@ -1,41 +1,110 @@
 import { httpClient } from "./http-client";
 import { Notification, NotificationListResponse } from "@/types/notification";
 
+export interface ChannelStatus {
+    discord: { configured: boolean; channelId: string | null };
+    telegram: { configured: boolean; botToken: string | null };
+}
+
+export interface NotificationPreferences {
+    defaultDiscordChannel: string | null;
+    telegramChatId: string | null;
+    enabledEvents: {
+        crawlSuccess: boolean;
+        crawlFailed: boolean;
+        trendingAlert: boolean;
+        systemAlert: boolean;
+        dailyDigest: boolean;
+    };
+}
+
 export const notificationApi = {
-    // Lấy danh sách thông báo
     getNotifications: async (limit = 20, offset = 0): Promise<NotificationListResponse> => {
         const response: any = await httpClient(`/notifications?limit=${limit}&offset=${offset}`);
-        // Handle wrapped response format: { statusCode, message, data: { items, total } }
         return response.data || response;
     },
 
-    // Đếm số thông báo chưa đọc
     getUnreadCount: async (): Promise<number> => {
         const response: any = await httpClient(`/notifications/unread-count`);
         return response.data?.count || response.count || 0;
     },
 
-    // Đánh dấu một thông báo đã đọc
     markAsRead: async (id: string): Promise<Notification> => {
-        const response = await httpClient<Notification>(`/notifications/${id}/read`, {
-            method: 'PATCH',
-        });
-        return response;
+        return httpClient<Notification>(`/notifications/${id}/read`, { method: 'PATCH' });
     },
 
-    // Đánh dấu tất cả đã đọc
     markAllAsRead: async (): Promise<{ updated: number }> => {
-        const response = await httpClient<{ updated: number }>(`/notifications/read-all`, {
-            method: 'PATCH',
-        });
-        return response;
+        return httpClient<{ updated: number }>(`/notifications/read-all`, { method: 'PATCH' });
     },
 
-    // Xóa thông báo
     deleteNotification: async (id: string): Promise<{ success: boolean }> => {
-        const response = await httpClient<{ success: boolean }>(`/notifications/${id}`, {
-            method: 'DELETE',
+        return httpClient<{ success: boolean }>(`/notifications/${id}`, { method: 'DELETE' });
+    },
+
+    getChannelStatus: async (): Promise<ChannelStatus> => {
+        const response = await httpClient('/notifications/channels/status');
+        return (response as any).data || response as ChannelStatus;
+    },
+
+    connectDiscord: async (channelId?: string, webhookUrl?: string): Promise<{ success: boolean }> => {
+        return httpClient<{ success: boolean }>('/notifications/channels/discord/connect', {
+            method: 'POST',
+            body: JSON.stringify({ channelId, webhookUrl }),
         });
-        return response;
+    },
+
+    testDiscord: async (channelId?: string): Promise<{ success: boolean; messageId?: string; error?: string }> => {
+        return httpClient<{ success: boolean; messageId?: string; error?: string }>('/notifications/channels/discord/test', {
+            method: 'POST',
+            body: JSON.stringify({ channelId }),
+        });
+    },
+
+    disconnectDiscord: async (): Promise<{ success: boolean; message?: string }> => {
+        return httpClient<{ success: boolean; message?: string }>('/notifications/channels/discord/disconnect', {
+            method: 'POST',
+        });
+    },
+
+    connectTelegram: async (chatId?: string, botToken?: string): Promise<{ success: boolean }> => {
+        return httpClient<{ success: boolean }>('/notifications/channels/telegram/connect', {
+            method: 'POST',
+            body: JSON.stringify({ chatId, botToken }),
+        });
+    },
+
+    testTelegram: async (chatId?: string): Promise<{ success: boolean; messageId?: number; error?: string }> => {
+        return httpClient<{ success: boolean; messageId?: number; error?: string }>('/notifications/channels/telegram/test', {
+            method: 'POST',
+            body: JSON.stringify({ chatId }),
+        });
+    },
+
+    setTelegramCommands: async (): Promise<{ success: boolean }> => {
+        return httpClient<{ success: boolean }>('/notifications/channels/telegram/set-commands', {
+            method: 'POST',
+        });
+    },
+
+    disconnectTelegram: async (): Promise<{ success: boolean; message?: string }> => {
+        return httpClient<{ success: boolean; message?: string }>('/notifications/channels/telegram/disconnect', {
+            method: 'POST',
+        });
+    },
+
+    getPreferences: async (): Promise<NotificationPreferences> => {
+        const response = await httpClient('/notifications/preferences');
+        return (response as any).data || response as NotificationPreferences;
+    },
+
+    updatePreferences: async (data: Partial<{
+        discordChannelId: string;
+        telegramChatId: string;
+        enabledEvents: Partial<NotificationPreferences['enabledEvents']>;
+    }>): Promise<{ success: boolean }> => {
+        return httpClient<{ success: boolean }>('/notifications/preferences', {
+            method: 'PATCH',
+            body: JSON.stringify(data),
+        });
     },
 };

@@ -8,7 +8,20 @@
         "contact": "Contact",
         "recruitment": "Careers",
         "login": "Login",
-        "search": "Search"
+        "search": "Search",
+        "email": "Email",
+        "phone": "Phone",
+        "language": "Language",
+        "menu": {
+            "introduction": "About",
+            "training_programs": "Training Areas",
+            "news": "News",
+            "careers": "Careers",
+            "contact": "Contact",
+            "recruitment": "Recruitment",
+            "culture": "Culture",
+            "policy": "Policy"
+        }
     },
     "Footer": {
         "tagline": "A leading technology education system committed to providing the best training quality for the young generation of Vietnam. Awakening potential, shaping the future.",
@@ -17,6 +30,9 @@
         "phone": "Phone",
         "followUs": "Follow us",
         "copyright": "© {year} Edurise Global. All rights reserved.",
+        "headquarters": "Headquarters",
+        "hotline": "Hotline",
+        "branch": "Branch",
         "links": {
             "privacy": "Privacy Policy",
             "terms": "Terms of Service"
@@ -64,5 +80,11 @@
         "callNow": "Call now",
         "zalo": "Zalo",
         "facebook": "Facebook"
+    },
+    "ComingSoon": {
+        "title": "Page under development",
+        "description": "We are working hard to complete this content to bring the best experience to you. Please come back later!",
+        "home": "Back to home",
+        "back": "Go back"
     }
 }

@@ -1,42 +1,109 @@
 {
     "tamNhinSuMenh": {
-        "title": "The Guiding Compass",
+        "title": "Orientation Compass",
+        "hero": "\"Igniting human potential, creating global digital citizens.\"",
         "vision": {
             "label": "Vision",
-            "text": "To become a pioneering technology education organization, leading in providing internationally standardized training solutions."
+            "enLabel": "Vision",
+            "title": "Digital Education Ecosystem",
+            "target": "2030 Goal",
+            "text": "ERG aims to become a pioneering technology education ecosystem where science and technology are applied extensively to redefine how people learn and work. We create a borderless learning space, using technology as a driving force for breakthroughs, unleashing innovative thinking, nurturing creative capacity, and equipping skills so that each individual can confidently conquer the digital future.",
+            "tags": ["International Standards", "Lifelong Learning", "Knowledge Community", "Innovation"]
         },
         "mission": {
             "label": "Mission",
-            "text": "To elevate knowledge and democratize digital skills. To bridge the digital divide through high-quality education."
+            "enLabel": "Mission",
+            "title": "Practical Study - Practical Work",
+            "motto": "Motto",
+            "text": "ERG carries the mission of closing the digital divide through high-quality technology education. We equip learners with a solid foundation, modern technological thinking, and problem-solving abilities in the digital world. ERG's training programs always update the latest technological trends, helping students not only master skills but also be ready to adapt, innovate, and confidently conquer the global labor market.",
+            "stats": {
+                "students": "Prominent Students",
+                "satisfaction": "Quality Satisfaction"
+            }
+        },
+        "cta": {
+            "title": "This educational philosophy is built on 5 core values",
+            "button": "EXPLORE CORE VALUES"
         }
     },
     "giaTriCotLoi": {
         "title": "CORE VALUES",
         "subtitle": "CORPORATE CULTURE",
+        "hero": "5 pillars defining the work style and training quality at {brand}.",
         "values": {
+            "community": {
+                "title": "Social Responsibility",
+                "content": "ERG contributes to the sustainable development of society through international training programs, enhancing technology skills for the community."
+            },
             "quality": {
                 "title": "Superior Quality",
-                "desc": "Committed to the highest standards in training"
+                "content": "ERG is committed to providing the best quality products and services by ensuring optimal success rates and superior service experiences."
+            },
+            "collaboration": {
+                "title": "Collaboration",
+                "content": "ERG builds a teamwork environment where everyone shares knowledge, experience and grows together."
             },
             "integrity": {
                 "title": "Customer-Centric",
-                "desc": "Honest and transparent in all activities"
+                "content": "ERG puts the interests and satisfaction of customers as the top priority in aspects of understanding, quality improvement, transparency, and keeping commitments."
             },
             "innovation": {
                 "title": "Innovative Spirit",
-                "desc": "Continuously improving teaching methodologies"
-            },
-            "community": {
-                "title": "Social Responsibility",
-                "desc": "Collaboration and community development"
+                "content": "Technology is not just a tool, but a driving force to transform education. ERG promotes the spirit of innovation in each solution, encouraging creative thinking."
             }
+        },
+        "cta": {
+            "title": "Ready to join ERG?",
+            "desc": "We always welcome talents who share our values to create the future of education.",
+            "button": "Join Now"
         }
     },
     "cauChuyenCuaErg": {
         "title": "The Story of ERG",
         "subtitle": "About Us",
         "quote": "Igniting intellect – Guiding the future",
+        "intro": {
+            "title": "Aspiration in the Digital Era",
+            "content": "Amidst the wave of strong digital transformation, when global education faces demands for innovation to keep pace with the times, {brand} was born with a great aspiration: to turn technology into a sustainable bridge between knowledge and people.",
+            "highlight": "\"We don't just teach technology, we use technology to unleash human potential.\""
+        },
+        "breakdown": {
+            "title": "\"Edu + Rise + Global\" – {brand} carries the mission of unleashing intellectual potential through smart and comprehensive education solutions.",
+            "subtitle": "Founded by dedicated educators and deep technology experts, {brand} is the intersection of progressive educational thinking and breakthrough creative capabilities in the digital era.",
+            "items": {
+                "edu": {
+                    "label": "Education",
+                    "desc": "The core foundation, where knowledge is transmitted with dedication and modern pedagogical methods."
+                },
+                "rise": {
+                    "label": "Rise",
+                    "desc": "Continuous development, the desire to rise and innovate to adapt to a changing world."
+                },
+                "global": {
+                    "label": "Global",
+                    "desc": "An international vision, bringing global educational standards to Vietnamese learners."
+                }
+            }
+        },
+        "features": {
+            "title": "What Makes {brand}?",
+            "items": {
+                "pioneer": {
+                    "title": "Pioneer",
+                    "desc": "Always leading in the application of new technology educational methods into teaching."
+                },
+                "heart": {
+                    "title": "Dedication",
+                    "desc": "The teaching team is not just about transmitting knowledge but also about transmitting passion."
+                },
+                "rocket": {
+                    "title": "Breakthrough",
+                    "desc": "Creating leaps in digital capacity for students, opening doors to future careers."
+                }
+            }
+        },
         "cta": {
+            "title": "Let's continue writing this story together",
             "join": "Join the ERG Team",
             "contact": "Contact for Partnership"
         }
@@ -52,19 +119,41 @@
     },
     "linhVucDaoTao": {
         "title": "Training Fields",
-        "subtitle": "A comprehensive IT training ecosystem",
+        "subtitle": "Comprehensive IT Training Ecosystem",
         "badge": "International Standard Training Programs",
-        "heading": "Ignite Intelligence — Guide the Future",
-        "subheading": "A diverse training system from office IT to advanced technology, helping you confidently master technology and excel in your career.",
+        "heading": "Igniting Intellect — Guiding the Future",
+        "subheading": "A diverse training system from Office IT to High Tech, helping you confidently master technology and excel in your career.",
+        "stats": {
+            "experience": "Years of Experience",
+            "courses": "Expert Courses",
+            "students": "Key Students",
+            "quality": "Quality Commitment"
+        },
         "fields": {
             "title": "Training Fields",
+            "description": "Designed with a structured path, updated with the latest technology trends and worldwide recognized certification.",
+            "programLabel": "Program",
             "more": "View Details"
         },
+        "why": {
+            "teachers": {
+                "title": "Expert Faculty",
+                "desc": "Experienced team of practitioners with international teaching certificates and dedication to students."
+            },
+            "practice": {
+                "title": "Intensive Practice",
+                "desc": "Practical time accounts for 70%, learning on real projects helps students master skills in class."
+            },
+            "award": {
+                "title": "Prestigious Certification",
+                "desc": "Supports examination and granting of International (MOS, IC3) and National certificates with global lifetime value."
+            }
+        },
         "cta": {
-            "title": "Don't know where to start?",
-            "subtitle": "Don't hesitate to contact us for guidance on the most suitable learning path for your abilities and goals.",
-            "register": "Register for Consultation",
-            "schedule": "View Course Schedule"
+            "title": "Not sure where to start?",
+            "subtitle": "Don't hesitate to contact us for advice on the most suitable learning path for your abilities and goals.",
+            "register": "Register Consultation Now",
+            "schedule": "View Training Schedule"
         }
     }
 }

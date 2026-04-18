@@ -1,38 +1,27 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card"
-import { Label } from "@/components/admin/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/admin/ui/select"
-import { Input } from "@/components/admin/ui/input"
 import { Button } from "@/components/admin/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/admin/ui/tabs"
 import dynamic from 'next/dynamic'
+import {
+    Eye,
+    DraftingCompass,
+    Settings2,
+    BarChart4
+} from "lucide-react"
+import { useState } from "react"
+import { toast } from "sonner"
+import { postsApi } from "@/services/posts.api"
+import { enablePreview } from "@/actions/preview.action"
+
+// Sub-components
+import { PostSidebarMeta } from "@/components/admin/shared/post-sidebar-meta"
+import { PostSidebarTaxonomy } from "@/components/admin/shared/post-sidebar-taxonomy"
 
 const SeoAnalysisPanel = dynamic(
     () => import('@/components/admin/seo/SeoAnalysisPanel').then(mod => ({ default: mod.SeoAnalysisPanel })),
     { ssr: false, loading: () => <div className="p-4 text-center text-sm text-muted-foreground animate-pulse">Đang tải công cụ phân tích...</div> }
 )
-const KeywordSuggestionPanel = dynamic(
-    () => import('@/components/seo/keyword-suggestion-panel').then(mod => ({ default: mod.KeywordSuggestionPanel })),
-    { ssr: false, loading: () => <div className="p-4 text-center text-sm text-muted-foreground animate-pulse">Đang tải gợi ý từ khóa...</div> }
-)
-import { KeywordTagInput } from "@/components/seo/keyword-tag-input"
-import {
-    ImagePlus,
-    X,
-    Globe,
-    Eye,
-    Trash,
-    DraftingCompass,
-    Settings2,
-    BarChart4
-} from "lucide-react"
-import { useState, useEffect } from "react"
-import { useQuery } from "@tanstack/react-query"
-import { postsApi } from "@/services/posts.api"
-import { toast } from "sonner"
-import { cn } from "@/lib/utils"
-import { enablePreview } from "@/actions/preview.action"
 
 interface PostData {
     id?: string;
@@ -72,33 +61,6 @@ export function PostSidebar({
     const [currentPreviewId, setCurrentPreviewId] = useState<string | null>(null);
     const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
-    // 1. Fetch Categories
-    const { data: categories } = useQuery({
-        queryKey: ['categories'],
-        queryFn: () => postsApi.getCategories()
-    })
-
-    // Tự động chọn chuyên mục đầu tiên nếu đang trống
-    useEffect(() => {
-        if (categories && categories.length > 0 && !post.categoryId) {
-            onUpdate({ categoryId: categories[0].id });
-        }
-    }, [categories, post.categoryId, onUpdate])
-
-    const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) {
-            onUpdate({ thumbnailUrl: URL.createObjectURL(file) })
-        }
-    }
-
-    // [HELPER] Get SEO Score Color
-    const getScoreColor = (score: number) => {
-        if (score < 50) return "bg-red-500 text-red-500";
-        if (score < 80) return "bg-amber-500 text-amber-500";
-        return "bg-green-500 text-green-500";
-    }
-
     const handlePreview = async () => {
         const currentContent = editor ? editor.getHTML() : post.content;
 
@@ -109,7 +71,6 @@ export function PostSidebar({
 
         setIsPreviewLoading(true);
 
-        // Mở tab trống trước để tránh bị Popup Blocker chặn
         let previewWindow: Window | null = null;
         const isFirstTime = !currentPreviewId;
 
@@ -201,252 +162,15 @@ export function PostSidebar({
 
                 <TabsContent value="settings" className="flex-1 mt-0 overflow-y-auto">
                     <div className="p-4 space-y-6">
-                        {/* Score SEO Display (Mini version if desired) */}
-                        {post.seoScore !== undefined && (
-                            <div className="bg-white dark:bg-white/5 rounded-xl p-3 border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">SEO Score</span>
-                                    <span className={`text-xs font-black ${getScoreColor(post.seoScore).split(' ')[1]}`}>
-                                        {post.seoScore}/100
-                                    </span>
-                                </div>
-                                <div className="h-1.5 w-full bg-zinc-100 dark:bg-white/10 rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full transition-all duration-500 ${getScoreColor(post.seoScore).split(' ')[0]}`}
-                                        style={{ width: `${post.seoScore}%` }}
-                                    />
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Trạng thái & Hiển thị */}
-                        <div className="space-y-4">
-                            <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em]">Phân loại</h3>
-
-                            <div className="grid gap-2">
-                                <Label className="text-xs font-bold">Trạng thái</Label>
-                                <Select
-                                    value={post.status || "draft"}
-                                    onValueChange={(val) => onUpdate({ status: val })}
-                                >
-                                    <SelectTrigger className="bg-white dark:bg-black h-9 text-sm"><SelectValue /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="draft">Bản nháp</SelectItem>
-                                        <SelectItem value="published">Công khai</SelectItem>
-                                        <SelectItem value="private">Riêng tư</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label className="text-xs font-bold">Chuyên mục</Label>
-                                <Select
-                                    value={post.categoryId || ""}
-                                    onValueChange={(val) => onUpdate({ categoryId: val })}
-                                >
-                                    <SelectTrigger className="bg-white dark:bg-black h-9 text-sm font-medium">
-                                        <SelectValue placeholder="Chọn chuyên mục" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categories?.map(cat => (
-                                            <SelectItem key={cat.id} value={cat.id}>
-                                                {cat.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        <div className="h-px bg-zinc-100 dark:bg-zinc-800" />
-
-                        {/* Ảnh đại diện */}
-                        <div className="space-y-4">
-                            <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em]">Hình ảnh</h3>
-                            <Card className="overflow-hidden bg-white dark:bg-black shadow-none border border-zinc-200 dark:border-zinc-800 rounded-xl">
-                                <CardHeader className="p-3 bg-zinc-50 dark:bg-white/5 border-b">
-                                    <CardTitle className="text-[10px] font-bold uppercase text-muted-foreground tracking-tight">Ảnh đại diện (Thumbnail)</CardTitle>
-                                </CardHeader>
-                                <CardContent className="p-0">
-                                    {post.thumbnailUrl ? (
-                                        <div className="relative aspect-video group">
-                                            <img src={post.thumbnailUrl} alt="Thumbnail" className="w-full h-full object-contain bg-zinc-900" />
-                                            <Button
-                                                variant="destructive" size="icon"
-                                                className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
-                                                onClick={() => onUpdate({ thumbnailUrl: null })}
-                                            >
-                                                <X className="w-3.5 h-3.5" />
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <div
-                                            className="aspect-video flex flex-col items-center justify-center hover:bg-zinc-50 dark:hover:bg-white/5 cursor-pointer transition-colors border-2 border-dashed border-zinc-200 dark:border-zinc-800 m-2 rounded-xl"
-                                            onClick={() => document.getElementById('thumb-upload')?.click()}
-                                        >
-                                            <ImagePlus className="w-6 h-6 text-zinc-400 mb-2" />
-                                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">Click để tải ảnh</span>
-                                            <input id="thumb-upload" type="file" className="hidden" accept="image/*" onChange={handleUpload} />
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        </div>
-
-                        <div className="h-px bg-zinc-100 dark:bg-zinc-800" />
-
-                        {/* SEO Configuration */}
-                        <div className="space-y-4 pb-10">
-                            <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em]">Tùy chọn SEO</h3>
-
-                            <div className="grid gap-2">
-                                <Label className="text-xs font-bold">Meta Title</Label>
-                                <Input
-                                    placeholder={post.title || "Tiêu đề bài viết"}
-                                    className="bg-white dark:bg-black h-9 text-sm"
-                                    value={post.metaTitle || ""}
-                                    onChange={(e) => onUpdate({ metaTitle: e.target.value })}
-                                />
-                                <div className="flex justify-between items-center px-1">
-                                    <span className="text-[9px] text-muted-foreground italic">Hiển thị trên kết quả tìm kiếm</span>
-                                    <span className={cn("text-[9px] font-bold", (post.metaTitle?.length || 0) > 60 ? "text-red-500" : "text-muted-foreground")}>
-                                        {post.metaTitle?.length || 0}/60
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label className="text-xs font-bold">Mô tả ngắn (Sapo)</Label>
-                                <textarea
-                                    className="flex w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-[80px]"
-                                    placeholder="Tóm tắt nội dung bài viết..."
-                                    value={post.excerpt || ""}
-                                    onChange={(e) => onUpdate({ excerpt: e.target.value })}
-                                />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label className="text-xs font-bold">Meta Description</Label>
-                                <textarea
-                                    className="flex w-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-[80px]"
-                                    placeholder="Mô tả cho Google..."
-                                    value={post.metaDescription || ""}
-                                    onChange={(e) => onUpdate({ metaDescription: e.target.value })}
-                                />
-                                <div className="flex justify-between items-center px-1">
-                                    <span className="text-[9px] text-muted-foreground italic">Tối ưu từ 120-160 ký tự</span>
-                                    <span className={cn("text-[9px] font-bold", (post.metaDescription?.length || 0) > 160 ? "text-red-500" : "text-muted-foreground")}>
-                                        {post.metaDescription?.length || 0}/160
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label className="text-xs font-bold">Focus Keyword</Label>
-                                <Input
-                                    placeholder="Từ khóa chính..."
-                                    className="bg-white dark:bg-black h-9 text-sm"
-                                    value={post.keywords || ""}
-                                    onChange={(e) => onUpdate({ keywords: e.target.value })}
-                                />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label className="text-xs font-bold">Schema Type</Label>
-                                <Select
-                                    value={post.schemaType || "Article"}
-                                    onValueChange={(val) => onUpdate({ schemaType: val })}
-                                >
-                                    <SelectTrigger className="bg-white dark:bg-black h-9 text-sm"><SelectValue /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Article">Article (Mặc định)</SelectItem>
-                                        <SelectItem value="Course">Khóa học (Course)</SelectItem>
-                                        <SelectItem value="JobPosting">Tuyển dụng (JobPosting)</SelectItem>
-                                        <SelectItem value="NewsArticle">Tin tức (NewsArticle)</SelectItem>
-                                        <SelectItem value="FAQPage">Câu hỏi (FAQPage)</SelectItem>
-                                        <SelectItem value="VideoObject">Video</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label className="text-xs font-bold">Từ khóa chính (Focus Keyword)</Label>
-                                <Input
-                                    placeholder="VD: học lập trình cho trẻ em"
-                                    className="bg-white dark:bg-black h-9 text-sm"
-                                    value={post.focusKeyword || ""}
-                                    onChange={(e) => onUpdate({ focusKeyword: e.target.value })}
-                                />
-                            </div>
-
-                            {/* Gợi ý Keyword theo Trend */}
-                            <div className="pt-2">
-                                <KeywordSuggestionPanel
-                                    focusKeyword={post.focusKeyword || ""}
-                                    type="post"
-                                    onAddKeywords={(kws) => {
-                                        const currentWords = post.keywords ? post.keywords.split(',').map(s => s.trim()) : [];
-                                        const totalWords = Array.from(new Set([...currentWords, ...kws])).filter(Boolean);
-                                        onUpdate({ keywords: totalWords.join(', ') });
-                                        toast.success(`Đã thêm ${kws.length} từ khóa chuẩn SEO!`);
-                                    }}
-                                />
-                            </div>
-
-                            <div className="grid gap-2 border-t pt-2 mt-2">
-                                <Label className="text-xs font-bold">Từ khóa chi tiết đã chọn</Label>
-                                <KeywordTagInput
-                                    value={post.keywords ? post.keywords.split(',').map(s => s.trim()).filter(Boolean) : []}
-                                    onChange={(newKeywords) => onUpdate({ keywords: newKeywords.join(', ') })}
-                                    placeholder="Nhập thẻ từ khóa thủ công..."
-                                />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label className="text-xs font-bold">Canonical URL (tùy chọn)</Label>
-                                <Input
-                                    placeholder="https://erg.edu.vn/tin-tuc/..."
-                                    className="bg-white dark:bg-black h-9 text-sm"
-                                    value={post.canonicalUrl || ""}
-                                    onChange={(e) => onUpdate({ canonicalUrl: e.target.value })}
-                                />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label className="text-xs font-bold">Robots</Label>
-                                <div className="flex gap-4">
-                                    <label className="flex items-center gap-2 text-sm">
-                                        <input
-                                            type="checkbox"
-                                            checked={post.noindex || false}
-                                            onChange={(e) => onUpdate({ noindex: e.target.checked })}
-                                        />
-                                        noindex
-                                    </label>
-                                    <label className="flex items-center gap-2 text-sm">
-                                        <input
-                                            type="checkbox"
-                                            checked={post.nofollow || false}
-                                            onChange={(e) => onUpdate({ nofollow: e.target.checked })}
-                                        />
-                                        nofollow
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label className="text-xs font-bold">URL Slug</Label>
-                                <div className="relative">
-                                    <Globe className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-zinc-400" />
-                                    <Input
-                                        placeholder="tu-dong-tao-slug"
-                                        className="pl-9 bg-white dark:bg-black h-9 text-xs"
-                                        value={post.slug || ""}
-                                        onChange={(e) => onUpdate({ slug: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        <PostSidebarTaxonomy post={post} onUpdate={onUpdate} />
+                        <PostSidebarMeta
+                            post={post}
+                            onUpdate={onUpdate}
+                            onSave={onSave}
+                            onSaveDraft={onSaveDraft}
+                            isSaving={isSaving}
+                            editor={editor}
+                        />
                     </div>
                 </TabsContent>
 

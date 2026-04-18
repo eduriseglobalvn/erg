@@ -13,6 +13,12 @@ const SEGMENT_LABELS: Record<string, string> = {
     'doi-ngu-giao-vien': 'Đội ngũ giáo viên',
     'van-hoa': 'Văn hóa & Hoạt động',
     'danh-muc': 'Danh mục',
+    'cong-khai': 'Công khai',
+    'phap-ly': 'Pháp lý',
+    'hoc-phi': 'Học phí',
+    'kiem-dinh-chat-luong': 'Kiểm định chất lượng',
+    'ke-hoach-giang-day': 'Kế hoạch giảng dạy',
+    'chung-nhan-hoat-dong-chi-nhanh': 'Chứng nhận hoạt động chi nhánh',
 };
 
 /**

@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Phone, Facebook, Youtube, ChevronDown, Search } from 'lucide-react';
+import { Menu, X, Phone, Facebook, Youtube, ChevronDown, ChevronRight, Search } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from '@/components/shared/language-switcher';
 import { SchemaScript } from '@/components/seo/schema-script';
 
@@ -21,6 +22,117 @@ export interface MenuItemType {
 interface HeaderProps {
   menuData?: MenuItemType[];
   hideTopBar?: boolean;
+}
+
+const isMenuItemActive = (item: MenuItemType, pathname: string): boolean => {
+  if (pathname === item.path) {
+    return true;
+  }
+
+  return Array.isArray(item.children)
+    ? item.children.some((child) => isMenuItemActive(child, pathname))
+    : false;
+};
+
+const hasNestedChildren = (item: MenuItemType) =>
+  Array.isArray(item.children) && item.children.length > 0;
+
+interface DesktopDropdownListProps {
+  items: MenuItemType[];
+  pathname: string;
+  translateLabel: (label: string) => string;
+  depth?: number;
+}
+
+function DesktopDropdownList({
+  items,
+  pathname,
+  translateLabel,
+  depth = 0,
+}: DesktopDropdownListProps) {
+  const isNested = depth > 0;
+  // Tìm mục đầu tiên có con để mặc định "mở" nếu cần (chỉ áp dụng cho fly-out cũ, nay có thể bỏ qua hoặc giữ cho logic cũ)
+  const firstItemWithChildren = items.find((item) => hasNestedChildren(item))?.path;
+
+  // Nếu là menu con cấp 3 (isNested), ta hiển thị danh sách đơn giản để lồng vào cha
+  if (isNested) {
+    return (
+      <ul className="bg-slate-50/50 py-2">
+        {items.map((item) => (
+          <li key={`${item.path}-${item.label}`}>
+            <Link
+              href={item.path}
+              className={`block px-10 py-3 text-[16px] font-medium transition-all duration-200 ${
+                pathname === item.path
+                  ? "text-[#253b99] bg-white/80"
+                  : "text-slate-500 hover:text-[#253b99] hover:bg-white/50"
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <span className="h-1 w-1 rounded-full bg-slate-300" />
+                {translateLabel(item.label)}
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  // Menu cấp 2 (Dropdown chính từ Navbar)
+  return (
+    <div className="min-w-[380px] overflow-hidden rounded-[12px] border border-slate-200 bg-white shadow-[0_20px_50px_-12px_rgba(15,23,42,0.25)]">
+      <div className="h-[4px] w-full bg-[#253b99]" />
+      <ul className="py-2">
+        {items.map((subItem) => {
+          const hasNestedSubmenu = hasNestedChildren(subItem);
+          const isExternal = subItem.path.startsWith('http');
+          const isSubActive = pathname === subItem.path;
+          const isDefaultExpandedParent = hasNestedSubmenu && subItem.path === firstItemWithChildren && false; // Tắt tự mở để tránh rối
+
+          return (
+            <li
+              key={`${subItem.path}-${subItem.label}`}
+              className="group/submenu relative"
+            >
+              <Link
+                href={subItem.path}
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noopener noreferrer" : undefined}
+                className={`flex min-h-[64px] items-center justify-between gap-4 px-6 py-3 text-[17px] font-bold transition-all duration-300 ${
+                  isSubActive
+                    ? "text-[#253b99] bg-slate-50"
+                    : "text-slate-700 hover:text-[#253b99] hover:bg-slate-50"
+                }`}
+              >
+                <span className="leading-tight">{translateLabel(subItem.label)}</span>
+                {hasNestedSubmenu && (
+                  <ChevronDown
+                    size={16}
+                    className="shrink-0 text-slate-400 transition-transform duration-300 group-hover/submenu:rotate-180 group-hover/submenu:text-[#253b99]"
+                    strokeWidth={2.5}
+                  />
+                )}
+              </Link>
+
+              {hasNestedSubmenu && subItem.children && (
+                <div
+                  className="max-h-0 overflow-hidden opacity-0 transition-all duration-500 ease-in-out group-hover/submenu:max-h-[1000px] group-hover/submenu:opacity-100"
+                >
+                  <DesktopDropdownList
+                    items={subItem.children}
+                    pathname={pathname}
+                    translateLabel={translateLabel}
+                    depth={depth + 1}
+                  />
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
 }
 
 const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar = false }) => {
@@ -70,8 +182,27 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
     }
   }, [isSearchOpen]);
 
+  const tc = useTranslations('common.Header');
+
+  // Vercel Best Practice: Use stable lookups and hoist mapping logic where possible
+  const translateLabel = (label: string) => {
+    const keyMap: Record<string, string> = {
+      'GIỚI THIỆU': 'menu.introduction',
+      'LĨNH VỰC ĐÀO TẠO': 'menu.training_programs',
+      'TIN TỨC': 'menu.news',
+      'CƠ HỘI NGHỀ NGHIỆP': 'menu.careers',
+      'LIÊN HỆ': 'menu.contact',
+      'TUYỂN DỤNG': 'menu.recruitment',
+      'VĂN HÓA': 'menu.culture',
+      'CHÍNH SÁCH NHÂN SỰ': 'menu.policy',
+      'Trang Chủ': 'home',
+    };
+    const key = keyMap[label];
+    return key ? tc(key as any) : label;
+  };
+
   const toggleMobileSubmenu = (label: string) => {
-    setMobileSubmenuOpen(mobileSubmenuOpen === label ? null : label);
+    setMobileSubmenuOpen(prev => prev === label ? null : label);
   };
 
   return (
@@ -114,13 +245,14 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="flex-shrink-0 relative w-[100px] h-[55px] md:w-[117px] md:h-[64px]">
+              <div className="flex-shrink-0">
                 <Image
                   src="https://media.erg.edu.vn/logo/erg.png"
                   alt="ERG Logo"
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 768px) 100px, 117px"
+                  width={117}
+                  height={64}
+                  className="object-contain w-[100px] md:w-[117px]"
+                  style={{ width: 'auto', height: 'auto' }}
                   priority
                 />
               </div>
@@ -135,10 +267,10 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-6 xl:gap-10">
+            <nav className="hidden lg:ml-8 lg:flex lg:flex-1 lg:flex-nowrap lg:items-center lg:justify-end lg:gap-4 xl:gap-6 2xl:gap-8">
               {menuItems.map((item) => {
                 const hasSubmenu = item.children && item.children.length > 0;
-                const isActive = pathname === item.path || (hasSubmenu && item.children?.some(sub => sub.path === pathname));
+                const isActive = isMenuItemActive(item, pathname);
 
                 return (
                   <div key={item.label} className="relative group py-4">
@@ -150,12 +282,12 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                           window.dispatchEvent(new CustomEvent('open-elearning-modal', { detail: item.path.substring(1) }));
                         }
                       }}
-                      className={`flex items-center gap-1 text-lg font-bold uppercase tracking-wide transition-all duration-300 relative
+                      className={`flex shrink-0 items-center gap-1 whitespace-nowrap text-[15px] xl:text-[16px] 2xl:text-[17px] font-bold uppercase tracking-[0.04em] transition-all duration-300 relative
                                 ${isActive ? 'text-highlight' : 'text-primary hover:text-highlight'}
                                 ${!hasSubmenu ? "after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[3px] after:bg-highlight after:transition-all after:duration-300 group-hover:after:w-full" : ''}
                             `}
                     >
-                      {item.label}
+                      {translateLabel(item.label)}
                       {hasSubmenu && (
                         <ChevronDown
                           size={16}
@@ -165,26 +297,14 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                       )}
                     </Link>
                     {hasSubmenu && (
-                      <div className="absolute top-full left-0 pt-3 w-72 opacity-0 translate-y-2 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-300 ease-out z-50">
-                        <div className="bg-white rounded-lg shadow-xl overflow-hidden ring-1 ring-black/5">
-                          <ul className="py-2">
-                            {item.children?.map((subItem) => {
-                              const isExternal = subItem.path.startsWith('http');
-                              return (
-                                <li key={subItem.path}>
-                                  <Link
-                                    href={subItem.path}
-                                    target={isExternal ? "_blank" : undefined}
-                                    rel={isExternal ? "noopener noreferrer" : undefined}
-                                    className="block px-6 py-3.5 text-base font-medium text-gray-600 hover:text-primary hover:bg-slate-50 transition-colors"
-                                  >
-                                    {subItem.label}
-                                  </Link>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
+                      <div
+                        className="absolute top-full left-1/2 z-50 pt-3 opacity-0 invisible -translate-x-1/2 translate-y-2 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible"
+                      >
+                        <DesktopDropdownList
+                          items={item.children || []}
+                          pathname={pathname}
+                          translateLabel={translateLabel}
+                        />
                       </div>
                     )}
                   </div>
@@ -197,7 +317,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                   <input
                     ref={searchInputRef}
                     type="text"
-                    placeholder="Tìm kiếm..."
+                    placeholder={`${tc('search')}...`}
                     className="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-gray-300 text-sm text-gray-700 bg-gray-50"
                   />
                 </div>
@@ -237,7 +357,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
 
             {/* Mobile Search */}
             <div className="mb-6 relative">
-              <input type="text" placeholder="Tìm kiếm..." className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-gray-200" />
+              <input type="text" placeholder={`${tc('search')}...`} className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-gray-200" />
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             </div>
 
@@ -255,25 +375,67 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                           className={`flex items-center justify-between w-full py-4 text-left text-lg font-bold uppercase transition-colors ${isOpen ? 'text-highlight' : 'text-primary'
                             }`}
                         >
-                          {item.label}
+                          {translateLabel(item.label)}
                           <ChevronDown size={20} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                         </button>
 
                         <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
                           <div className="bg-gray-50 rounded-lg mb-4 p-2 space-y-1">
                             {item.children?.map(sub => {
+                              const hasNestedSubmenu = hasNestedChildren(sub);
                               const isExternal = sub.path.startsWith('http');
+                              if (!hasNestedSubmenu) {
+                                const isSubActive = pathname === sub.path;
+                                return (
+                                  <Link
+                                    key={sub.path}
+                                    href={sub.path}
+                                    target={isExternal ? "_blank" : undefined}
+                                    rel={isExternal ? "noopener noreferrer" : undefined}
+                                    className={`block rounded-xl px-4 py-3 text-base font-semibold transition-colors ${
+                                      isSubActive
+                                        ? "bg-primary text-white"
+                                        : "text-gray-600 hover:bg-white hover:text-primary"
+                                    }`}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                  >
+                                    {translateLabel(sub.label)}
+                                  </Link>
+                                );
+                              }
+
                               return (
-                                <Link
-                                  key={sub.path}
-                                  href={sub.path}
-                                  target={isExternal ? "_blank" : undefined}
-                                  rel={isExternal ? "noopener noreferrer" : undefined}
-                                  className="block px-4 py-3 text-base font-medium text-gray-600 hover:text-primary hover:bg-white rounded-md transition-colors"
-                                  onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                  {sub.label}
-                                </Link>
+                                <div key={`${sub.path}-${sub.label}`} className="rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+                                  <Link
+                                    href={sub.path}
+                                    className="block px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-slate-400"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                  >
+                                    {translateLabel(sub.label)}
+                                  </Link>
+                                  <div className="space-y-1">
+                                    {sub.children?.map((nestedItem) => {
+                                      const isNestedExternal = nestedItem.path.startsWith('http');
+                                      const isNestedActive = pathname === nestedItem.path;
+                                      return (
+                                        <Link
+                                          key={nestedItem.path}
+                                          href={nestedItem.path}
+                                          target={isNestedExternal ? "_blank" : undefined}
+                                          rel={isNestedExternal ? "noopener noreferrer" : undefined}
+                                          className={`block rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                                            isNestedActive
+                                              ? "bg-primary/10 text-primary"
+                                              : "text-gray-600 hover:bg-gray-50 hover:text-primary"
+                                          }`}
+                                          onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                          {translateLabel(nestedItem.label)}
+                                        </Link>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
                               );
                             })}
                           </div>
@@ -293,7 +455,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                           }
                         }}
                       >
-                        {item.label}
+                        {translateLabel(item.label)}
                       </Link>
                     )}
                   </div>
@@ -302,13 +464,9 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
             </nav>
 
             <div className="mt-8 pt-6 border-t border-gray-100">
-              <div className="flex items-center justify-between mb-6 px-2">
-                <span className="text-gray-500 font-medium">Ngôn ngữ:</span>
-                <div className="flex items-center gap-2">
-                  <button className="text-highlight font-bold">VN</button>
-                  <span className="text-gray-300">|</span>
-                  <button className="text-gray-500 hover:text-primary">EN</button>
-                </div>
+              <div className="flex items-center justify-between mb-6 px-2 bg-slate-50/50 p-2 rounded-xl">
+                <span className="text-[#00008b] font-bold text-sm tracking-wide">{tc('language')}:</span>
+                <LanguageSwitcher currentLocale={currentLocale} />
               </div>
               <div className="flex justify-center gap-8">
                 <a href="#" className="text-primary hover:scale-110 transition-transform"><Facebook size={32} /></a>

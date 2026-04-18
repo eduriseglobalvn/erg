@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3003';
+import { fetchWithBackendFallback } from '@/lib/backend-url';
+import { appendAuthCookies, appendLogoutCookies } from '@/lib/auth-cookies';
 
 export async function GET(
     request: NextRequest,
@@ -46,7 +46,7 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
     try {
         const path = pathSegments?.join('/') || '';
         const url = new URL(request.url);
-        const backendUrl = `${BACKEND_URL}/api/${path}${url.search}`;
+        const backendPath = `/api/${path}${url.search}`;
 
         // Removed production logs (B-L5)
 
@@ -95,7 +95,7 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
             }
         }
 
-        const response = await fetch(backendUrl, {
+        const response = await fetchWithBackendFallback(backendPath, {
             method: request.method,
             headers: headers,
             body: bodyToForward,
@@ -105,6 +105,8 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
 
         const responseHeaders = new Headers(response.headers);
         responseHeaders.delete('transfer-encoding');
+        responseHeaders.delete('content-length');
+        responseHeaders.delete('content-encoding'); 
 
         let responseBody = await response.text();
 
@@ -115,27 +117,15 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
                 if (data.refreshToken || (data.data && data.data.refreshToken)) {
                     const tokenToSet = data.refreshToken || data.data.refreshToken;
                     const accessTokenToSet = data.accessToken || data?.data?.accessToken;
+                    const userPayload = data.user || data.data?.user;
 
-                    if (tokenToSet) {
-                        // Set RefreshToken HttpOnly cookie
-                        responseHeaders.append(
-                            'Set-Cookie',
-                            `refreshToken=${tokenToSet}; Path=/api; HttpOnly; SameSite=Lax; Max-Age=2592000` // 30 days
-                        );
-                    }
-
-                    if (accessTokenToSet) {
-                        // Set AccessToken HttpOnly cookie
-                        responseHeaders.append(
-                            'Set-Cookie',
-                            `accessToken=${accessTokenToSet}; Path=/api; HttpOnly; SameSite=Lax; Max-Age=86400` // 1 day
-                        );
-                        // Also set a non-HttpOnly flag for client-side routing checks
-                        responseHeaders.append(
-                            'Set-Cookie',
-                            `isLoggedIn=true; Path=/; SameSite=Lax; Max-Age=2592000` // 30 days
-                        );
-                    }
+                    appendAuthCookies(responseHeaders, {
+                        refreshToken: tokenToSet,
+                        accessToken: accessTokenToSet,
+                        userId: userPayload?.id,
+                        provider: userPayload?.provider,
+                        accountType: userPayload?.accountType,
+                    });
 
                     // Remove tokens from payload sent to client for extra security
                     if (data.refreshToken) delete data.refreshToken;
@@ -151,18 +141,14 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
         }
 
         // [SECURE TOKENS] Intercept logout to clear cookie
-        if (response.ok && path === 'auth/logout') {
-            responseHeaders.append(
-                'Set-Cookie',
-                `refreshToken=; Path=/api; HttpOnly; SameSite=Lax; Max-Age=0`
-            );
-            responseHeaders.append(
-                'Set-Cookie',
-                `accessToken=; Path=/api; HttpOnly; SameSite=Lax; Max-Age=0`
-            );
-            responseHeaders.append(
-                'Set-Cookie',
-                `isLoggedIn=; Path=/; SameSite=Lax; Max-Age=0`
+        if (path === 'auth/logout') {
+            appendLogoutCookies(responseHeaders);
+            return new NextResponse(
+                responseBody || JSON.stringify({ success: true, message: 'Logged out' }),
+                {
+                    status: 200,
+                    headers: responseHeaders,
+                }
             );
         }
 
@@ -177,9 +163,25 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
         });
     } catch (error: any) {
         console.error('[API Proxy Error]', error);
+
+        if (pathSegments?.join('/') === 'auth/logout') {
+            const headers = new Headers();
+            appendLogoutCookies(headers);
+            return new NextResponse(
+                JSON.stringify({
+                    success: true,
+                    message: 'Logged out locally while backend is unavailable',
+                }),
+                {
+                    status: 200,
+                    headers,
+                }
+            );
+        }
+
         return NextResponse.json(
-            { error: 'Proxy error', message: error.message },
-            { status: 500 }
+            { error: 'Service Unavailable', message: 'Dịch vụ đang tạm thời không khả dụng. Vui lòng thử lại sau.' },
+            { status: 503 }
         );
     }
 }

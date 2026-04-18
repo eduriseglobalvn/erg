@@ -3,55 +3,117 @@
         "badge": "Trung tâm đào tạo CNTT quốc tế",
         "heading": "Kiến Tạo Tương Lai Số",
         "subheading": "Cùng ERG mang chuẩn Tin học Quốc tế đến hàng triệu học sinh Việt Nam",
-        "ctaPrimary": "Khám phá khóa học",
-        "ctaSecondary": "Liên hệ tư vấn"
+        "cta": "Khám phá các khóa học",
+        "slides": [
+            {
+                "title": "Tiên phong Đào tạo Công nghệ & \nKỹ năng số",
+                "subtitle": "Hệ thống đào tạo chuẩn Quốc tế, trang bị hành trang vững chắc cho kỷ nguyên số hóa."
+            },
+            {
+                "title": "Lộ trình học tập toàn diện",
+                "subtitle": "Từ Tin học văn phòng đến Khoa học dữ liệu, phù hợp mọi lứa tuổi và nhu cầu công việc."
+            }
+        ]
     },
     "Stats": {
         "branches": "Chi nhánh",
         "students": "Học viên",
         "schools": "Trường đối tác",
-        "teachers": "Giáo viên đạt chuẩn"
+        "teachers": "Giáo viên đạt chuẩn",
+        "experience": "Năm kinh nghiệm đào tạo"
     },
-    "Courses": {
-        "title": "Chương trình đào tạo",
-        "subtitle": "Khám phá các lộ trình học tập chuẩn quốc tế",
-        "viewAll": "Xem tất cả khóa học"
-    },
-    "Jobs": {
-        "title": "Việc làm mới nhất",
-        "subtitle": "Cơ hội nghề nghiệp",
-        "viewAll": "Xem tất cả vị trí",
-        "noJobs": "Không có vị trí tuyển dụng nào."
-    },
-    "News": {
-        "title": "Tin tức & Sự kiện",
-        "subtitle": "Cập nhật mới nhất từ ERG",
-        "viewAll": "Xem tất cả tin tức"
-    },
-    "Why": {
-        "title": "Tại sao chọn ERG?",
-        "subtitle": "Bởi vì chúng tôi đồng hành cùng bạn",
+    "CoreValues": {
+        "title": "Về chúng tôi",
+        "heading": "Kiến tạo nền tảng vững chắc cho tương lai",
+        "description": "Tại ERG, chúng tôi tin rằng mỗi học sinh đều có những tiềm năng riêng biệt cần được khơi dậy. Với phương pháp giáo dục hiện đại, kết hợp giữa lý thuyết và thực hành, chúng tôi cam kết mang đến môi trường học tập tốt nhất.",
+        "viewDetail": "Xem chi tiết",
         "items": {
             "quality": {
-                "title": "Chất lượng chuẩn quốc tế",
-                "desc": "Được công nhận bởi Certiport, Microsoft và các tổ chức quốc tế uy tín."
+                "title": "Chất lượng Quốc tế",
+                "content": "Chương trình chuẩn hóa, cấp chứng chỉ MOS, IC3 có giá trị toàn cầu."
             },
-            "teachers": {
-                "title": "Đội ngũ giáo viên giàu kinh nghiệm",
-                "desc": "100% giáo viên đạt chứng chỉ quốc tế."
+            "practice": {
+                "title": "Thực tiễn & Ứng dụng",
+                "content": "Học đi đôi với hành, cam kết thành thạo kỹ năng ngay sau khóa học."
             },
-            "support": {
-                "title": "Hỗ trợ toàn diện",
-                "desc": "Tư vấn và hỗ trợ học viên trong suốt quá trình học."
+            "tech": {
+                "title": "Công nghệ hiện đại",
+                "content": "Hệ thống phòng máy, phần mềm cập nhật liên tục theo xu hướng 4.0."
             }
         }
     },
-    "Partners": {
-        "title": "Đối tác của chúng tôi"
+    "Training": {
+        "title": "Lĩnh vực đào tạo",
+        "description": "Các chương trình đào tạo trọng điểm được thiết kế bám sát nhu cầu thực tế của doanh nghiệp.",
+        "viewProgram": "Xem chương trình",
+        "fields": {
+            "thqt": {
+                "title": "Tin học Quốc tế",
+                "desc": "Chương trình đào tạo - luyện thi các chứng chỉ uy tín toàn cầu như MOS, IC3 Spark, IC3 GS6. Trang bị hành trang vững chắc cho sự nghiệp."
+            },
+            "thqg": {
+                "title": "Tin học Quốc gia",
+                "desc": "Các khóa học bám sát chương trình chuẩn của Bộ GD&ĐT, nâng cao kỹ năng tin học văn phòng, đáp ứng yêu cầu công việc và thi tuyển."
+            },
+            "thtn": {
+                "title": "Tin học Thiếu nhi",
+                "desc": "Khơi dậy niềm đam mê công nghệ cho trẻ từ sớm với phương pháp trực quan, sinh động. Giúp phát triển tư duy logic và kỹ năng giải quyết vấn đề."
+            },
+            "kns": {
+                "title": "Giáo dục kỹ năng công dân số",
+                "desc": "Trang bị kiến thức về an toàn trực tuyến, đạo đức mạng và kỹ năng sử dụng công nghệ văn minh trong kỷ nguyên số hóa."
+            },
+            "dtdm": {
+                "title": "Điện toán đám mây",
+                "desc": "Làm chủ công nghệ Cloud Computing, lưu trữ và quản lý dữ liệu hiện đại. Đón đầu xu hướng công nghệ của doanh nghiệp 4.0."
+            },
+            "ai": {
+                "title": "Trí tuệ nhân tạo (AI)",
+                "desc": "Khám phá thế giới AI, Machine Learning cơ bản và ứng dụng AI vào học tập, làm việc để gia tăng hiệu suất đột phá."
+            }
+        }
     },
-    "CTA": {
-        "title": "Bắt đầu hành trình học tập ngay hôm nay",
-        "subtitle": "Đăng ký tư vấn miễn phí để được hỗ trợ chọn lộ trình phù hợp",
-        "button": "Đăng ký tư vấn"
+    "Why": {
+        "title": "Lý do nên chọn ERG Global",
+        "subtitle": "Giá trị khác biệt",
+        "items": {
+            "teachers": {
+                "title": "Đội ngũ giáo viên chất lượng cao",
+                "desc": "Giáo viên nhiều năm kinh nghiệm, chuyên môn vững vàng, tận tâm với nghề và luôn cập nhật phương pháp giảng dạy hiện đại."
+            },
+            "standard": {
+                "title": "Chương trình chuẩn Quốc tế",
+                "desc": "Giáo trình biên soạn dựa trên tiêu chuẩn quốc tế, bám sát thực tiễn, giúp học viên nắm vững kiến thức nền tảng và kỹ năng tư duy."
+            },
+            "facilities": {
+                "title": "Cơ sở vật chất hiện đại",
+                "desc": "Phòng học được trang bị đầy đủ thiết bị công nghệ tiên tiến, mang đến môi trường học tập tiện nghi, chuyên nghiệp và hiệu quả."
+            },
+            "quality": {
+                "title": "Kiểm soát chất lượng chặt chẽ",
+                "desc": "Chương trình giảng dạy và đào tạo được giám sát chặt chẽ theo lộ trình rõ ràng, đảm bảo chất lượng đồng đều."
+            },
+            "commitment": {
+                "title": "Cam kết tỉ lệ đầu ra",
+                "desc": "ERG cam kết tỷ lệ học viên đạt chuẩn đầu ra và vượt qua các kỳ thi quốc tế đạt:",
+                "stats": {
+                    "primary": "Khối TH, THCS, THPT",
+                    "university": "Khối Cao Đẳng - Đại Học"
+                }
+            },
+            "cost": {
+                "title": "Chi phí hợp lý, nhiều ưu đãi",
+                "desc": "Học phí phù hợp, chính sách linh hoạt cùng nhiều chương trình học bổng dành cho học sinh."
+            }
+        }
+    },
+    "News": {
+        "title": "Tin tức & Sự kiện",
+        "viewAll": "Xem tất cả",
+        "category": "Tin tức"
+    },
+    "Testimonials": {
+        "title": "Cảm nhận học viên",
+        "subtitle": "Góc học viên"
     }
 }

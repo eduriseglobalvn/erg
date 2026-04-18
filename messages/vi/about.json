@@ -1,42 +1,109 @@
 {
     "tamNhinSuMenh": {
         "title": "La bàn định hướng",
+        "hero": "\"Khơi dậy tiềm năng con người, kiến tạo công dân số toàn cầu.\"",
         "vision": {
-            "label": "Tầm Nhìn (Vision)",
-            "text": "Trở thành tổ chức giáo dục công nghệ tiên phong, hàng đầu trong việc cung cấp các giải pháp đào tạo chuẩn quốc tế."
+            "label": "Tầm Nhìn",
+            "enLabel": "Vision",
+            "title": "Hệ sinh thái giáo dục số",
+            "target": "Mục tiêu 2030",
+            "text": "ERG định hướng trở thành hệ sinh thái giáo dục công nghệ tiên phong nơi khoa học và công nghệ được ứng dụng sâu rộng để tái định nghĩa cách con người học tập và làm việc. Chúng tôi kiến tạo một không gian học tập không biên giới, lấy công nghệ làm động lực bứt phá, khai phóng tư duy đột phá, nuôi dưỡng năng lực sáng tạo và trang bị kỹ năng để mỗi cá nhân tự tin chinh phục tương lai số.",
+            "tags": ["Chuẩn hóa quốc tế", "Học tập trọn đời", "Cộng đồng tri thức", "Đổi mới sáng tạo"]
         },
         "mission": {
-            "label": "Sứ Mệnh (Mission)",
-            "text": "Nâng tầm tri thức và phổ cập kỹ năng số. Xóa bỏ khoảng cách số thông qua giáo dục chất lượng cao."
+            "label": "Sứ Mệnh",
+            "enLabel": "Mission",
+            "title": "Thực học - Thực làm",
+            "motto": "Phương châm",
+            "text": "ERG mang trong mình sứ mệnh thu hẹp khoảng cách số bằng giáo dục công nghệ chất lượng cao. Chúng tôi trang bị cho người học nền tảng vững chắc, tư duy công nghệ hiện đại và khả năng giải quyết vấn đề trong thế giới số. Các chương trình đào tạo của ERG luôn cập nhật xu hướng công nghệ mới nhất, giúp học viên không chỉ làm chủ kỹ năng, mà còn sẵn sàng thích ứng, sáng tạo và tự tin chinh phục thị trường lao động toàn cầu.",
+            "stats": {
+                "students": "Học viên tiêu biểu",
+                "satisfaction": "Hài lòng về chất lượng"
+            }
+        },
+        "cta": {
+            "title": "Triết lý giáo dục này được xây dựng trên 5 giá trị cốt lõi",
+            "button": "KHÁM PHÁ GIÁ TRỊ CỐT LÕI"
         }
     },
     "giaTriCotLoi": {
         "title": "GIÁ TRỊ CỐT LÕI",
         "subtitle": "VĂN HÓA DOANH NGHIỆP",
+        "hero": "5 trụ cột định hình phong cách làm việc và chất lượng đào tạo tại {brand}.",
         "values": {
+            "community": {
+                "title": "Trách nhiệm xã hội",
+                "content": "ERG đóng góp vào sự phát triển bền vững của xã hội thông qua các chương trình đào tạo quốc tế, nâng cao kỹ năng công nghệ cho cộng đồng."
+            },
             "quality": {
                 "title": "Chất lượng vượt trội",
-                "desc": "Cam kết chuẩn mực cao nhất trong đào tạo"
+                "content": "ERG cam kết mang lại những sản phẩm và dịch vụ với chất lượng tốt nhất thông qua việc đảm bảo tỷ lệ thành công tối ưu và trải nghiệm dịch vụ vượt trội."
+            },
+            "collaboration": {
+                "title": "Hợp tác đồng hành",
+                "content": "ERG xây dựng một môi trường làm việc đội nhóm, nơi mọi người cùng nhau chia sẻ kiến thức, kinh nghiệm và cùng nhau phát triển."
             },
             "integrity": {
                 "title": "Khách hàng là trung tâm",
-                "desc": "Trung thực và minh bạch trong mọi hoạt động"
+                "content": "ERG đặt lợi ích và sự hài lòng của khách hàng làm ưu tiên hàng đầu trên các khía cạnh về sự thấu hiểu, cải tiến chất lượng, minh bạch hóa, giữ đúng cam kết."
             },
             "innovation": {
                 "title": "Sáng tạo đổi mới",
-                "desc": "Không ngừng cải tiến phương pháp giảng dạy"
-            },
-            "community": {
-                "title": "Trách nhiệm xã hội",
-                "desc": "Hợp tác và phát triển cộng đồng"
+                "content": "Công nghệ không chỉ là công cụ, mà là động lực để chuyển hóa giáo dục. ERG thúc đẩy tinh thần đổi mới trong từng giải pháp, khuyến khích tư duy sáng tạo."
             }
+        },
+        "cta": {
+            "title": "Sẵn sàng đồng hành cùng ERG?",
+            "desc": "Chúng tôi luôn chào đón những nhân tài chia sẻ cùng hệ giá trị để kiến tạo tương lai giáo dục.",
+            "button": "Gia nhập ngay"
         }
     },
     "cauChuyenCuaErg": {
         "title": "Câu chuyện của ERG",
         "subtitle": "Về chúng tôi",
         "quote": "Khơi nguồn trí tuệ – Dẫn lối tương lai",
+        "intro": {
+            "title": "Khát vọng trong kỷ nguyên số",
+            "content": "Giữa làn sóng chuyển đổi số mạnh mẽ, khi giáo dục toàn cầu đối mặt với yêu cầu đổi mới để bắt nhịp thời đại, {brand} ra đời với một khát vọng lớn: biến công nghệ trở thành chiếc cầu nối bền vững giữa tri thức và con người.",
+            "highlight": "\"Chúng tôi không chỉ dạy công nghệ, chúng tôi dùng công nghệ để khai phóng tiềm năng con người.\""
+        },
+        "breakdown": {
+            "title": "\"Edu + Rise + Global\" – {brand} mang trong mình sứ mệnh khai phóng tiềm năng trí tuệ thông qua các giải pháp giáo dục thông minh và toàn diện.",
+            "subtitle": "Được sáng lập bởi những nhà giáo dục tâm huyết cùng đội ngũ chuyên gia công nghệ sâu sắc, {brand} là sự giao thoa giữa tư duy giáo dục tiến bộ và năng lực sáng tạo đột phá trong kỷ nguyên số.",
+            "items": {
+                "edu": {
+                    "label": "Education - Giáo dục",
+                    "desc": "Nền tảng cốt lõi, nơi tri thức được truyền tải bằng sự tận tâm và phương pháp sư phạm hiện đại."
+                },
+                "rise": {
+                    "label": "Rise - Vươn tầm",
+                    "desc": "Sự phát triển không ngừng, khát vọng vươn lên và đổi mới sáng tạo để thích ứng với thế giới biến động."
+                },
+                "global": {
+                    "label": "Global - Toàn cầu",
+                    "desc": "Tầm nhìn quốc tế, đưa tiêu chuẩn giáo dục toàn cầu đến với người học Việt Nam."
+                }
+            }
+        },
+        "features": {
+            "title": "Điều Gì Tạo Nên {brand}?",
+            "items": {
+                "pioneer": {
+                    "title": "Tiên Phong",
+                    "desc": "Luôn đi đầu trong việc áp dụng các công nghệ phương pháp giáo dục mới vào giảng dạy."
+                },
+                "heart": {
+                    "title": "Tâm Huyết",
+                    "desc": "Đội ngũ giáo viên không chỉ là người truyền đạt kiến thức mà còn là người truyền lửa đam mê."
+                },
+                "rocket": {
+                    "title": "Đột Phá",
+                    "desc": "Tạo ra những bước nhảy vọt về năng lực số cho học viên, mở ra cánh cửa sự nghiệp tương lai."
+                }
+            }
+        },
         "cta": {
+            "title": "Hãy cùng chúng tôi viết tiếp câu chuyện này",
             "join": "Gia nhập đội ngũ ERG",
             "contact": "Liên hệ hợp tác"
         }
@@ -56,9 +123,31 @@
         "badge": "Chương trình đào tạo chuẩn quốc tế",
         "heading": "Khơi Nguồn Trí Tuệ — Dẫn Lối Tương Lai",
         "subheading": "Hệ thống đào tạo đa dạng từ Tin học văn phòng đến Công nghệ cao, giúp bạn tự tin làm chủ công nghệ và bứt phá trong sự nghiệp.",
+        "stats": {
+            "experience": "Năm kinh nghiệm",
+            "courses": "Khóa học chuyên sâu",
+            "students": "Học viên tiêu biểu",
+            "quality": "Cam kết chất lượng"
+        },
         "fields": {
             "title": "Các Lĩnh Vực Đào Tạo",
+            "description": "Được thiết kế lộ trình bài bản, cập nhật xu hướng công nghệ mới nhất và cấp chứng chỉ có giá trị toàn cầu.",
+            "programLabel": "Chương trình",
             "more": "Xem chi tiết"
+        },
+        "why": {
+            "teachers": {
+                "title": "Giảng viên chuyên gia",
+                "desc": "Đội ngũ giảng viên giàu kinh nghiệm thực chiến, có chứng chỉ sư phạm quốc tế và tận tâm với học viên."
+            },
+            "practice": {
+                "title": "Thực hành chuyên sâu",
+                "desc": "Thời lượng thực hành chiếm 70%, học trên dự án thực tế giúp học viên thành thạo kỹ năng ngay tại lớp."
+            },
+            "award": {
+                "title": "Chứng chỉ uy tín",
+                "desc": "Hỗ trợ thi và cấp các chứng chỉ Quốc tế (MOS, IC3) và Quốc gia, có giá trị trọn đời trên toàn cầu."
+            }
         },
         "cta": {
             "title": "Bạn chưa biết bắt đầu từ đâu?",

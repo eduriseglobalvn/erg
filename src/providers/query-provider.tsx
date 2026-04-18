@@ -1,9 +1,9 @@
 "use client"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import * as React from "react"
 import { setGlobalQueryClient } from "@/lib/logout-utils"
+import { FirebaseAnalyticsProvider } from "@/providers/FirebaseAnalyticsProvider"
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
     const [queryClient] = React.useState(
@@ -31,19 +31,9 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <QueryClientProvider client={queryClient}>
-            {children}
+            <FirebaseAnalyticsProvider>
+                {children}
+            </FirebaseAnalyticsProvider>
         </QueryClientProvider>
     )
-}
-
-export function QueryDevtools() {
-    return (
-        <>
-            {process.env.NODE_ENV === 'development' && (
-                <ReactQueryDevtools
-                    initialIsOpen={false}
-                />
-            )}
-        </>
-    );
 }

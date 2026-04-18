@@ -1,0 +1,481 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1775548424928,
+  "projectRoot": "/Users/vuong/ERG.Workspace/erg",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "next",
+        "version": "16.2.1",
+        "category": "fullstack"
+      },
+      {
+        "name": "react",
+        "version": "19.2.1",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.1",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "dev": "bun run next dev --turbo",
+      "build": "bun run next build",
+      "analyze": "bun run next build",
+      "start": "bun run next start",
+      "lint": "bun run eslint",
+      "refresh-baseline-browser-mapping": "bun add baseline-browser-mapping@latest -D"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": "type-based"
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs",
+      "public",
+      "src"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 2,
+      "lastAccessed": 1775548424858,
+      "keyFiles": [
+        "API_SPEC_IMAGE_MANAGEMENT.md",
+        "image-management-integration.md"
+      ]
+    },
+    "md": {
+      "path": "md",
+      "purpose": null,
+      "fileCount": 5,
+      "lastAccessed": 1775548424863,
+      "keyFiles": [
+        "ADMIN-NOTIFICATION-MONITOR-FRONTEND.md",
+        "AUTO-CRAWL-HIDDEN-CATEGORY-REQUIREMENTS.md",
+        "FE-implement.md",
+        "REVIEW-FRONTEND.md",
+        "REVIEW-OPTIMIZATION-PLAN.md"
+      ]
+    },
+    "messages": {
+      "path": "messages",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1775548424875,
+      "keyFiles": []
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 7,
+      "lastAccessed": 1775548424876,
+      "keyFiles": [
+        "erg.png",
+        "file.svg",
+        "globe.svg",
+        "iconerg.png",
+        "next.svg"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 3,
+      "lastAccessed": 1775548424877,
+      "keyFiles": [
+        "favicon.ico",
+        "proxy.ts",
+        "proxy.ts.demo"
+      ]
+    },
+    "src/app": {
+      "path": "src/app",
+      "purpose": "Application code",
+      "fileCount": 9,
+      "lastAccessed": 1775548424879,
+      "keyFiles": [
+        "default.tsx",
+        "error.tsx",
+        "global-error.tsx"
+      ]
+    },
+    "src/components": {
+      "path": "src/components",
+      "purpose": "UI components",
+      "fileCount": 5,
+      "lastAccessed": 1775548424879,
+      "keyFiles": [
+        "FloatingContact.tsx",
+        "Footer.tsx",
+        "Header.tsx"
+      ]
+    },
+    "src/lib": {
+      "path": "src/lib",
+      "purpose": "Library code",
+      "fileCount": 3,
+      "lastAccessed": 1775548424880,
+      "keyFiles": [
+        "logout-utils.ts",
+        "tiptap-utils.ts",
+        "utils.ts"
+      ]
+    },
+    "src/mocks": {
+      "path": "src/mocks",
+      "purpose": "Mock data",
+      "fileCount": 8,
+      "lastAccessed": 1775548424881,
+      "keyFiles": [
+        "chart-data.ts",
+        "constants.ts",
+        "courses.mock.tsx"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src/components/admin/posts/posts-table.tsx",
+      "accessCount": 82,
+      "lastAccessed": 1775286343945,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 51,
+      "lastAccessed": 1776094847909,
+      "type": "directory"
+    },
+    {
+      "path": "",
+      "accessCount": 18,
+      "lastAccessed": 1775832236153,
+      "type": "directory"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 14,
+      "lastAccessed": 1775573579795,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-ai-writer.ts",
+      "accessCount": 12,
+      "lastAccessed": 1775285647714,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-page-tracking.ts",
+      "accessCount": 11,
+      "lastAccessed": 1775548461179,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-seo.ts",
+      "accessCount": 10,
+      "lastAccessed": 1775285540926,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-auth.ts",
+      "accessCount": 9,
+      "lastAccessed": 1776094855507,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-permission.ts",
+      "accessCount": 8,
+      "lastAccessed": 1775283851260,
+      "type": "file"
+    },
+    {
+      "path": "src/components/admin/shared/protected-route.tsx",
+      "accessCount": 6,
+      "lastAccessed": 1775283261272,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/logout-utils.ts",
+      "accessCount": 6,
+      "lastAccessed": 1775283929302,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-login.ts",
+      "accessCount": 5,
+      "lastAccessed": 1775283754245,
+      "type": "file"
+    },
+    {
+      "path": "src/app",
+      "accessCount": 5,
+      "lastAccessed": 1775552341544,
+      "type": "directory"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1776095585022,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-permission-sync.ts",
+      "accessCount": 4,
+      "lastAccessed": 1775283247490,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-polling.ts",
+      "accessCount": 4,
+      "lastAccessed": 1775285283218,
+      "type": "file"
+    },
+    {
+      "path": "next.config.ts",
+      "accessCount": 4,
+      "lastAccessed": 1775549569132,
+      "type": "file"
+    },
+    {
+      "path": "src/components",
+      "accessCount": 4,
+      "lastAccessed": 1775551712072,
+      "type": "directory"
+    },
+    {
+      "path": "src/hooks/use-analytics.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775229544136,
+      "type": "file"
+    },
+    {
+      "path": "src/app/@admin/layout.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1775283246210,
+      "type": "file"
+    },
+    {
+      "path": "src/services/analytics.api.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775283265867,
+      "type": "file"
+    },
+    {
+      "path": "src/services/index.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775283777604,
+      "type": "file"
+    },
+    {
+      "path": "src/app/@admin/(dashboard)/page.tsx",
+      "accessCount": 3,
+      "lastAccessed": 1775548691790,
+      "type": "file"
+    },
+    {
+      "path": "src/middleware.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775229577112,
+      "type": "file"
+    },
+    {
+      "path": "src/components/admin/shared/can.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1775266606565,
+      "type": "file"
+    },
+    {
+      "path": "src/services",
+      "accessCount": 2,
+      "lastAccessed": 1775283692343,
+      "type": "directory"
+    },
+    {
+      "path": "src/hooks/use-mobile.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775285171427,
+      "type": "file"
+    },
+    {
+      "path": "src/app/@admin",
+      "accessCount": 2,
+      "lastAccessed": 1775285183279,
+      "type": "directory"
+    },
+    {
+      "path": "src/components/admin/ui/skeleton.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1775548478645,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/utils.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775548551378,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-menu-navigation.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775551701040,
+      "type": "file"
+    },
+    {
+      "path": "src/lib",
+      "accessCount": 1,
+      "lastAccessed": 1775229199353,
+      "type": "directory"
+    },
+    {
+      "path": "src/app/@admin/(dashboard)",
+      "accessCount": 1,
+      "lastAccessed": 1775229212494,
+      "type": "directory"
+    },
+    {
+      "path": "src/app/@admin/(dashboard)/layout.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775229220667,
+      "type": "file"
+    },
+    {
+      "path": "src/services/access-control.api.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775229483041,
+      "type": "file"
+    },
+    {
+      "path": "src/services/users.api.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775229483105,
+      "type": "file"
+    },
+    {
+      "path": "src/components/admin/dashboard/visitors-chart.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775229503852,
+      "type": "file"
+    },
+    {
+      "path": "src/components/admin/dashboard/analytics-bar-chart.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775229503902,
+      "type": "file"
+    },
+    {
+      "path": "src/components/admin/dashboard/analytics-pie-chart.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775229503954,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks",
+      "accessCount": 1,
+      "lastAccessed": 1775229512445,
+      "type": "directory"
+    },
+    {
+      "path": "src/components/admin/dashboard/analytics-radial-chart.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775229526763,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-tiptap-editor.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775229543815,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/tiptap-utils.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775229544083,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/useNotifications.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775229553799,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-user.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775229553874,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-websocket.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775229554126,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-edit-post.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775229565960,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-create-post.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775229566149,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-debounce.ts",
+      "accessCount": 1,
+      "lastAccessed": 1775229577009,
+      "type": "file"
+    },
+    {
+      "path": "src/components/admin/shared/error-boundary.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775229577214,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

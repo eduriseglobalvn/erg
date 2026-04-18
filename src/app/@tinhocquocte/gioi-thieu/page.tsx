@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
 import { Target, Compass, Award, Users, BookOpen, Star, CheckCircle2, Globe, TrendingUp } from 'lucide-react';

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { authApi, httpClient } from '@/services';
+import { authApi } from '@/services';
+import { RateLimitError } from '@/services/http-client';
 import { toast } from 'sonner';
 
 interface LoginDto {
@@ -26,28 +27,18 @@ export function useLoginMutation() {
             if (data) {
                 // Access token và Refresh token đã được Next.js proxy set qua HttpOnly cookies.
                 // Đồng thời proxy cũng set flag "isLoggedIn=true" (non-HttpOnly) để client check.
+                queryClient.invalidateQueries({ queryKey: ['auth'] });
+                toast.success('Đăng nhập thành công!');
 
-                // Dữ liệu User, Roles và Permissions sẽ được load tự động qua useAuth
-                try {
-                    // Fetch auth status immediately để pre-warm cache
-                    await httpClient('/sessions/current', {
-                        method: 'GET',
-                        requireAuth: true,
-                    });
-
-                    // Invalidate auth queries để re-fetch và load data
-                    queryClient.invalidateQueries({ queryKey: ['auth'] });
-
-                    toast.success('Đăng nhập thành công!');
-
-                    // Delay để browser kịp hiện popup "Lưu mật khẩu"
-                    setTimeout(() => {
+                setTimeout(() => {
+                    const sessionData = res?.data || res;
+                    const isCompleted = sessionData?.user?.isProfileCompleted;
+                    if (isCompleted === false) {
+                        window.location.href = '/onboarding';
+                    } else {
                         window.location.href = '/';
-                    }, 500);
-                } catch (e) {
-                    console.error('Failed to fetch session:', e);
-                    window.location.href = '/';
-                }
+                    }
+                }, 250);
             } else {
                 throw new Error('Không nhận được Token từ máy chủ');
             }
@@ -55,6 +46,16 @@ export function useLoginMutation() {
         onError: (error: any) => {
             const errorMessage = error.message || '';
             const lowered = errorMessage.toLowerCase();
+
+            // Xử lý 429 Rate Limit (BE trả khi đăng nhập sai quá nhiều lần)
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(
+                    `Đã đăng nhập sai quá nhiều lần. Vui lòng thử lại sau ${retrySec} giây.`,
+                    { duration: Infinity }
+                );
+                return;
+            }
 
             // Xử lý lỗi 403 Account not activated
             if (

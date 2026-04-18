@@ -8,6 +8,9 @@
         "search": "Tìm kiếm",
         "noJobs": "Không tìm thấy công việc nào."
     },
+    "Jobs": {
+        "title": "Vị trí đang tuyển dụng"
+    },
     "Stats": {
         "branches": "Chi nhánh",
         "students": "Học viên",
@@ -24,7 +27,8 @@
         "apply": "Ứng Tuyển",
         "hot": "Hot",
         "urgent": "Tuyển gấp",
-        "new": "Mới"
+        "new": "Mới",
+        "postDate": "Ngày đăng"
     },
     "Detail": {
         "back": "Quay lại danh sách việc làm",
@@ -119,6 +123,130 @@
                 "title": "Tiện Nghi",
                 "sub": "Laptop, PC cấu hình cao"
             }
+        },
+        "badges": {
+            "topEmployer": "Top Employer",
+            "eduTech": "Trong lĩnh vực giáo dục công nghệ"
+        }
+    },
+    "About": {
+        "title": "Về Tuyển dụng ERG",
+        "description": "Edurise Global (ERG) là đơn vị tiên phong trong lĩnh vực giáo dục công nghệ tại Việt Nam.",
+        "vision": {
+            "title": "Hệ sinh thái Giáo dục",
+            "desc": "Chúng tôi kiến tạo môi trường nơi công nghệ và con người hòa quyện để mang lại giá trị thực cho cộng đồng."
+        },
+        "stats": {
+            "title": "Quy mô & Tầm ảnh hưởng"
+        },
+        "missionTitle": "Sứ mệnh của chúng tôi",
+        "missionSub": "Kết nối Tri thức, Khai phóng Tiềm năng",
+        "pillarsTitle": "Trụ cột phát triển nghề nghiệp",
+        "pillarsCulture": "Văn hóa & Giá trị",
+        "pillarsPolicy": "Chính sách & Phúc lợi",
+        "pillarsTraining": "Đào tạo & Phát triển"
+    },
+    "Culture": {
+        "title": "Văn hóa ERG",
+        "subtitle": "DNA Của Chúng Tôi",
+        "badge": "Văn hóa doanh nghiệp",
+        "heading": "Người EDURISE",
+        "description": "Tại ERG, chúng tôi không chỉ dạy Tin học. Chúng tôi truyền cảm hứng để thế hệ trẻ làm chủ công nghệ và kiến tạo tương lai.",
+        "quote": "Mục tiêu của Edurise Global không chỉ dừng lại ở việc cung cấp kiến thức. Chúng tôi muốn xây dựng một môi trường nơi mỗi giáo viên là một người truyền lửa, và mỗi học sinh đều có cơ hội tiếp cận công nghệ bình đẳng theo tiêu chuẩn quốc tế.",
+        "director": "Ông Bùi Quốc Việt",
+        "position": "Giám đốc - EDURISE GLOBAL CO., LTD",
+        "values": {
+            "title": "5 Giá Trị Cốt Lõi",
+            "responsibility": {
+                "title": "Trách Nhiệm Xã Hội",
+                "desc": "Đóng góp vào sự phát triển bền vững thông qua đào tạo quốc tế."
+            },
+            "quality": {
+                "title": "Chất Lượng Vượt Trội",
+                "desc": "Cam kết mang lại sản phẩm giáo dục ưu việt nhất."
+            },
+            "cooperation": {
+                "title": "Hợp Tác & Phát Triển",
+                "desc": "Xây dựng môi trường làm việc cởi mở, cùng chia sẻ và lớn mạnh."
+            },
+            "customer": {
+                "title": "Khách Hàng Là Trung Tâm",
+                "desc": "Đặt lợi ích của học viên và đối tác lên hàng đầu."
+            },
+            "innovation": {
+                "title": "Sáng Tạo Đổi Mới",
+                "desc": "Công nghệ là động lực chuyển hóa, khuyến khích tư duy đột phá."
+            }
+        },
+        "commitment": "Luôn đồng hành cùng sự phát triển của Giáo dục Việt Nam.",
+        "life": {
+            "title": "Nhịp sống Edurise",
+            "sub": "Những khoảnh khắc nhiệt huyết và sáng tạo của đội ngũ ERG.",
+            "stem": "Giờ học STEM đầy cảm hứng",
+            "training": "Đào tạo Giáo viên",
+            "teambuilding": "Team Building",
+            "workshop": "Hội thảo Công nghệ Giáo dục"
+        }
+    },
+    "HRPolicy": {
+        "title": "Chính Sách & Phúc Lợi",
+        "description": "Edurise Global cam kết mang đến môi trường làm việc công bằng, minh bạch và chế độ đãi ngộ xứng đáng.",
+        "badge": "Sự nghiệp vững chắc",
+        "income": {
+            "title": "Thu Nhập Cạnh Tranh",
+            "list": [
+                "Lương thỏa thuận theo năng lực giảng dạy & bằng cấp (IC3, MOS).",
+                "Thưởng hiệu quả công việc định kỳ.",
+                "Thưởng các dịp Lễ, Tết, lương tháng 13."
+            ]
+        },
+        "security": {
+            "title": "An Tâm Công Tác",
+            "list": [
+                "Đóng BHXH, BHYT, BHTN đầy đủ theo quy định Nhà nước.",
+                "Chế độ nghỉ phép năm theo luật Lao động.",
+                "Khám sức khỏe định kỳ hàng năm."
+            ]
+        },
+        "environment": {
+            "title": "Môi Trường Hiện Đại",
+            "list": [
+                "Làm việc tại trụ sở Q1 hoặc chi nhánh Bình Phú hiện đại.",
+                "Trang bị đầy đủ thiết bị, phần mềm bản quyền.",
+                "Tham gia các hoạt động Team Building sôi nổi."
+            ]
+        },
+        "training": {
+            "title": "Đào tạo & Phát triển chuyên môn",
+            "desc": "Việc học không bao giờ dừng lại. Chúng tôi nâng cao năng lực giáo viên theo tiêu chuẩn quốc tế.",
+            "programs": {
+                "professional": {
+                    "title": "Tập huấn nghiệp vụ",
+                    "desc": "Phương pháp giảng dạy STEM, IC3, MOS định kỳ."
+                },
+                "tech": {
+                    "title": "Cập nhật công nghệ",
+                    "desc": "Tiếp cập AI, Lập trình ứng dụng vào bài giảng."
+                }
+            }
+        },
+        "careerPath": {
+            "title": "Lộ Trình Thăng Tiến",
+            "step1": { "title": "Giáo viên / Nhân viên", "sub": "Thực hiện công tác chuyên môn" },
+            "step2": { "title": "Giáo viên nòng cốt / Leader", "sub": "Phụ trách nhóm, hỗ trợ chuyên môn" },
+            "step3": { "title": "Tổ trưởng Chuyên môn", "sub": "Quản lý chương trình, đào tạo nhân sự" },
+            "step4": { "title": "Quản lý / Ban Giám đốc", "sub": "Hoạch định chiến lược" }
+        },
+        "regulations": {
+            "title": "Trách nhiệm & Quy định chung",
+            "list": [
+                "Tuân thủ các quy định và chính sách của tổ chức.",
+                "Tham gia đầy đủ các buổi họp, sự kiện Công ty.",
+                "Soạn thảo giáo án đúng tiến độ.",
+                "Đảm bảo kỷ luật và môi trường học tập tích cực.",
+                "Bảo quản tốt thiết bị, tài sản.",
+                "Hỗ trợ đồng nghiệp nhiệt tình."
+            ]
         }
     },
     "CTA": {
@@ -126,9 +254,5 @@
         "subtitle": "Nếu bạn chưa tìm thấy vị trí phù hợp, đừng ngần ngại gửi CV cho chúng tôi.",
         "sendCV": "Gửi CV Ngay",
         "zaloHR": "Chat Zalo HR"
-    },
-    "Van Hoa": {
-        "title": "Văn hóa ERG",
-        "subtitle": "Nơi bạn được là chính mình"
     }
 }

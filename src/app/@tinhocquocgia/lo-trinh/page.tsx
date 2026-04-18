@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { BookOpen, CheckCircle2, GraduationCap } from 'lucide-react';
 import Link from 'next/link';

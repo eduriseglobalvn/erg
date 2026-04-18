@@ -3,6 +3,7 @@
 import * as React from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { reviewsApi, Review, ReviewStats } from "@/services/reviews.api"
+import { RateLimitError } from "@/services/http-client"
 import { Star, User, Loader2, CheckCircle2, ChevronDown, ThumbsUp, Pin } from "lucide-react"
 import { Button } from "@/components/admin/ui/button"
 import { Textarea } from "@/components/admin/ui/textarea"
@@ -35,13 +36,19 @@ export function Reviews({ targetId, targetType = 'post', className }: ReviewsPro
     const { mutate: submitReview, isPending } = useMutation({
         mutationFn: reviewsApi.create,
         onSuccess: () => {
-            toast.success("Cảm ơn đánh giá của bạn!")
+            toast.success("Cảm ơn đánh giá của bạn! Đánh giá đang chờ duyệt.")
             setRating(0)
             setComment("")
             queryClient.invalidateQueries({ queryKey: ['reviews', targetId] })
         },
-        onError: () => {
-            toast.error("Có lỗi xảy ra, vui lòng thử lại.")
+        onError: (error: any) => {
+            // Handle 429 Rate Limit
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(`Quá nhiều yêu cầu. Vui lòng thử lại sau ${retrySec} giây.`, { duration: Infinity });
+                return;
+            }
+            toast.error(error.message || "Có lỗi xảy ra, vui lòng thử lại.")
         }
     })
 
@@ -140,7 +147,7 @@ export function Reviews({ targetId, targetType = 'post', className }: ReviewsPro
                 />
 
                 <p className="text-xs text-slate-500 mb-4 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Thêm đánh giá tối thiểu 20 ký tự. Đánh giá sẽ được kiểm duyệt trước khi hiển thị công khai.
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Đánh giá tối thiểu 20 ký tự. Sau khi gửi, đánh giá sẽ được duyệt trước khi hiển thị công khai.
                 </p>
 
                 <Button onClick={handleSubmit} disabled={isPending}>

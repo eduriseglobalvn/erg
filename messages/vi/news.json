@@ -1,7 +1,7 @@
 {
     "Page": {
         "title": "Tin tức & Sự kiện",
-        "subtitle": "Cập nhật mới nhất từ ERG",
+        "subtitle": "Thông tin cập nhật mới nhất từ ERG và ngành giáo dục",
         "readMore": "Đọc tiếp",
         "publishedAt": "Ngày đăng",
         "author": "Tác giả",
@@ -10,6 +10,11 @@
         "share": "Chia sẻ",
         "relatedPosts": "Bài viết liên quan",
         "noNews": "Chưa có bài viết nào.",
-        "backToList": "Quay lại danh sách tin tức"
+        "backToList": "Quay lại danh sách tin tức",
+        "allNews": "Tất cả tin tức",
+        "loadingError": "Đã có lỗi xảy ra khi tải dữ liệu. Vui lòng thử lại sau.",
+        "noExcerpt": "Đang cập nhật nội dung ngắn cho bài viết này...",
+        "uncategorized": "Chưa phân loại",
+        "educationHighlights": "Điểm tin giáo dục"
     }
 }

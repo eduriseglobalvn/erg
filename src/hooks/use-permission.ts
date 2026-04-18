@@ -1,15 +1,28 @@
 "use client";
 
 import { useAuth } from "./use-auth";
+import { usePermissionStore } from "@/store/permission-store";
 
 /**
- * Hook để kiểm tra permission của user hiện tại
- * @param permission - Tên permission cần check (vd: 'posts.create')
- * @returns boolean - true nếu user có permission, false nếu không
+ * Hook để kiểm tra permission của user hiện tại.
+ * Ưu tiên Zustand store (instant) → TanStack Query cache (authoritative).
  */
 export const usePermission = (permission: string) => {
     const { data: auth, isLoading } = useAuth();
-    const hasPermission = auth?.permissions?.includes(permission) || false;
+
+    // Zustand store: instant check, synced from TanStack Query
+    const zustandHasPermission = usePermissionStore((s) =>
+        s.isLoaded ? s.hasPermission(permission) : undefined
+    );
+
+    // TanStack Query: authoritative source
+    const tqPermissions = auth?.permissions || [];
+
+    // Nếu Zustand đã loaded → dùng nó (nhanh), không thì fallback TanStack Query
+    const hasPermission =
+        zustandHasPermission !== undefined
+            ? zustandHasPermission
+            : tqPermissions.includes(permission);
 
     return { hasPermission, isLoading };
 };

@@ -1,24 +1,26 @@
 "use client"
 
 import { analyticsApi } from "@/services/analytics.api";
+import { devLog, devWarn } from "@/lib/dev-logger";
 
 /**
  * Hook to manually track events (behaviors)
  */
 export function useAnalytics() {
-    const trackEvent = (eventName: string, metadata: Record<string, any> = {}) => {
+    const trackEvent = (eventName: string, metadata: Record<string, unknown> = {}) => {
         try {
             if (typeof window === 'undefined') return;
 
-            // Get visitId from sessionStorage
             const visitId = sessionStorage.getItem('erg_visit_id');
 
-            if (process.env.NODE_ENV === 'development') {
-                console.log(`%c[Analytics] 🖱️ Đang track hành vi: ${eventName}`, "color: #ff8c00; font-weight: bold;", metadata);
-            }
+            devLog(
+                `%c[Analytics] 🖱️ Đang track hành vi: ${eventName}`,
+                "color: #ff8c00; font-weight: bold;",
+                metadata
+            );
 
             if (!visitId) {
-                console.warn('[Analytics] ❌ Không thể track behavior: Chưa có visitId trong bộ nhớ');
+                devWarn('[Analytics] ❌ Không thể track behavior: Chưa có visitId trong bộ nhớ');
                 return;
             }
 
@@ -31,12 +33,10 @@ export function useAnalytics() {
                     pathname: window.location.pathname,
                 }
             }).then(() => {
-                if (process.env.NODE_ENV === 'development') {
-                    console.log(`%c[Analytics] ✅ Đã gửi behavior: ${eventName}`, "color: #ff8c00;");
-                }
+                devLog(`%c[Analytics] ✅ Đã gửi behavior: ${eventName}`, "color: #ff8c00;");
             });
         } catch (error) {
-            console.error('[Analytics] trackEvent error:', error);
+            devWarn('[Analytics] trackEvent error:', error);
         }
     };
 

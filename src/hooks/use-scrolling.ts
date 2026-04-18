@@ -69,7 +69,7 @@ export function useScrolling(
       }
       clearTimeout(timeout)
     }
-  }, [target, debounce, fallbackToDocument, isScrolling])
+  }, [target, debounce, fallbackToDocument])
 
   return isScrolling
 }

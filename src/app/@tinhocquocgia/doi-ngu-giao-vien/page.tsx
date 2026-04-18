@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import Image from 'next/image';
 import { GraduationCap, Quote, Star, BookOpen, Facebook, Linkedin, Mail } from 'lucide-react';

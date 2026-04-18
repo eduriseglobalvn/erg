@@ -69,5 +69,17 @@ export const authApi = {
             method: 'POST',
             requireAuth: true,
         });
-    }
+    },
+
+    /**
+     * POST /auth/refresh - Làm mới access token
+     * Body: { refreshToken: string }
+     */
+    refreshToken: (data: { refreshToken: string }) => {
+        return httpClient<{ accessToken: string; refreshToken: string }>('/auth/refresh', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            requireAuth: false,
+        });
+    },
 };

@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { Shield, MessageCircle, Brain, Heart, ArrowRight, CheckCircle2 } from 'lucide-react';
 

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi, httpClient } from '@/services';
+import { RateLimitError } from '@/services/http-client';
 import { toast } from 'sonner';
 
 interface VerifyPinDto {
@@ -23,14 +24,11 @@ export function useVerifyPinMutation() {
             return res;
         },
         onSuccess: async (res: any) => {
-            // Lưu Token vào LocalStorage để Auto Login
-            if (res?.accessToken) {
-                localStorage.setItem('accessToken', res.accessToken);
-                localStorage.setItem('refreshToken', res.refreshToken);
-                if (res.user) {
-                    localStorage.setItem('user', JSON.stringify(res.user));
-                    if (res.user.id) localStorage.setItem('userId', res.user.id);
-                }
+            // Session tokens da duoc proxy set qua HttpOnly cookies.
+            // Chi giu lai mot it user metadata khong nhay cam de UI co the hien nhanh.
+            if (res?.user?.id) {
+                localStorage.setItem('userId', res.user.id);
+                if (res.user) localStorage.setItem('user', JSON.stringify(res.user));
             }
 
             toast.success('Kích hoạt thành công!');
@@ -45,27 +43,30 @@ export function useVerifyPinMutation() {
 
                 if (sessionData.user) {
                     localStorage.setItem('user', JSON.stringify(sessionData.user));
-
-                    if (sessionData.accessControl) {
-                        const permissions = sessionData.accessControl.permissions || [];
-                        const roles = sessionData.accessControl.roles || [];
-
-                        localStorage.setItem('permissions', JSON.stringify(permissions));
-                        localStorage.setItem('roles', JSON.stringify(roles));
-                    }
                 }
 
                 // Invalidate auth cache
                 queryClient.invalidateQueries({ queryKey: ['auth'] });
 
-                // Redirect về trang chủ
-                window.location.href = '/';
+                // ISSUE 1 FIX: Check isProfileCompleted → redirect phù hợp
+                const isCompleted = sessionData?.user?.isProfileCompleted;
+                if (isCompleted === false) {
+                    window.location.href = '/onboarding';
+                } else {
+                    window.location.href = '/';
+                }
             } catch (e) {
                 console.error('Failed to fetch session:', e);
                 window.location.href = '/';
             }
         },
         onError: (error: any) => {
+            // Handle 429 rate limit
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(`Quá nhiều yêu cầu. Vui lòng thử lại sau ${retrySec} giây.`, { duration: Infinity });
+                return;
+            }
             toast.error(error.message || 'Mã xác thực không chính xác');
         }
     });
@@ -83,6 +84,12 @@ export function useResendPinMutation() {
             toast.success('Đã gửi lại mã PIN mới');
         },
         onError: (error: any) => {
+            // Handle 429 rate limit
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(`Quá nhiều yêu cầu. Vui lòng thử lại sau ${retrySec} giây.`, { duration: Infinity });
+                return;
+            }
             toast.error(error.message || 'Không thể gửi lại mã');
         }
     });
@@ -98,8 +105,18 @@ export function useResetPasswordMutation() {
         },
         onSuccess: () => {
             toast.success('Mật khẩu đã được thay đổi thành công!');
+            // BE sẽ revoke tất cả sessions → redirect về login với message
+            setTimeout(() => {
+                window.location.href = '/auth/login?reason=password_changed';
+            }, 1500);
         },
         onError: (error: any) => {
+            // Handle 429 rate limit
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(`Quá nhiều yêu cầu. Vui lòng thử lại sau ${retrySec} giây.`, { duration: Infinity });
+                return;
+            }
             toast.error(error.message || 'Đổi mật khẩu thất bại');
         }
     });

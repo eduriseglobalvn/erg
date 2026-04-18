@@ -21,4 +21,11 @@ export function usePolling(callback: () => void, delay: number | null) {
 
         return () => clearInterval(id);
     }, [delay]);
+
+    // Cleanup savedCallback on unmount to avoid stale closures
+    useEffect(() => {
+        return () => {
+            savedCallback.current = () => {};
+        };
+    }, []);
 }

@@ -33,7 +33,10 @@ const GradientBlob = ({ className, color = "bg-blue-200" }: { className?: string
 );
 
 
+import { useTranslations } from 'next-intl';
+
 export default function MainContent() {
+    const t = useTranslations('home');
     const [currentSlide, setCurrentSlide] = useState(0);
     const testimonialRef = useRef<HTMLDivElement>(null);
 
@@ -85,16 +88,16 @@ export default function MainContent() {
                     <div className="relative bg-white/95 backdrop-blur-md p-8 md:p-12 rounded-2xl shadow-2xl max-w-xl animate-fade-in-up border-l-[6px] border-[var(--erg-red)] overflow-hidden">
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-[var(--erg-blue)]/10 rounded-full blur-xl"></div>
                         <h1 className="relative z-10 text-3xl md:text-5xl font-bold text-[var(--erg-blue)] mb-4 leading-tight whitespace-pre-line">
-                            {HERO_SLIDES[currentSlide].title}
+                            {t(`Hero.slides.${currentSlide}.title`)}
                         </h1>
                         <p className="relative z-10 text-lg text-gray-600 mb-8 leading-relaxed">
-                            {HERO_SLIDES[currentSlide].subtitle}
+                            {t(`Hero.slides.${currentSlide}.subtitle`)}
                         </p>
                         <Link
                             href="/linh-vuc-dao-tao"
                             className="relative z-10 inline-block bg-[var(--erg-red)] hover:bg-red-700 text-white px-8 py-3 rounded-lg font-bold transition-all transform hover:-translate-y-1 shadow-md uppercase tracking-wide text-sm"
                         >
-                            Khám phá các khóa học
+                            {t('Hero.cta')}
                         </Link>
                     </div>
                 </div>
@@ -145,39 +148,44 @@ export default function MainContent() {
                         <div className="lg:col-span-4 lg:sticky lg:top-24 relative">
                             <h4 className="flex items-center gap-2 text-[var(--erg-red)] font-bold uppercase tracking-widest text-sm mb-3">
                                 <span className="w-8 h-[2px] bg-[var(--erg-red)]"></span>
-                                Về chúng tôi
+                                {t('CoreValues.title')}
                             </h4>
                             <h2 className="text-3xl md:text-4xl font-bold text-[var(--erg-blue)] mb-6 leading-snug">
-                                Kiến tạo nền tảng vững chắc cho tương lai
+                                {t('CoreValues.heading')}
                             </h2>
                             <p className="text-gray-600 mb-8 leading-relaxed text-justify relative">
-                                Tại ERG, chúng tôi tin rằng mỗi học sinh đều có những tiềm năng riêng biệt cần được khơi dậy. Với phương pháp giáo dục hiện đại, kết hợp giữa lý thuyết và thực hành, chúng tôi cam kết mang đến môi trường học tập tốt nhất.                            </p>
+                                {t('CoreValues.description')}
+                            </p>
                             {/* Thêm whitespace-nowrap để chữ không bị rớt dòng xấu */}
                             <Link
                                 href="/gia-tri-cot-loi"
                                 className="group inline-flex items-center gap-2 text-[var(--erg-blue)] font-bold hover:text-[var(--erg-red)] transition-all whitespace-nowrap"
                             >
-                                <span className="border-b-2 border-transparent group-hover:border-[var(--erg-red)] pb-0.5">Xem chi tiết</span>
+                                <span className="border-b-2 border-transparent group-hover:border-[var(--erg-red)] pb-0.5">{t('CoreValues.viewDetail')}</span>
                                 <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
                             </Link>
                         </div>
 
                         <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {CORE_VALUES.map((item, index) => (
-                                <div key={index} className="bg-white p-8 rounded-2xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] hover:shadow-xl hover:border-[var(--erg-blue)]/30 hover:-translate-y-1 transition-all duration-300 group">
-                                    <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-[var(--erg-blue)] group-hover:text-white transition-all duration-300">
-                                        <item.icon size={28} className="text-[var(--erg-blue)] group-hover:text-white" />
+                            {CORE_VALUES.map((item, index) => {
+                                const detailKeys = ['quality', 'practice', 'tech'] as const;
+                                const key = detailKeys[index];
+                                return (
+                                    <div key={index} className="bg-white p-8 rounded-2xl border border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] hover:shadow-xl hover:border-[var(--erg-blue)]/30 hover:-translate-y-1 transition-all duration-300 group">
+                                        <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-[var(--erg-blue)] group-hover:text-white transition-all duration-300">
+                                            <item.icon size={28} className="text-[var(--erg-blue)] group-hover:text-white" />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-gray-900 mb-3">{t(`CoreValues.items.${key}.title`)}</h3>
+                                        <p className="text-gray-600 text-sm leading-relaxed">
+                                            {t(`CoreValues.items.${key}.content`)}
+                                        </p>
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                                    <p className="text-gray-600 text-sm leading-relaxed">
-                                        {item.content}
-                                    </p>
-                                </div>
-                            ))}
+                                );
+                            })}
                             <div className="bg-gradient-to-br from-[var(--erg-blue)] to-blue-900 p-8 rounded-2xl text-white flex flex-col justify-center items-center text-center relative overflow-hidden shadow-lg">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                                 <h3 className="text-5xl font-bold mb-2 relative z-10">8+</h3>
-                                <p className="text-blue-100 relative z-10">Năm kinh nghiệm đào tạo</p>
+                                <p className="text-blue-100 relative z-10">{t('Stats.experience')}</p>
                             </div>
                         </div>
                     </div>
@@ -193,21 +201,18 @@ export default function MainContent() {
 
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <div className="mb-12 text-center md:text-left">
-                        <h2 className="text-3xl md:text-4xl font-bold text-[var(--erg-blue)]">Lĩnh vực đào tạo</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold text-[var(--erg-blue)]">{t('Training.title')}</h2>
                         <div className="w-20 h-1 bg-[var(--erg-red)] mt-4 rounded-full mx-auto md:mx-0"></div>
                         <p className="mt-4 text-gray-600 max-w-2xl mx-auto md:mx-0">
-                            Các chương trình đào tạo trọng điểm được thiết kế bám sát nhu cầu thực tế của doanh nghiệp.
+                            {t('Training.description')}
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        {TRAINING_FIELDS.map((field) => {
-                            // --- LOGIC MỚI: TÁI SỬ DỤNG getSubdomainLink ---
-
-                            // 1. Tìm cấu hình tinhocquocte
+                        {TRAINING_FIELDS.map((field, index) => {
+                            const fieldKeys = ['thqt', 'thqg', 'thtn', 'kns', 'dtdm', 'ai'] as const;
+                            const key = fieldKeys[index];
                             const programConfig = TRAINING_PROGRAMS.find(p => p.label === field.title);
-
-                            // 2. Tạo URL: Nếu có config thì dùng hàm helper, không thì dùng link cũ
                             const targetUrl = programConfig
                                 ? getSubdomainLink(programConfig.subdomain)
                                 : field.link;
@@ -218,7 +223,7 @@ export default function MainContent() {
                                         <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all duration-500 z-10" />
                                         <Image
                                             src={field.image}
-                                            alt={field.title}
+                                            alt={t(`Training.fields.${key}.title`)}
                                             fill
                                             className="object-cover group-hover:scale-110 transition-transform duration-700"
                                             sizes="(max-width: 640px) 100vw, 300px"
@@ -227,18 +232,17 @@ export default function MainContent() {
 
                                     <div className="flex flex-col h-full items-start justify-center flex-1">
                                         <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-3 group-hover:text-[var(--erg-red)] transition-colors">
-                                            {field.title}
+                                            {t(`Training.fields.${key}.title`)}
                                         </h3>
                                         <p className="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed">
-                                            {field.description}
+                                            {t(`Training.fields.${key}.desc`)}
                                         </p>
 
-                                        {/* Link đã được xử lý tinhocquocte chuẩn xác */}
                                         <Link
                                             href={targetUrl}
                                             className="text-sm font-bold uppercase tracking-wider text-[var(--erg-red)] hover:underline underline-offset-4"
                                         >
-                                            Xem chương trình &rarr;
+                                            {t('Training.viewProgram')} &rarr;
                                         </Link>
                                     </div>
                                 </div>
@@ -256,11 +260,11 @@ export default function MainContent() {
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <div className="flex justify-between items-end mb-12">
                         <div>
-                            <h2 className="text-3xl md:text-4xl font-bold text-[var(--erg-blue)] mb-2">Tin tức & Sự kiện</h2>
+                            <h2 className="text-3xl md:text-4xl font-bold text-[var(--erg-blue)] mb-2">{t('News.title')}</h2>
                             <div className="w-16 h-1 bg-[var(--erg-red)] rounded-full"></div>
                         </div>
                         <Link href="/tin-tuc" className="hidden md:flex items-center gap-2 text-gray-500 hover:text-[var(--erg-red)] transition-colors font-medium">
-                            Xem tất cả <ArrowRight size={18} />
+                            {t('News.viewAll')} <ArrowRight size={18} />
                         </Link>
                     </div>
 
@@ -273,7 +277,7 @@ export default function MainContent() {
                                 date={news.date}
                                 thumbnail={news.image}
                                 slug={news.slug}
-                                categoryName="Tin tức"
+                                categoryName={t('News.category')}
                             />
                         ))}
                     </div>
@@ -296,10 +300,10 @@ export default function MainContent() {
                     {/* Header */}
                     <div className="text-center mb-16">
                         <h4 className="text-[var(--erg-red)] font-bold uppercase tracking-widest text-sm mb-3">
-                            Giá trị khác biệt
+                            {t('Why.subtitle')}
                         </h4>
                         <h2 className="text-3xl md:text-5xl font-bold text-[var(--erg-blue)] mb-4">
-                            Lý do nên chọn ERG Global
+                            {t('Why.title')}
                         </h2>
                         <div className="w-24 h-1.5 bg-[var(--erg-red)] mx-auto rounded-full"></div>
                     </div>
@@ -307,7 +311,9 @@ export default function MainContent() {
                     {/* Grid Layout: 3 Cột đều nhau */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
 
-                        {WHY_CHOOSE_US.map((item) => {
+                        {WHY_CHOOSE_US.map((item, index) => {
+                            const whyKeys = ['teachers', 'standard', 'facilities', 'quality', 'commitment', 'cost'] as const;
+                            const key = whyKeys[index];
                             // --- GIAO DIỆN CHO THẺ CAM KẾT (Nền xanh, Chữ trắng) ---
                             if (item.isFeatured) {
                                 return (
@@ -323,21 +329,23 @@ export default function MainContent() {
                                                 </div>
 
                                                 <h3 className="text-xl font-bold text-white mb-3">
-                                                    {item.title}
+                                                    {t(`Why.items.${key}.title`)}
                                                 </h3>
                                                 <p className="text-blue-100 text-sm mb-6 leading-relaxed opacity-90">
-                                                    {item.desc}
+                                                    {t(`Why.items.${key}.desc`)}
                                                 </p>
                                             </div>
 
                                             {/* Phần số liệu: 2 cột ngang hàng */}
                                             <div className="grid grid-cols-2 gap-4 bg-black/20 rounded-xl p-4 border border-white/5 mt-auto">
-                                                {item.stats?.map((stat, idx) => (
-                                                    <div key={idx} className="text-center">
-                                                        <div className="text-2xl font-bold text-yellow-400 leading-none mb-1">{stat.value}</div>
-                                                        <div className="text-[10px] text-white/70 uppercase font-medium">{stat.label}</div>
-                                                    </div>
-                                                ))}
+                                                <div className="text-center">
+                                                    <div className="text-2xl font-bold text-yellow-400 leading-none mb-1">90%+</div>
+                                                    <div className="text-[10px] text-white/70 uppercase font-medium">{t('Why.items.commitment.stats.primary')}</div>
+                                                </div>
+                                                <div className="text-center">
+                                                    <div className="text-2xl font-bold text-yellow-400 leading-none mb-1">100%</div>
+                                                    <div className="text-[10px] text-white/70 uppercase font-medium">{t('Why.items.commitment.stats.university')}</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -351,10 +359,10 @@ export default function MainContent() {
                                         <item.icon size={28} className="text-[var(--erg-blue)] group-hover:text-white transition-colors" />
                                     </div>
                                     <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-[var(--erg-blue)] transition-colors">
-                                        {item.id}. {item.title}
+                                        {item.id}. {t(`Why.items.${key}.title`)}
                                     </h3>
                                     <p className="text-gray-600 text-sm leading-relaxed flex-grow">
-                                        {item.desc}
+                                        {t(`Why.items.${key}.desc`)}
                                     </p>
                                 </div>
                             );
@@ -369,8 +377,8 @@ export default function MainContent() {
 
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <div className="mb-12 text-center md:text-left">
-                        <h4 className="text-[var(--erg-red)] font-bold uppercase text-xs tracking-wider mb-2">Góc học viên</h4>
-                        <h2 className="text-3xl md:text-4xl font-bold text-[var(--erg-blue)]">Cảm nhận học viên</h2>
+                        <h4 className="text-[var(--erg-red)] font-bold uppercase text-xs tracking-wider mb-2">{t('Testimonials.subtitle')}</h4>
+                        <h2 className="text-3xl md:text-4xl font-bold text-[var(--erg-blue)]">{t('Testimonials.title')}</h2>
                     </div>
 
                     {/* Thẻ bao ngoài có class 'group' để điều khiển trạng thái hover */}

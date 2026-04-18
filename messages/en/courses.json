@@ -85,5 +85,40 @@
         "ctaTitle": "Ready for the digital era?",
         "ctaDesc": "Register for consultation today to receive a detailed learning roadmap most suited to your abilities.",
         "ctaButton": "Register for Consultation"
+    },
+    "tinhocthieunhi": {
+        "heroBadge": "★ Standard course for children aged 6 - 15",
+        "heroTitle1": "IGNITE PASSION",
+        "heroTitle2": "FUTURE TECHNOLOGY",
+        "heroDesc": "Equip computational thinking, logic, and problem-solving skills through Scratch & Python programming. A solid stepping stone to becoming a global digital citizen.",
+        "cta": {
+            "program": "View Program",
+            "consult": "Free Consultation"
+        },
+        "learning": {
+            "title": "What Will Children Learn?",
+            "subtitle": "Comprehensive development from thinking to soft skills",
+            "items": [
+                {
+                    "title": "Computational Thinking",
+                    "desc": "Practice perseverance and carefulness. Develop logical thinking and clear expression of ideas."
+                },
+                {
+                    "title": "Creativity & Independence",
+                    "desc": "Freedom to create their own games. Form a sense of self-discipline in solving unfinished work."
+                },
+                {
+                    "title": "Soft Skills",
+                    "desc": "Know how to divide and coordinate teamwork. Practice presentation skills and clear explanations."
+                }
+            ]
+        },
+        "coursesTitle": "Training Program",
+        "coursesSubtitle": "Designed to be vivid and intuitive for the age group.",
+        "footerNote": "Both programs are designed with pedagogical standards for {levels} students",
+        "footerNoteBold": "Elementary & Middle School",
+        "ctaTitle": "Invest in your child's future today",
+        "ctaDesc": "Leave your information for a consultation on the most suitable programming learning roadmap for your child's age and ability.",
+        "ctaButton": "Register for Trial Class"
     }
 }

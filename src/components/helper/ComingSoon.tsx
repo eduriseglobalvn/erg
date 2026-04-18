@@ -4,6 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Construction, ArrowLeft, Home } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 // Định nghĩa màu để dùng trực tiếp (nếu Tailwind config chưa nhận biến CSS)
 const ERG_BLUE = '#00008b';
@@ -15,9 +16,12 @@ interface ComingSoonProps {
 }
 
 export default function ComingSoon({
-                                       title = "Trang đang phát triển",
-                                       description = "Chúng tôi đang nỗ lực hoàn thiện nội dung này để mang đến trải nghiệm tốt nhất cho bạn. Vui lòng quay lại sau!"
+                                       title,
+                                       description
                                    }: ComingSoonProps) {
+    const t = useTranslations('common.ComingSoon');
+    const displayTitle = title || t('title');
+    const displayDescription = description || t('description');
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-4 text-center relative overflow-hidden">
 
@@ -40,10 +44,10 @@ export default function ComingSoon({
 
                 {/* Text Content */}
                 <h1 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: ERG_BLUE }}>
-                    {title}
+                    {displayTitle}
                 </h1>
                 <p className="text-gray-600 mb-8 leading-relaxed">
-                    {description}
+                    {displayDescription}
                 </p>
 
                 {/* Buttons Action */}
@@ -54,7 +58,7 @@ export default function ComingSoon({
                         style={{ backgroundColor: ERG_BLUE }}
                     >
                         <Home size={18} />
-                        Về trang chủ
+                        {t('home')}
                     </Link>
 
                     <button
@@ -62,7 +66,7 @@ export default function ComingSoon({
                         className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-300 transition-all"
                     >
                         <ArrowLeft size={18} />
-                        Quay lại
+                        {t('back')}
                     </button>
                 </div>
             </div>

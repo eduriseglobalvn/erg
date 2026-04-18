@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl';
 export default function RecruitmentContent() {
     const t = useTranslations('recruitment');
     const tp = useTranslations('recruitment.Process');
+    const tc = useTranslations('common');
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [searchInput, setSearchInput] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
@@ -139,7 +140,7 @@ export default function RecruitmentContent() {
                                 <div className="w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center mb-4 group-hover:border-[#cc0022] transition-colors bg-gray-50 hover:bg-white">
                                     <ArrowRight size={32} />
                                 </div>
-                                <span className="font-bold text-lg">{t('Buttons.viewAll', { ns: 'common' })}</span>
+                                <span className="font-bold text-lg">{tc('Buttons.viewAll')}</span>
                             </Link>
                         </div>
                     </div>
@@ -202,8 +203,8 @@ export default function RecruitmentContent() {
                                 <div className="absolute top-1/2 left-1/2 z-20 w-max -translate-x-1/2 -translate-y-1/2">
                                     <div className="bg-white p-6 rounded-2xl shadow-2xl border border-gray-100 text-center">
                                         <Trophy className="w-10 h-10 text-yellow-500 mx-auto mb-2" />
-                                        <div className="font-bold text-gray-800">Top Employer</div>
-                                        <div className="text-xs text-gray-500">In Education Tech</div>
+                                        <div className="font-bold text-gray-800">{t('Why.badges.topEmployer')}</div>
+                                        <div className="text-xs text-gray-500">{t('Why.badges.eduTech')}</div>
                                     </div>
                                 </div>
                             </div>

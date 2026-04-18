@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import {
     Heart, Star, Globe, Lightbulb, Users,
@@ -15,35 +13,35 @@ export default function CoreValuesContent() {
         {
             id: 1,
             title: t('values.community.title'),
-            content: "ERG đóng góp vào sự phát triển bền vững của xã hội thông qua các chương trình đào tạo quốc tế, nâng cao kỹ năng công nghệ cho cộng đồng.",
+            content: t('values.community.content'),
             icon: <Globe className="w-8 h-8 text-white" />,
             theme: "blue",
         },
         {
             id: 2,
             title: t('values.quality.title'),
-            content: "ERG cam kết mang lại những sản phẩm và dịch vụ với chất lượng tốt nhất thông qua việc đảm bảo tỷ lệ thành công tối ưu và trải nghiệm dịch vụ vượt trội.",
+            content: t('values.quality.content'),
             icon: <Star className="w-8 h-8 text-white" />,
             theme: "red",
         },
         {
             id: 3,
-            title: t('values.community.desc'),
-            content: "ERG xây dựng một môi trường làm việc đội nhóm, nơi mọi người cùng nhau chia sẻ kiến thức, kinh nghiệm và cùng nhau phát triển.",
+            title: t('values.collaboration.title'),
+            content: t('values.collaboration.content'),
             icon: <Users className="w-8 h-8 text-white" />,
             theme: "blue",
         },
         {
             id: 4,
             title: t('values.integrity.title'),
-            content: "ERG đặt lợi ích và sự hài lòng của khách hàng làm ưu tiên hàng đầu trên các khía cạnh về sự thấu hiểu, cải tiến chất lượng, minh bạch hóa, giữ đúng cam kết.",
+            content: t('values.integrity.content'),
             icon: <Heart className="w-8 h-8 text-white" />,
             theme: "red",
         },
         {
             id: 5,
             title: t('values.innovation.title'),
-            content: "Công nghệ không chỉ là công cụ, mà là động lực để chuyển hóa giáo dục. ERG thúc đẩy tinh thần đổi mới trong từng giải pháp, khuyến khích tư duy sáng tạo.",
+            content: t('values.innovation.content'),
             icon: <Lightbulb className="w-8 h-8 text-white" />,
             theme: "blue",
         }
@@ -69,7 +67,9 @@ export default function CoreValuesContent() {
                         {t('title')}
                     </h1>
                     <p className="text-lg md:text-2xl text-gray-500 max-w-3xl mx-auto font-light leading-relaxed">
-                        5 trụ cột định hình phong cách làm việc và chất lượng đào tạo tại <span className="text-[#cc0022] font-bold">Edurise Global</span>.
+                        {t.rich('hero', {
+                            brand: (chunks) => <span className="text-[#cc0022] font-bold">{chunks}</span>
+                        })}
                     </p>
                 </div>
             </section>
@@ -166,12 +166,12 @@ export default function CoreValuesContent() {
                 <div className="container mx-auto px-4 text-center relative z-10">
                     <div className="max-w-5xl mx-auto bg-white/60 backdrop-blur-md rounded-[3rem] p-8 md:p-16 border border-white shadow-2xl">
                         <Zap className="w-16 h-16 text-[#ffcc00] mx-auto mb-6 drop-shadow-md animate-bounce" />
-                        <h2 className="text-3xl md:text-5xl font-bold text-[#00008b] mb-6">Sẵn sàng đồng hành cùng ERG?</h2>
+                        <h2 className="text-3xl md:text-5xl font-bold text-[#00008b] mb-6">{t('cta.title')}</h2>
                         <p className="text-gray-600 mb-10 max-w-3xl mx-auto text-lg md:text-xl leading-relaxed">
-                            Chúng tôi luôn chào đón những nhân tài chia sẻ cùng hệ giá trị để kiến tạo tương lai giáo dục.
+                            {t('cta.desc')}
                         </p>
                         <a href="https://tuyendung.erg.edu.vn" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center bg-[#cc0022] hover:bg-red-700 text-white font-bold text-lg md:text-xl py-4 px-8 md:py-5 md:px-12 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 group transform hover:-translate-y-1">
-                            {tc('learnMore')}
+                            {t('cta.button')}
                             <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform" />
                         </a>
                     </div>

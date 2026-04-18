@@ -1,15 +1,20 @@
 {
     "Page": {
         "title": "News & Events",
-        "subtitle": "Latest updates from ERG",
+        "subtitle": "Latest updates from ERG and the education industry",
         "readMore": "Read more",
-        "publishedAt": "Published",
+        "publishedAt": "Post date",
         "author": "Author",
         "category": "Category",
         "tags": "Tags",
         "share": "Share",
-        "relatedPosts": "Related Articles",
+        "relatedPosts": "Related posts",
         "noNews": "No articles yet.",
-        "backToList": "Back to news list"
+        "backToList": "Back to news list",
+        "allNews": "All News",
+        "loadingError": "An error occurred while loading data. Please try again later.",
+        "noExcerpt": "Short content for this article is being updated...",
+        "uncategorized": "Uncategorized",
+        "educationHighlights": "Education Highlights"
     }
 }

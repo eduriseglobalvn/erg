@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
+import { RSS_SOURCE_URL } from '@/lib/rss';
 
 export async function GET() {
-    // Bỏ qua lỗi SSL nếu server đích dùng chứng chỉ tự ký hoặc cũ
-    const RSS_URL = 'https://giaoducthoidai.vn/rss/giao-duc-17.rss';
-
     try {
-        const response = await fetch(RSS_URL, {
+        const response = await fetch(RSS_SOURCE_URL, {
             method: 'GET',
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

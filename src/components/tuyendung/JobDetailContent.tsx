@@ -173,7 +173,7 @@ const JobDetailContent = ({ job, employer }: JobDetailContentProps) => {
                             </p>
                             <div className="h-64 rounded-lg overflow-hidden border border-gray-200">
                                 <iframe
-                                    src={`https://maps.google.com/maps?q=${encodeURIComponent('Số 40-42, Đường Bình Phú, Phường 11, Quận 6, TP. Hồ Chí Minh')}&t=&z=16&ie=UTF8&iwloc=&output=embed`}
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.8998521705817!2d106.62756084016806!3d10.742201459866777!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f005ce5dca9%3A0x973ca9cb9b1195ff!2zR3M0MC00MiBCw6xuaCBQaMO6!5e0!3m2!1sen!2s!4v1774510064238!5m2!1sen!2s"
                                     width="100%"
                                     height="100%"
                                     style={{ border: 0 }}

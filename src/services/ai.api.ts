@@ -17,14 +17,17 @@ export const aiApi = {
     },
 
     // 2. Check Status: Token cũng tự động có
+    // [BE v2026-03] Giờ trả về seoScore, readabilityScore, keywordDensity khi completed
     checkStatus: (jobId: string) => {
         return httpClient<{
             state: 'completed' | 'failed' | 'active' | 'waiting';
             progress: number;
-            // UPDATE: Backend nên trả về data luôn để đỡ phải fetch lần 2
             data?: { title: string; content: string };
-            // Nếu Backend cũ của bạn trả về result.postId thì giữ nguyên dòng dưới:
-            // result?: { postId: string }
+            result?: { postId: string; slug?: string };
+            // [MỚI] SEO scores được tính tự động khi AI hoàn thành content
+            seoScore?: number;
+            readabilityScore?: number;
+            keywordDensity?: number;
         }>(`/ai-content/status/${jobId}`);
     },
 

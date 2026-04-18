@@ -10,18 +10,31 @@ export default getRequestConfig(async () => {
     const cookieStore = await cookies();
     const cookieLocale = cookieStore.get('NEXT_LOCALE')?.value;
 
-    // 2. Fall back to Accept-Language header
+    // 3. Resolve locale with Geo / Browser Detection
     const headerStore = await headers();
+    const country = headerStore.get('x-vercel-ip-country');
     const acceptLang = headerStore.get('accept-language') || '';
     const browserLocale = acceptLang.split(',')[0]?.split('-')[0]?.toLowerCase();
 
-    // 3. Resolve locale with validation
-    const resolved: Locale =
-        locales.includes(cookieLocale as Locale)
-            ? (cookieLocale as Locale)
-            : locales.includes(browserLocale as Locale)
-                ? (browserLocale as Locale)
-                : defaultLocale;
+    // Mapping Strategy:
+    // a. Cookie (User explicit choice)
+    // b. Geolocation (Country-based)
+    // c. Browser Locale (Language-based)
+    // d. Default ('vi')
+    
+    let resolved: Locale = defaultLocale;
+
+    if (locales.includes(cookieLocale as Locale)) {
+        resolved = cookieLocale as Locale;
+    } else if (country) {
+        // If in Vietnam, always default to Vietnamese regardless of browser language
+        // unless they have a cookie set from a previous choice.
+        resolved = country === 'VN' ? 'vi' : 'en';
+    } else if (locales.includes(browserLocale as Locale)) {
+        resolved = browserLocale as Locale;
+    } else {
+        resolved = defaultLocale;
+    }
 
     return {
         locale: resolved,

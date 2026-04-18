@@ -1,18 +1,17 @@
 import React from "react";
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Inter, Lora, JetBrains_Mono, Oswald } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { headers, cookies } from "next/headers";
 import { AnalyticsTracker } from "@/components/analytics-tracker";
-import Link from 'next/link';
-import Image from 'next/image';
+import { ConsentBanner } from "@/components/ConsentBanner";
 import { QueryProvider } from "@/providers/query-provider";
 import { QueryDevtoolsWrapper } from "@/components/debug/query-devtools-wrapper";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getLocale } from 'next-intl/server';
+import { getMessages } from 'next-intl/server';
 import NextTopLoader from 'nextjs-toploader';
 
 const inter = Inter({
@@ -39,49 +38,28 @@ const oswald = Oswald({
     display: "swap",
 });
 
-// Lấy BASE_URL từ env, fallback an toàn cho SEO
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://erg.edu.vn";
-
-import { SEO_DATA, BRAND_SUFFIX } from "@/constants/seo.constants";
+import { SEO_DATA } from "@/constants/seo.constants";
 import { SchemaScript } from "@/components/seo/schema-script";
 import { MAIN_MENU_ITEMS } from "@/constants/MenuItem";
 import { Toaster } from "sonner";
 import { RedirectNotification } from "@/components/shared/redirect-notification";
 import { OfflineIndicator } from "@/components/shared/offline-indicator";
 import { SearchEngineMeta } from "@/components/seo/search-engine-meta";
-
-// Helper to get subdomain logic (shared with RootLayout)
-function getSubdomain(hostname: string, rootDomain: string) {
-    if (!hostname || hostname === rootDomain) return "";
-    return hostname.replace(`.${rootDomain}`, "").split(":")[0];
-}
+import { resolveSiteContextFromHeaders } from "@/lib/site-context";
+import { NextAuthProvider } from "@/providers/next-auth-provider";
+import { getServerSession } from "next-auth/next";
+import { nextAuthOptions } from "@/lib/next-auth";
 
 export async function generateMetadata(): Promise<Metadata> {
     const headerList = await headers();
-    // Vercel / serverless environments often set the real host in x-forwarded-host
-    const rawHost = headerList.get("x-forwarded-host") || headerList.get("host") || "";
-    const hostname = rawHost.split(":")[0];
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'erg.edu.local';
-    const subdomain = getSubdomain(hostname, rootDomain).toLowerCase();
-
-    // Xác định bộ dữ liệu SEO dựa trên subdomain
-    // Phải ép kiểu subdomain về keyof typeof SEO_DATA hoặc fallback về main
-    const seoKey = (subdomain && subdomain in SEO_DATA) ? (subdomain as keyof typeof SEO_DATA) : 'main';
+    const siteContext = resolveSiteContextFromHeaders(headerList);
+    const seoKey = (siteContext.siteKey in SEO_DATA
+        ? siteContext.siteKey
+        : 'main') as keyof typeof SEO_DATA;
 
     const currentSeo = SEO_DATA[seoKey];
 
-    const title = currentSeo.title;
-    const description = currentSeo.description;
-    const keywords = currentSeo.keywords;
-    const ogImage = currentSeo.ogImage;
-
-    // Exclude admin from SEO
-    const robots = subdomain === 'admin' ? { index: false, follow: false } : undefined;
-
-    // Dynamic Metadata Base
-    const baseUrl = subdomain && subdomain !== 'www'
-        ? `https://${subdomain}.erg.edu.vn`
-        : BASE_URL;
+    const robots = siteContext.isAdmin ? { index: false, follow: false } : undefined;
 
     return {
         icons: {
@@ -93,26 +71,26 @@ export async function generateMetadata(): Promise<Metadata> {
             ],
             apple: [{ url: 'https://media.erg.edu.vn/logo/erg.png', sizes: '180x180', type: 'image/png' }],
         },
-        metadataBase: new URL(baseUrl),
+        metadataBase: new URL(siteContext.baseUrl),
         robots,
         title: {
-            default: title,
-            // Nếu title con chưa có suffix, Next.js sẽ tự thêm. 
-            // Nhưng thiết kế mới: Page con sẽ tự define title tuyệt đối (absolute) để tránh lặp.
-            template: `%s | ${subdomain ? 'ERG' : 'Trung Tâm Ngoại Ngữ Tin Học ERG'}`,
+            default: currentSeo.title,
+            template: `%s | ${siteContext.isRoot ? 'Trung Tâm Ngoai Ngu Tin Hoc ERG' : 'ERG'}`,
         },
-        description,
-        keywords: keywords.join(", "),
+        description: currentSeo.description,
+        keywords: currentSeo.keywords.join(", "),
         openGraph: {
             type: 'website',
             locale: 'vi_VN',
-            url: baseUrl,
+            url: siteContext.baseUrl,
             siteName: 'Edurise Global',
-            title: subdomain ? title : `${title} | Edurise Global`,
-            description,
+            title: siteContext.isRoot
+                ? `${currentSeo.title} | Edurise Global`
+                : currentSeo.title,
+            description: currentSeo.description,
             images: [
                 {
-                    url: ogImage,
+                    url: currentSeo.ogImage,
                     width: 1200,
                     height: 630,
                     alt: 'Edurise Global - Kiến tạo tương lai số',
@@ -123,9 +101,11 @@ export async function generateMetadata(): Promise<Metadata> {
             card: 'summary_large_image',
             site: '@eduriseglobal',
             creator: '@eduriseglobal',
-            title: subdomain ? `${title} | Edurise Global` : title,
-            description,
-            images: [ogImage],
+            title: siteContext.isRoot
+                ? currentSeo.title
+                : `${currentSeo.title} | Edurise Global`,
+            description: currentSeo.description,
+            images: [currentSeo.ogImage],
         },
     };
 }
@@ -142,121 +122,123 @@ export default async function RootLayout(props: {
     tuyendung: React.ReactNode;
     elearning: React.ReactNode;
     admin: React.ReactNode;
+    noibo: React.ReactNode;
 }) {
-    // 1. Lấy Hostname thực tế từ Request
-    const headerList = await headers();
-    // Vercel / serverless proxy thường giấu host thật vào x-forwarded-host
-    let rawHost = headerList.get("x-forwarded-host") || headerList.get("host") || "";
-    let hostname = rawHost.split(":")[0];
-    // Local: erg.edu.local | Prod: erg.edu.vn
-    const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'erg.edu.local';
+    const [headerList, cookieStore, nextAuthSession] = await Promise.all([
+        headers(),
+        cookies(),
+        getServerSession(nextAuthOptions),
+    ]);
+    const siteContext = resolveSiteContextFromHeaders(headerList);
+    const seoKey = (siteContext.siteKey in SEO_DATA
+        ? siteContext.siteKey
+        : 'main') as keyof typeof SEO_DATA;
+    const slotOrChildren = (slot: React.ReactNode) => slot ?? props.children;
 
-    // Làm sạch hostname (bỏ port :3000 nếu có)
-    hostname = hostname.split(":")[0];
-
-    // 3. Tách subdomain sử dụng helper
-    const subdomain = getSubdomain(hostname, rootDomain).toLowerCase();
-
-    // 4. Quyết định hiển thị Slot nào dựa trên subdomain tĩnh
     let content;
     let currentMenu = MAIN_MENU_ITEMS;
 
-    // Import thêm các menu constants
     const {
         THQT_MENU_ITEMS, THQG_MENU_ITEMS, THTN_MENU_ITEMS,
         CDS_MENU_ITEMS, DTDM_MENU_ITEMS, AI_MENU_ITEMS, TUYEN_DUNG_MENU_ITEMS, ELEARNING_MENU_ITEMS
     } = await import("@/constants/MenuItem");
 
-    switch (subdomain) {
+    switch (siteContext.siteKey) {
         case 'ai':
-            content = props.ai;
+            content = slotOrChildren(props.ai);
             currentMenu = AI_MENU_ITEMS;
             break;
         case 'tinhocquocte':
-            content = props.tinhocquocte;
+            content = slotOrChildren(props.tinhocquocte);
             currentMenu = THQT_MENU_ITEMS;
             break;
         case 'tinhocquocgia':
-            content = props.tinhocquocgia;
+            content = slotOrChildren(props.tinhocquocgia);
             currentMenu = THQG_MENU_ITEMS;
             break;
         case 'tinhocthieunhi':
-            content = props.tinhocthieunhi;
+            content = slotOrChildren(props.tinhocthieunhi);
             currentMenu = THTN_MENU_ITEMS;
             break;
         case 'congdanso':
-            content = props.congdanso;
+            content = slotOrChildren(props.congdanso);
             currentMenu = CDS_MENU_ITEMS;
             break;
         case 'dientoandammay':
-            content = props.dientoandammay;
+            content = slotOrChildren(props.dientoandammay);
             currentMenu = DTDM_MENU_ITEMS;
             break;
         case 'tuyendung':
-            content = props.tuyendung;
+            content = slotOrChildren(props.tuyendung);
             currentMenu = TUYEN_DUNG_MENU_ITEMS;
             break;
         case 'elearning':
         case 'elerning':
-            content = props.elearning;
+            content = slotOrChildren(props.elearning);
             currentMenu = ELEARNING_MENU_ITEMS;
             break;
-        case 'admin': content = props.admin; break;
+        case 'noibo':
+            content = slotOrChildren(props.noibo);
+            break;
+        case 'admin':
+            content = slotOrChildren(props.admin);
+            break;
         case '':
         case 'www':
-            content = props.main;
+            content = slotOrChildren(props.main);
             currentMenu = MAIN_MENU_ITEMS;
             break;
         default:
-            content = props.main; // Fallback về trang chủ nếu subdomain lạ
+            content = slotOrChildren(props.main);
     }
 
-    // --- SCHEMA DATA (JSON-LD) ---
-    // Sử dụng SchemaScript component mới để quản lý tập trung
-    // Chỉ render các Schema cơ bản cấp Site tại đây. Các Schema chi tiết (Article, Course) sẽ nằm ở page.tsx
-
-    // Resolve locale from cookie
-    const cookieStore = await cookies();
     const locale = cookieStore.get('NEXT_LOCALE')?.value || 'vi';
     const messages = await getMessages();
 
     return (
-        <QueryProvider>
-            <html lang={locale} suppressHydrationWarning className={`${inter.variable} ${lora.variable} ${jetBrainsMono.variable} ${oswald.variable}`}>
-                <head>
-                    <GoogleAnalytics gaId="G-PF00V6RJDD" />
-                    <SearchEngineMeta subdomain={subdomain} />
-                </head>
-                <body
-                    className={`${inter.className} bg-gray-50 text-slate-800 antialiased flex flex-col min-h-screen overflow-x-hidden`}
-                    suppressHydrationWarning={true}
-                >
-                    <QueryDevtoolsWrapper />
-                    <NextIntlClientProvider locale={locale} messages={messages}>
-                        <AnalyticsTracker />
-                        <Toaster position="top-center" richColors />
-                        <React.Suspense fallback={null}>
-                            <RedirectNotification />
-                        </React.Suspense>
-                        <OfflineIndicator />
+        <html lang={locale} suppressHydrationWarning className={`${inter.variable} ${lora.variable} ${jetBrainsMono.variable} ${oswald.variable}`}>
+            <head>
+                <GoogleAnalytics gaId="G-PF00V6RJDD" />
+                <SearchEngineMeta subdomain={siteContext.siteKey} />
+            </head>
+            <body
+                className={`${inter.className} bg-gray-50 text-slate-800 antialiased flex flex-col min-h-screen overflow-x-hidden`}
+                suppressHydrationWarning={true}
+            >
+                <NextAuthProvider session={nextAuthSession}>
+                    <QueryProvider>
+                        <QueryDevtoolsWrapper />
+                        <NextIntlClientProvider locale={locale} messages={messages}>
+                            <AnalyticsTracker />
+                            <ConsentBanner />
+                            <Toaster position="top-center" richColors />
+                            <React.Suspense fallback={null}>
+                                <RedirectNotification />
+                            </React.Suspense>
+                            <OfflineIndicator />
 
-                        {/* Global Schemas */}
-                        <SchemaScript type="Organization" data={{}} domain={hostname} />
-                        <SchemaScript type="WebSite" data={{ name: SEO_DATA[subdomain as keyof typeof SEO_DATA]?.title || "Edurise Global" }} domain={hostname} />
+                        <SchemaScript type="Organization" data={{}} domain={siteContext.hostname} />
+                        <SchemaScript
+                            type="WebSite"
+                            data={{ name: SEO_DATA[seoKey]?.title || "Edurise Global" }}
+                            domain={siteContext.hostname}
+                        />
+                        <SchemaScript
+                            type="SiteNavigationElement"
+                            data={currentMenu}
+                            domain={siteContext.hostname}
+                        />
 
-                        {/* Sitelinks Navigation Schema */}
-                        <SchemaScript type="SiteNavigationElement" data={currentMenu} domain={hostname} />
+                            <NextTopLoader color="#00008b" showSpinner={false} />
 
-                        <NextTopLoader color="#00008b" showSpinner={false} />
+                            {content}
 
-                        {/* Render Slot tương ứng */}
-                        {content}
-
-                        <SpeedInsights />
-                        <Analytics />
-                    </NextIntlClientProvider>
-                </body>
-            </html>
-        </QueryProvider>
+                            <SpeedInsights />
+                            <Analytics />
+                        </NextIntlClientProvider>
+                    </QueryProvider>
+                </NextAuthProvider>
+            </body>
+        </html>
     );
 }

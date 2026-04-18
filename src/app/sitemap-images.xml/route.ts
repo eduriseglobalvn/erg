@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getPreferredBackendBaseUrl } from '@/lib/backend-url';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
-    const apiUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+    const apiUrl = getPreferredBackendBaseUrl();
 
     try {
         const response = await fetch(`${apiUrl}/api/sitemap/images.xml`, {

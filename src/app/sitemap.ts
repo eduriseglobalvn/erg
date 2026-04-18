@@ -1,5 +1,7 @@
 import { MetadataRoute } from 'next';
 import { headers } from 'next/headers';
+import { resolveSiteContext, resolveSiteContextFromHeaders } from '@/lib/site-context';
+import { getPreferredBackendBaseUrl } from '@/lib/backend-url';
 
 export const dynamic = 'force-dynamic';
 
@@ -84,21 +86,15 @@ const PAGES_CONFIG = {
 
 // ─── Helper ────────────────────────────────────────────────────────────────
 function buildStaticEntries(host: string, deployDate: Date): MetadataRoute.Sitemap {
-    const hostname = host.split(':')[0];
-    const isLocal = host.includes('localhost') || host.includes('.local');
-    const protocol = isLocal ? 'http' : 'https';
-    const domain = `${protocol}://${host}`;
-    const rootDomain = isLocal ? 'erg.edu.local' : 'erg.edu.vn';
-    const isRoot =
-        hostname === rootDomain ||
-        hostname === 'localhost' ||
-        hostname === `www.${rootDomain}`;
-    const subdomain = isRoot ? '' : hostname.replace(`.${rootDomain}`, '');
+    const siteContext = resolveSiteContext(host);
+    const isLocal = siteContext.protocol === 'http';
+    const domain = siteContext.baseUrl;
+    const port = host.includes(':') ? `:${host.split(':')[1]}` : '';
+    const localRootHost = host.includes('localhost') ? 'localhost' : siteContext.rootDomain;
 
     const entries: MetadataRoute.Sitemap = [];
 
-    if (isRoot) {
-        // Trang chủ + tất cả pages của main
+    if (siteContext.isRoot) {
         PAGES_CONFIG.main.forEach(route => {
             entries.push({
                 url: `${domain}${route.path}`,
@@ -108,25 +104,22 @@ function buildStaticEntries(host: string, deployDate: Date): MetadataRoute.Sitem
             });
         });
 
-        // Homepage của từng subdomain (cho sitemap root domain)
-        const port = process.env.PORT || 3000;
         Object.keys(PAGES_CONFIG)
             .filter(k => k !== 'main')
             .forEach(subKey => {
                 const subHost = isLocal
-                    ? `${subKey}.localhost:${port}`
-                    : `${subKey}.${rootDomain}`;
+                    ? `${subKey}.${localRootHost}${port}`
+                    : `${subKey}.${siteContext.rootDomain}`;
                 entries.push({
-                    url: `${protocol}://${subHost}`,
+                    url: `${siteContext.protocol}://${subHost}`,
                     lastModified: deployDate,
                     changeFrequency: 'daily',
                     priority: 0.9,
                 });
             });
     } else {
-        // Subdomain cụ thể — lấy đầy đủ pages của nó
         const subRoutes =
-            PAGES_CONFIG[subdomain as keyof typeof PAGES_CONFIG] ||
+            PAGES_CONFIG[siteContext.siteKey as keyof typeof PAGES_CONFIG] ||
             [{ path: '', priority: 1, changefreq: 'daily' }];
 
         subRoutes.forEach(route => {
@@ -144,14 +137,13 @@ function buildStaticEntries(host: string, deployDate: Date): MetadataRoute.Sitem
 
 // ─── Main export ───────────────────────────────────────────────────────────
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const apiUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+    const apiUrl = getPreferredBackendBaseUrl();
     const deployDate = new Date(process.env.BUILD_DATE || new Date().toISOString());
 
-    // Đọc host — nếu fail thì dùng root domain
-    let host = 'erg.edu.vn';
+    let host = resolveSiteContext('').host;
     try {
         const headersList = await headers();
-        host = headersList.get('host') || 'erg.edu.vn';
+        host = resolveSiteContextFromHeaders(headersList).host;
     } catch { /* fallback đã set trên */ }
 
     if (process.env.NODE_ENV === 'development') {
@@ -178,9 +170,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         if (!dynamicUrls.length) return staticEntries;
 
-        // 3. Merge: static trước, chỉ append những URL động (bài viết) chưa có
-        const protocol = host.includes('localhost') ? 'http' : 'https';
-        const domain = `${protocol}://${host}`;
+        const siteContext = resolveSiteContext(host);
+        const domain = siteContext.baseUrl;
         const existingUrls = new Set(staticEntries.map(e => e.url));
         const finalEntries: MetadataRoute.Sitemap = [...staticEntries];
 

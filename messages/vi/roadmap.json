@@ -1,0 +1,89 @@
+{
+    "title": "Chương Trình Đào Tạo",
+    "description": "Chúng tôi thiết kế lộ trình học tập linh hoạt, phù hợp với cả chương trình chính khóa tại trường và nhu cầu luyện thi cấp tốc tại trung tâm.",
+    "tabs": {
+        "school": "Liên kết đào tạo",
+        "center": "Luyện thi cấp tốc"
+    },
+    "note": "* {type, select, school {Lộ trình được thiết kế bám sát chương trình của Bộ GD&ĐT và chuẩn quốc tế.} center {Lớp luyện thi cấp tốc cam kết số lượng học viên ít, giáo viên kèm cặp sát sao.} other {}}",
+    "register": "Đăng ký ngay",
+    "schoolSteps": [
+        {
+            "level": "Khối Tiểu học",
+            "sub": "Lộ trình 5 năm",
+            "certs": [
+                { "name": "IC3 Spark Level 1", "desc": "Làm quen phần cứng, phần mềm & HĐH." },
+                { "name": "IC3 Spark Level 2", "desc": "Các ứng dụng chủ chốt (Word, Excel, PPT cơ bản)." },
+                { "name": "IC3 Spark Level 3", "desc": "Cuộc sống trực tuyến & An toàn số." }
+            ]
+        },
+        {
+            "level": "Khối THCS",
+            "sub": "Lộ trình 4 năm",
+            "certs": [
+                { "name": "IC3 GS6 Level 1", "desc": "CNTT Cơ bản & Công dân số." },
+                { "name": "IC3 GS6 Level 2", "desc": "Kỹ năng ứng dụng & Sáng tạo nội dung." },
+                { "name": "IC3 GS6 Level 3", "desc": "Quản lý hệ thống & An ninh mạng." }
+            ]
+        },
+        {
+            "level": "Khối THPT",
+            "sub": "Lộ trình 3 năm",
+            "certs": [
+                { "name": "MOS Word", "desc": "Soạn thảo văn bản chuyên nghiệp." },
+                { "name": "MOS Excel", "desc": "Xử lý tính toán & phân tích dữ liệu." },
+                { "name": "MOS PowerPoint", "desc": "Thiết kế bài thuyết trình ấn tượng." }
+            ]
+        },
+        {
+            "level": "Đại Học & Đi Làm",
+            "sub": "Chuyên sâu",
+            "certs": [
+                { "name": "MOS Specialist", "desc": "Chuẩn kỹ năng văn phòng quốc tế." },
+                { "name": "MOS Expert", "desc": "Xử lý dữ liệu & văn bản nâng cao." }
+            ]
+        }
+    ],
+    "centerSteps": [
+        {
+            "level": "Luyện Thi IC3 Spark",
+            "sub": "Dành cho Tiểu học",
+            "tag": "10 Tuần / 30 Buổi",
+            "certs": [
+                { "name": "Hệ thống kiến thức", "desc": "Cô đọng kiến thức 3 level trong thời gian ngắn." },
+                { "name": "Luyện đề Gmetrix", "desc": "Thực hành trên phần mềm giả lập thi thật." },
+                { "name": "Cam kết đầu ra", "desc": "Đạt chứng chỉ IC3 Spark quốc tế." }
+            ]
+        },
+        {
+            "level": "Luyện Thi IC3 GS6",
+            "sub": "Dành cho THCS",
+            "tag": "10 Tuần / 30 Buổi",
+            "certs": [
+                { "name": "Tư duy công nghệ", "desc": "Nắm vững kiến thức Máy tính & Internet." },
+                { "name": "Kỹ năng thực hành", "desc": "Thao tác thành thạo bộ Office cơ bản." },
+                { "name": "Chiến thuật làm bài", "desc": "Tối ưu điểm số với bộ đề thi sát sườn." }
+            ]
+        },
+        {
+            "level": "Luyện Thi MOS",
+            "sub": "THPT & Sinh viên",
+            "tag": "10 Tuần / 30 Buổi",
+            "certs": [
+                { "name": "MOS Word/Excel/PPT", "desc": "Chọn 1 trong 3 môn để luyện chuyên sâu." },
+                { "name": "Thực hành 100%", "desc": "Học trực tiếp trên máy tính, cầm tay chỉ việc." },
+                { "name": "Chứng chỉ trọn đời", "desc": "Sở hữu chứng chỉ Microsoft giá trị toàn cầu." }
+            ]
+        },
+        {
+            "level": "Tin Học Văn Phòng",
+            "sub": "Người đi làm",
+            "tag": "Linh hoạt",
+            "certs": [
+                { "name": "Ứng dụng thực tế", "desc": "Xử lý văn bản, bảng tính phục vụ công việc." },
+                { "name": "Kỹ năng mềm", "desc": "Email, Lịch biểu, Quản lý tệp tin khoa học." },
+                { "name": "Cấp tốc", "desc": "Đào tạo theo nhu cầu doanh nghiệp hoặc cá nhân." }
+            ]
+        }
+    ]
+}

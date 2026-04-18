@@ -3,6 +3,8 @@
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { analyticsApi } from '@/services/analytics.api';
+import { SessionStartResponse } from '@/services/analytics.api';
+import { devLog, devWarn } from '@/lib/dev-logger';
 
 /**
  * Hook để tự động tracking page visits
@@ -16,17 +18,22 @@ export function usePageTracking() {
     const startTimeRef = useRef<number>(Date.now());
 
     useEffect(() => {
-        // 1. Track    useEffect(() => {
+        // 1. Track khi vào trang
         const trackSessionBegin = async () => {
             startTimeRef.current = Date.now();
 
             try {
                 if (typeof window !== 'undefined') {
-                    // --- PHÂN TÍCH ENTITY ---
                     let entityType = 'page';
                     let entityId = pathname === '/' ? 'home' : pathname.split('/').filter(Boolean).pop() || 'home';
 
                     const host = window.location.hostname;
+                    
+                    const skipPaths = ['/admin', '/auth'];
+                    if (host.includes('admin') || skipPaths.some(p => pathname?.startsWith(p))) {
+                        return;
+                    }
+
                     if (pathname === '/' && !host.includes('www') && host.split('.').length > 2) {
                         entityId = host.split('.')[0] + '-home';
                     }
@@ -39,33 +46,40 @@ export function usePageTracking() {
                         else if (['danh-muc', 'category'].includes(first)) entityType = 'category';
                     }
 
-                    if (process.env.NODE_ENV === 'development') {
-                        console.log(`%c[Analytics] 🚀 Khởi tạo phiên: ${entityType} | ${entityId}`, "color: #007bff; font-weight: bold;");
-                    }
+                    devLog(
+                        `%c[Analytics] 🚀 Khởi tạo phiên: ${entityType} | ${entityId}`,
+                        "color: #007bff; font-weight: bold;"
+                    );
 
-                    const response: any = await analyticsApi.trackSessionBegin({
+                    const response: SessionStartResponse = await analyticsApi.trackSessionBegin({
                         url: window.location.href,
                         referrer: document.referrer || '',
                         entityType,
                         entityId
                     });
 
-                    // CỐ GẮNG LẤY ID LINH HOẠT (phẳng hoặc lồng trong data)
-                    const vId = response?.visitId || response?.sessionInternalId ||
-                        response?.data?.visitId || response?.data?.sessionInternalId;
+                    const responseRecord = response as SessionStartResponse & {
+                        sessionInternalId?: string;
+                        data?: {
+                            visitId?: string;
+                            sessionInternalId?: string;
+                        };
+                    };
+                    const vId = responseRecord.visitId
+                        || responseRecord.sessionInternalId
+                        || responseRecord.data?.visitId
+                        || responseRecord.data?.sessionInternalId;
 
                     if (vId) {
                         visitIdRef.current = vId;
                         sessionStorage.setItem('erg_visit_id', vId);
-                        if (process.env.NODE_ENV === 'development') {
-                            console.log(`%c[Analytics] ✅ Đã nhận ID: ${vId}`, "color: #28a745; font-weight: bold;");
-                        }
+                        devLog(`%c[Analytics] ✅ Đã nhận ID: ${vId}`, "color: #28a745; font-weight: bold;");
                     } else {
-                        console.warn('[Analytics] ⚠️ Không tìm thấy ID trong response BE:', response);
+                        devWarn('[Analytics] ⚠️ Không tìm thấy ID trong response BE:', response);
                     }
                 }
             } catch (e) {
-                console.warn('[Analytics] Session begin failed:', e);
+                devWarn('[Analytics] Session begin failed:', e);
             }
         };
 
@@ -75,13 +89,19 @@ export function usePageTracking() {
 
             const duration = Math.round((Date.now() - startTimeRef.current) / 1000);
 
-            if (process.env.NODE_ENV === 'development') {
-                console.log(`%c[Analytics] 🏁 Kết thúc phiên. ID: ${currentId} | Ờ lại: ${duration}s`, "color: #dc3545; font-weight: bold;");
-            }
+            devLog(
+                `%c[Analytics] 🏁 Kết thúc phiên. ID: ${currentId} | Ở lại: ${duration}s`,
+                "color: #dc3545; font-weight: bold;"
+            );
 
-            analyticsApi.trackSessionFinish(currentId, duration);
+            const blob = new Blob([JSON.stringify({ duration })], { type: 'application/json' });
+            const sent = navigator.sendBeacon(`/api/insight/session/${currentId}/finish`, blob);
 
-            // Chỉ xóa sau khi finish thành công
+            devLog(
+                `%c[Analytics] sendBeacon: ${sent ? '✅' : '⚠️ không gửi được'}`,
+                "color: #dc3545; font-weight: bold;"
+            );
+
             visitIdRef.current = null;
             sessionStorage.removeItem('erg_visit_id');
         };

@@ -8,7 +8,20 @@
         "contact": "Liên hệ",
         "recruitment": "Tuyển dụng",
         "login": "Đăng nhập",
-        "search": "Tìm kiếm"
+        "search": "Tìm kiếm",
+        "email": "Email",
+        "phone": "Điện thoại",
+        "language": "Ngôn ngữ",
+        "menu": {
+            "introduction": "Giới thiệu",
+            "training_programs": "Lĩnh vực đào tạo",
+            "news": "Tin tức",
+            "careers": "Cơ hội nghề nghiệp",
+            "contact": "Liên hệ",
+            "recruitment": "Tuyển dụng",
+            "culture": "Văn hóa",
+            "policy": "Chính sách nhân sự"
+        }
     },
     "Footer": {
         "tagline": "Hệ thống giáo dục về công nghệ hàng đầu, cam kết mang lại chất lượng đào tạo tốt nhất cho thế hệ trẻ Việt Nam. Khơi dậy tiềm năng, kiến tạo tương lai.",
@@ -17,6 +30,9 @@
         "phone": "Điện thoại",
         "followUs": "Theo dõi chúng tôi",
         "copyright": "© {year} Edurise Global. All rights reserved.",
+        "headquarters": "Trụ sở chính",
+        "hotline": "Hotline",
+        "branch": "Chi nhánh",
         "links": {
             "privacy": "Chính sách bảo mật",
             "terms": "Điều khoản sử dụng"
@@ -64,5 +80,11 @@
         "callNow": "Gọi ngay",
         "zalo": "Zalo",
         "facebook": "Facebook"
+    },
+    "ComingSoon": {
+        "title": "Trang đang phát triển",
+        "description": "Chúng tôi đang nỗ lực hoàn thiện nội dung này để mang đến trải nghiệm tốt nhất cho bạn. Vui lòng quay lại sau!",
+        "home": "Về trang chủ",
+        "back": "Quay lại"
     }
 }

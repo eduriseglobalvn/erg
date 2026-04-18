@@ -58,5 +58,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
 
     // Có permission - render children
-    return <>{children}</>;
+    // Dùng div.contents thay vì Fragment để wrap multi-element JSX (VD: div+aside)
+    return <div className="contents">{children}</div>;
 };

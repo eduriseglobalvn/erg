@@ -1,9 +1,24 @@
 import { PostsTable } from "@/components/admin/posts/posts-table"
 import { Metadata } from "next"
+import { Skeleton } from "@/components/admin/ui/skeleton"
 
 export const metadata: Metadata = {
     title: "Quản lý bài viết | ERG Admin",
     description: "Danh sách tất cả bài viết trên hệ thống",
+}
+
+// ✅ Phase 4: Suspense boundary for async data fetching
+function PostsTableSkeleton() {
+    return (
+        <div className="flex flex-col gap-4 p-6">
+            <div className="h-10 w-64 animate-pulse bg-muted rounded" />
+            <div className="space-y-2">
+                {Array.from({ length: 8 }).map((_, i) => (
+                    <Skeleton key={i} className="h-14 w-full rounded" />
+                ))}
+            </div>
+        </div>
+    )
 }
 
 export default function PostsPage() {
@@ -16,7 +31,7 @@ export default function PostsPage() {
                 </p>
             </div>
 
-            <div className="w-full">
+            <div className="w-full min-w-0 overflow-hidden">
                 <PostsTable />
             </div>
         </div>

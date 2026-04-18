@@ -5,10 +5,12 @@ import { Card, CardContent } from "@/components/admin/ui/card";
 import { Badge } from "@/components/admin/ui/badge";
 import { Progress } from "@/components/admin/ui/progress";
 import { Button } from "@/components/admin/ui/button";
+import { cn } from "@/lib/utils";
 
 export type PipelineStep = 'DISCOVER' | 'SCRAPE' | 'PROCESS' | 'SEO' | 'PUBLISH';
 
 export interface PipelineStatusProps {
+    jobId?: string; // Phase 4.5: SSE job ID for unique keying
     url: string;
     source: string;
     status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
@@ -16,6 +18,7 @@ export interface PipelineStatusProps {
     progress: number;
     timeStarted: string;
     message?: string;
+    qualityScore?: number; // NEW: 0-100 quality score assigned after completion
     onRetry?: () => void;
 }
 
@@ -29,7 +32,7 @@ const STEP_LABELS: Record<PipelineStep, string> = {
     PUBLISH: 'Đăng tải',
 };
 
-export function PipelineStatus({ url, source, status, currentStep, progress, timeStarted, message, onRetry }: PipelineStatusProps) {
+export function PipelineStatus({ url, source, status, currentStep, progress, timeStarted, message, qualityScore, onRetry }: PipelineStatusProps) {
 
     const getCurrentStepIndex = () => {
         if (status === 'COMPLETED') return STEPS.length;
@@ -135,12 +138,26 @@ export function PipelineStatus({ url, source, status, currentStep, progress, tim
 
                 {/* Success State */}
                 {status === 'COMPLETED' && (
-                    <div className="bg-green-50 rounded-lg p-3 border border-green-100 flex items-center justify-between">
-                        <div className="flex gap-2 items-center">
-                            <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    <div className="bg-green-50 rounded-lg p-3 border border-green-100 flex items-center justify-between gap-3">
+                        <div className="flex gap-2 items-center min-w-0">
+                            <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" />
                             <span className="text-sm font-medium text-green-800">Bài viết đã được đăng tải thành công!</span>
+                            {qualityScore !== undefined && (
+                                <Badge
+                                    className={cn(
+                                        "shrink-0 shadow-none",
+                                        qualityScore >= 85
+                                            ? "bg-green-100 text-green-800 border-green-200"
+                                            : qualityScore >= 70
+                                            ? "bg-amber-100 text-amber-800 border-amber-200"
+                                            : "bg-red-100 text-red-800 border-red-200"
+                                    )}
+                                >
+                                    📊 Quality: {qualityScore}/100
+                                </Badge>
+                            )}
                         </div>
-                        <Button size="sm" variant="outline" className="h-7 text-xs border-green-200 text-green-700 hover:bg-green-100 shadow-none">
+                        <Button size="sm" variant="outline" className="h-7 text-xs border-green-200 text-green-700 hover:bg-green-100 shadow-none shrink-0">
                             Xem bài viết
                         </Button>
                     </div>

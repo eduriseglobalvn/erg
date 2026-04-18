@@ -57,7 +57,7 @@ export const JobCard = ({ className, ...job }: Job & { className?: string }) => 
                 {job.postDate && (
                     <div className="flex items-center gap-2 text-xs text-gray-400">
                         <Calendar size={14} className="shrink-0" />
-                        <span>{t('postDate') || 'Ngày đăng'}: {job.postDate}</span>
+                        <span>{t('postDate')}: {job.postDate}</span>
                     </div>
                 )}
                 <div className="flex items-center gap-2 text-xs text-gray-600">

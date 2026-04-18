@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { authApi } from "@/services"
+import { RateLimitError } from "@/services/http-client"
 import { Button } from "@/components/admin/ui/button"
 import {
     Card, CardContent, CardDescription, CardHeader, CardTitle
@@ -30,9 +31,13 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
             // Chuyển sang OTP, đánh dấu là mode reset password
             router.push(`/auth/otp?email=${encodeURIComponent(email)}&mode=reset_password`)
         } catch (error: any) {
-            toast.error(error.message || "Gửi yêu cầu thất bại")
-        } finally {
-            setIsLoading(false)
+            // Handle 429 Rate Limit
+            if (error instanceof RateLimitError || error.status === 429) {
+                const retrySec = error.retryAfterSec ?? error.data?.retryAfter ?? 60;
+                toast.error(`Quá nhiều yêu cầu. Vui lòng thử lại sau ${retrySec} giây.`, { duration: Infinity });
+                return;
+            }
+            toast.error(error.message || "Gửi yêu cầu thất bại");
         }
     }
 

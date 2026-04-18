@@ -7,14 +7,7 @@ import { useTranslations } from 'next-intl';
 const ERG_BLUE = '#00008b';
 const ERG_RED = '#cc0022';
 
-const INTEREST_TOPICS = [
-    "Tin học Quốc tế",
-    "Tin học Quốc gia",
-    "Tin học Thiếu nhi",
-    "Giáo dục kỹ năng công dân số",
-    "Điện toán đám mây",
-    "Trí tuệ nhân tạo (AI)"
-];
+const INTEREST_KEYS = ['thqt', 'thqg', 'thtn', 'kns', 'dtdm', 'ai'] as const;
 
 export default function ContactContent() {
     const t = useTranslations('contact.Page');
@@ -48,18 +41,18 @@ export default function ContactContent() {
                         {/* Row: Họ & Tên */}
                         <div className="grid grid-cols-2 gap-5">
                             <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-gray-700">{t('name')}</label>
+                                <label className="text-sm font-semibold text-gray-700">{t('firstNameLabel')}</label>
                                 <input
                                     type="text"
-                                    placeholder="Nguyễn"
+                                    placeholder={t('firstNamePlaceholder')}
                                     className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#00008b] focus:ring-4 focus:ring-[#00008b]/10 outline-none transition-all placeholder:text-gray-400"
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-sm font-semibold text-gray-700">{t('name')}</label>
+                                <label className="text-sm font-semibold text-gray-700">{t('lastNameLabel')}</label>
                                 <input
                                     type="text"
-                                    placeholder="Văn A"
+                                    placeholder={t('lastNamePlaceholder')}
                                     className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#00008b] focus:ring-4 focus:ring-[#00008b]/10 outline-none transition-all placeholder:text-gray-400"
                                 />
                             </div>
@@ -67,20 +60,20 @@ export default function ContactContent() {
 
                         {/* Email */}
                         <div className="space-y-1.5">
-                            <label className="text-sm font-semibold text-gray-700">Email</label>
+                            <label className="text-sm font-semibold text-gray-700">{t('emailLabel')}</label>
                             <input
                                 type="email"
-                                placeholder="email@example.com"
+                                placeholder={t('emailPlaceholder')}
                                 className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#00008b] focus:ring-4 focus:ring-[#00008b]/10 outline-none transition-all placeholder:text-gray-400"
                             />
                         </div>
 
                         {/* Số điện thoại */}
                         <div className="space-y-1.5">
-                            <label className="text-sm font-semibold text-gray-700">{t('phone')}</label>
+                            <label className="text-sm font-semibold text-gray-700">{t('phoneLabel')}</label>
                             <input
                                 type="tel"
-                                placeholder="0912 345 678"
+                                placeholder={t('phonePlaceholder')}
                                 className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#00008b] focus:ring-4 focus:ring-[#00008b]/10 outline-none transition-all placeholder:text-gray-400"
                             />
                         </div>
@@ -89,7 +82,7 @@ export default function ContactContent() {
                         <div className="space-y-3 pt-2">
                             <label className="text-sm font-bold text-gray-900">{t('subject')}</label>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                {INTEREST_TOPICS.map((item, idx) => (
+                                {INTEREST_KEYS.map((key, idx) => (
                                     <label key={idx} className="flex items-start gap-3 cursor-pointer group p-2 rounded-md hover:bg-gray-50 transition-colors -ml-2">
                                         <div className="relative flex items-center pt-0.5">
                                             <input
@@ -102,7 +95,7 @@ export default function ContactContent() {
                                                 </svg>
                                             </div>
                                         </div>
-                                        <span className="text-gray-600 text-sm font-medium group-hover:text-[#00008b] transition-colors">{item}</span>
+                                        <span className="text-gray-600 text-sm font-medium group-hover:text-[#00008b] transition-colors">{t(`topics.${key}`)}</span>
                                     </label>
                                 ))}
                             </div>
@@ -113,7 +106,7 @@ export default function ContactContent() {
                             <label className="text-sm font-semibold text-gray-700">{t('message')}</label>
                             <textarea
                                 rows={3}
-                                placeholder={t('message')}
+                                placeholder={t('messagePlaceholder')}
                                 className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:bg-white focus:border-[#00008b] focus:ring-4 focus:ring-[#00008b]/10 outline-none transition-all resize-none placeholder:text-gray-400"
                             ></textarea>
                         </div>
@@ -134,7 +127,7 @@ export default function ContactContent() {
             {/* --- 2. RIGHT SIDE: FULL MAP --- */}
             <div className="lg:w-1/2 w-full relative bg-gray-100 lg:min-h-screen h-[450px] order-1 lg:order-2 border-l border-gray-200">
                 <iframe
-                    src="https://maps.google.com/maps?q=40-42%20B%C3%ACnh%20Ph%C3%BA%2C%20P%20B%C3%ACnh%20Ph%C3%BA%2C%20TP.%20H%E1%BB%93%20Ch%C3%AD%20Minh&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.8998521705817!2d106.62756084016806!3d10.742201459866777!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f005ce5dca9%3A0x973ca9cb9b1195ff!2zR3M0MC00MiBCw6xuaCBQaMO6!5e0!3m2!1sen!2s!4v1774510064238!5m2!1sen!2s"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
@@ -152,17 +145,17 @@ export default function ContactContent() {
                             <MapPin size={24} color={ERG_RED} />
                         </div>
                         <div>
-                            <h4 className="font-bold text-sm text-gray-900 mb-1">Trung tâm Tin học ERG</h4>
+                            <h4 className="font-bold text-sm text-gray-900 mb-1">{t('branchName')}</h4>
                             <p className="text-xs text-gray-500 leading-relaxed">
-                                Số 40-42 Bình Phú, P. Bình Phú, TP. Hồ Chí Minh
+                                {t('fullAddress')}
                             </p>
                             <a
-                                href="https://maps.app.goo.gl/..."
+                                href="https://maps.app.goo.gl/W2BjQrsrvmbLsri96"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1 text-xs font-bold text-[#00008b] mt-3 hover:underline"
                             >
-                                Xem trên Google Maps
+                                {t('viewMap')}
                                 <Send size={10} className="-rotate-45" />
                             </a>
                         </div>

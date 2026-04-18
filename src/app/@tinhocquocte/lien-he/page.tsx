@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { MapPin, Send } from 'lucide-react';
 
@@ -38,13 +36,7 @@ export default function ContactPage() {
                     </p>
 
                     {/* Form */}
-                    <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            // Handle submit logic
-                        }}
-                        className="space-y-6"
-                    >
+                    <form className="space-y-6">
                         {/* Row: Họ & Tên */}
                         <div className="grid grid-cols-2 gap-5">
                             <div className="space-y-1.5">

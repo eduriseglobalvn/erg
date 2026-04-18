@@ -1,57 +1,119 @@
 {
     "Hero": {
         "badge": "International IT Training Center",
-        "heading": "Building the Digital Future",
-        "subheading": "Together with ERG, bringing international IT standards to millions of Vietnamese students",
-        "ctaPrimary": "Explore courses",
-        "ctaSecondary": "Contact us"
+        "heading": "Shaping Digital Future",
+        "subheading": "Joining ERG to bring international IT standards to millions of Vietnamese students",
+        "cta": "Explore Courses",
+        "slides": [
+            {
+                "title": "Pioneer in Technology & \nDigital Skills training",
+                "subtitle": "International standardized training system, equipping solid foundations for the digital era."
+            },
+            {
+                "title": "Comprehensive Learning Path",
+                "subtitle": "From Office IT to Data Science, suitable for all ages and professional needs."
+            }
+        ]
     },
     "Stats": {
         "branches": "Branches",
         "students": "Students",
         "schools": "Partner Schools",
-        "teachers": "Certified Teachers"
+        "teachers": "Certified Teachers",
+        "experience": "Years of training experience"
     },
-    "Courses": {
-        "title": "Training Programs",
-        "subtitle": "Explore internationally certified learning paths",
-        "viewAll": "View all courses"
-    },
-    "Jobs": {
-        "title": "Latest Job Openings",
-        "subtitle": "Career opportunities",
-        "viewAll": "View all positions",
-        "noJobs": "No job openings available."
-    },
-    "News": {
-        "title": "News & Events",
-        "subtitle": "Latest updates from ERG",
-        "viewAll": "View all news"
-    },
-    "Why": {
-        "title": "Why choose ERG?",
-        "subtitle": "Because we grow with you",
+    "CoreValues": {
+        "title": "About Us",
+        "heading": "Creating a solid foundation for the future",
+        "description": "At ERG, we believe each student has unique potential waiting to be awakened. With modern educational methods, combining theory and practice, we are committed to providing the best learning environment.",
+        "viewDetail": "View detail",
         "items": {
             "quality": {
-                "title": "International Standards",
-                "desc": "Recognized by Certiport, Microsoft and reputable international organizations."
+                "title": "International Quality",
+                "content": "Standardized programs, granting MOS, IC3 certificates with global value."
             },
-            "teachers": {
-                "title": "Experienced Teachers",
-                "desc": "100% of teachers hold international certificates."
+            "practice": {
+                "title": "Practice & Application",
+                "content": "Learning by doing, committed to proficiency immediately after the course."
             },
-            "support": {
-                "title": "Comprehensive Support",
-                "desc": "Advising and supporting students throughout the learning journey."
+            "tech": {
+                "title": "Modern Technology",
+                "content": "Computer labs and software systems continuously updated according to 4.0 trends."
             }
         }
     },
-    "Partners": {
-        "title": "Our Partners"
+    "Training": {
+        "title": "Training Fields",
+        "description": "Key training programs designed to align with real-world business needs.",
+        "viewProgram": "View program",
+        "fields": {
+            "thqt": {
+                "title": "International IT",
+                "desc": "Training - certification exam prep for prestigious global certificates such as MOS, IC3 Spark, IC3 GS6. Equipping solid baggage for your career."
+            },
+            "thqg": {
+                "title": "National IT",
+                "desc": "Courses following Ministry of Education and Training standards, improving office IT skills to meet work and exam requirements."
+            },
+            "thtn": {
+                "title": "Kids IT",
+                "desc": "Sparking passion for technology for children from an early age with visual, vivid methods. Helping develop logical thinking and problem-solving skills."
+            },
+            "kns": {
+                "title": "Digital Citizenship Skills",
+                "desc": "Equipping knowledge about online safety, digital ethics and civil technology skills in the digital age."
+            },
+            "dtdm": {
+                "title": "Cloud Computing",
+                "desc": "Mastering Cloud Computing technology, storing and managing modern data. Anticipating technology trends of 4.0 businesses."
+            },
+            "ai": {
+                "title": "Artificial Intelligence (AI)",
+                "desc": "Exploring the world of AI, basic Machine Learning and applying AI in learning and working to increase breakthrough performance."
+            }
+        }
     },
-    "CTA": {
-        "title": "Start your learning journey today",
-        "subtitle": "Register for a free consultation to find the right path for you",
-        "button": "Register for consultation"
+    "Why": {
+        "title": "Why Choose ERG Global",
+        "subtitle": "Different Values",
+        "items": {
+            "teachers": {
+                "title": "High Quality Faculty",
+                "desc": "Teachers with many years of experience, solid expertise, dedicated to the profession and always updating modern teaching methods."
+            },
+            "standard": {
+                "title": "International Standardized Program",
+                "desc": "Curriculum compiled based on international standards, practical to reality, helping students grasp fundamental knowledge and thinking skills."
+            },
+            "facilities": {
+                "title": "Modern Facilities",
+                "desc": "Classrooms are equipped with advanced technology devices, providing a comfortable, professional and effective learning environment."
+            },
+            "quality": {
+                "title": "Strict Quality Control",
+                "desc": "Teaching and training programs are strictly monitored according to a clear path, ensuring uniform quality."
+            },
+            "commitment": {
+                "title": "Output Commitment",
+                "desc": "ERG commits that the rate of students meeting achievement standards and passing international exams reaches:",
+                "stats": {
+                    "primary": "K-12 Students",
+                    "university": "College - University"
+                }
+            },
+            "cost": {
+                "title": "Reasonable Costs, Special Offers",
+                "desc": "Affordable tuition, flexible policies and many scholarship programs for students."
+            }
+        }
+    },
+    "News": {
+        "title": "News & Events",
+        "viewAll": "View All",
+        "category": "News"
+    },
+    "Testimonials": {
+        "title": "Student Testimonials",
+        "subtitle": "Student Corner"
     }
 }

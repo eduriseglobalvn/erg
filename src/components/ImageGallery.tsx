@@ -3,25 +3,39 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-// Định nghĩa kiểu dữ liệu cho Props
-// Định nghĩa kiểu dữ liệu cho Props
-interface ImageGalleryProps {
-    images?: (string | { src: string; alt: string })[];      // Hỗ trợ cả string và object
-    autoPlayTime?: number;  // Thời gian tự chạy (ms)
+export interface GalleryImageItem {
+    src: string;
+    alt?: string;
 }
 
-export default function ImageGallery({ images = [], autoPlayTime = 5000 }: ImageGalleryProps) {
+export interface ImageGalleryProps {
+    images?: (string | GalleryImageItem)[];
+    autoPlayTime?: number;
+    aspectRatio?: string;
+    emptyMessage?: string;
+    activeThumbnailClassName?: string;
+}
+
+export default function ImageGallery({
+    images = [],
+    autoPlayTime = 5000,
+    aspectRatio = 'aspect-[4/3]',
+    emptyMessage = 'No images available',
+    activeThumbnailClassName = 'border-teal-500 ring-2 ring-teal-500/20 opacity-100 scale-105',
+}: ImageGalleryProps) {
     const [activeIndex, setActiveIndex] = useState<number>(0);
 
-    // Helper để lấy src và alt chuẩn
-    const getImageData = (item: string | { src: string; alt: string }) => {
+    const getImageData = (item: string | GalleryImageItem) => {
         if (typeof item === 'string') {
             return { src: item, alt: 'Gallery Image' };
         }
-        return item;
+
+        return {
+            src: item.src,
+            alt: item.alt || 'Gallery Image',
+        };
     };
 
-    // Logic tự động chuyển ảnh
     useEffect(() => {
         if (images.length <= 1) return;
 
@@ -30,7 +44,7 @@ export default function ImageGallery({ images = [], autoPlayTime = 5000 }: Image
         }, autoPlayTime);
 
         return () => clearInterval(interval);
-    }, [activeIndex, images.length, autoPlayTime]);
+    }, [images.length, autoPlayTime]);
 
     // Xử lý sự kiện click
     const handleThumbnailClick = (index: number) => {
@@ -49,8 +63,8 @@ export default function ImageGallery({ images = [], autoPlayTime = 5000 }: Image
 
     if (!images || images.length === 0) {
         return (
-            <div className="p-4 bg-gray-100 rounded text-center text-gray-500">
-                No images available
+            <div className={`p-4 bg-gray-100 rounded text-center text-gray-500 text-sm w-full ${aspectRatio} flex items-center justify-center`}>
+                {emptyMessage}
             </div>
         );
     }
@@ -59,15 +73,13 @@ export default function ImageGallery({ images = [], autoPlayTime = 5000 }: Image
 
     return (
         <div className="space-y-3 w-full">
-            {/* --- ẢNH CHÍNH --- */}
-            <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden group bg-gray-100 border border-gray-100 shadow-sm">
+            <div className={`relative w-full ${aspectRatio} rounded-lg overflow-hidden group bg-gray-100 border border-gray-100 shadow-sm`}>
                 <img
                     src={currentImage.src}
                     alt={currentImage.alt}
                     className="w-full h-full object-cover transition-all duration-700 ease-in-out"
                 />
 
-                {/* Nút điều hướng */}
                 {images.length > 1 && (
                     <>
                         <button
@@ -85,13 +97,11 @@ export default function ImageGallery({ images = [], autoPlayTime = 5000 }: Image
                     </>
                 )}
 
-                {/* Badge đếm số */}
                 <div className="absolute bottom-3 right-3 bg-black/60 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md z-10">
                     {activeIndex + 1} / {images.length}
                 </div>
             </div>
 
-            {/* --- THUMBNAILS --- */}
             {images.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide pt-1">
                     {images.map((item, idx) => {
@@ -100,10 +110,11 @@ export default function ImageGallery({ images = [], autoPlayTime = 5000 }: Image
                             <button
                                 key={idx}
                                 onClick={() => handleThumbnailClick(idx)}
-                                className={`relative w-16 h-12 shrink-0 rounded-md overflow-hidden border-2 transition-all duration-300 ${activeIndex === idx
-                                        ? 'border-teal-500 ring-2 ring-teal-500/20 opacity-100 scale-105'
+                                className={`relative w-16 h-12 shrink-0 rounded-md overflow-hidden border-2 transition-all duration-300 ${
+                                    activeIndex === idx
+                                        ? activeThumbnailClassName
                                         : 'border-transparent opacity-60 hover:opacity-100 hover:border-gray-300'
-                                    }`}
+                                }`}
                             >
                                 <img src={imgData.src} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
                             </button>

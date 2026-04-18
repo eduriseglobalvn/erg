@@ -46,7 +46,7 @@ export function TopCoursesChart() {
     return (
         <ResponsiveContainer width="100%" height={180}>
             <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
-                <XAxis type="number" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} tickFormatter={(v: number) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
+                <XAxis type="number" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} />
                 <YAxis
                     type="category"
                     dataKey="name"

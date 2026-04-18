@@ -10,70 +10,9 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 const nextConfig: NextConfig = {
     output: 'standalone',
 
-    // Cấu hình Headers cho Production
-    allowedDevOrigins: ['erg.edu.local', '*.erg.edu.local', 'erg.edu.vn', '*.erg.edu.vn'],
-    async headers() {
-        const isDev = process.env.NODE_ENV === 'development';
-        const cspHeader = `
-            default-src 'self';
-            script-src 'self' 'unsafe-inline' https://www.googletagmanager.com ${isDev ? "'unsafe-eval'" : ""};
-            style-src 'self' 'unsafe-inline';
-            img-src 'self' blob: data: https:;
-            font-src 'self' data: https:;
-            object-src 'none';
-            base-uri 'self';
-            form-action 'self';
-            frame-src 'self' https://www.google.com https://maps.google.com;
-            frame-ancestors 'self';
-            connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https: ws: wss:;
-        `.replace(/\s{2,}/g, ' ').trim();
-
-        const staticCacheHeaders = !isDev ? [
-            {
-                key: 'Cache-Control',
-                value: 'public, max-age=31536000, immutable',
-            },
-        ] : [];
-
-        const mediaCacheHeaders = !isDev ? [
-            {
-                key: 'Cache-Control',
-                value: 'public, max-age=86400, stale-while-revalidate=604800',
-            },
-        ] : [];
-
-        return [
-            // === Security & CORS Headers ===
-            {
-                source: '/:path*',
-                headers: [
-                    {
-                        key: 'Access-Control-Allow-Origin',
-                        value: process.env.NEXT_PUBLIC_DOMAIN || 'https://erg.edu.vn',
-                    },
-                    { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS' },
-                    { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
-                    { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-                    { key: 'X-Content-Type-Options', value: 'nosniff' },
-                    { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-                    { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-                    { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
-                    { key: 'Content-Security-Policy', value: cspHeader },
-                ],
-            },
-            // === Cache Headers cho static assets (chỉ production) ===
-            // Warning: Next.js tự quản lý cache trong development
-            ...(staticCacheHeaders.length > 0 ? [{
-                source: '/_next/static/:path*',
-                headers: staticCacheHeaders,
-            }] : []),
-            // === Cache Headers cho public media (chỉ production) ===
-            ...(mediaCacheHeaders.length > 0 ? [{
-                source: '/images/:path*',
-                headers: mediaCacheHeaders,
-            }] : []),
-        ];
-    },
+    // Bun-native: dùng bun install trên Vercel nên không cần离线安装
+    // Bun resolver tự resolve symlink nhanh hơn npm
+    // output standalone đã có — Vercel build local rồi deploy artifact
 
     devIndicators: false,
     compiler: {
@@ -87,8 +26,18 @@ const nextConfig: NextConfig = {
             'framer-motion',
             '@radix-ui/react-icons',
             'lodash',
-            'date-fns'
+            'date-fns',
+            'recharts',
+            'sonner',
+            'clsx',
+            'tailwind-merge',
+            'react-dom',
+            'next-intl',
+            '@tanstack/react-query',
         ],
+        serverActions: {
+            bodySizeLimit: '2mb',
+        },
     },
 
     images: {
@@ -110,6 +59,59 @@ const nextConfig: NextConfig = {
             { protocol: 'https', hostname: '*.cdninstagram.com' },
             { protocol: 'https', hostname: 'randomuser.me' },
         ],
+    },
+
+    // Cấu hình Headers cho Production
+    allowedDevOrigins: ['erg.edu.local', '*.erg.edu.local', 'erg.edu.vn', '*.erg.edu.vn'],
+    async headers() {
+        const isDev = process.env.NODE_ENV === 'development'
+        const cspHeader = `
+            default-src 'self';
+            script-src 'self' 'unsafe-inline' https://www.googletagmanager.com ${isDev ? "'unsafe-eval'" : ''};
+            style-src 'self' 'unsafe-inline';
+            img-src 'self' blob: data: https:;
+            font-src 'self' data: https:;
+            object-src 'none';
+            base-uri 'self';
+            form-action 'self';
+            frame-src 'self' https://www.google.com https://maps.google.com;
+            frame-ancestors 'self';
+            connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https: ws: wss:;
+        `.replace(/\s{2,}/g, ' ').trim()
+
+        const staticCacheHeaders = !isDev
+            ? [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }]
+            : []
+
+        const mediaCacheHeaders = !isDev
+            ? [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }]
+            : []
+
+        return [
+            // === Security & CORS Headers ===
+            {
+                source: '/:path*',
+                headers: [
+                    { key: 'Access-Control-Allow-Origin', value: process.env.NEXT_PUBLIC_DOMAIN || 'https://erg.edu.vn' },
+                    { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS' },
+                    { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
+                    { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+                    { key: 'X-Content-Type-Options', value: 'nosniff' },
+                    { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+                    { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+                    { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
+                    { key: 'Content-Security-Policy', value: cspHeader },
+                ],
+            },
+            // === Cache Headers cho static assets (chỉ production) ===
+            ...(staticCacheHeaders.length > 0
+                ? [{ source: '/_next/static/:path*', headers: staticCacheHeaders }]
+                : []),
+            // === Cache Headers cho public media (chỉ production) ===
+            ...(mediaCacheHeaders.length > 0
+                ? [{ source: '/images/:path*', headers: mediaCacheHeaders }]
+                : []),
+        ]
     },
 }
 

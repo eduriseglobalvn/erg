@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { aiApi, postsApi } from '@/services';
+import { ApiError } from '@/services/http-client';
 import { localSeoAnalyzer } from '@/utils/local-seo';
 
 // 1. Định nghĩa lại kiểu dữ liệu trả về cho chắc chắn
@@ -27,18 +28,41 @@ interface AiStatusData {
     keywordDensity?: number;
 }
 
+const missingAiKeyMessage = 'Chưa có AI API key hoạt động. Vui lòng cấu hình tại Cài đặt > AI Keys.';
+
+const isMissingAiKeyError = (error: unknown): boolean => {
+    if (!(error instanceof ApiError)) return false;
+
+    const errorCode = typeof error.data?.errors === 'string' ? error.data.errors : '';
+    const message = typeof error.message === 'string' ? error.message.toLowerCase() : '';
+
+    return error.status === 412
+        || errorCode === 'AI_KEY_MISSING'
+        || message.includes('api key')
+        || message.includes('gemini');
+};
+
+const isMissingAiJobError = (error: unknown): boolean => {
+    if (!(error instanceof ApiError)) return false;
+
+    if (error.status !== 404) return false;
+
+    const message = typeof error.message === 'string' ? error.message.toLowerCase() : '';
+    return message.includes('không tìm thấy job') || message.includes('job đã bị xoá khỏi bộ đệm');
+};
+
 export function useAiWriter(editor: any) {
     const [isGenerating, setIsGenerating] = useState(false);
     const [isRefining, setIsRefining] = useState(false);
     const [progress, setProgress] = useState(0);
 
-    // FIX LỖI 1: Dùng 'any' cho interval để tránh xung đột kiểu giữa Node và Browser
-    const intervalRef = useRef<any>(null);
+    // FIX LỖI 1: Dùng 'any' cho timeout để tránh xung đột kiểu giữa Node và Browser
+    const timeoutRef = useRef<any>(null);
 
     // CLEANUP LỖI MEMORY LEAK (B-H4)
     useEffect(() => {
         return () => {
-            if (intervalRef.current) clearInterval(intervalRef.current);
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
     }, []);
 
@@ -107,7 +131,8 @@ export function useAiWriter(editor: any) {
 
             if (!jobId) throw new Error("Không lấy được Job ID từ Server");
 
-            intervalRef.current = setInterval(async () => {
+            // [OPT 3] Replace setInterval with recursive setTimeout to stop polling when tab is inactive
+            const checkStatus = async () => {
                 try {
                     const resStatus = await aiApi.checkStatus(jobId) as any;
 
@@ -121,7 +146,7 @@ export function useAiWriter(editor: any) {
                     if (statusData.progress) setProgress(statusData.progress);
 
                     if (statusData.state === 'completed') {
-                        clearInterval(intervalRef.current);
+                        clearTimeout(timeoutRef.current);
                         setProgress(95);
 
                         // [OPTIMIZATION] Kiểm tra dữ liệu trực tiếp từ AI status trước
@@ -215,7 +240,7 @@ export function useAiWriter(editor: any) {
                         setIsGenerating(false);
                     }
                     else if (statusData.state === 'failed') {
-                        clearInterval(intervalRef.current);
+                        clearTimeout(timeoutRef.current);
                         toast.dismiss(toastId);
 
                         // Thông báo UI thân thiện cho AI Rate Limit / Quota
@@ -230,21 +255,40 @@ export function useAiWriter(editor: any) {
                         }
                         setIsGenerating(false);
                     }
+                    else {
+                        poll();
+                    }
                 } catch (err: any) {
                     console.error("Polling error:", err);
-                    clearInterval(intervalRef.current);
+                    clearTimeout(timeoutRef.current);
                     toast.dismiss(toastId);
-                    toast.error(err.message || 'Lỗi khi đồng bộ kết quả AI');
+                    if (isMissingAiJobError(err)) {
+                        toast.error('Job AI không còn trong hàng đợi. Nếu hệ thống chưa có AI key hoạt động, hãy cấu hình lại rồi tạo bài mới.');
+                    } else {
+                        toast.error(err.message || 'Lỗi khi đồng bộ kết quả AI');
+                    }
                     setIsGenerating(false);
                 }
-            }, 5000); // Tăng lên 5s để nhẹ server tối đa theo yêu cầu từ USER
+            };
+
+            // [OPT 3] Recursive setTimeout loop — stops when tab is hidden/inactive
+            const poll = () => {
+                timeoutRef.current = setTimeout(async () => {
+                    await checkStatus();
+                }, 5000);
+            };
+            poll();
 
         } catch (error: any) {
             console.error(error);
             toast.dismiss(toastId);
-            toast.error(error.message || 'Lỗi kết nối AI');
+            if (isMissingAiKeyError(error)) {
+                toast.error(missingAiKeyMessage, { duration: 7000 });
+            } else {
+                toast.error(error.message || 'Lỗi kết nối AI');
+            }
             setIsGenerating(false);
-            if (intervalRef.current) clearInterval(intervalRef.current);
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
         }
     };
 
@@ -255,7 +299,11 @@ export function useAiWriter(editor: any) {
             return res.data?.refinedContent || res.refinedContent || res.result;
         } catch (e) {
             console.error(e);
-            toast.error('Lỗi kết nối AI');
+            if (isMissingAiKeyError(e)) {
+                toast.error(missingAiKeyMessage, { duration: 7000 });
+            } else {
+                toast.error('Lỗi kết nối AI');
+            }
             return null;
         } finally {
             setIsRefining(false);

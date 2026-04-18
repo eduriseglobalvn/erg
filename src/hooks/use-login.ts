@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { authApi, httpClient } from '@/services';
+import { authApi } from '@/services';
 import { RateLimitError } from '@/services/http-client';
 import { toast } from 'sonner';
 
@@ -27,35 +27,18 @@ export function useLoginMutation() {
             if (data) {
                 // Access token và Refresh token đã được Next.js proxy set qua HttpOnly cookies.
                 // Đồng thời proxy cũng set flag "isLoggedIn=true" (non-HttpOnly) để client check.
+                queryClient.invalidateQueries({ queryKey: ['auth'] });
+                toast.success('Đăng nhập thành công!');
 
-                // Dữ liệu User, Roles và Permissions sẽ được load tự động qua useAuth
-                try {
-                    // Fetch auth status immediately để pre-warm cache
-                    await httpClient('/sessions/current', {
-                        method: 'GET',
-                        requireAuth: true,
-                    });
-
-                    // Invalidate auth queries để re-fetch và load data
-                    queryClient.invalidateQueries({ queryKey: ['auth'] });
-
-                    toast.success('Đăng nhập thành công!');
-
-                    // Delay để browser kịp hiện popup "Lưu mật khẩu"
-                    setTimeout(() => {
-                        // ISSUE 1 FIX: Check isProfileCompleted → redirect phù hợp
-                        const sessionData = res?.data || res;
-                        const isCompleted = sessionData?.user?.isProfileCompleted;
-                        if (isCompleted === false) {
-                            window.location.href = '/onboarding';
-                        } else {
-                            window.location.href = '/';
-                        }
-                    }, 500);
-                } catch (e) {
-                    console.error('Failed to fetch session:', e);
-                    window.location.href = '/';
-                }
+                setTimeout(() => {
+                    const sessionData = res?.data || res;
+                    const isCompleted = sessionData?.user?.isProfileCompleted;
+                    if (isCompleted === false) {
+                        window.location.href = '/onboarding';
+                    } else {
+                        window.location.href = '/';
+                    }
+                }, 250);
             } else {
                 throw new Error('Không nhận được Token từ máy chủ');
             }

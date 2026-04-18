@@ -1,10 +1,22 @@
+import type { QueryClient } from '@tanstack/react-query';
+import { devWarn } from '@/lib/dev-logger';
+
 // Re-export để dùng ở nơi khác
 export { handleLogout } from '@/services/http-client';
 
-// Singleton QueryClient instance để có thể access từ bên ngoài React components
-let globalQueryClient: any = null;
+// Zustand permission store — lazy import để tránh circular dependency
+const clearPermissionStore = () => {
+    try {
+        const { usePermissionStore } = require('@/store/permission-store');
+        usePermissionStore.getState().clearPermissions();
+    } catch {
+        // Store chưa được hydrate, bỏ qua
+    }
+};
 
-export function setGlobalQueryClient(client: any) {
+let globalQueryClient: QueryClient | null = null;
+
+export function setGlobalQueryClient(client: QueryClient) {
     globalQueryClient = client;
 }
 
@@ -27,19 +39,37 @@ export const handleLogoutWithCache = async () => {
         try {
             await fetch('/api/auth/logout', { method: 'POST' });
         } catch (error) {
-            console.error('Logout API failed:', error);
+            devWarn('Logout API failed:', error);
+        }
+
+        try {
+            const { signOut } = await import('next-auth/react');
+            await signOut({
+                redirect: false,
+                callbackUrl: '/auth/login?reason=session_expired',
+            });
+        } catch (error) {
+            devWarn('NextAuth logout failed:', error);
         }
 
         // Force clear isLoggedIn cookie on client-side (fallback an toàn)
         document.cookie = 'isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'clientUserId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'authProvider=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'accountType=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
-        // 3. Xóa các localStorage info khác
+        // 3. Clear Zustand permission store
+        clearPermissionStore();
+
+        // 4. Xóa các localStorage info khác
         localStorage.removeItem('userId');
         localStorage.removeItem('user');
         localStorage.removeItem('permissions');
         localStorage.removeItem('roles');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
 
-        // 4. Redirect
+        // 5. Redirect
         const currentPath = window.location.pathname;
         const currentSearch = window.location.search;
         if (currentPath !== '/auth/login' || !currentSearch.includes('reason=session_expired')) {

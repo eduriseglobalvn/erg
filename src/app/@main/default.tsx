@@ -1,1 +1,1 @@
-export default function Default() { return null; }
+export { default } from './page'

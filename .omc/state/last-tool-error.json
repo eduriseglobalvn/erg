@@ -1,7 +1,7 @@
 {
-  "tool_name": "mcp__filesystem__create_directory",
-  "tool_input_preview": "{\"path\":\"/Users/vuong/ERG.Workspace/erg/src/components/admin/analytics/charts\"}",
-  "error": "Parent directory does not exist: /Users/vuong/ERG.Workspace/erg/src/components/admin/analytics",
-  "timestamp": "2026-04-04T06:16:37.865Z",
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cat > /Users/vuong/ERG.Workspace/erg-functions/.firebaserc << 'EOF'\\n{\\n  \\\"projects\\\": {\\n    \\\"default\\\": \\\"YOUR_FIREBASE_PROJECT_ID\\\"\\n  }\\n}\\nEOF\",\"description\":\"Create .firebaserc fil...",
+  "error": "Exit code 1\n(eval):1: is a directory: /Users/vuong/ERG.Workspace/erg-functions/.firebaserc",
+  "timestamp": "2026-04-13T15:56:50.786Z",
   "retry_count": 1
 }

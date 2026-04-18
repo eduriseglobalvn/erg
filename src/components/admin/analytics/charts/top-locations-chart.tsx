@@ -52,7 +52,7 @@ export function TopLocationsChart() {
     return (
         <ResponsiveContainer width="100%" height={220}>
             <BarChart data={chartData} layout="vertical" margin={{ top: 0, right: 10, left: 0, bottom: 0 }}>
-                <XAxis type="number" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} tickFormatter={(v: number) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
+                <XAxis type="number" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
                 <YAxis
                     type="category"
                     dataKey="name"
@@ -60,6 +60,7 @@ export function TopLocationsChart() {
                     axisLine={false}
                     tick={{ fontSize: 11 }}
                     width={120}
+                    tickFormatter={(v) => String(v).length > 15 ? String(v).substring(0, 15) + "…" : String(v)}
                 />
                 <Tooltip
                     contentStyle={{

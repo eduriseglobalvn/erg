@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ChevronLeft,
     ChevronRight,
@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { postsApi } from '@/services/posts.api';
 import { NewsCard } from '@/components/shared/news-card';
 import { NewsGridSkeleton } from '@/components/shared/news-card-skeleton';
+import { devWarn } from '@/lib/dev-logger';
 
 // --- CONFIG ---
 const DEFAULT_IMAGE = 'https://media.erg.edu.vn/posts/default-thumbnail.webp';
@@ -29,25 +30,76 @@ interface NewsItem {
 
 type TabType = 'ERG' | 'RSS';
 
-export default function NewsContent() {
+interface NewsPost {
+    id: string;
+    title: string;
+    slug: string;
+    excerpt?: string;
+    createdAt: string;
+    thumbnailUrl?: string;
+    category?: {
+        name?: string;
+    };
+}
+
+interface NewsPostsData {
+    items: NewsPost[];
+    meta?: {
+        totalPages?: number;
+        page?: number;
+        total?: number;
+    };
+}
+
+interface NewsContentProps {
+    initialTab?: TabType;
+    initialPostsData?: NewsPostsData;
+    initialRssNews?: NewsItem[];
+}
+
+function normalizePostsPayload(payload: unknown): NewsPostsData {
+    const normalizedPayload = (typeof payload === 'object' && payload !== null)
+        ? (payload as NewsPostsData)
+        : undefined;
+    const items = Array.isArray(normalizedPayload?.items)
+        ? normalizedPayload.items
+        : (Array.isArray(payload) ? payload : []);
+
+    return {
+        items,
+        meta: {
+            totalPages: Number(normalizedPayload?.meta?.totalPages) || 1,
+            page: Number(normalizedPayload?.meta?.page) || 1,
+            total: Number(normalizedPayload?.meta?.total) || items.length,
+        },
+    };
+}
+
+export default function NewsContent({
+    initialTab = 'RSS',
+    initialPostsData,
+    initialRssNews = [],
+}: NewsContentProps) {
     const t = useTranslations('news.Page');
     const locale = useLocale();
-    const [activeTab, setActiveTab] = useState<TabType>('RSS'); // Lựa chọn mặc định từ các subdomain
+    const [activeTab, setActiveTab] = useState<TabType>(initialTab);
     const [currentPage, setCurrentPage] = useState(1);
-    
-    // RSS State
-    const [rssNews, setRssNews] = useState<NewsItem[]>([]);
-    const [loadingRss, setLoadingRss] = useState(true);
 
-    // --- DATA FETCHING (ERG News) ---
-    const { data: postsData, isLoading: isLoadingApi, isError } = useQuery({
+    const [rssNews, setRssNews] = useState<NewsItem[]>(initialRssNews);
+    const [loadingRss, setLoadingRss] = useState(
+        initialTab === 'RSS' && initialRssNews.length === 0
+    );
+
+    const { data: postsResponse, isLoading: isLoadingApi, isError } = useQuery({
         queryKey: ['news', currentPage],
         queryFn: () => postsApi.getAll({
             page: currentPage,
             limit: ITEMS_PER_PAGE,
             status: 'published'
-        }).then(res => res.data),
-        enabled: activeTab === 'ERG'
+        }).then((res) => normalizePostsPayload(res.data)),
+        enabled: activeTab === 'ERG',
+        initialData: currentPage === 1 ? initialPostsData : undefined,
+        staleTime: 5 * 60 * 1000,
     });
 
     // --- UTILS ---
@@ -134,7 +186,7 @@ export default function NewsContent() {
                 });
                 setRssNews(formatted.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()));
             } catch (err) {
-                console.error("Lỗi lấy RSS:", err);
+                devWarn("Loi lay RSS:", err);
             } finally {
                 setLoadingRss(false);
             }
@@ -147,10 +199,12 @@ export default function NewsContent() {
         window.scrollTo({ top: 400, behavior: 'smooth' });
     };
 
-    // Calculate current data for pagination
+    const postsData = postsResponse || initialPostsData;
+    const ergNews = Array.isArray(postsData?.items) ? postsData.items : [];
+
     const totalPages = activeTab === 'ERG' 
-        ? ((postsData as any)?.meta?.totalPages || 1)
-        : Math.ceil(rssNews.length / ITEMS_PER_PAGE);
+        ? (postsData?.meta?.totalPages || 1)
+        : Math.max(Math.ceil(rssNews.length / ITEMS_PER_PAGE), 1);
 
     const displayedRssNews = rssNews.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
@@ -217,7 +271,7 @@ export default function NewsContent() {
                         {/* News Grid */}
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 mb-16">
                             {activeTab === 'ERG' ? (
-                                (Array.isArray(postsData) ? postsData : []).map((item: any) => (
+                                ergNews.map((item) => (
                                     <NewsCard
                                         key={item.id}
                                         title={item.title}
@@ -294,7 +348,7 @@ export default function NewsContent() {
                             </div>
                         )}
 
-                        {((activeTab === 'ERG' && postsData?.items?.length === 0) || (activeTab === 'RSS' && rssNews.length === 0 && !loadingRss)) && (
+                        {((activeTab === 'ERG' && ergNews.length === 0) || (activeTab === 'RSS' && rssNews.length === 0 && !loadingRss)) && (
                             <div className="text-center py-32 border-2 border-dashed border-gray-200 rounded-2xl">
                                 <p className="text-gray-500 text-lg font-medium">{t('noNews')}</p>
                             </div>

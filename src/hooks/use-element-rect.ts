@@ -38,6 +38,7 @@ const initialRect: RectState = {
 
 const isSSR = typeof window === "undefined"
 const hasResizeObserver = !isSSR && typeof ResizeObserver !== "undefined"
+const hasIntersectionObserver = !isSSR && typeof IntersectionObserver !== "undefined"
 
 /**
  * Helper function to check if code is running on client side
@@ -45,7 +46,9 @@ const hasResizeObserver = !isSSR && typeof ResizeObserver !== "undefined"
 const isClientSide = (): boolean => !isSSR
 
 /**
- * Custom hook that tracks an element's bounding rectangle and updates on resize, scroll, etc.
+ * Custom hook that tracks an element's bounding rectangle.
+ * Uses IntersectionObserver for visibility changes (replaces window scroll/resize listeners)
+ * and ResizeObserver for size tracking.
  *
  * @param options Configuration options for element rect tracking
  * @returns The current bounding rectangle of the element
@@ -116,6 +119,23 @@ export function useElementRect({
 
     const cleanup: (() => void)[] = []
 
+    // [OPT 3] Use IntersectionObserver for visibility changes instead of window scroll/resize
+    // This reduces event handlers from 3 (scroll, resize, ResizeObserver) to 1-2
+    if (hasIntersectionObserver) {
+      const intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          // Update rect when element becomes visible or changes intersection ratio
+          if (entries[0].isIntersecting || entries[0].intersectionRatio > 0) {
+            window.requestAnimationFrame(updateRect)
+          }
+        },
+        { threshold: [0, 0.1, 0.5, 1.0] }
+      )
+      intersectionObserver.observe(targetElement)
+      cleanup.push(() => intersectionObserver.disconnect())
+    }
+
+    // ResizeObserver for accurate size tracking (still needed for layout changes)
     if (useResizeObserver && hasResizeObserver) {
       const resizeObserver = new ResizeObserver(() => {
         window.requestAnimationFrame(updateRect)
@@ -123,16 +143,6 @@ export function useElementRect({
       resizeObserver.observe(targetElement)
       cleanup.push(() => resizeObserver.disconnect())
     }
-
-    const handleUpdate = () => updateRect()
-
-    window.addEventListener("scroll", handleUpdate, true)
-    window.addEventListener("resize", handleUpdate, true)
-
-    cleanup.push(() => {
-      window.removeEventListener("scroll", handleUpdate, true)
-      window.removeEventListener("resize", handleUpdate, true)
-    })
 
     return () => {
       cleanup.forEach((fn) => fn())

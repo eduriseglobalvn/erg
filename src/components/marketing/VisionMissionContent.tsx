@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { Eye, Target, ArrowRight, CheckCircle2, BookOpen } from 'lucide-react';
 import { useTranslations } from 'next-intl';

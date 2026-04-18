@@ -1,20 +1,18 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { hasLoggedInCookie } from '@/lib/client-session';
 
 /**
  * Hook để tự động làm mới auth session cache mỗi 5 phút.
- * Chỉ chạy khi user đã authenticated (có accessToken).
+ * Chỉ chạy khi user đã authenticated (có isLoggedIn cookie).
  * Không sync permissions thực sự — chỉ invalidate TanStack Query cache.
  */
 export function useAuthRefresh() {
     const queryClient = useQueryClient();
 
     useEffect(() => {
-        // Chỉ chạy khi có token
-        const token = localStorage.getItem('accessToken');
-        if (!token) return;
+        if (!hasLoggedInCookie()) return;
 
-        // Refetch auth data mỗi 5 phút
         const interval = setInterval(() => {
             queryClient.invalidateQueries({ queryKey: ['auth', 'session'] });
         }, 5 * 60 * 1000); // 5 minutes

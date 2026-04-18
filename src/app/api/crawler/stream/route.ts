@@ -10,11 +10,11 @@
  * Auth: reads accessToken from HttpOnly cookie and injects as Bearer header.
  */
 
+import { fetchWithBackendFallback } from '@/lib/backend-url';
+
 export const dynamic = 'force-dynamic'; // never cache — this is a live stream
 
 export async function GET(request: Request) {
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:3003';
-
     // Extract the cookie header from the incoming request
     const cookieHeader = request.headers.get('cookie') ?? '';
 
@@ -38,7 +38,7 @@ export async function GET(request: Request) {
     }
 
     try {
-        const response = await fetch(`${backendUrl}/api/crawler/stream`, {
+        const response = await fetchWithBackendFallback('/api/crawler/stream', {
             method: 'GET',
             headers,
         });

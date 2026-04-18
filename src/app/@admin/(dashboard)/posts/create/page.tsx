@@ -3,15 +3,29 @@
 import { useState, useEffect } from "react"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/admin/ui/button"
 import { Sparkles, ArrowUp, StopCircle, X } from "lucide-react"
-import { SimpleEditor } from "@/components/admin/shared/editor/tiptap-templates/simple/simple-editor"
 import { PostSidebar } from "@/components/admin/shared/post-sidebar"
 import { useAiWriter } from "@/hooks/use-ai-writer"
 import { postsApi } from "@/services/posts.api"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
-import { AiWriterBar } from "@/components/admin/shared/editor/tiptap-ui/ai-writer-bar"
+
+// ✅ Phase 4: Dynamic imports for heavy Tiptap editor
+const SimpleEditor = dynamic(
+    () => import("@/components/admin/shared/editor/tiptap-templates/simple/simple-editor").then(m => ({ default: m.SimpleEditor })),
+    {
+        ssr: false,
+        loading: () => <div className="h-full w-full flex items-center justify-center bg-white dark:bg-[#191919]">
+            <div className="h-64 w-full max-w-4xl mx-auto animate-pulse bg-muted rounded-md" />
+        </div>
+    }
+)
+const AiWriterBar = dynamic(
+    () => import("@/components/admin/shared/editor/tiptap-ui/ai-writer-bar").then(m => ({ default: m.AiWriterBar })),
+    { ssr: false }
+)
 
 export default function CreatePostPage() {
     const router = useRouter();

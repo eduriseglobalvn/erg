@@ -4,7 +4,13 @@
       "Bash(yarn install:*)",
       "Bash(dir)",
       "Bash(npx @next/codemod@canary middleware-to-proxy .)",
-      "Bash(npx @next/codemod@canary middleware-to-proxy . --force)"
+      "Bash(npx @next/codemod@canary middleware-to-proxy . --force)",
+      "mcp__plugin_oh-my-claudecode_t__state_write",
+      "mcp__plugin_oh-my-claudecode_t__state_clear",
+      "WebFetch(domain:steppingstones.edu.vn)",
+      "Bash(yarn build:*)",
+      "Bash(bun run:*)",
+      "Bash(npx eslint:*)"
     ]
   }
 }

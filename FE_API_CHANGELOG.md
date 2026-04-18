@@ -328,3 +328,60 @@ Endpoint này **không thay đổi gì**. FE vẫn dùng bình thường.
 **Legend:**
 - ⚠️ = Breaking change — cần FE thay đổi code
 - ✅ = Non-breaking — FE có thể tận dụng hoặc không cần quan tâm
+
+---
+
+## 14. Go Backend Parity (Monolith Integration)
+
+**THAY ĐỔI:** Go Monolith (`erg-go`) giờ trả về response đồng nhất với NestJS Backend Gateway.
+
+### Global Response Envelope
+
+Tất cả responses từ Go hiện tại đều có cấu trúc:
+```typescript
+{
+  statusCode: number;
+  message: string;
+  data: T | null;
+  errors: any;
+  timestamp: string;
+  path: string;
+  requestId: string;
+}
+```
+
+### CamelCase Migration
+
+**QUAN TRỌNG:** Tất cả JSON tags trong Go đã được chuyển từ `snake_case` sang `camelCase`.
+
+```typescript
+// TRƯỚC:
+{ "user_id": "...", "full_name": "...", "access_token": "..." }
+
+// SAU:
+{ "userId": "...", "fullName": "...", "accessToken": "..." }
+```
+
+### Pagination Standard
+
+Các endpoint danh sách trong Go hiện trả về:
+```typescript
+{
+  data: {
+    items: T[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }
+}
+```
+
+### Trending Module Auth
+
+**THAY ĐỔI:** Các routes `/api/trending/*` giờ yêu cầu JWT Token:
+```typescript
+headers: { Authorization: `Bearer ${accessToken}` }
+```
+
+> FE: Sử dụng `httpClient` chuẩn sẽ tự động tương thích với các thay đổi này.

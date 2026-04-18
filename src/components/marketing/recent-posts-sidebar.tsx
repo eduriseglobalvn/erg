@@ -7,14 +7,32 @@ import { postsApi } from '@/services/posts.api';
 import { Skeleton } from '@/components/admin/ui/skeleton';
 import { Calendar } from 'lucide-react';
 
-export function RecentPostsSidebar({ initialData }: { initialData?: any[] }) {
+interface RecentPostItem {
+    id: string;
+    slug: string;
+    title: string;
+    createdAt: string;
+}
+
+interface RecentPostsData {
+    items: RecentPostItem[];
+}
+
+export function RecentPostsSidebar({ initialData }: { initialData?: RecentPostItem[] }) {
     const { data: recentPostsResponse, isLoading } = useQuery({
         queryKey: ['recent-posts'],
-        queryFn: () => postsApi.getAll({ limit: 5, sortBy: 'createdAt', order: 'DESC', status: 'published' }).then(res => res.data),
+        queryFn: () =>
+            postsApi
+                .getAll({ limit: 5, sortBy: 'createdAt', order: 'DESC', status: 'published' })
+                .then((res) => res.data as RecentPostsData | RecentPostItem[]),
         initialData: initialData ? { items: initialData } : undefined,
     });
 
-    const posts = Array.isArray(recentPostsResponse?.items) ? recentPostsResponse.items : (Array.isArray(recentPostsResponse) ? recentPostsResponse : []);
+    const posts: RecentPostItem[] = Array.isArray(recentPostsResponse)
+        ? recentPostsResponse
+        : Array.isArray(recentPostsResponse?.items)
+            ? recentPostsResponse.items
+            : [];
 
     return (
         <div className="rounded-xl overflow-hidden shadow-sm border border-gray-100">
@@ -28,7 +46,7 @@ export function RecentPostsSidebar({ initialData }: { initialData?: any[] }) {
                 ) : posts.length === 0 ? (
                     <p className="p-6 text-center text-gray-400 italic text-sm">Chưa có bài viết nào.</p>
                 ) : (
-                    posts.map((post: any) => (
+                    posts.map((post) => (
                         <Link
                             key={post.id}
                             href={`/tin-tuc/${post.slug}`}

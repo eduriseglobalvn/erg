@@ -10,13 +10,21 @@ import { Reviews } from '@/components/shared/reviews';
 import { SchemaScript } from '@/components/seo/schema-script';
 import { AiSearchSummaryBox } from '@/components/seo/ai-search-summary';
 import { PostDetailResponse } from '@/services/posts.api';
+import { ReviewStats } from '@/services/reviews.api';
+
+interface RecentPostItem {
+    id: string;
+    slug: string;
+    title: string;
+    createdAt: string;
+}
 
 interface NewsDetailViewProps {
     post: PostDetailResponse['data'];
     status?: number;
-    recentPosts: any[];
+    recentPosts: RecentPostItem[];
     isDraft?: boolean;
-    reviewStats?: any;
+    reviewStats?: ReviewStats | null;
     host: string;
 }
 

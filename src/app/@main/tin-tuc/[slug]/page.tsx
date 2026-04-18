@@ -4,25 +4,39 @@ import { redirect } from 'next/navigation';
 import { draftMode, headers } from 'next/headers';
 import { NewsDetailView } from '@/components/news/NewsDetailView';
 import { generateFullMetadata } from '@/utils/seo/seo-metadata';
+import { getPreferredBackendBaseUrl } from '@/lib/backend-url';
+import { resolveSiteContextFromHeaders } from '@/lib/site-context';
 
 // Import Interface
 import { PostDetailResponse } from '@/services/posts.api';
+import { ReviewStats } from '@/services/reviews.api';
 
 interface PostFetchResult {
     data: PostDetailResponse['data'] | null;
     status: number;
 }
 
+interface RecentPostItem {
+    id: string;
+    slug: string;
+    title: string;
+    createdAt: string;
+}
+
+interface ReviewStatsResponse {
+    stats?: ReviewStats | null;
+}
+
 // Fetch review stats for SSR
-async function getReviewStats(targetId: string) {
+async function getReviewStats(targetId: string): Promise<ReviewStats | null> {
     try {
-        const apiUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+        const apiUrl = getPreferredBackendBaseUrl();
         const res = await fetch(`${apiUrl}/api/reviews?targetId=${targetId}&limit=1`, {
             next: { revalidate: 60 },
         });
 
         if (!res.ok) return null;
-        const json = await res.json();
+        const json = await res.json() as ReviewStatsResponse;
         return json.stats || null;
     } catch (error) {
         return null;
@@ -32,7 +46,7 @@ async function getReviewStats(targetId: string) {
 // Fetch function for Server Component
 async function getPost(slug: string, previewId?: string | null): Promise<PostFetchResult> {
     try {
-        const apiUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+        const apiUrl = getPreferredBackendBaseUrl();
 
         // [CASE] Nếu đang ở chế độ xem trước (Draft Mode)
         if (previewId) {
@@ -62,22 +76,29 @@ async function getPost(slug: string, previewId?: string | null): Promise<PostFet
         const json = await res.json();
         return { data: json.data, status: 200 };
     } catch (error) {
-        console.error('Error fetching post:', error);
         return { data: null, status: 500 };
     }
 }
 
-async function getRecentPosts(): Promise<any[]> {
+async function getRecentPosts(): Promise<RecentPostItem[]> {
     try {
-        const apiUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+        const apiUrl = getPreferredBackendBaseUrl();
         const res = await fetch(`${apiUrl}/api/posts?limit=5&sortBy=createdAt&order=DESC&status=published`, {
             next: { revalidate: 60 },
         });
 
         if (!res.ok) return [];
-        const json = await res.json();
+        const json = await res.json() as {
+            data?: {
+                items?: RecentPostItem[];
+            } | RecentPostItem[];
+        };
         const data = json.data;
-        return Array.isArray(data?.items) ? data.items : (Array.isArray(data) ? data : []);
+        return Array.isArray(data)
+            ? data
+            : Array.isArray(data?.items)
+                ? data.items
+                : [];
     } catch (error) {
         return [];
     }
@@ -91,9 +112,8 @@ export async function generateMetadata({ params, searchParams }: {
     const { slug } = await params;
     const { previewId } = await searchParams;
 
-    // Get dynamic host
     const headerList = await headers();
-    const host = headerList.get('host') || 'erg.edu.vn';
+    const siteContext = resolveSiteContextFromHeaders(headerList);
 
     const isDraft = (await draftMode()).isEnabled;
     const { data: post, status } = await getPost(slug, isDraft ? previewId : null);
@@ -121,7 +141,7 @@ export async function generateMetadata({ params, searchParams }: {
         description: seoDesc,
         keywords: post.keywords?.split(',') || [],
         path: `/tin-tuc/${post.slug}`,
-        host,
+        host: siteContext.host,
         type: 'article',
         images: post.thumbnailUrl ? [post.thumbnailUrl] : [],
         author: post.author?.fullName ? [post.author.fullName] : undefined,
@@ -142,9 +162,8 @@ export default async function PostDetailPage({
     const { previewId } = await searchParams;
     const isDraft = (await draftMode()).isEnabled;
 
-    // Get dynamic host
     const headerList = await headers();
-    const host = headerList.get('host') || 'erg.edu.vn';
+    const siteContext = resolveSiteContextFromHeaders(headerList);
 
     // Parallel Fetching
     const [{ data: post, status }, recentPosts] = await Promise.all([
@@ -168,7 +187,7 @@ export default async function PostDetailPage({
             recentPosts={recentPosts}
             isDraft={isDraft}
             reviewStats={reviewStats}
-            host={host}
+            host={siteContext.host}
         />
     );
 }

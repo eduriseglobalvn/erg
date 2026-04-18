@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { BookOpen, TrendingUp, Globe, Lightbulb, Heart, Rocket, Quote } from 'lucide-react';
 import { useTranslations } from 'next-intl';

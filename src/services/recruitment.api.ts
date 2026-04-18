@@ -1,4 +1,5 @@
 import { httpClient } from '@/services/http-client';
+import { getPreferredBackendBaseUrl } from '@/lib/backend-url';
 import { Job, Candidate, CandidateStatus } from '@/types/recruitment';
 
 export interface ApiResponse<T> {
@@ -30,7 +31,7 @@ export const recruitmentApi = {
 
         // Server-side fetching
         if (typeof window === 'undefined') {
-            const backendUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+            const backendUrl = getPreferredBackendBaseUrl();
             const url = `${backendUrl}/api${endpoint}`;
             const res = await fetch(url, { next: { revalidate: 60 } });
             if (!res.ok) throw new Error(`Failed to fetch jobs: ${res.status}`);
@@ -46,7 +47,7 @@ export const recruitmentApi = {
 
         // Server-side fetching
         if (typeof window === 'undefined') {
-            const backendUrl = process.env.BACKEND_URL || 'http://localhost:3003';
+            const backendUrl = getPreferredBackendBaseUrl();
             const url = `${backendUrl}/api${endpoint}`;
             const res = await fetch(url, { next: { revalidate: 60 } });
             if (!res.ok) throw new Error(`Failed to fetch job ${slug}: ${res.status}`);

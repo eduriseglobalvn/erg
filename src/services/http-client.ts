@@ -1,11 +1,13 @@
 // src/services/http-client.ts
 
+import { buildBackendApiUrl, fetchWithBackendFallback } from '@/lib/backend-url';
+
 /**
  * HTTP Client Isomorphic (Chạy được cả Client & Server)
  *
  * ✅ Tự động nhận diện môi trường (Client/Server)
- * ✅ Ở Client: Sử dụng localStorage, handle refresh token queue
- * ✅ Ở Server: Fetch trực tiếp, dùng API_URL từ env
+ * ✅ Ở Client: Sử dụng HttpOnly cookie session qua Next proxy
+ * ✅ Ở Server: Fetch trực tiếp backend URL từ env
  *
  * [BE v2026-03] Rate limit headers:
  *   - X-RateLimit-Limit / X-RateLimit-Remaining / X-RateLimit-Reset (perIp)
@@ -27,6 +29,25 @@ export class ApiError extends Error {
         super(message);
         this.name = 'ApiError';
     }
+}
+
+export function isBackendUnavailableError(error: unknown): boolean {
+    if (error instanceof ApiError) {
+        if (error.status === 503) return true;
+        if (typeof error.message === 'string' && error.message.includes('Backend unavailable')) {
+            return true;
+        }
+    }
+
+    if (error instanceof Error) {
+        return error.message.includes('Backend unavailable') || error.message.includes('fetch failed');
+    }
+
+    return false;
+}
+
+export function isAuthFailureError(error: unknown): boolean {
+    return error instanceof ApiError && (error.status === 401 || error.status === 403);
 }
 
 /** Error class cho rate limit (429) */
@@ -55,6 +76,11 @@ export interface RateLimitHeaders {
     ipUserLimit?: number;
     ipUserRemaining?: number;
     ipUserReset?: number;
+}
+
+interface FailedQueueEntry {
+    resolve: () => void;
+    reject: (error: unknown) => void;
 }
 
 /**
@@ -124,12 +150,16 @@ export const getRateLimitInfo = (endpoint: string): RateLimitHeaders | null => {
 
 // --- BIẾN TOÀN CỤC (CHỈ DÙNG Ở CLIENT) ---
 let isRefreshing = false;
-let failedQueue: any[] = [];
+let failedQueue: FailedQueueEntry[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
-    failedQueue.forEach((prom) => {
-        if (error) prom.reject(error);
-        else prom.resolve(token);
+const processQueue = (error?: unknown) => {
+    failedQueue.forEach((pendingRequest) => {
+        if (error) {
+            pendingRequest.reject(error);
+            return;
+        }
+
+        pendingRequest.resolve();
     });
     failedQueue = [];
 };
@@ -141,44 +171,45 @@ export const httpClient = async <T>(
     const isServer = typeof window === 'undefined';
     const { requireAuth = true, ...fetchOptions } = options || {};
 
-    const getRefreshToken = () => {
-        if (isServer) return null;
-        return localStorage.getItem('refreshToken');
-    };
-
-    const getAccessToken = () => {
-        if (isServer) return null;
-        return localStorage.getItem('accessToken');
-    };
-
-    // Helper tạo headers
     const createHeaders = () => {
         const headers = new Headers(fetchOptions.headers);
-        if (!(fetchOptions.body instanceof FormData)) {
+
+        if (
+            fetchOptions.body &&
+            !(fetchOptions.body instanceof FormData) &&
+            !headers.has('Content-Type')
+        ) {
             headers.set('Content-Type', 'application/json');
         }
+
         return headers;
     };
 
-    // ✅ Resolve URL
     let url: string;
+    let serverPath = '';
     if (isServer) {
-        // Trên Server, gọi trực tiếp Backend URL
-        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        const cleanEndpoint = endpoint.startsWith('/api/') ? endpoint.replace('/api/', '/') : (endpoint.startsWith('/') ? endpoint : `/${endpoint}`);
-        url = `${backendUrl}${cleanEndpoint}`;
+        serverPath = endpoint.startsWith('/api/')
+            ? endpoint
+            : (endpoint.startsWith('/') ? `/api${endpoint}` : `/api/${endpoint}`);
+        url = buildBackendApiUrl(serverPath);
     } else {
-        // Ở Client, đi qua proxy /api/
         if (endpoint.startsWith('/api/')) url = endpoint;
         else if (endpoint.startsWith('/')) url = `/api${endpoint}`;
         else url = `/api/${endpoint}`;
     }
 
     try {
-        const response = await fetch(url, {
-            ...fetchOptions,
-            headers: createHeaders(),
-        });
+        const response = isServer
+            ? await fetchWithBackendFallback(serverPath, {
+                ...fetchOptions,
+                headers: createHeaders(),
+                credentials: fetchOptions.credentials ?? 'same-origin',
+            })
+            : await fetch(url, {
+                ...fetchOptions,
+                headers: createHeaders(),
+                credentials: fetchOptions.credentials ?? 'include',
+            });
 
         if (response.ok) {
             // [BE v2026-03] Extract & store rate limit headers vào cache
@@ -210,51 +241,33 @@ export const httpClient = async <T>(
                 return new Promise((resolve, reject) => {
                     failedQueue.push({
                         resolve: () => {
-                            const newHeaders = createHeaders();
-                            resolve(
-                                fetch(url, { ...fetchOptions, headers: newHeaders }).then(async (res) => {
-                                    if (res.ok) {
-                                        const contentLength = res.headers.get('Content-Length');
-                                        if (contentLength === '0') return {};
-                                        return res.json();
-                                    }
-                                    const errorData = await res.json().catch(() => ({}));
-                                    throw new ApiError(errorData.message || `HTTP Error ${res.status}`, res.status, errorData);
-                                })
-                            );
+                            httpClient<T>(endpoint, options).then(resolve).catch(reject);
                         },
-                        reject: (err: any) => reject(err),
+                        reject,
                     });
                 });
             }
 
             isRefreshing = true;
-            const refreshToken = getRefreshToken();
 
-            if (refreshToken) {
-                try {
-                    const refreshResponse = await fetch('/api/auth/refresh', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ refreshToken }),
-                    });
+            try {
+                const refreshResponse = await fetch('/api/auth/refresh', {
+                    method: 'POST',
+                    credentials: 'include',
+                });
 
-                    if (refreshResponse.ok) {
-                        processQueue(null);
-                        isRefreshing = false;
-                        return httpClient<T>(endpoint, options);
-                    } else {
-                        throw new ApiError('Session expired', 401);
-                    }
-                } catch (error) {
-                    processQueue(error, null);
-                    isRefreshing = false;
-                    handleLogout();
-                    throw error;
+                if (!refreshResponse.ok) {
+                    throw new ApiError('Session expired', 401);
                 }
-            } else {
+
+                processQueue();
+                isRefreshing = false;
+                return httpClient<T>(endpoint, options);
+            } catch (error) {
+                processQueue(error);
+                isRefreshing = false;
                 handleLogout();
-                throw new ApiError('No refresh token available', 401);
+                throw error;
             }
         }
 

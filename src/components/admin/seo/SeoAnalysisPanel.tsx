@@ -4,18 +4,11 @@ import * as React from "react"
 import { useSeoAnalysis } from "@/hooks/use-seo"
 import { useQuery } from "@tanstack/react-query"
 import { seoApi } from "@/services/seo.api"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/admin/ui/card"
-import { Progress } from "@/components/admin/ui/progress"
-import { Badge } from "@/components/admin/ui/badge"
 import { ScrollArea } from "@/components/admin/ui/scroll-area"
 import {
-    CopyCheck,
-    Link as LinkIcon,
-    Loader2,
     Sparkles,
     ChevronDown,
     ChevronUp,
-    History,
     Search,
     FileText,
     Settings,
@@ -25,12 +18,6 @@ import {
     AlertCircle,
     XCircle
 } from "lucide-react"
-import {
-    LineChart,
-    Line,
-    ResponsiveContainer,
-    YAxis
-} from 'recharts'
 import {
     Collapsible,
     CollapsibleContent,
@@ -43,6 +30,10 @@ import { localSeoAnalyzer } from "@/utils/local-seo"
 import { Button } from "@/components/admin/ui/button"
 import { toast } from "sonner"
 import { useCheckSeoDuplicate, useApplySeoAutolinks } from "@/hooks/use-seo"
+
+// Sub-components
+import { SeoScoreCard } from "@/components/admin/seo/seo-score-card"
+import { SeoKeywordList } from "@/components/admin/seo/seo-keyword-list"
 
 interface SeoAnalysisPanelProps {
     postId: string
@@ -187,70 +178,14 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
             <ScrollArea className="flex-1">
                 <div className="p-4 space-y-6">
                     {/* Overall Score Card */}
-                    <div className="bg-white dark:bg-zinc-900 rounded-xl p-5 border shadow-sm space-y-4">
-                        <div className="flex items-center justify-between">
-                            <span className="text-sm font-bold text-muted-foreground uppercase tracking-tight">SEO Score</span>
-                            <span className={cn("text-2xl font-black", getScoreColor(overallScore))}>
-                                {overallScore}/100
-                            </span>
-                        </div>
-                        <Progress value={overallScore} className="h-2.5" />
-
-                        {/* [NEW] Quick Actions */}
-                        <div className="grid grid-cols-2 gap-2 mt-2">
-                            <Button
-                                variant="outline" size="sm"
-                                className="text-[10px] h-8"
-                                onClick={handleCheckDuplicate}
-                                disabled={isCheckingDuplicate}
-                            >
-                                {isCheckingDuplicate ? <Loader2 className="w-3 h-3 animate-spin" /> : <CopyCheck className="w-3 h-3 mr-1" />}
-                                Check Duplicate
-                            </Button>
-                            <Button
-                                variant="outline" size="sm"
-                                className="text-[10px] h-8"
-                                onClick={handleApplyLinks}
-                                disabled={isApplyingLinks}
-                            >
-                                {isApplyingLinks ? <Loader2 className="w-3 h-3 animate-spin" /> : <LinkIcon className="w-3 h-3 mr-1" />}
-                                Auto Link
-                            </Button>
-                        </div>
-
-                        {/* [NEW] Score History Sparkline */}
-                        {scoreHistory && scoreHistory.length > 1 && (
-                            <div className="pt-2 border-t mt-2">
-                                <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
-                                    <span className="flex items-center gap-1"><History className="w-3 h-3" /> Lịch sử điểm số</span>
-                                    <span>{scoreHistory.length} lần sửa</span>
-                                </div>
-                                <div className="h-10 w-full">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <LineChart data={scoreHistory}>
-                                            <YAxis domain={[0, 100]} hide />
-                                            <Line
-                                                type="monotone"
-                                                dataKey="score"
-                                                stroke="#4f46e5"
-                                                strokeWidth={2}
-                                                dot={false}
-                                                animationDuration={1000}
-                                            />
-                                        </LineChart>
-                                    </ResponsiveContainer>
-                                </div>
-                            </div>
-                        )}
-
-                        <p className="text-[11px] text-muted-foreground italic">
-                            {overallScore >= 80
-                                ? "✨ Tuyệt vời! Bài viết của bạn đã tối ưu SEO cực tốt."
-                                : overallScore >= 50
-                                    ? "⚠️ Khá tốt, nhưng vẫn cần cải thiện thêm một vài điểm."
-                                    : "❌ Cảnh báo! Bài viết này chưa đạt chuẩn SEO tối thiểu."}
-                        </p>
-                    </div>
+                    <SeoScoreCard
+                        overallScore={overallScore}
+                        scoreHistory={scoreHistory}
+                        isCheckingDuplicate={isCheckingDuplicate}
+                        isApplyingLinks={isApplyingLinks}
+                        onCheckDuplicate={handleCheckDuplicate}
+                        onApplyLinks={handleApplyLinks}
+                    />
 
                     {/* Analysis Categories */}
                     <div className="space-y-4">
@@ -330,26 +265,7 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
                     </div>
 
                     {/* Suggestions Section */}
-                    {/* ... Existing suggestions ... */}
-                    <div className="bg-purple-50/50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-800 rounded-xl p-4">
-                        <div className="flex items-center gap-2 mb-3">
-                            <Lightbulb className="w-4 h-4 text-purple-600" />
-                            <h3 className="text-sm font-bold text-purple-900 dark:text-purple-300 uppercase tracking-tight">Gợi ý hành động</h3>
-                        </div>
-                        <ul className="space-y-3">
-                            {suggestions.map((suggestion, index) => (
-                                <li key={index} className="flex gap-2 text-xs text-purple-800 dark:text-purple-400 leading-relaxed font-medium">
-                                    <ChevronRight className="w-3 h-3 mt-0.5 shrink-0" />
-                                    {suggestion}
-                                </li>
-                            ))}
-                            {suggestions.length === 0 && (
-                                <li className="text-xs text-muted-foreground text-center py-2 italic">
-                                    Không có gợi ý nào thêm. Bài viết của bạn đã rất tốt!
-                                </li>
-                            )}
-                        </ul>
-                    </div>
+                    <SeoKeywordList suggestions={suggestions} />
                 </div>
             </ScrollArea>
         </div>

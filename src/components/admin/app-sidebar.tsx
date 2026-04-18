@@ -4,16 +4,7 @@ import * as React from "react"
 import { useQuery } from "@tanstack/react-query"
 import { usePathname } from "next/navigation"
 import {
-    AudioWaveform,
-    BookOpen,
-    Bot,
-    Command,
-    Frame,
     GalleryVerticalEnd,
-    Map,
-    PieChart,
-    Settings2,
-    SquareTerminal,
     LayoutDashboard,
     PenSquare,
     FileEdit,
@@ -25,7 +16,6 @@ import {
     Library,
     Tags,
     Image,
-    ChevronRight,
     Type,
     Building2,
     GraduationCap,
@@ -37,10 +27,14 @@ import {
     Search,
     Link as LinkIcon,
     Activity,
-    Shield
+    Shield,
+    ShieldCheck,
+    Bot,
+    BookOpen,
+    Settings2,
+    PieChart
 } from "lucide-react"
 
-import { NavUser } from "@/components/admin/nav-user"
 import { TeamSwitcher } from "@/components/admin/team-switcher"
 import {
     Sidebar,
@@ -48,23 +42,9 @@ import {
     SidebarFooter,
     SidebarHeader,
     SidebarRail,
-    SidebarGroup,
-    SidebarGroupLabel,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    SidebarMenuSub,
-    SidebarMenuSubButton,
-    SidebarMenuSubItem,
-    useSidebar,
 } from "@/components/admin/ui/sidebar"
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from "@/components/admin/ui/collapsible"
 import { postsApi } from "@/services/posts.api"
-import { cn } from "@/lib/utils"
+import { usePermissions } from "@/hooks/use-permission"
 
 const categoryIcons: Record<string, React.ElementType> = {
     "GraduationCap": GraduationCap,
@@ -147,27 +127,27 @@ const data = {
                 },
                 {
                     title: "Nguồn RSS",
-                    url: "/admin/crawler/rss",
+                    url: "/crawler/rss",
                     permission: "crawler.read",
                 },
                 {
                     title: "Cấu hình Selector",
-                    url: "/admin/crawler/configs",
+                    url: "/crawler/configs",
                     permission: "crawler.manage",
                 },
                 {
                     title: "Lịch sử cào tin",
-                    url: "/admin/crawler/history",
+                    url: "/crawler/history",
                     permission: "crawler.read",
                 },
                 {
                     title: "Hot Topics",
-                    url: "/admin/crawler/trending",
+                    url: "/crawler/trending",
                     permission: "crawler.read",
                 },
                 {
                     title: "Blacklist",
-                    url: "/admin/crawler/blacklist",
+                    url: "/crawler/blacklist",
                     permission: "system.settings",
                 },
             ]
@@ -180,25 +160,25 @@ const data = {
             items: [
                 {
                     title: "Tin thô từ web khác", // Thay cho "Raw Scraper Review"
-                    url: "/admin/automation/review/raw",
+                    url: "/automation/review/raw",
                     permission: "crawler.read",
                 },
                 {
                     title: "Bài viết do AI tạo", // Thay cho "AI Draft Review"
-                    url: "/admin/automation/review/ai",
+                    url: "/automation/review/ai",
                     permission: "posts.read",
                 },
             ],
         },
         {
             title: "Bài viết tạm ẩn", // Hoặc "Kho lưu trữ"
-            url: "/admin/posts/archived",
+            url: "/posts/archived",
             icon: EyeOff, // Sử dụng icon con mắt bị gạch chéo (EyeOff) từ lucide-react
             permission: "posts.read",
         },
         {
             title: "Thùng rác", // Nơi chứa bài đã xóa
-            url: "/admin/posts/trash",
+            url: "/posts/trash",
             icon: Trash2,
             permission: "posts.delete",
         },
@@ -208,13 +188,13 @@ const data = {
     navCourses: [
         {
             title: "Quản lý khóa học",
-            url: "/admin/courses",
+            url: "/courses",
             icon: GraduationCap,
             permission: "courses.read",
         },
         {
             title: "E-Learning",
-            url: "/admin/elearning",
+            url: "/elearning",
             icon: BookOpen,
             permission: "courses.read",
         },
@@ -224,25 +204,25 @@ const data = {
     navRecruitment: [
         {
             title: "Tin tuyển dụng",
-            url: "/admin/recruitment/jobs",
+            url: "/recruitment/jobs",
             icon: Briefcase,
             permission: "recruitment.read",
         },
         {
             title: "Hồ sơ ứng viên",
-            url: "/admin/recruitment/candidates",
+            url: "/recruitment/candidates",
             icon: Users,
             permission: "recruitment.read",
         },
         {
             title: "Lịch phỏng vấn",
-            url: "/admin/recruitment/interviews",
+            url: "/recruitment/interviews",
             icon: UserCheck,
             permission: "recruitment.read",
         },
         {
             title: "Mẫu bài thi/Test",
-            url: "/admin/recruitment/templates",
+            url: "/recruitment/templates",
             icon: FileText,
             permission: "recruitment.read",
         },
@@ -252,25 +232,31 @@ const data = {
     navSystem: [
         {
             title: "Người dùng",
-            url: "/admin/users",
+            url: "/users",
             icon: Users,
             permission: "users.read",
         },
         {
+            title: "Hồ sơ Công khai",
+            url: "/public-disclosure",
+            icon: ShieldCheck,
+            permission: "posts.read",
+        },
+        {
             title: "Phân quyền",
-            url: "/admin/access-control",
+            url: "/access-control",
             icon: Shield,
             permission: "roles.read",
         },
         {
             title: "Quản lý chuyên mục", // Categories
-            url: "/admin/categories",
+            url: "/categories",
             icon: Library,
             permission: "categories.read",
         },
         {
             title: "Quản lý thẻ (Tags)",
-            url: "/admin/tags",
+            url: "/tags",
             icon: Tags,
             permission: "tags.read",
         },
@@ -355,155 +341,13 @@ const data = {
     ]
 }
 
-// --- HÀM KIỂM TRA QUYỀN ---
-const hasPermission = (userPermissions: string[], permission?: string | null) => {
-    if (!permission) return true;
-    if (userPermissions.includes('*')) return true; // Admin có mọi quyền
-    return userPermissions.includes(permission);
-};
-
-// --- COMPONENT GROUP MENU CHÍNH (Dùng cho Quản lý bài viết, Công cụ tự động) ---
-function NavMain({
-    items,
-    label,
-    pathname,
-    userPermissions,
-}: {
-    items: {
-        title: string
-        url: string
-        icon?: React.ElementType
-        isActive?: boolean
-        permission?: string | null
-        items?: {
-            title: string
-            url: string
-            icon?: React.ElementType
-            permission?: string | null
-        }[]
-    }[]
-    label?: string
-    pathname?: string
-    userPermissions: string[]
-}) {
-    const { state } = useSidebar()
-    const isCollapsed = state === "collapsed"
-
-    const isItemActive = (url: string) => {
-        if (!pathname) return false
-        if (url === "#") return false // Collapsible items không được active
-        if (url === "/") {
-            return pathname === "/" || pathname === ""
-        }
-        return pathname.startsWith(url)
-    }
-
-    // Filter root items
-    const visibleItems = items.filter(item => hasPermission(userPermissions, item.permission));
-
-    if (visibleItems.length === 0) return null;
-
-    return (
-        <SidebarGroup>
-            {/* Hiển thị tên nhóm menu (ví dụ: QUẢN LÝ NỘI DUNG) */}
-            {label && <SidebarGroupLabel>{label}</SidebarGroupLabel>}
-            <SidebarMenu>
-                {visibleItems.map((item) => {
-                    // Filter sub-items
-                    const visibleSubItems = item.items?.filter(sub => hasPermission(userPermissions, sub.permission)) || [];
-
-                    return (
-                        <Collapsible
-                            key={item.title}
-                            asChild
-                            defaultOpen={item.isActive}
-                            className="group/collapsible"
-                        >
-                            <SidebarMenuItem>
-                                {/* KIỂM TRA: Nếu mục này có menu con (items) và còn it nhất 1 item được hiển thị */}
-                                {visibleSubItems.length > 0 ? (
-                                    <>
-                                        {/* SPLIT BUTTON: Giao diện liền mạch, Active State chuẩn */}
-                                        <div className="flex items-center w-full relative">
-                                            <SidebarMenuButton
-                                                asChild
-                                                tooltip={item.title}
-                                                isActive={isItemActive(item.url)} // ✅ Thêm Active State cho Parent
-                                                className={cn("flex-1", !isCollapsed && "pr-10")} // Chừa chỗ cho mũi tên khi mở rộng
-                                            >
-                                                <a href={item.url === "#" ? visibleSubItems[0].url : item.url}>
-                                                    {item.icon && <item.icon />}
-                                                    <span className="font-medium">{item.title}</span>
-                                                </a>
-                                            </SidebarMenuButton>
-
-                                            {/* BIẾN MẤT KHI THU NHỎ SIDEBAR */}
-                                            {!isCollapsed && (
-                                                <CollapsibleTrigger asChild>
-                                                    {/* Nút Toggle: Size đại (40px box, 28px icon) */}
-                                                    <button className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 z-20 transition-all focus-visible:outline-none">
-                                                        <ChevronRight className="h-7 w-7 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                                        <span className="sr-only">Toggle</span>
-                                                    </button>
-                                                </CollapsibleTrigger>
-                                            )}
-                                        </div>
-                                        <CollapsibleContent>
-                                            <SidebarMenuSub>
-                                                {visibleSubItems.map((subItem) => (
-                                                    <SidebarMenuSubItem key={subItem.title}>
-                                                        <SidebarMenuSubButton
-                                                            asChild
-                                                            isActive={isItemActive(subItem.url)}
-                                                        >
-                                                            <a href={subItem.url}>
-                                                                {subItem.icon && <subItem.icon className="mr-2 h-4 w-4" />}
-                                                                <span>{subItem.title}</span>
-                                                            </a>
-                                                        </SidebarMenuSubButton>
-                                                    </SidebarMenuSubItem>
-                                                ))}
-                                            </SidebarMenuSub>
-                                        </CollapsibleContent>
-                                    </>
-                                ) : (
-                                    /* TRƯỜNG HỢP KHÁC: Nếu không có menu con, chỉ là link thường */
-                                    <SidebarMenuButton
-                                        asChild
-                                        tooltip={item.title}
-                                        isActive={isItemActive(item.url)}
-                                    >
-                                        <a href={item.url}>
-                                            {item.icon && <item.icon />}
-                                            <span>{item.title}</span>
-                                        </a>
-                                    </SidebarMenuButton>
-                                )}
-                            </SidebarMenuItem>
-                        </Collapsible>
-                    )
-                })}
-            </SidebarMenu >
-        </SidebarGroup >
-    )
-}
-
-import { usePermissions } from "@/hooks/use-permission"
-import { useAuth } from "@/hooks/use-auth"
+// Sub-components
+import { AppSidebarNav } from "@/components/admin/app-sidebar-nav"
 
 // --- PHẦN CHÍNH CỦA THANH SIDEBAR ---
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const pathname = usePathname() // Hook để lấy URL hiện tại
-    const permissions = usePermissions() // Lấy quyền hiện tại sử dụng hook usePermissions
-
-    const { data: auth, isLoading } = useAuth()
-
-    // Tạo user object chuẩn bị cho UI
-    const user = {
-        name: auth?.user?.fullName || "Admin",
-        email: auth?.user?.email || "admin@congty.com",
-        avatar: auth?.user?.avatarUrl || "/avatars/avatar.jpg",
-    }
+    const pathname = usePathname()
+    const permissions = usePermissions()
 
     // Dynamic categories for "Quản lý bài viết"
     const { data: categories } = useQuery({
@@ -528,63 +372,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         })
     }, [categories])
 
-    // Helper function để check active state
-    const isItemActive = (url: string) => {
-        if (!pathname) return false
-        if (url === "/") {
-            return pathname === "/" || pathname === ""
-        }
-        return pathname.startsWith(url)
-    }
-
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                {/* Phần chọn team/công ty ở trên cùng */}
                 <TeamSwitcher teams={data.teams} />
             </SidebarHeader>
 
             <SidebarContent>
-                {/* 1. Khu vực Bảng tổng quan */}
-                <SidebarGroup>
-                    <SidebarMenu>
-                        {data.navDashboard.filter(item => hasPermission(permissions, item.permission)).map((item) => (
-                            <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton
-                                    asChild
-                                    isActive={isItemActive(item.url)}
-                                    tooltip={item.title}
-                                >
-                                    <a href={item.url}>
-                                        <item.icon />
-                                        <span>{item.title}</span>
-                                    </a>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))}
-                    </SidebarMenu>
-                </SidebarGroup>
-
-                {/* 2. Nhóm Quản lý bài viết */}
-                <NavMain items={navContent} label="Quản lý nội dung" pathname={pathname} userPermissions={permissions} />
-
-                {/* Khóa học */}
-                <NavMain items={data.navCourses} label="Học tập" pathname={pathname} userPermissions={permissions} />
-
-                {/* 2.5 Nhóm Quản lý Tuyển dụng */}
-                <NavMain items={data.navRecruitment} label="Quản lý tuyển dụng" pathname={pathname} userPermissions={permissions} />
-
-                {/* 3. Nhóm Quản lý SEO */}
-                <NavMain items={data.navSeo} label="Tối ưu hóa SEO" pathname={pathname} userPermissions={permissions} />
-
-                {/* 4. Nhóm Cài đặt hệ thống */}
-                <NavMain items={data.navSystem} label="Hệ thống" pathname={pathname} userPermissions={permissions} />
-
+                <AppSidebarNav
+                    navContent={navContent}
+                    navCourses={data.navCourses}
+                    navRecruitment={data.navRecruitment}
+                    navSeo={data.navSeo}
+                    navSystem={data.navSystem}
+                />
             </SidebarContent>
 
-            <SidebarFooter>
-                {/* Thông tin người dùng - ĐÃ LOẠI BỎ THEO YÊU CẦU */}
-            </SidebarFooter>
+            <SidebarFooter />
             <SidebarRail />
         </Sidebar>
     )

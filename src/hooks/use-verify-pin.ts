@@ -24,18 +24,11 @@ export function useVerifyPinMutation() {
             return res;
         },
         onSuccess: async (res: any) => {
-            // ISSUE 3 FIX: Tokens đã được backend trả về HttpOnly cookies qua proxy
-            // Đồng thời lưu vào localStorage để httpClient đọc phục vụ refresh
-            // (thống nhất: verify-pin cũng dùng proxy HttpOnly cookies như login)
+            // Session tokens da duoc proxy set qua HttpOnly cookies.
+            // Chi giu lai mot it user metadata khong nhay cam de UI co the hien nhanh.
             if (res?.user?.id) {
                 localStorage.setItem('userId', res.user.id);
                 if (res.user) localStorage.setItem('user', JSON.stringify(res.user));
-            }
-            if (res?.refreshToken) {
-                localStorage.setItem('refreshToken', res.refreshToken);
-            }
-            if (res?.accessToken) {
-                localStorage.setItem('accessToken', res.accessToken);
             }
 
             toast.success('Kích hoạt thành công!');
@@ -50,14 +43,6 @@ export function useVerifyPinMutation() {
 
                 if (sessionData.user) {
                     localStorage.setItem('user', JSON.stringify(sessionData.user));
-
-                    if (sessionData.accessControl) {
-                        const permissions = sessionData.accessControl.permissions || [];
-                        const roles = sessionData.accessControl.roles || [];
-
-                        localStorage.setItem('permissions', JSON.stringify(permissions));
-                        localStorage.setItem('roles', JSON.stringify(roles));
-                    }
                 }
 
                 // Invalidate auth cache

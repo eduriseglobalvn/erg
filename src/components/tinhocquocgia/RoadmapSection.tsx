@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { BookOpen, Trophy, ArrowRight, CheckCircle2, MoreHorizontal, Star, Layers, GraduationCap } from 'lucide-react';
 

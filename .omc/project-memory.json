@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1775229126186,
+  "lastScanned": 1775548424928,
   "projectRoot": "/Users/vuong/ERG.Workspace/erg",
   "techStack": {
     "languages": [
@@ -24,7 +24,7 @@
     "frameworks": [
       {
         "name": "next",
-        "version": "16.0.10",
+        "version": "16.2.1",
         "category": "fullstack"
       },
       {
@@ -38,21 +38,21 @@
         "category": "frontend"
       }
     ],
-    "packageManager": "yarn",
+    "packageManager": "npm",
     "runtime": null
   },
   "build": {
-    "buildCommand": "yarn build",
+    "buildCommand": "npm run build",
     "testCommand": null,
-    "lintCommand": "yarn lint",
-    "devCommand": "yarn dev",
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
     "scripts": {
-      "dev": "next dev --turbo",
-      "build": "next build",
-      "analyze": "ANALYZE=true next build",
-      "start": "next start",
-      "lint": "eslint",
-      "refresh-baseline-browser-mapping": "yarn add baseline-browser-mapping@latest -D"
+      "dev": "bun run next dev --turbo",
+      "build": "bun run next build",
+      "analyze": "bun run next build",
+      "start": "bun run next start",
+      "lint": "bun run eslint",
+      "refresh-baseline-browser-mapping": "bun add baseline-browser-mapping@latest -D"
     }
   },
   "conventions": {
@@ -80,7 +80,7 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 2,
-      "lastAccessed": 1775229126145,
+      "lastAccessed": 1775548424858,
       "keyFiles": [
         "API_SPEC_IMAGE_MANAGEMENT.md",
         "image-management-integration.md"
@@ -90,7 +90,7 @@
       "path": "md",
       "purpose": null,
       "fileCount": 5,
-      "lastAccessed": 1775229126146,
+      "lastAccessed": 1775548424863,
       "keyFiles": [
         "ADMIN-NOTIFICATION-MONITOR-FRONTEND.md",
         "AUTO-CRAWL-HIDDEN-CATEGORY-REQUIREMENTS.md",
@@ -103,14 +103,14 @@
       "path": "messages",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1775229126151,
+      "lastAccessed": 1775548424875,
       "keyFiles": []
     },
     "public": {
       "path": "public",
       "purpose": "Public files",
       "fileCount": 7,
-      "lastAccessed": 1775229126151,
+      "lastAccessed": 1775548424876,
       "keyFiles": [
         "erg.png",
         "file.svg",
@@ -123,29 +123,29 @@
       "path": "src",
       "purpose": "Source code",
       "fileCount": 3,
-      "lastAccessed": 1775229126152,
+      "lastAccessed": 1775548424877,
       "keyFiles": [
         "favicon.ico",
-        "middleware.ts",
+        "proxy.ts",
         "proxy.ts.demo"
       ]
     },
     "src/app": {
       "path": "src/app",
       "purpose": "Application code",
-      "fileCount": 8,
-      "lastAccessed": 1775229126154,
+      "fileCount": 9,
+      "lastAccessed": 1775548424879,
       "keyFiles": [
+        "default.tsx",
         "error.tsx",
-        "global-error.tsx",
-        "globals.css"
+        "global-error.tsx"
       ]
     },
     "src/components": {
       "path": "src/components",
       "purpose": "UI components",
       "fileCount": 5,
-      "lastAccessed": 1775229126154,
+      "lastAccessed": 1775548424879,
       "keyFiles": [
         "FloatingContact.tsx",
         "Footer.tsx",
@@ -156,7 +156,7 @@
       "path": "src/lib",
       "purpose": "Library code",
       "fileCount": 3,
-      "lastAccessed": 1775229126155,
+      "lastAccessed": 1775548424880,
       "keyFiles": [
         "logout-utils.ts",
         "tiptap-utils.ts",
@@ -167,7 +167,7 @@
       "path": "src/mocks",
       "purpose": "Mock data",
       "fileCount": 8,
-      "lastAccessed": 1775229126155,
+      "lastAccessed": 1775548424881,
       "keyFiles": [
         "chart-data.ts",
         "constants.ts",
@@ -177,21 +177,57 @@
   },
   "hotPaths": [
     {
-      "path": "",
-      "accessCount": 14,
-      "lastAccessed": 1775283266484,
-      "type": "directory"
+      "path": "src/components/admin/posts/posts-table.tsx",
+      "accessCount": 82,
+      "lastAccessed": 1775286343945,
+      "type": "file"
     },
     {
       "path": "src",
-      "accessCount": 11,
-      "lastAccessed": 1775283256699,
+      "accessCount": 51,
+      "lastAccessed": 1776094847909,
       "type": "directory"
     },
     {
+      "path": "",
+      "accessCount": 18,
+      "lastAccessed": 1775832236153,
+      "type": "directory"
+    },
+    {
+      "path": "package.json",
+      "accessCount": 14,
+      "lastAccessed": 1775573579795,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-ai-writer.ts",
+      "accessCount": 12,
+      "lastAccessed": 1775285647714,
+      "type": "file"
+    },
+    {
       "path": "src/hooks/use-page-tracking.ts",
+      "accessCount": 11,
+      "lastAccessed": 1775548461179,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-seo.ts",
+      "accessCount": 10,
+      "lastAccessed": 1775285540926,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-auth.ts",
       "accessCount": 9,
-      "lastAccessed": 1775283257885,
+      "lastAccessed": 1776094855507,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-permission.ts",
+      "accessCount": 8,
+      "lastAccessed": 1775283851260,
       "type": "file"
     },
     {
@@ -201,15 +237,27 @@
       "type": "file"
     },
     {
-      "path": "src/hooks/use-permission.ts",
+      "path": "src/lib/logout-utils.ts",
       "accessCount": 6,
-      "lastAccessed": 1775283266102,
+      "lastAccessed": 1775283929302,
       "type": "file"
     },
     {
-      "path": "src/hooks/use-auth.ts",
-      "accessCount": 4,
-      "lastAccessed": 1775283246158,
+      "path": "src/hooks/use-login.ts",
+      "accessCount": 5,
+      "lastAccessed": 1775283754245,
+      "type": "file"
+    },
+    {
+      "path": "src/app",
+      "accessCount": 5,
+      "lastAccessed": 1775552341544,
+      "type": "directory"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1776095585022,
       "type": "file"
     },
     {
@@ -219,21 +267,27 @@
       "type": "file"
     },
     {
-      "path": "package.json",
+      "path": "src/hooks/use-polling.ts",
       "accessCount": 4,
-      "lastAccessed": 1775283374002,
+      "lastAccessed": 1775285283218,
       "type": "file"
+    },
+    {
+      "path": "next.config.ts",
+      "accessCount": 4,
+      "lastAccessed": 1775549569132,
+      "type": "file"
+    },
+    {
+      "path": "src/components",
+      "accessCount": 4,
+      "lastAccessed": 1775551712072,
+      "type": "directory"
     },
     {
       "path": "src/hooks/use-analytics.ts",
       "accessCount": 3,
       "lastAccessed": 1775229544136,
-      "type": "file"
-    },
-    {
-      "path": "src/hooks/use-login.ts",
-      "accessCount": 3,
-      "lastAccessed": 1775266683027,
       "type": "file"
     },
     {
@@ -249,15 +303,15 @@
       "type": "file"
     },
     {
-      "path": "src/app/layout.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1775229220887,
+      "path": "src/services/index.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775283777604,
       "type": "file"
     },
     {
       "path": "src/app/@admin/(dashboard)/page.tsx",
-      "accessCount": 2,
-      "lastAccessed": 1775229503748,
+      "accessCount": 3,
+      "lastAccessed": 1775548691790,
       "type": "file"
     },
     {
@@ -273,15 +327,39 @@
       "type": "file"
     },
     {
-      "path": "src/services/index.ts",
+      "path": "src/services",
       "accessCount": 2,
-      "lastAccessed": 1775266630054,
+      "lastAccessed": 1775283692343,
+      "type": "directory"
+    },
+    {
+      "path": "src/hooks/use-mobile.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775285171427,
       "type": "file"
     },
     {
-      "path": "src/lib/logout-utils.ts",
+      "path": "src/app/@admin",
       "accessCount": 2,
-      "lastAccessed": 1775266635596,
+      "lastAccessed": 1775285183279,
+      "type": "directory"
+    },
+    {
+      "path": "src/components/admin/ui/skeleton.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1775548478645,
+      "type": "file"
+    },
+    {
+      "path": "src/lib/utils.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775548551378,
+      "type": "file"
+    },
+    {
+      "path": "src/hooks/use-menu-navigation.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775551701040,
       "type": "file"
     },
     {
@@ -291,28 +369,10 @@
       "type": "directory"
     },
     {
-      "path": "src/app/@admin",
-      "accessCount": 1,
-      "lastAccessed": 1775229199438,
-      "type": "directory"
-    },
-    {
-      "path": "src/lib/utils.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775229212330,
-      "type": "file"
-    },
-    {
       "path": "src/app/@admin/(dashboard)",
       "accessCount": 1,
       "lastAccessed": 1775229212494,
       "type": "directory"
-    },
-    {
-      "path": "next.config.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775229213362,
-      "type": "file"
     },
     {
       "path": "src/app/@admin/(dashboard)/layout.tsx",
@@ -331,24 +391,6 @@
       "accessCount": 1,
       "lastAccessed": 1775229483105,
       "type": "file"
-    },
-    {
-      "path": "src/components",
-      "accessCount": 1,
-      "lastAccessed": 1775229491778,
-      "type": "directory"
-    },
-    {
-      "path": "src/app",
-      "accessCount": 1,
-      "lastAccessed": 1775229494940,
-      "type": "directory"
-    },
-    {
-      "path": "src/services",
-      "accessCount": 1,
-      "lastAccessed": 1775229499736,
-      "type": "directory"
     },
     {
       "path": "src/components/admin/dashboard/visitors-chart.tsx",
@@ -405,39 +447,15 @@
       "type": "file"
     },
     {
-      "path": "src/hooks/use-ai-writer.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775229553953,
-      "type": "file"
-    },
-    {
-      "path": "src/hooks/use-polling.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775229554007,
-      "type": "file"
-    },
-    {
       "path": "src/hooks/use-websocket.ts",
       "accessCount": 1,
       "lastAccessed": 1775229554126,
       "type": "file"
     },
     {
-      "path": "src/hooks/use-menu-navigation.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775229565905,
-      "type": "file"
-    },
-    {
       "path": "src/hooks/use-edit-post.ts",
       "accessCount": 1,
       "lastAccessed": 1775229565960,
-      "type": "file"
-    },
-    {
-      "path": "src/hooks/use-seo.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775229566096,
       "type": "file"
     },
     {
@@ -453,27 +471,9 @@
       "type": "file"
     },
     {
-      "path": "src/components/admin/ui/skeleton.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1775229577162,
-      "type": "file"
-    },
-    {
       "path": "src/components/admin/shared/error-boundary.tsx",
       "accessCount": 1,
       "lastAccessed": 1775229577214,
-      "type": "file"
-    },
-    {
-      "path": "src/components/admin/posts/posts-table.tsx",
-      "accessCount": 1,
-      "lastAccessed": 1775229577465,
-      "type": "file"
-    },
-    {
-      "path": "src/hooks/use-mobile.ts",
-      "accessCount": 1,
-      "lastAccessed": 1775229588813,
       "type": "file"
     }
   ],

@@ -1,5 +1,7 @@
 // src/constants/menu.ts
 
+import { PUBLIC_DISCLOSURE_MENU_ITEMS } from "@/constants/public-disclosure";
+
 // 1. CẤU HÌNH DOMAIN (Giữ nguyên)
 const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN ||
     (process.env.NODE_ENV === 'production' ? 'erg.edu.vn' : 'erg.edu.local');
@@ -67,6 +69,7 @@ export const MAIN_MENU_ITEMS = [
         }))
     },
     { label: "TIN TỨC", path: "/tin-tuc" },
+    { label: "CÔNG KHAI", path: "/cong-khai", children: PUBLIC_DISCLOSURE_MENU_ITEMS },
     { label: "CƠ HỘI NGHỀ NGHIỆP", path: "/co-hoi-nghe-nghiep" },
     { label: "LIÊN HỆ", path: "/lien-he" },
 ];

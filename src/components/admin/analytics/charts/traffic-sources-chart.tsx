@@ -49,7 +49,7 @@ export function TrafficSourcesChart() {
             <BarChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.3} />
                 <XAxis dataKey="source" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
-                <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11 }} tickFormatter={(v: number) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
+                <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 11 }} />
                 <Tooltip
                     contentStyle={{
                         backgroundColor: "hsl(var(--background))",

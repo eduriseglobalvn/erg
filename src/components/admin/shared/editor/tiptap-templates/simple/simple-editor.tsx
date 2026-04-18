@@ -68,7 +68,7 @@ import { LinkIcon } from "@/components/admin/shared/editor/tiptap-icons/link-ico
 import { ChevronDown, Loader2, Sparkles, ListTree } from "lucide-react"
 
 // --- Hooks ---
-import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
+import { useIsBreakpoint } from "@/hooks/use-breakpoint"
 
 // --- Components ---
 import { ThemeToggle } from "@/components/admin/shared/editor/tiptap-templates/simple/theme-toggle"

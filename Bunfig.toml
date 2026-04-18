@@ -1,0 +1,3 @@
+[install]
+cacheDir = ".bun-cache"
+runPostinstallOnNewInstall = true

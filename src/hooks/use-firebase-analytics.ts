@@ -18,13 +18,20 @@
 "use client";
 
 import { useCallback, useRef } from "react";
-import { fbLogEvent, fbSetUserId, fbSetUserProperties } from "@/lib/firebase";
 import { useAnalytics as useErgoAnalytics } from "@/hooks/use-analytics";
 import { devLog } from "@/lib/dev-logger";
 
 // ─── Consent check ─────────────────────────────────────────────────────────────
 
 const CONSENT_KEY = "analytics_consent";
+type FirebaseModule = typeof import("@/lib/firebase");
+
+let firebaseModulePromise: Promise<FirebaseModule> | null = null;
+
+function loadFirebase() {
+  firebaseModulePromise ??= import("@/lib/firebase");
+  return firebaseModulePromise;
+}
 
 function hasConsent(): boolean {
   if (typeof window === "undefined") return false;
@@ -61,7 +68,7 @@ export function useFirebaseAnalytics() {
         page_title: params.page_title ?? (typeof document !== "undefined" ? document.title : ""),
       };
 
-      void fbLogEvent("page_view", payload);
+      void loadFirebase().then(({ fbLogEvent }) => fbLogEvent("page_view", payload));
       devLog(`%c[Firebase] 📄 page_view: ${params.page_path}`, "color: #2196f3");
     },
     [baseParams]
@@ -75,7 +82,7 @@ export function useFirebaseAnalytics() {
 
       const payload = baseParams({ element, ...metadata });
 
-      void fbLogEvent("click", payload);
+      void loadFirebase().then(({ fbLogEvent }) => fbLogEvent("click", payload));
       void ergTrackEvent("click", { element, ...metadata });
       devLog(`%c[Firebase] 🖱️ click: ${element}`, "color: #ff9800", metadata);
     },
@@ -93,7 +100,7 @@ export function useFirebaseAnalytics() {
 
       const payload = baseParams({ scroll_depth: depth });
 
-      void fbLogEvent(`scroll_depth_${depth}`, payload);
+      void loadFirebase().then(({ fbLogEvent }) => fbLogEvent(`scroll_depth_${depth}`, payload));
       void ergTrackEvent(`scroll_depth_${depth}`, { depth });
       devLog(`%c[Firebase] 📜 scroll_depth_${depth}`, "color: #9c27b0");
     },
@@ -112,7 +119,7 @@ export function useFirebaseAnalytics() {
 
       const payload = baseParams({ video_id: videoId, ...metadata });
 
-      void fbLogEvent(`video_${action}`, payload);
+      void loadFirebase().then(({ fbLogEvent }) => fbLogEvent(`video_${action}`, payload));
       void ergTrackEvent(`video_${action}`, { video_id: videoId, ...metadata });
       devLog(`%c[Firebase] 🎬 video_${action}: ${videoId}`, "color: #e91e63", metadata);
     },
@@ -130,7 +137,7 @@ export function useFirebaseAnalytics() {
         result_count: resultCount,
       });
 
-      void fbLogEvent("search", payload);
+      void loadFirebase().then(({ fbLogEvent }) => fbLogEvent("search", payload));
       void ergTrackEvent("search", { search_term: searchTerm, result_count: resultCount });
       devLog(`%c[Firebase] 🔍 search: "${searchTerm}" (${resultCount} results)`, "color: #00bcd4");
     },
@@ -145,7 +152,7 @@ export function useFirebaseAnalytics() {
 
       const payload = baseParams({ form_id: formId, ...metadata });
 
-      void fbLogEvent(`form_${action}`, payload);
+      void loadFirebase().then(({ fbLogEvent }) => fbLogEvent(`form_${action}`, payload));
       void ergTrackEvent(`form_${action}`, { form_id: formId, ...metadata });
       devLog(`%c[Firebase] 📝 form_${action}: ${formId}`, "color: #795548", metadata);
     },
@@ -163,7 +170,7 @@ export function useFirebaseAnalytics() {
         payload.value = value;
       }
 
-      void fbLogEvent(eventName, payload);
+      void loadFirebase().then(({ fbLogEvent }) => fbLogEvent(eventName, payload));
       void ergTrackEvent(eventName, { value, ...metadata });
       devLog(`%c[Firebase] ⭐ conversion: ${eventName}`, "color: #4caf50", { value, metadata });
     },
@@ -174,10 +181,12 @@ export function useFirebaseAnalytics() {
 
   const setFirebaseUser = useCallback(
     (userId: string, properties?: Record<string, string | number | boolean>) => {
-      void fbSetUserId(userId);
-      if (properties) {
-        void fbSetUserProperties(properties);
-      }
+      void loadFirebase().then(({ fbSetUserId, fbSetUserProperties }) => {
+        void fbSetUserId(userId);
+        if (properties) {
+          void fbSetUserProperties(properties);
+        }
+      });
       devLog(`%c[Firebase] 👤 user set: ${userId}`, "color: #4caf50", properties);
     },
     []

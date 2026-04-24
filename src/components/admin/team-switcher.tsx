@@ -30,15 +30,13 @@ export function TeamSwitcher({
     plan: string
   }[]
 }) {
-  const { isMobile } = useSidebar()
+  const { state } = useSidebar()
   const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  const isCollapsed = state === "collapsed"
 
   if (!activeTeam) {
     return null
   }
-
-  const { state } = useSidebar()
-  const isCollapsed = state === "collapsed"
 
   return (
     <SidebarMenu>

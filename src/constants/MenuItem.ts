@@ -1,6 +1,6 @@
 // src/constants/menu.ts
 
-import { PUBLIC_DISCLOSURE_MENU_ITEMS } from "@/constants/public-disclosure";
+import { PUBLIC_DISCLOSURE_MENU_ITEMS } from "@/constants/public-disclosure-menu";
 
 // 1. CẤU HÌNH DOMAIN (Giữ nguyên)
 const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN ||

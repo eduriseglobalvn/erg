@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
 import { Button } from "@/components/admin/ui/button"
-import { Sparkles, ArrowUp, StopCircle, X } from "lucide-react"
+import { Sparkles } from "lucide-react"
 import { PostSidebar } from "@/components/admin/shared/post-sidebar"
 import { useAiWriter } from "@/hooks/use-ai-writer"
 import { postsApi } from "@/services/posts.api"

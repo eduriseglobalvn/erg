@@ -64,7 +64,7 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
         }
 
         let bodyToForward = undefined;
-        let isRefreshRequest = path === 'auth/refresh';
+        const isRefreshRequest = path === 'auth/refresh';
 
         if (request.method !== 'GET' && request.method !== 'HEAD') {
             const rawBody = await request.arrayBuffer();

@@ -46,9 +46,11 @@ import { RedirectNotification } from "@/components/shared/redirect-notification"
 import { OfflineIndicator } from "@/components/shared/offline-indicator";
 import { SearchEngineMeta } from "@/components/seo/search-engine-meta";
 import { resolveSiteContextFromHeaders } from "@/lib/site-context";
-import { NextAuthProvider } from "@/providers/next-auth-provider";
-import { getServerSession } from "next-auth/next";
-import { nextAuthOptions } from "@/lib/next-auth";
+import { SlotDefault } from "./slot-default";
+
+function isSlotDefault(slot: React.ReactNode) {
+    return React.isValidElement(slot) && slot.type === SlotDefault;
+}
 
 export async function generateMetadata(): Promise<Metadata> {
     const headerList = await headers();
@@ -124,16 +126,15 @@ export default async function RootLayout(props: {
     admin: React.ReactNode;
     noibo: React.ReactNode;
 }) {
-    const [headerList, cookieStore, nextAuthSession] = await Promise.all([
+    const [headerList, cookieStore] = await Promise.all([
         headers(),
         cookies(),
-        getServerSession(nextAuthOptions),
     ]);
     const siteContext = resolveSiteContextFromHeaders(headerList);
     const seoKey = (siteContext.siteKey in SEO_DATA
         ? siteContext.siteKey
         : 'main') as keyof typeof SEO_DATA;
-    const slotOrChildren = (slot: React.ReactNode) => slot ?? props.children;
+    const slotOrChildren = (slot: React.ReactNode) => (slot == null || isSlotDefault(slot) ? props.children : slot);
 
     let content;
     let currentMenu = MAIN_MENU_ITEMS;
@@ -205,17 +206,16 @@ export default async function RootLayout(props: {
                 className={`${inter.className} bg-gray-50 text-slate-800 antialiased flex flex-col min-h-screen overflow-x-hidden`}
                 suppressHydrationWarning={true}
             >
-                <NextAuthProvider session={nextAuthSession}>
-                    <QueryProvider>
-                        <QueryDevtoolsWrapper />
-                        <NextIntlClientProvider locale={locale} messages={messages}>
-                            <AnalyticsTracker />
-                            <ConsentBanner />
-                            <Toaster position="top-center" richColors />
-                            <React.Suspense fallback={null}>
-                                <RedirectNotification />
-                            </React.Suspense>
-                            <OfflineIndicator />
+                <QueryProvider>
+                    <QueryDevtoolsWrapper />
+                    <NextIntlClientProvider locale={locale} messages={messages}>
+                        <AnalyticsTracker />
+                        <ConsentBanner />
+                        <Toaster position="top-center" richColors />
+                        <React.Suspense fallback={null}>
+                            <RedirectNotification />
+                        </React.Suspense>
+                        <OfflineIndicator />
 
                         <SchemaScript type="Organization" data={{}} domain={siteContext.hostname} />
                         <SchemaScript
@@ -229,15 +229,14 @@ export default async function RootLayout(props: {
                             domain={siteContext.hostname}
                         />
 
-                            <NextTopLoader color="#00008b" showSpinner={false} />
+                        <NextTopLoader color="#00008b" showSpinner={false} />
 
-                            {content}
+                        {content}
 
-                            <SpeedInsights />
-                            <Analytics />
-                        </NextIntlClientProvider>
-                    </QueryProvider>
-                </NextAuthProvider>
+                        <SpeedInsights />
+                        <Analytics />
+                    </NextIntlClientProvider>
+                </QueryProvider>
             </body>
         </html>
     );

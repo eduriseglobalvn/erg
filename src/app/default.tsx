@@ -1,1 +1,1 @@
-export { default } from '@/app/@main/page'
+export { SlotDefault as default } from './slot-default';

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { initFirebase, fbLogEvent } from "@/lib/firebase";
 import { devLog } from "@/lib/dev-logger";
 
 const CONSENT_KEY = "analytics_consent";
@@ -29,7 +28,8 @@ export function setConsent(status: "accepted" | "declined"): void {
 
   if (status === "accepted") {
     // Activate Firebase after consent
-    initFirebase()
+    import("@/lib/firebase")
+      .then(({ initFirebase, fbLogEvent }) => initFirebase()
       .then(({ analytics }) => {
         if (analytics) {
           void fbLogEvent("consent_accepted", {
@@ -38,7 +38,7 @@ export function setConsent(status: "accepted" | "declined"): void {
           });
           devLog("%c[Consent] ✅ Firebase activated after consent", "color: #4caf50");
         }
-      })
+      }))
       .catch(() => {});
   } else {
     devLog("%c[Consent] ❌ Analytics declined", "color: #f44336");

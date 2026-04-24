@@ -116,7 +116,7 @@ export default function NewsContent({
         if (!content) return DEFAULT_IMAGE;
         const match = content.match(/<img[^>]+src=['"]([^'"]+)['"]/i);
         if (match && match[1]) {
-            let src = match[1];
+            const src = match[1];
             return src.startsWith('/') ? `https://giaoduc.edu.vn${src}` : src;
         }
         return DEFAULT_IMAGE;

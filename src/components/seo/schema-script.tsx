@@ -1,6 +1,4 @@
 import React from 'react';
-import { PostDetailResponse } from '@/services/posts.api';
-import { SEO_DATA } from '@/constants/seo.constants';
 
 type SchemaType =
     | 'WebSite'

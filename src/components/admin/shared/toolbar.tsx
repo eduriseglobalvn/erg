@@ -24,15 +24,15 @@ type ToolbarProps = {
 }
 
 export function Toolbar({ editor }: ToolbarProps) {
-    if (!editor) return null
-
     // --- UTILS ---
     const addImage = useCallback(() => {
+        if (!editor) return
         const url = window.prompt('URL hình ảnh:')
         if (url) editor.chain().focus().setImage({ src: url }).run()
     }, [editor])
 
     const setLink = useCallback(() => {
+        if (!editor) return
         const previousUrl = editor.getAttributes('link').href
         const url = window.prompt('URL:', previousUrl)
         if (url === null) return
@@ -42,6 +42,8 @@ export function Toolbar({ editor }: ToolbarProps) {
         }
         editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
     }, [editor])
+
+    if (!editor) return null
 
     // Lấy label cho nút Heading Dropdown
     const getCurrentHeadingLabel = () => {

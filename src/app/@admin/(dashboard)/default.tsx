@@ -1,1 +1,1 @@
-export { default } from './page';
+export { SlotDefault as default } from '../../slot-default';

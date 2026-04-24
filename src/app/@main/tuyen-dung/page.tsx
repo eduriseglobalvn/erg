@@ -3,9 +3,9 @@ import { Button } from '@/components/admin/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/admin/ui/card';
 import { recruitmentApi } from '@/services/recruitment.api';
 import { Job } from '@/types/recruitment';
-import { Briefcase, MapPin, Clock, ArrowRight, Flame, Zap } from 'lucide-react';
+import { Briefcase, MapPin, ArrowRight, Flame, Zap } from 'lucide-react';
 
-import JobFilter from '@/components/features/recruitment/job-filter';
+export const dynamic = 'force-dynamic';
 
 export default async function RecruitmentPage() {
     let jobs: Job[] = [];

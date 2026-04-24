@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { httpClient } from './http-client';
 
 export interface PageContent {
@@ -11,14 +12,16 @@ export interface PageContent {
     features?: { title: string; description: string; icon?: string }[];
 }
 
-export const pagesApi = {
-    getPage: async (slug: string, domain?: string): Promise<PageContent | null> => {
-        try {
-            const response = await httpClient<any>(`/pages/${slug}${domain ? `?domain=${domain}` : ''}`);
-            return response.data;
-        } catch (error) {
-            console.error(`Error fetching page ${slug}:`, error);
-            return null;
-        }
+const getPage = cache(async (slug: string, domain?: string): Promise<PageContent | null> => {
+    try {
+        const response = await httpClient<any>(`/pages/${slug}${domain ? `?domain=${domain}` : ''}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching page ${slug}:`, error);
+        return null;
     }
+});
+
+export const pagesApi = {
+    getPage,
 };

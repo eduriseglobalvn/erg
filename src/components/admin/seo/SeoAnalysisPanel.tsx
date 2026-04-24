@@ -84,6 +84,11 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
         return serverAnalysis;
     }, [liveData, serverAnalysis]);
 
+    // [NEW] Hooks for Actions
+    const { mutate: checkDuplicate, isPending: isCheckingDuplicate } = useCheckSeoDuplicate()
+    const { mutate: applyAutolinks, isPending: isApplyingLinks } = useApplySeoAutolinks()
+    const [isAIOptimizing, setIsAIOptimizing] = React.useState(false)
+
     if (isLoading && !analysis) { // Chỉ hiện loading nếu chưa có cả data cũ lẫn mới
         return (
             <div className="p-4 space-y-4 animate-pulse">
@@ -129,10 +134,6 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
         return "text-red-500"
     }
 
-    // [NEW] Hooks for Actions
-    const { mutate: checkDuplicate, isPending: isCheckingDuplicate } = useCheckSeoDuplicate()
-    const { mutate: applyAutolinks, isPending: isApplyingLinks } = useApplySeoAutolinks()
-
     const handleCheckDuplicate = () => {
         if (!liveData?.content) return;
         checkDuplicate({ content: liveData.content, currentPostId: postId }, {
@@ -153,8 +154,6 @@ export function SeoAnalysisPanel({ postId, className, liveData }: SeoAnalysisPan
             }
         })
     }
-
-    const [isAIOptimizing, setIsAIOptimizing] = React.useState(false)
 
     const handleAIOptimize = async (instruction: string) => {
         if (!liveData?.content) return;

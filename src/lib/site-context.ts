@@ -1,4 +1,5 @@
-const DEFAULT_ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'erg.edu.local'
+const DEFAULT_ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN ||
+  (process.env.NODE_ENV === 'production' ? 'erg.edu.vn' : 'erg.edu.local')
 const DEFAULT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://erg.edu.vn'
 
 export interface SiteContext {

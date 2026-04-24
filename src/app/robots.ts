@@ -16,8 +16,8 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     const subdomain = isRoot ? '' : hostname.replace(`.${rootDomain}`, '');
 
     // 2. Định nghĩa Rules theo Subdomain
-    let allowPaths = ['/'];
-    let disallowPaths = ['/api/', '/_next/', '/auth/', '/preview/', '/onboarding/', '/verify-pin/'];
+    const allowPaths = ['/'];
+    const disallowPaths = ['/api/', '/_next/', '/auth/', '/preview/', '/onboarding/', '/verify-pin/'];
 
     // Nếu RootDomain/Main thì ẩn admin
     if (isRoot || subdomain === 'admin') {

@@ -257,8 +257,8 @@ const GS6_LEVEL_3_UNITS: ElearningUnit[] = [
     {
         id: 'gs6-l3-u1',
         title: "Phần 1",
-        description: "Ôn luyện IC3 GS6 Level 3 — Phần 1.",
-        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLSdxLidj28NusamjcAx50Xz9Iw6B73Ks942q2L0mPfI6g5A5zg/viewform?usp=header",
+        description: "Ôn luyện IC3 GS6 Level 3 — Phần 1. (UPDATED)",
+        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLSdgIi731nfyoyqbW4592LMcZO24zkAt-v9mDoW6k-AsXhnXWQ/viewform?usp=header",
         testLink: "https://docs.google.com/forms/d/e/1FAIpQLSfYACIHfj_SCwIq33OAoGj5GHw3luzzIMRg5_cNeGmlKSX3aA/viewform?usp=header"
     },
     {

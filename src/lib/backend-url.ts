@@ -37,17 +37,22 @@ export async function fetchWithBackendFallback(path: string, init?: RequestInit)
 
     for (const baseUrl of candidates) {
         try {
-            return await fetch(buildBackendApiUrl(path, baseUrl), init);
+            const url = buildBackendApiUrl(path, baseUrl);
+            if (process.env.NODE_ENV === 'development') {
+                console.log(`[Backend Connectivity] Attempting fetch: ${url}`);
+            }
+            return await fetch(url, init);
         } catch (error) {
             lastError = error;
         }
     }
 
     const lastMessage = lastError instanceof Error ? lastError.message : 'timeout or connection refused';
-    
+
     // Log detailed internal info ONLY to server-side console, NEVER return to client
     if (process.env.NODE_ENV === 'development') {
-        console.error(`[Backend Connectivity] Exhausted candidates: ${candidates.join(', ')}. Last error: ${lastMessage}`);
+        console.error(`[Backend Connectivity] Exhausted candidates: ${candidates.join(', ')}.`);
+        console.error(`[Backend Connectivity] Last error:`, lastError);
     }
 
     throw new Error('Dịch vụ đang tạm thời không khả dụng. Vui lòng thử lại sau.');

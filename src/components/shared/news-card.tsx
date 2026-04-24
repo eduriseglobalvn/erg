@@ -18,6 +18,54 @@ export interface NewsCardProps {
     showExternalIcon?: boolean;
 }
 
+type NewsCardLinkProps = {
+    children: React.ReactNode;
+    className?: string;
+    href: string;
+    target: '_blank' | '_self';
+    title: string;
+    slug?: string;
+    analyticsHref?: string;
+};
+
+function NewsCardLink({
+    children,
+    className,
+    href,
+    target,
+    title,
+    slug,
+    analyticsHref,
+}: NewsCardLinkProps) {
+    const metadata = JSON.stringify({ title, slug: slug || analyticsHref });
+
+    if (target === '_blank' || href.startsWith('http')) {
+        return (
+            <a
+                href={href}
+                target={target}
+                className={className}
+                rel={target === '_blank' ? "noopener noreferrer" : undefined}
+                data-analytics="click_news_detail"
+                data-analytics-metadata={metadata}
+            >
+                {children}
+            </a>
+        );
+    }
+
+    return (
+        <Link
+            href={href}
+            className={className}
+            data-analytics="click_news_detail"
+            data-analytics-metadata={metadata}
+        >
+            {children}
+        </Link>
+    );
+}
+
 /**
  * Thẻ tin tức dùng chung cho toàn bộ hệ thống (Main site & Subdomains)
  */
@@ -39,39 +87,11 @@ export const NewsCard = ({
     const BLUR_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8f+F9PQAI8AKp26Y69QAAAABJRU5ErkJggg==";
     const [hasError, setHasError] = useState(false);
     const currentSrc = hasError ? DEFAULT_IMAGE : (thumbnail || DEFAULT_IMAGE);
-
-    const CardLink = ({ children, className }: { children: React.ReactNode, className?: string }) => {
-        const metadata = JSON.stringify({ title, slug: slug || href });
-
-        if (target === '_blank' || targetHref.startsWith('http')) {
-            return (
-                <a
-                    href={targetHref}
-                    target={target}
-                    className={className}
-                    rel={target === '_blank' ? "noopener noreferrer" : undefined}
-                    data-analytics="click_news_detail"
-                    data-analytics-metadata={metadata}
-                >
-                    {children}
-                </a>
-            );
-        }
-        return (
-            <Link
-                href={targetHref}
-                className={className}
-                data-analytics="click_news_detail"
-                data-analytics-metadata={metadata}
-            >
-                {children}
-            </Link>
-        );
-    };
+    const linkProps = { href: targetHref, target, title, slug, analyticsHref: href };
 
     return (
         <article className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group border border-gray-100 flex flex-col h-full">
-            <CardLink className="relative h-56 overflow-hidden block">
+            <NewsCardLink {...linkProps} className="relative h-56 overflow-hidden block">
                 <Image
                     src={currentSrc}
                     alt={title}
@@ -87,7 +107,7 @@ export const NewsCard = ({
                         <Flame size={12} className="fill-yellow-300 text-yellow-300" /> NEW
                     </div>
                 )}
-            </CardLink>
+            </NewsCardLink>
 
             <div className="p-6 flex flex-col flex-grow">
                 <div className="flex items-center gap-2 text-sm text-[#00008b] font-semibold mb-3">
@@ -96,7 +116,7 @@ export const NewsCard = ({
                 </div>
 
                 <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-[#00008b] transition-colors line-clamp-2 min-h-[3.5rem]">
-                    <CardLink>{title}</CardLink>
+                    <NewsCardLink {...linkProps}>{title}</NewsCardLink>
                 </h3>
 
                 <p className="text-gray-500 text-sm line-clamp-3 mb-4 flex-grow leading-relaxed">
@@ -105,11 +125,12 @@ export const NewsCard = ({
                 </p>
 
                 <div className="mt-auto pt-4 border-t border-gray-50 flex justify-between items-center">
-                    <CardLink
+                    <NewsCardLink
+                        {...linkProps}
                         className="text-[#cc0022] font-semibold text-sm hover:underline inline-flex items-center gap-1"
                     >
                         Xem chi tiết <ChevronRight size={14} />
-                    </CardLink>
+                    </NewsCardLink>
                     {showExternalIcon && <ExternalLink size={14} className="text-gray-300" />}
                 </div>
             </div>

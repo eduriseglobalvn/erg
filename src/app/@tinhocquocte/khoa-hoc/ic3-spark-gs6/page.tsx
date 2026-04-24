@@ -10,6 +10,8 @@ import { REAL_IMAGES } from '@/mocks/imageGalerry';
 import { generateFullMetadata } from '@/utils/seo/seo-metadata';
 import { SEO_DATA } from '@/constants/seo.constants';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(): Promise<Metadata> {
     const pageData = await pagesApi.getPage('ic3-spark-gs6');
     const headerList = await headers();

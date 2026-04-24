@@ -273,25 +273,6 @@ const disclosureSections: DisclosureSection[] = [
 
 export const PUBLIC_DISCLOSURE_SECTIONS = disclosureSections;
 
-export const PUBLIC_DISCLOSURE_MENU_ITEMS = disclosureSections.map((section) => {
-  const sectionPath = `/cong-khai/${section.slug}`;
-  if (section.documents.length === 1 && section.documents[0].slug === section.slug) {
-    return {
-      label: section.label,
-      path: sectionPath,
-    };
-  }
-
-  return {
-    label: section.label,
-    path: sectionPath,
-    children: section.documents.map((document) => ({
-      label: document.menuLabel,
-      path: `/cong-khai/${section.slug}/${document.slug}`,
-    })),
-  };
-});
-
 export function getDisclosureSection(sectionSlug: string) {
   return disclosureSections.find((section) => section.slug === sectionSlug);
 }

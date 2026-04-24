@@ -1,12 +1,23 @@
 'use client';
 
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import * as React from 'react';
 
+const ReactQueryDevtools = process.env.NODE_ENV === 'development'
+  ? React.lazy(() =>
+      import('@tanstack/react-query-devtools').then((mod) => ({
+        default: mod.ReactQueryDevtools,
+      }))
+    )
+  : null;
+
 export function QueryDevtoolsWrapper() {
-  if (process.env.NODE_ENV !== 'development') {
+  if (!ReactQueryDevtools) {
     return null;
   }
 
-  return <ReactQueryDevtools initialIsOpen={false} />;
+  return (
+    <React.Suspense fallback={null}>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </React.Suspense>
+  );
 }

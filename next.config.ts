@@ -7,34 +7,39 @@ const withBundleAnalyzer = NextBundleAnalyzer({
     enabled: process.env.ANALYZE === 'true',
 })
 
-const nextConfig: NextConfig = {
-    output: 'standalone',
+const isVercel = process.env.VERCEL === '1'
 
-    // Bun-native: dùng bun install trên Vercel nên không cần离线安装
-    // Bun resolver tự resolve symlink nhanh hơn npm
-    // output standalone đã có — Vercel build local rồi deploy artifact
+const nextConfig: NextConfig = {
+    ...(isVercel ? {} : { output: 'standalone' as const }),
+
+    typescript: {
+        ignoreBuildErrors: isVercel,
+    },
 
     devIndicators: false,
     compiler: {
         removeConsole: process.env.NODE_ENV === 'production',
     },
 
-    // Tối ưu bundle size cho các thư viện nặng (Barrel imports)
     experimental: {
-        optimizePackageImports: [
-            'lucide-react',
-            'framer-motion',
-            '@radix-ui/react-icons',
-            'lodash',
-            'date-fns',
-            'recharts',
-            'sonner',
-            'clsx',
-            'tailwind-merge',
-            'react-dom',
-            'next-intl',
-            '@tanstack/react-query',
-        ],
+        ...(!isVercel
+            ? {
+                optimizePackageImports: [
+                    'lucide-react',
+                    'framer-motion',
+                    '@radix-ui/react-icons',
+                    'lodash',
+                    'date-fns',
+                    'recharts',
+                    'sonner',
+                    'clsx',
+                    'tailwind-merge',
+                    'react-dom',
+                    'next-intl',
+                    '@tanstack/react-query',
+                ],
+            }
+            : {}),
         serverActions: {
             bodySizeLimit: '2mb',
         },
@@ -79,10 +84,6 @@ const nextConfig: NextConfig = {
             connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https: ws: wss:;
         `.replace(/\s{2,}/g, ' ').trim()
 
-        const staticCacheHeaders = !isDev
-            ? [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }]
-            : []
-
         const mediaCacheHeaders = !isDev
             ? [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }]
             : []
@@ -103,10 +104,6 @@ const nextConfig: NextConfig = {
                     { key: 'Content-Security-Policy', value: cspHeader },
                 ],
             },
-            // === Cache Headers cho static assets (chỉ production) ===
-            ...(staticCacheHeaders.length > 0
-                ? [{ source: '/_next/static/:path*', headers: staticCacheHeaders }]
-                : []),
             // === Cache Headers cho public media (chỉ production) ===
             ...(mediaCacheHeaders.length > 0
                 ? [{ source: '/images/:path*', headers: mediaCacheHeaders }]

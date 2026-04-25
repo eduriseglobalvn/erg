@@ -3,7 +3,8 @@ export interface ElearningUnit {
     title: string;
     description: string;
     studyLink: string;
-    testLink: string;
+    testLink?: string;
+    orderLabel?: string;
 }
 
 export interface ElearningLevel {
@@ -150,6 +151,13 @@ const SPARK_LEVEL_3_UNITS: ElearningUnit[] = [
  * 3. DỮ LIỆU BÀI HỌC CHO THCS (GS6)
  */
 const GS6_LEVEL_1_UNITS: ElearningUnit[] = [
+    {
+        id: 'gs6-l1-bosung',
+        title: "Chủ đề bổ sung",
+        description: "Luyện tập bổ sung IC3 GS6 Level 1.",
+        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLScuK_wGJC8aXqZ0cJPNPCSslRkyPFHmpUApeLH0M_IKy-mI3w/viewform?usp=header",
+        orderLabel: "+"
+    },
     {
         id: 'gs6-l1-u1',
         title: "Phần 1",

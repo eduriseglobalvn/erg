@@ -13,6 +13,13 @@ interface LevelPageProps {
     }>
 }
 
+function getUnitOrderLabel(title: string, index: number, orderLabel?: string) {
+    if (orderLabel) return orderLabel;
+
+    const partNumber = /^Phần\s+(\d+)$/.exec(title)?.[1];
+    return partNumber ?? index + 1;
+}
+
 export async function generateMetadata({ params }: LevelPageProps): Promise<Metadata> {
     const { type, levelId } = await params;
     const category = ELEARNING_DATA.find(c => c.id === type);
@@ -87,7 +94,7 @@ export default async function LevelPage({ params }: LevelPageProps) {
                             <div className="group bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:border-[#00008b]/10 transition-all duration-300">
                                 <div className="flex flex-col md:flex-row md:items-center gap-6">
                                     <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-[#00008b] font-black text-xl group-hover:bg-[#00008b] group-hover:text-white transition-all duration-300">
-                                        {index + 1}
+                                        {getUnitOrderLabel(unit.title, index, unit.orderLabel)}
                                     </div>
 
                                     <div className="flex-grow">
@@ -104,13 +111,13 @@ export default async function LevelPage({ params }: LevelPageProps) {
                                         </p>
                                     </div>
 
-                                    <div className="flex flex-row gap-3 mt-4 md:mt-0">
+                                    <div className={`flex flex-row gap-3 mt-4 md:mt-0 ${unit.testLink ? '' : 'md:w-[304px]'}`}>
                                         {unit.studyLink ? (
                                             <a
                                                 href={unit.studyLink}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-[#00008b] hover:bg-[#000066] text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md shadow-blue-900/10 active:scale-95 whitespace-nowrap"
+                                                className={`flex-1 flex items-center justify-center gap-2 bg-[#00008b] hover:bg-[#000066] text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md shadow-blue-900/10 active:scale-95 whitespace-nowrap ${unit.testLink ? 'md:flex-none' : 'md:w-full'}`}
                                             >
                                                 <BookOpen size={18} />
                                                 <span>Luyện tập</span>
@@ -121,21 +128,16 @@ export default async function LevelPage({ params }: LevelPageProps) {
                                                 <span>Sắp có</span>
                                             </span>
                                         )}
-                                        {unit.testLink ? (
+                                        {unit.testLink && (
                                             <a
                                                 href={unit.testLink}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold py-3 px-6 rounded-xl border border-slate-200 transition-all active:scale-95 whitespace-nowrap"
+                                                className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-[var(--erg-red)] hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl border border-[var(--erg-red)] transition-all active:scale-95 whitespace-nowrap shadow-md shadow-red-900/10"
                                             >
                                                 <ClipboardCheck size={18} />
                                                 <span>Kiểm tra</span>
                                             </a>
-                                        ) : (
-                                            <span className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-slate-50 text-slate-300 font-bold py-3 px-6 rounded-xl border border-slate-100 whitespace-nowrap cursor-not-allowed">
-                                                <ClipboardCheck size={18} />
-                                                <span>Sắp có</span>
-                                            </span>
                                         )}
                                     </div>
                                 </div>

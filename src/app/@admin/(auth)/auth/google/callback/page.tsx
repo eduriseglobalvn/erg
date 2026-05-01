@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { setClientAuthSession } from "@/lib/client-auth-session";
 
 export default function GoogleAuthCallbackPage() {
   const router = useRouter();
@@ -55,6 +56,7 @@ export default function GoogleAuthCallbackPage() {
           throw new Error(payload.message || "Không thể hoàn tất đăng nhập Google");
         }
 
+        setClientAuthSession(payload);
         queryClient.invalidateQueries({ queryKey: ["auth"] });
 
         if (!cancelled) {

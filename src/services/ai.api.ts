@@ -1,6 +1,46 @@
 // src/services/ai.api.ts
 import { httpClient } from './http-client';
 
+export type AIProvider = 'groq' | 'gemini';
+export type AIKeyStatus = 'active' | 'inactive' | 'rate_limited' | 'quota_exceeded' | 'error';
+
+export interface AIKey {
+    id: string;
+    key: string;
+    maskedKey: string;
+    label: string;
+    provider: AIProvider;
+    projectId: string;
+    type: 'shared' | 'private';
+    status: AIKeyStatus;
+    selected: boolean;
+    model: string;
+    todayUsage: number;
+    maxDailyQuota: number;
+    usageCount: number;
+    maxTokensPerRequest: number;
+    defaultTemperature: number;
+    lastUsedAt: string | null;
+    lastTestedAt: string | null;
+    cooldownUntil: string | null;
+    lastErrorMessage: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface SaveAIKeyPayload {
+    key: string;
+    label?: string;
+    provider: AIProvider;
+    projectId?: string;
+    model?: string;
+    maxDailyQuota?: number;
+    maxTokensPerRequest?: number;
+    defaultTemperature?: number;
+    type?: 'shared' | 'private';
+    selected?: boolean;
+}
+
 export const aiApi = {
     // 1. Generate: Gửi topic + configs
     generate: (data: {
@@ -22,8 +62,25 @@ export const aiApi = {
         return httpClient<{
             state: 'completed' | 'failed' | 'active' | 'waiting';
             progress: number;
-            data?: { title: string; content: string };
-            result?: { postId: string; slug?: string };
+            data?: {
+                title: string;
+                content: string;
+                excerpt?: string;
+                slug?: string;
+                categoryId?: string;
+                thumbnailUrl?: string;
+                thumbnailPrompt?: string;
+            };
+            result?: {
+                postId?: string;
+                slug?: string;
+                title?: string;
+                content?: string;
+                excerpt?: string;
+                categoryId?: string;
+                thumbnailUrl?: string;
+                thumbnailPrompt?: string;
+            };
             // [MỚI] SEO scores được tính tự động khi AI hoàn thành content
             seoScore?: number;
             readabilityScore?: number;
@@ -42,32 +99,29 @@ export const aiApi = {
     // 4. AI Key Management
     getMyKeys: () => {
         return httpClient<{
-            data: Array<{
-                id: string;
-                key: string;
-                label: string | null;
-                provider: string | null;
-                projectId: string | null;
-                status: 'active' | 'rate_limited' | 'quota_exceeded' | 'error';
-                todayUsage: number;
-                maxDailyQuota: number;
-                usageCount: number;
-                lastUsedAt: string | null;
-                cooldownUntil: string | null;
-                lastErrorMessage: string | null;
-            }>
+            data: AIKey[]
         }>('/ai-content/keys/my');
     },
 
-    saveKey: (data: {
-        id?: string;
-        key: string;
-        label?: string;
-        projectId?: string;
-        maxDailyQuota?: number;
-        type?: 'private' | 'public';
-    }) => {
-        return httpClient<any>('/ai-content/keys', {
+    getKeysDashboard: () => {
+        return httpClient<{
+            data: {
+                total_keys: number;
+                active_keys: number;
+                selected_key: AIKey | null;
+                total_usage: number;
+                monthly_usage: number;
+                by_provider: Record<string, number>;
+            }
+        }>('/ai-content/keys/dashboard');
+    },
+
+    getProviderHealth: () => {
+        return httpClient<{ data: Record<string, any> }>('/ai-content/provider-health');
+    },
+
+    saveKey: (data: SaveAIKeyPayload) => {
+        return httpClient<{ data: AIKey }>('/ai-content/keys', {
             method: 'POST',
             body: JSON.stringify(data),
         });
@@ -80,10 +134,14 @@ export const aiApi = {
     },
 
     testKey: (id: string) => {
-        return httpClient<any>(`/ai-content/keys/${id}/test`, { method: 'POST' });
+        return httpClient<{ data: { ok: boolean; key: AIKey } }>(`/ai-content/keys/${id}/test`, { method: 'POST' });
+    },
+
+    selectKey: (id: string) => {
+        return httpClient<{ data: AIKey }>(`/ai-content/keys/${id}/select`, { method: 'POST' });
     },
 
     reactivateKey: (id: string) => {
-        return httpClient<any>(`/ai-content/keys/${id}/reactivate`, { method: 'POST' });
+        return httpClient<{ data: AIKey }>(`/ai-content/keys/${id}/reactivate`, { method: 'POST' });
     }
 };

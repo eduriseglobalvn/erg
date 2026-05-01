@@ -59,7 +59,7 @@ export function SeoTopPerformingPosts() {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <Link
-                                    href={`/admin/posts/${post.id}/edit`}
+                                    href={`/posts/${post.id}/edit`}
                                     className="text-sm font-semibold truncate block hover:text-blue-500 transition-colors"
                                 >
                                     {post.title}

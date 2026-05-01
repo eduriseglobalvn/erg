@@ -7,7 +7,7 @@
  * The generic /api/[...path] proxy doesn't support streaming responses,
  * so this dedicated route forwards the SSE stream byte-for-byte.
  *
- * Auth: reads accessToken from HttpOnly cookie and injects as Bearer header.
+ * Auth: reads HttpOnly auth cookie and injects it as Bearer header.
  */
 
 import { fetchWithBackendFallback } from '@/lib/backend-url';
@@ -18,14 +18,14 @@ export async function GET(request: Request) {
     // Extract the cookie header from the incoming request
     const cookieHeader = request.headers.get('cookie') ?? '';
 
-    // Parse accessToken from cookies
+    // Parse access token from current and legacy cookie names.
     const cookies = Object.fromEntries(
         cookieHeader.split(';').map(c => {
             const [k, ...v] = c.trim().split('=');
             return [k, v.join('=')];
         }),
     );
-    const accessToken = cookies['accessToken'];
+    const accessToken = cookies['erg_access_token'] || cookies['accessToken'];
 
     const headers: Record<string, string> = {
         'Accept': 'text/event-stream',

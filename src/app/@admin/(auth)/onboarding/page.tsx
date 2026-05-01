@@ -7,6 +7,7 @@ import { Loader2, ArrowRight, UserCircle, Camera, Upload } from "lucide-react"
 import Image from "next/image" // Import Image của Next.js
 
 import { cn } from "@/lib/utils"
+import { hasLoggedInCookie } from "@/lib/client-session"
 import { userApi } from "@/services/users.api"
 import { Button } from "@/components/admin/ui/button"
 import {
@@ -48,8 +49,7 @@ export default function OnboardingPage() {
             if (hasFetched.current) return;
             hasFetched.current = true;
 
-            const token = localStorage.getItem("accessToken");
-            if (!token) {
+            if (!hasLoggedInCookie()) {
                 router.push("/auth/login");
                 return;
             }

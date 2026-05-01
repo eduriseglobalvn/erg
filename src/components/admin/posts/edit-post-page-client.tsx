@@ -1,18 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { useMutation } from "@tanstack/react-query"
-import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
 import { Button } from "@/components/admin/ui/button"
-import { Sparkles } from "lucide-react"
 import { PostSidebar } from "@/components/admin/shared/post-sidebar"
 import { useAiWriter } from "@/hooks/use-ai-writer"
-import { postsApi } from "@/services/posts.api"
-import { toast } from "sonner"
+import { useEditPost } from "@/hooks/use-edit-post"
+import { Sparkles } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
-// ✅ Phase 4: Dynamic imports for heavy Tiptap editor
 const SimpleEditor = dynamic(
     () => import("@/components/admin/shared/editor/tiptap-templates/simple/simple-editor").then(m => ({ default: m.SimpleEditor })),
     {
@@ -22,92 +18,91 @@ const SimpleEditor = dynamic(
         </div>
     }
 )
+
 const AiWriterBar = dynamic(
     () => import("@/components/admin/shared/editor/tiptap-ui/ai-writer-bar").then(m => ({ default: m.AiWriterBar })),
     { ssr: false }
 )
 
-export default function CreatePostPage() {
-    const router = useRouter();
-    const [editorInstance, setEditorInstance] = useState<any>(null);
-    const [title, setTitle] = useState("");
-    const [showAiInput, setShowAiInput] = useState(false);
+export function EditPostPageClient({ postId }: { postId: string }) {
+    const [editorInstance, setEditorInstance] = useState<any>(null)
+    const [showAiInput, setShowAiInput] = useState(false)
 
-    const [postMetadata, setPostMetadata] = useState({
-        slug: "",
-        excerpt: "",
-        categoryId: "",
-        thumbnailUrl: null as string | null,
-        status: "draft"
-    });
+    const {
+        fetchedPost,
+        isLoading,
+        title,
+        setTitle,
+        postMetadata,
+        setPostMetadata,
+        handleSave,
+        handleSaveDraft,
+        isSaving,
+    } = useEditPost(postId, editorInstance)
 
-    const { isGenerating, progress, generateFullPost, refineText } = useAiWriter(editorInstance);
-
-    // Create Mutation
-    const createMutation = useMutation({
-        mutationFn: (data: any) => postsApi.create(data),
-        onSuccess: (res: any) => {
-            const id = res.data?.id || res.id;
-            toast.success("Đã đăng bài viết thành công!");
-            router.push(`/posts/${id}/edit`);
-        },
-        onError: (error: any) => {
-            toast.error(error.message || "Lỗi khi đăng bài viết");
-        }
-    })
-
-    const handleSave = () => {
-        if (!title.trim()) {
-            toast.error("Vui lòng nhập tiêu đề bài viết");
-            return;
-        }
-        createMutation.mutate({
-            ...postMetadata,
-            title,
-            content: editorInstance?.getHTML() || "",
-        });
-    };
+    const { isGenerating, progress, generateFullPost, refineText } = useAiWriter(editorInstance)
 
     const handleAiSuccess = (aiData: any) => {
-        if (aiData.title) setTitle(aiData.title);
+        if (aiData.title) setTitle(aiData.title)
         if (editorInstance && aiData.content) {
-            editorInstance.commands.setContent(aiData.content);
+            editorInstance.commands.setContent(aiData.content)
         }
 
-        // Cập nhật Metadata cho Sidebar
         setPostMetadata(prev => ({
             ...prev,
             slug: aiData.slug || prev.slug,
             excerpt: aiData.excerpt || prev.excerpt,
             categoryId: aiData.category?.id || aiData.categoryId || prev.categoryId,
             thumbnailUrl: aiData.thumbnailUrl || prev.thumbnailUrl
-        }));
+        }))
 
-        setShowAiInput(false);
-    };
+        setShowAiInput(false)
+    }
 
     const handleStartAi = (topic: string) => {
         if (topic.trim()) {
-            generateFullPost(topic, postMetadata.categoryId || "DEFAULT_CAT_ID", handleAiSuccess);
+            generateFullPost(topic, postMetadata.categoryId || "DEFAULT_CAT_ID", handleAiSuccess)
         }
     }
 
-    // Biến kiểm tra để hiển thị thanh Input
-    const isInputVisible = showAiInput || isGenerating;
+    if (!postId) {
+        return (
+            <div className="flex h-[calc(100vh-4rem)] items-center justify-center text-sm text-muted-foreground">
+                Khong tim thay ID bai viet.
+            </div>
+        )
+    }
+
+    if (isLoading) {
+        return (
+            <div className="flex h-[calc(100vh-4rem)] w-full bg-white dark:bg-[#191919]">
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="h-64 w-full max-w-4xl animate-pulse rounded-md bg-muted" />
+                </div>
+                <div className="hidden lg:block w-[350px] border-l bg-gray-50/30" />
+            </div>
+        )
+    }
+
+    if (!fetchedPost) {
+        return (
+            <div className="flex h-[calc(100vh-4rem)] items-center justify-center text-sm text-muted-foreground">
+                Khong tim thay bai viet.
+            </div>
+        )
+    }
+
+    const isInputVisible = showAiInput || isGenerating
+    const content = editorInstance?.getHTML() || fetchedPost.content || ""
 
     return (
         <div className="flex h-[calc(100vh-4rem)] w-full bg-white dark:bg-[#191919] overflow-hidden relative group">
-
             <main className="flex-1 flex flex-col min-w-0 relative h-full">
-                {/* [UPDATE] Đã xóa thẻ Input cũ ở đây */}
-
-                {/* Khu vực Editor */}
                 <div className="flex-1 min-h-0 relative border-t">
                     <SimpleEditor
-                        initialContent=""
+                        initialContent={fetchedPost.content || ""}
                         onEditorReady={setEditorInstance}
                         onRefine={refineText}
-                        // [NEW] Truyền Title xuống component con
                         title={title}
                         onTitleChange={setTitle}
                     />
@@ -141,15 +136,16 @@ export default function CreatePostPage() {
                         </motion.div>
                     )}
                 </AnimatePresence>
-
             </main>
 
             <aside className="w-[350px] border-l hidden lg:block shrink-0 h-full overflow-hidden z-10 bg-gray-50/30">
                 <PostSidebar
-                    post={{ ...postMetadata, title, content: "" }}
+                    post={{ id: postId, ...postMetadata, title, content }}
                     onUpdate={(data) => setPostMetadata(prev => ({ ...prev, ...data }))}
                     onSave={handleSave}
-                    isSaving={createMutation.isPending}
+                    onSaveDraft={handleSaveDraft}
+                    isSaving={isSaving}
+                    editor={editorInstance}
                 />
             </aside>
         </div>

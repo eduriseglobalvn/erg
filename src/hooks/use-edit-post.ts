@@ -64,7 +64,7 @@ export function useEditPost(id: string, editorInstance: import('@tiptap/core').E
             queryClient.invalidateQueries({ queryKey: ['post', id] });
             queryClient.invalidateQueries({ queryKey: ['posts'] });
             toast.success("Đã cập nhật bài viết thành công!")
-            router.push('/admin/posts')
+            router.push('/posts')
         },
         onError: (error: Error) => {
             toast.error(error.message || "Lỗi khi cập nhật bài viết")

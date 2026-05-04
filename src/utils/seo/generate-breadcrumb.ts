@@ -5,6 +5,7 @@ export interface BreadcrumbItem {
 
 const SEGMENT_LABELS: Record<string, string> = {
     'tin-tuc': 'Tin tức',
+    'linh-vuc-dao-tao': 'Lĩnh vực đào tạo',
     'khoa-hoc': 'Khóa học',
     'lien-he': 'Liên hệ',
     've-chung-toi': 'Về chúng tôi',

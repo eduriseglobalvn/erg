@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next';
 import { headers } from 'next/headers';
 import { resolveSiteContext, resolveSiteContextFromHeaders } from '@/lib/site-context';
 import { getPreferredBackendBaseUrl } from '@/lib/backend-url';
+import { TRAINING_FIELDS } from '@/constants/training-fields';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,11 @@ const PAGES_CONFIG = {
     main: [
         { path: '', priority: 1, changefreq: 'daily' },
         { path: '/linh-vuc-dao-tao', priority: 0.9, changefreq: 'weekly' },
+        ...TRAINING_FIELDS.map((field) => ({
+            path: field.link,
+            priority: 0.82,
+            changefreq: 'weekly'
+        })),
         { path: '/tin-tuc', priority: 0.8, changefreq: 'hourly' },
         { path: '/tuyen-dung', priority: 0.8, changefreq: 'daily' },
         { path: '/gia-tri-cot-loi', priority: 0.7, changefreq: 'monthly' },

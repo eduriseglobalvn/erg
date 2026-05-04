@@ -1,15 +1,15 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
     ArrowRight, CheckCircle2, Award, Users, BookOpen,
     MonitorPlay, GraduationCap, ArrowUpRight
 } from 'lucide-react';
-import { TRAINING_FIELDS } from "@/mocks/main.constants";
+import { TRAINING_CONTACT_URL, TRAINING_FIELDS } from "@/constants/training-fields";
 import { useTranslations } from 'next-intl';
 
 export default function TrainingFieldsContent() {
     const t = useTranslations('about.linhVucDaoTao');
-    const th = useTranslations('home.Training');
     return (
         <main className="min-h-screen bg-gray-50 font-sans text-slate-800 pt-[70px] lg:pt-[135px]">
 
@@ -37,7 +37,7 @@ export default function TrainingFieldsContent() {
                 <div className="bg-white rounded-2xl shadow-xl p-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center border border-gray-100">
                     {[
                         { num: "8+", label: t('stats.experience'), icon: <Award className="w-6 h-6 text-[#cc0022]" /> },
-                        { num: "50+", label: t('stats.courses'), icon: <BookOpen className="w-6 h-6 text-[#cc0022]" /> },
+                        { num: `${TRAINING_FIELDS.length}+`, label: t('stats.courses'), icon: <BookOpen className="w-6 h-6 text-[#cc0022]" /> },
                         { num: "20k+", label: t('stats.students'), icon: <Users className="w-6 h-6 text-[#cc0022]" /> },
                         { num: "100%", label: t('stats.quality'), icon: <CheckCircle2 className="w-6 h-6 text-[#cc0022]" /> },
                     ].map((stat, idx) => (
@@ -63,9 +63,7 @@ export default function TrainingFieldsContent() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {TRAINING_FIELDS.map((item, index) => {
-                        const fieldKeys = ['thqt', 'thqg', 'thtn', 'kns', 'dtdm', 'ai'] as const;
-                        const key = fieldKeys[index];
+                    {TRAINING_FIELDS.map((item) => {
                         return (
                             <div
                                 key={item.id}
@@ -76,10 +74,12 @@ export default function TrainingFieldsContent() {
 
                                 {/* Image Area */}
                                 <div className="w-full md:w-5/12 h-56 md:h-auto shrink-0 relative overflow-hidden rounded-xl">
-                                    <img
+                                    <Image
                                         src={item.image}
-                                        alt={th(`fields.${key}.title`)}
-                                        className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
+                                        alt={item.imageAlt}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, 360px"
+                                        className="object-cover transform transition-transform duration-700 group-hover:scale-110"
                                     />
                                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                         <span className="bg-white/90 backdrop-blur-sm text-[#00008b] p-3 rounded-full">
@@ -93,14 +93,14 @@ export default function TrainingFieldsContent() {
                                     <div>
                                         <div className="flex items-center gap-2 mb-2">
                                             <span className="px-2 py-1 rounded bg-blue-50 text-[#00008b] text-[10px] font-bold uppercase tracking-wider">
-                                                {t('fields.programLabel')}
+                                                {item.badge}
                                             </span>
                                         </div>
                                         <h3 className="text-xl font-bold mb-3 transition-colors group-hover:text-[#cc0022]" style={{ color: '#00008b' }}>
-                                            {th(`fields.${key}.title`)}
+                                            {item.title}
                                         </h3>
                                         <p className="text-sm text-gray-600 leading-relaxed line-clamp-3 mb-4">
-                                            {th(`fields.${key}.desc`)}
+                                            {item.description}
                                         </p>
                                     </div>
 
@@ -117,6 +117,24 @@ export default function TrainingFieldsContent() {
                             </div>
                         );
                     })}
+                </div>
+
+                <div className="mt-12 rounded-2xl border border-blue-100 bg-white p-6 text-center shadow-sm">
+                    <h3 className="text-2xl font-black text-[#00008b]">
+                        Cần tư vấn chọn chương trình phù hợp?
+                    </h3>
+                    <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-600">
+                        ERG sẽ tư vấn lộ trình theo độ tuổi, nền tảng hiện tại và mục tiêu học tập hoặc chứng chỉ của học viên.
+                    </p>
+                    <Link
+                        href={TRAINING_CONTACT_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-6 inline-flex items-center justify-center rounded-full bg-[#cc0022] px-7 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-lg transition hover:bg-red-700"
+                    >
+                        Liên hệ nhanh qua Zalo
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
                 </div>
             </div>
 
@@ -159,7 +177,12 @@ export default function TrainingFieldsContent() {
                         {t('cta.subtitle')}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href="/lien-he" className="inline-block px-8 py-4 bg-[#cc0022] text-white font-bold rounded-full hover:bg-red-700 transition-all shadow-lg hover:shadow-red-900/30 hover:-translate-y-1">
+                        <Link
+                            href={TRAINING_CONTACT_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block px-8 py-4 bg-[#cc0022] text-white font-bold rounded-full hover:bg-red-700 transition-all shadow-lg hover:shadow-red-900/30 hover:-translate-y-1"
+                        >
                             {t('cta.register')}
                         </Link>
                         <Link href="/tuyen-dung" className="inline-block px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold rounded-full hover:bg-white hover:text-[#00008b] transition-all">

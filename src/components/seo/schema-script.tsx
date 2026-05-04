@@ -37,6 +37,16 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
         }
     };
 
+    const safeRelativeOrAbsoluteUrl = (value: unknown, fallback: string) => {
+        if (typeof value !== 'string' || !value.trim()) return fallback;
+
+        if (value.startsWith('/')) {
+            return `${safeBaseUrl}${value}`;
+        }
+
+        return safeAbsoluteUrl(value, fallback);
+    };
+
     switch (type) {
         case 'WebSite':
             schemaData = {
@@ -137,6 +147,17 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                 "@type": "Course",
                 "name": data.title,
                 "description": data.description || data.title,
+                "url": safeRelativeOrAbsoluteUrl(data.url, safeBaseUrl),
+                "image": data.image
+                    ? [safeRelativeOrAbsoluteUrl(data.image, "https://media.erg.edu.vn/logo/erg.png")]
+                    : ["https://media.erg.edu.vn/logo/erg.png"],
+                "keywords": Array.isArray(data.keywords) ? data.keywords.join(", ") : data.keywords,
+                ...(Array.isArray(data.audience) && data.audience.length > 0 && {
+                    "audience": data.audience.map((name: string) => ({
+                        "@type": "Audience",
+                        "audienceType": name,
+                    })),
+                }),
                 "hasCourseInstance": {
                     "@type": "CourseInstance",
                     "courseMode": "Online", // Assuming default, can be extended if data provides it

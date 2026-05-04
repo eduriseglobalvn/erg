@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next';
 import { headers } from 'next/headers';
 import { resolveSiteContext, resolveSiteContextFromHeaders } from '@/lib/site-context';
 import { getPreferredBackendBaseUrl } from '@/lib/backend-url';
+import { TRAINING_FIELDS } from '@/constants/training-fields';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,11 @@ const PAGES_CONFIG = {
     main: [
         { path: '', priority: 1, changefreq: 'daily' },
         { path: '/linh-vuc-dao-tao', priority: 0.9, changefreq: 'weekly' },
+        ...TRAINING_FIELDS.map((field) => ({
+            path: field.link,
+            priority: 0.82,
+            changefreq: 'weekly'
+        })),
         { path: '/tin-tuc', priority: 0.8, changefreq: 'hourly' },
         { path: '/tuyen-dung', priority: 0.8, changefreq: 'daily' },
         { path: '/gia-tri-cot-loi', priority: 0.7, changefreq: 'monthly' },
@@ -155,7 +161,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // 2. Chỉ gọi BE để lấy bài viết / tin tức động
     try {
-        const response = await fetch(`${apiUrl}/api/sitemap/data?domain=${host}`, {
+        const sitemapQuery = new URLSearchParams({ domain: host });
+        const response = await fetch(`${apiUrl}/api/sitemap/data?${sitemapQuery.toString()}`, {
             cache: 'no-store',
             signal: AbortSignal.timeout(5000), // timeout 5s, không chờ BE mãi
         });

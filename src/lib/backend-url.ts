@@ -1,6 +1,6 @@
 const LOCAL_BACKEND_FALLBACKS = [
-    'http://127.0.0.1:8080',
     'http://localhost:8080',
+    'http://127.0.0.1:8080',
     'http://127.0.0.1:3003',
     'http://localhost:3003',
 ];
@@ -24,6 +24,27 @@ export function getBackendBaseCandidates(): string[] {
 
 export function getPreferredBackendBaseUrl(): string {
     return getBackendBaseCandidates()[0] || 'http://localhost:8080';
+}
+
+export function getPreferredBrowserBackendBaseUrl(): string {
+    const configured = normalizeBaseUrl(process.env.NEXT_PUBLIC_API_URL);
+    if (configured) return configured;
+
+    if (typeof window !== 'undefined') {
+        const { protocol, hostname } = window.location;
+        if (hostname.endsWith('.erg.edu.local')) {
+            return `${protocol}//${hostname}:8080`;
+        }
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            return 'http://localhost:8080';
+        }
+    }
+
+    return 'http://localhost:8080';
+}
+
+export function shouldUseDirectBrowserApi(): boolean {
+    return process.env.NEXT_PUBLIC_API_MODE === 'direct';
 }
 
 export function buildBackendApiUrl(path: string, baseUrl = getPreferredBackendBaseUrl()): string {

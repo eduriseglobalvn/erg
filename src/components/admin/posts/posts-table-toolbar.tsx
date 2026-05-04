@@ -126,7 +126,7 @@ export function PostsTableToolbar({
 
                     {!isTrash && (
                         <Button asChild className="bg-primary hover:bg-primary/90 shadow-sm h-10 px-4">
-                            <Link href="/admin/posts/create">
+                            <Link href="/posts/create">
                                 <Plus className="mr-2 h-4 w-4" /> Viết bài mới
                             </Link>
                         </Button>

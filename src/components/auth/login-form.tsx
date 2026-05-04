@@ -10,6 +10,7 @@ import { toast } from "sonner"
 
 import { cn } from "@/lib/utils"
 import { useLoginMutation } from "@/hooks/use-login"
+import { isEmailNotVerifiedError } from "@/services/http-client"
 import { Button } from "@/components/admin/ui/button"
 import {
     Card,
@@ -96,15 +97,7 @@ function LoginFormContent({
             { email, password, rememberMe },
             {
                 onError: (error: any) => {
-                    const errorMessage = error.message || ""
-                    const lowered = errorMessage.toLowerCase()
-
-                    if (
-                        lowered.includes("not activated") ||
-                        lowered.includes("account is not activated") ||
-                        lowered.includes("actived") ||
-                        lowered.includes("403")
-                    ) {
+                    if (isEmailNotVerifiedError(error)) {
                         router.push(`/auth/otp?email=${encodeURIComponent(email)}&mode=activation`)
                     }
                 }

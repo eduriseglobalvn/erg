@@ -44,9 +44,9 @@ export type Post = {
     viewCount: number
     commentCount: number
     isCreatedByAI: boolean
-    author: {
-        fullName: string
-        avatarUrl: string | null
+    author?: {
+        fullName?: string | null
+        avatarUrl?: string | null
     }
     category?: {
         id: string
@@ -130,7 +130,7 @@ export function usePostsTableColumns({
                         )}
                         <div className="flex flex-col gap-0.5 min-w-0 flex-1 overflow-hidden">
                             <Link
-                                href={isTrash === true ? "#" : `/admin/posts/${post.id}/edit`}
+                                href={isTrash === true ? "#" : `/posts/${post.id}/edit`}
                                 className="font-bold text-sm text-foreground line-clamp-1 leading-tight hover:text-primary transition-colors cursor-pointer truncate"
                             >
                                 {post.title}
@@ -161,14 +161,15 @@ export function usePostsTableColumns({
             header: "Tác giả",
             cell: ({ row }) => {
                 const author = row.original.author
+                const authorName = author?.fullName || "Chua ro tac gia"
                 return (
                     <div className="flex items-center justify-center gap-2.5 py-3 w-[180px] shrink-0 overflow-hidden">
                         <Avatar className="h-8 w-8 border shadow-sm shrink-0">
-                            <AvatarImage src={author.avatarUrl || ""} alt={author.fullName} />
+                            <AvatarImage src={author?.avatarUrl || ""} alt={authorName} />
                             <AvatarFallback><User className="h-3 w-3" /></AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col min-w-0">
-                            <span className="text-xs font-semibold text-foreground truncate">{author.fullName}</span>
+                            <span className="text-xs font-semibold text-foreground truncate">{authorName}</span>
                             <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-medium">BTV</span>
                         </div>
                     </div>
@@ -185,14 +186,14 @@ export function usePostsTableColumns({
                         <div className="flex flex-col items-center gap-0.5" title="Lượt xem">
                             <div className="flex items-center gap-1.5">
                                 <Eye className="h-4 w-4 text-primary/60" />
-                                <span className="text-xs font-bold text-foreground">{post.viewCount}</span>
+                                <span className="text-xs font-bold text-foreground">{post.viewCount ?? 0}</span>
                             </div>
                             <span className="text-[9px] uppercase font-medium tracking-tight">Xem</span>
                         </div>
                         <div className="flex flex-col items-center gap-0.5" title="Bình luận">
                             <div className="flex items-center gap-1.5">
                                 <MessageSquare className="h-4 w-4 text-primary/60" />
-                                <span className="text-xs font-bold text-foreground">{post.commentCount}</span>
+                                <span className="text-xs font-bold text-foreground">{post.commentCount ?? 0}</span>
                             </div>
                             <span className="text-[9px] uppercase font-medium tracking-tight">Phản hồi</span>
                         </div>
@@ -290,14 +291,15 @@ export function usePostsTableColumns({
             },
             cell: ({ row }) => {
                 const post = row.original
+                const updatedAt = post.updatedAt ? new Date(post.updatedAt) : null
                 return (
                     <div className="flex flex-col py-3 text-[10px] text-muted-foreground whitespace-nowrap w-[140px] shrink-0 items-center">
                         <span className="font-bold text-foreground/90">
-                            {new Date(post.updatedAt).toLocaleDateString("vi-VN", {
+                            {updatedAt && !Number.isNaN(updatedAt.getTime()) ? updatedAt.toLocaleDateString("vi-VN", {
                                 day: '2-digit',
                                 month: '2-digit',
                                 year: 'numeric'
-                            })}
+                            }) : "-"}
                         </span>
                         <span className="text-[8px] uppercase opacity-70 tracking-widest">Lần cuối</span>
                     </div>
@@ -331,7 +333,7 @@ export function usePostsTableColumns({
                             {!isTrash ? (
                                 <>
                                     <DropdownMenuItem asChild>
-                                        <Link href={`/admin/posts/${post.id}/edit`}>
+                                        <Link href={`/posts/${post.id}/edit`}>
                                             <Edit className="mr-2 h-4 w-4" /> Chỉnh sửa
                                         </Link>
                                     </DropdownMenuItem>

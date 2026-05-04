@@ -96,19 +96,19 @@ const data = {
     navContent: [
         {
             title: "Tạo bài viết mới", // Dễ hiểu hơn "Create Manual Post"
-            url: "/admin/posts/create",
+            url: "/posts/create",
             icon: PenSquare,
             permission: "posts.create",
         },
         {
             title: "Bài nháp & Chờ xử lý", // Nơi chứa bài chưa đăng
-            url: "/admin/posts/drafts",
+            url: "/posts/drafts",
             icon: FileEdit,
             permission: "posts.read",
         },
         {
             title: "Quản lý bài viết", // Menu này sẽ chứa các danh mục con
-            url: "/admin/posts",
+            url: "/posts",
             icon: CheckCircle2,
             isActive: true, // Mặc định mở sẵn để dễ nhìn
             permission: "posts.read",
@@ -267,10 +267,10 @@ const data = {
             permission: "media.read",
         },
         {
-            title: "Cấu hình AI Keys", // Thay cho Cài đặt kết nối
+            title: "AI API Keys",
             url: "/admin/settings/ai-keys",
             icon: Sparkles,
-            permission: "settings.read",
+            permission: "api-keys.read",
         },
         {
             title: "Giám sát hệ thống",
@@ -362,7 +362,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     ...item,
                     items: categories.map(cat => ({
                         title: cat.name,
-                        url: `/admin/posts/${cat.slug}`,
+                        url: `/posts/${cat.slug}`,
                         icon: cat.icon && categoryIcons[cat.icon] ? categoryIcons[cat.icon] : Library,
                         permission: "posts.read"
                     }))

@@ -1,12 +1,22 @@
 // src/services/http-client.ts
 
-import { buildBackendApiUrl, fetchWithBackendFallback } from '@/lib/backend-url';
+import {
+    buildBackendApiUrl,
+    fetchWithBackendFallback,
+    getPreferredBrowserBackendBaseUrl,
+    shouldUseDirectBrowserApi,
+} from '@/lib/backend-url';
+import {
+    clearClientAuthSession,
+    setClientAuthSession,
+} from '@/lib/client-auth-session';
 
 /**
  * HTTP Client Isomorphic (Chạy được cả Client & Server)
  *
  * ✅ Tự động nhận diện môi trường (Client/Server)
- * ✅ Ở Client: Sử dụng HttpOnly cookie session qua Next proxy
+ * ✅ Ở Client: mặc định đi qua Next proxy cùng origin để tránh CORS và dùng HttpOnly cookie
+ * ✅ Có thể bật gọi trực tiếp backend bằng NEXT_PUBLIC_API_MODE=direct khi backend CORS đã sẵn sàng
  * ✅ Ở Server: Fetch trực tiếp backend URL từ env
  *
  * [BE v2026-03] Rate limit headers:
@@ -48,6 +58,35 @@ export function isBackendUnavailableError(error: unknown): boolean {
 
 export function isAuthFailureError(error: unknown): boolean {
     return error instanceof ApiError && (error.status === 401 || error.status === 403);
+}
+
+export function getApiErrorCode(error: unknown): string | null {
+    if (!(error instanceof ApiError)) {
+        return null;
+    }
+
+    const data = error.data;
+    const nestedError = data?.error;
+    const rawCode =
+        data?.code ??
+        data?.errorCode ??
+        (typeof nestedError === 'object' && nestedError !== null
+            ? nestedError.code ?? nestedError.errorCode ?? null
+            : nestedError) ??
+        data?.errors ??
+        null;
+
+    if (Array.isArray(rawCode)) {
+        return rawCode[0] ? String(rawCode[0]) : null;
+    }
+
+    return rawCode ? String(rawCode) : null;
+}
+
+export function isEmailNotVerifiedError(error: unknown): boolean {
+    return error instanceof ApiError &&
+        error.status === 403 &&
+        getApiErrorCode(error) === 'EMAIL_NOT_VERIFIED';
 }
 
 /** Error class cho rate limit (429) */
@@ -164,6 +203,34 @@ const processQueue = (error?: unknown) => {
     failedQueue = [];
 };
 
+const toBackendApiPath = (endpoint: string) => {
+    if (endpoint.startsWith('/api/')) return endpoint;
+    if (endpoint.startsWith('/')) return `/api${endpoint}`;
+    return `/api/${endpoint}`;
+};
+
+const isAuthTokenEndpoint = (path: string) => (
+    path === '/api/auth/login' ||
+    path === '/api/auth/refresh' ||
+    path === '/api/auth/google/login'
+);
+
+const parseJsonPayload = async <T>(response: Response): Promise<T> => {
+    const contentLength = response.headers.get('Content-Length');
+    if (contentLength === '0' || response.status === 204) {
+        return {} as T;
+    }
+
+    const text = await response.text();
+    if (!text) return {} as T;
+
+    try {
+        return JSON.parse(text) as T;
+    } catch {
+        return text as T;
+    }
+};
+
 export const httpClient = async <T>(
     endpoint: string,
     options?: CustomRequestInit
@@ -186,16 +253,16 @@ export const httpClient = async <T>(
     };
 
     let url: string;
+    const apiPath = toBackendApiPath(endpoint);
     let serverPath = '';
+    const useDirectBrowserApi = !isServer && shouldUseDirectBrowserApi();
     if (isServer) {
-        serverPath = endpoint.startsWith('/api/')
-            ? endpoint
-            : (endpoint.startsWith('/') ? `/api${endpoint}` : `/api/${endpoint}`);
+        serverPath = apiPath;
         url = buildBackendApiUrl(serverPath);
+    } else if (useDirectBrowserApi) {
+        url = buildBackendApiUrl(apiPath, getPreferredBrowserBackendBaseUrl());
     } else {
-        if (endpoint.startsWith('/api/')) url = endpoint;
-        else if (endpoint.startsWith('/')) url = `/api${endpoint}`;
-        else url = `/api/${endpoint}`;
+        url = apiPath;
     }
 
     try {
@@ -212,11 +279,14 @@ export const httpClient = async <T>(
             });
 
         if (response.ok) {
-            // [BE v2026-03] Extract & store rate limit headers vào cache
             extractRateLimitHeaders(response, endpoint);
-            const contentLength = response.headers.get('Content-Length');
-            if (contentLength === '0') return {} as T;
-            return response.json();
+            const payload = await parseJsonPayload<T>(response);
+
+            if (!isServer && isAuthTokenEndpoint(apiPath)) {
+                setClientAuthSession(payload as any);
+            }
+
+            return payload;
         }
 
         // --- LỖI 429 (RATE LIMIT) — CẢ SERVER LẪN CLIENT ---
@@ -236,7 +306,7 @@ export const httpClient = async <T>(
         }
 
         // --- LỖI 401 (CHỈ XỬ LÝ REFRESH Ở CLIENT) ---
-        if (response.status === 401 && requireAuth && !isServer) {
+        if (response.status === 401 && requireAuth && !isServer && apiPath !== '/api/auth/refresh') {
             if (isRefreshing) {
                 return new Promise((resolve, reject) => {
                     failedQueue.push({
@@ -251,14 +321,23 @@ export const httpClient = async <T>(
             isRefreshing = true;
 
             try {
-                const refreshResponse = await fetch('/api/auth/refresh', {
+                const refreshUrl = useDirectBrowserApi
+                    ? buildBackendApiUrl('/api/auth/refresh', getPreferredBrowserBackendBaseUrl())
+                    : '/api/auth/refresh';
+
+                const refreshResponse = await fetch(refreshUrl, {
                     method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({}),
                     credentials: 'include',
                 });
 
                 if (!refreshResponse.ok) {
                     throw new ApiError('Session expired', 401);
                 }
+
+                const refreshPayload = await parseJsonPayload(refreshResponse);
+                setClientAuthSession(refreshPayload as any);
 
                 processQueue();
                 isRefreshing = false;
@@ -297,6 +376,8 @@ export const handleLogout = () => {
     if (typeof window !== 'undefined') {
         import('@/lib/logout-utils').then(({ handleLogoutWithCache }) => {
             handleLogoutWithCache();
+        }).catch(() => {
+            clearClientAuthSession();
         });
     }
 };

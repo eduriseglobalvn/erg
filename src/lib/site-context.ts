@@ -1,6 +1,19 @@
 const DEFAULT_ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN ||
   (process.env.NODE_ENV === 'production' ? 'erg.edu.vn' : 'erg.edu.local')
 const DEFAULT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://erg.edu.vn'
+const KNOWN_SITE_SUBDOMAINS = new Set([
+  'admin',
+  'ai',
+  'congdanso',
+  'dientoandammay',
+  'elearning',
+  'elerning',
+  'noibo',
+  'tinhocquocgia',
+  'tinhocquocte',
+  'tinhocthieunhi',
+  'tuyendung',
+])
 
 export interface SiteContext {
   rawHost: string
@@ -20,17 +33,73 @@ function firstForwardedValue(value: string) {
 }
 
 function stripPort(value: string) {
-  return value.split(':')[0]?.trim().toLowerCase()
+  const normalized = value.trim().toLowerCase()
+
+  if (!normalized) return ''
+
+  if (normalized.startsWith('[')) {
+    const closingBracketIndex = normalized.indexOf(']')
+    return closingBracketIndex > -1
+      ? normalized.slice(1, closingBracketIndex)
+      : normalized
+  }
+
+  if ((normalized.match(/:/g) || []).length > 1) {
+    return normalized
+  }
+
+  return normalized.split(':')[0]?.trim() || ''
 }
 
 function normalizeRootDomain(rootDomain?: string) {
   return stripPort(rootDomain || DEFAULT_ROOT_DOMAIN)
 }
 
+function configuredAllowedHosts() {
+  return (process.env.NEXT_PUBLIC_ALLOWED_HOSTS || process.env.ALLOWED_HOSTS || '')
+    .split(',')
+    .map((host) => stripPort(host))
+    .filter(Boolean)
+}
+
+export function isAllowedSiteHost(rawHost: string, rootDomain?: string) {
+  const normalizedRawHost = firstForwardedValue(rawHost)
+  const hostname = stripPort(normalizedRawHost)
+  const normalizedRootDomain = normalizeRootDomain(rootDomain)
+
+  if (!hostname) return false
+
+  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1') {
+    return true
+  }
+
+  if (configuredAllowedHosts().includes(hostname)) {
+    return true
+  }
+
+  if (hostname === normalizedRootDomain || hostname === `www.${normalizedRootDomain}`) {
+    return true
+  }
+
+  const subdomain = getSubdomain(hostname, normalizedRootDomain)
+  return Boolean(subdomain && KNOWN_SITE_SUBDOMAINS.has(subdomain))
+}
+
+function normalizeAllowedHost(rawHost: string, rootDomain?: string) {
+  const normalizedRawHost = firstForwardedValue(rawHost)
+  if (isAllowedSiteHost(normalizedRawHost, rootDomain)) {
+    return normalizedRawHost
+  }
+
+  return new URL(DEFAULT_PUBLIC_BASE_URL).host
+}
+
 function detectProtocol(host: string, hostname: string): 'http' | 'https' {
   if (
     host.includes('localhost') ||
     hostname.includes('localhost') ||
+    hostname === '127.0.0.1' ||
+    hostname === '::1' ||
     hostname.endsWith('.local')
   ) {
     return 'http'
@@ -73,7 +142,7 @@ export function normalizeSiteKey(subdomain: string) {
 export function resolveSiteContext(rawHost: string, rootDomain?: string): SiteContext {
   const normalizedRawHost = firstForwardedValue(rawHost)
   const fallbackUrl = new URL(DEFAULT_PUBLIC_BASE_URL)
-  const host = normalizedRawHost || fallbackUrl.host
+  const host = normalizeAllowedHost(normalizedRawHost || fallbackUrl.host, rootDomain)
   const hostname = stripPort(host) || fallbackUrl.hostname
   const normalizedRootDomain = normalizeRootDomain(rootDomain)
   const subdomain = getSubdomain(hostname, normalizedRootDomain)
@@ -98,10 +167,9 @@ export function resolveSiteContext(rawHost: string, rootDomain?: string): SiteCo
 export function resolveSiteContextFromHeaders(
   headerStore: Pick<Headers, 'get'> | { get(name: string): string | null }
 ) {
-  const rawHost =
-    headerStore.get('x-forwarded-host') ||
-    headerStore.get('host') ||
-    ''
+  const forwardedHost = headerStore.get('x-forwarded-host') || ''
+  const host = headerStore.get('host') || ''
+  const rawHost = isAllowedSiteHost(forwardedHost) ? forwardedHost : host
 
   return resolveSiteContext(rawHost)
 }

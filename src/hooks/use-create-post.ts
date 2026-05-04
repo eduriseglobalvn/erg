@@ -26,7 +26,7 @@ export function useCreatePost(editorInstance: Editor | null) {
             const id = res.data?.id || res.id;
             queryClient.invalidateQueries({ queryKey: ['posts'] });
             toast.success("Đã đăng bài viết thành công!");
-            router.push(`/admin/posts/${id}/edit`);
+            router.push(`/posts/${id}/edit`);
         },
         onError: (error: Error) => {
             toast.error(error.message || "Lỗi khi đăng bài viết");

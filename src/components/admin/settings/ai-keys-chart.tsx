@@ -17,20 +17,7 @@ import {
     ChartLegend,
     ChartLegendContent,
 } from "@/components/admin/ui/chart"
-
-interface AIKey {
-    id: string;
-    key: string;
-    label: string | null;
-    projectId: string | null;
-    status: 'active' | 'rate_limited' | 'quota_exceeded' | 'error';
-    todayUsage: number;
-    maxDailyQuota: number;
-    usageCount: number;
-    lastUsedAt: string | null;
-    cooldownUntil: string | null;
-    lastErrorMessage: string | null;
-}
+import type { AIKey } from "@/services/ai.api"
 
 const COLORS = [
     "#8b5cf6", // Purple

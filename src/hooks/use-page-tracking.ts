@@ -5,6 +5,11 @@ import { usePathname } from 'next/navigation';
 import { analyticsApi } from '@/services/analytics.api';
 import { SessionStartResponse } from '@/services/analytics.api';
 import { devLog, devWarn } from '@/lib/dev-logger';
+import {
+    buildBackendApiUrl,
+    getPreferredBrowserBackendBaseUrl,
+    shouldUseDirectBrowserApi,
+} from '@/lib/backend-url';
 
 /**
  * Hook để tự động tracking page visits
@@ -94,13 +99,19 @@ export function usePageTracking() {
                 "color: #dc3545; font-weight: bold;"
             );
 
-            const blob = new Blob([JSON.stringify({ duration })], { type: 'application/json' });
-            const sent = navigator.sendBeacon(`/api/insight/session/${currentId}/finish`, blob);
+            const path = `/api/insight/session/${currentId}/finish`;
+            const url = shouldUseDirectBrowserApi()
+                ? buildBackendApiUrl(path, getPreferredBrowserBackendBaseUrl())
+                : path;
+            void fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ duration }),
+                credentials: 'include',
+                keepalive: true,
+            }).catch((error) => devWarn('[Analytics] Session finish failed:', error));
 
-            devLog(
-                `%c[Analytics] sendBeacon: ${sent ? '✅' : '⚠️ không gửi được'}`,
-                "color: #dc3545; font-weight: bold;"
-            );
+            devLog('[Analytics] Session finish request queued');
 
             visitIdRef.current = null;
             sessionStorage.removeItem('erg_visit_id');

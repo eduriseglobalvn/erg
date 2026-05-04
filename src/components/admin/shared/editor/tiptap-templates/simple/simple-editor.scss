@@ -85,8 +85,180 @@ body,
 .simple-editor-content .tiptap.ProseMirror.simple-editor {
   flex: 1;
   /* Giảm padding để tận dụng không gian, hoặc giữ nguyên tùy bạn */
-  padding: 2rem 3rem 30vh;
+  padding: 1rem 0 30vh;
   min-height: 100%;
+}
+
+.simple-editor .erg-image-text-node {
+  background: #fff;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
+  display: block;
+  margin: 1.75rem 0;
+  padding: 1.25rem;
+  width: 100%;
+}
+
+.simple-editor .erg-image-text-node[data-bg="soft"] {
+  background: #f3f7ff;
+}
+
+.simple-editor .erg-image-text-node[data-bg="course-hero"] {
+  background:
+    linear-gradient(rgba(0, 62, 124, 0.88), rgba(0, 62, 124, 0.9)),
+    radial-gradient(circle at 85% 5%, rgba(255, 255, 255, 0.18), transparent 28%),
+    #07559f;
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  padding: 2.5rem;
+}
+
+.simple-editor .erg-image-text-node[data-tone="dark"] :where(h1, h2, h3, p, li) {
+  color: #fff;
+}
+
+.simple-editor .erg-image-text-node[data-variant="courseHero"] .erg-image-text-content {
+  background: rgba(8, 74, 138, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
+  padding: 1.5rem;
+}
+
+.simple-editor .erg-image-text-node[data-variant="courseHero"] .erg-image-text-content a,
+.simple-editor .erg-image-text-node[data-variant="offer"] .erg-image-text-content a {
+  background: #cc0022;
+  border-radius: 12px;
+  color: #fff;
+  display: inline-flex;
+  font-weight: 800;
+  margin-top: 0.5rem;
+  padding: 0.7rem 1.1rem;
+  text-decoration: none;
+}
+
+.simple-editor .erg-image-text-node[data-variant="offer"] .erg-image-text-copy {
+  background: #fff;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+  padding: 1.5rem;
+}
+
+.simple-editor .erg-image-text-node[data-variant="benefit"] {
+  border-color: #dbeafe;
+}
+
+.simple-editor .erg-image-text-node.ProseMirror-selectednode {
+  outline: 2px solid #00008b;
+  outline-offset: 6px;
+}
+
+.simple-editor .erg-image-text-grid {
+  align-items: center;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, var(--erg-image-column, 44%));
+}
+
+.simple-editor .erg-image-text-node[data-layout="image-text"] .erg-image-text-grid {
+  grid-template-columns: minmax(280px, var(--erg-image-column, 44%)) minmax(0, 1fr);
+}
+
+.simple-editor .erg-image-text-copy {
+  min-width: 0;
+}
+
+.simple-editor .erg-image-text-content {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.simple-editor .erg-image-text-content :where(p, ul, ol) {
+  margin: 0;
+}
+
+.simple-editor .erg-image-text-content ul,
+.simple-editor .erg-image-text-content ol {
+  padding-left: 1.25rem;
+}
+
+.simple-editor .erg-image-text-figure {
+  margin: 0;
+  min-width: 0;
+  position: relative;
+}
+
+.simple-editor .erg-image-text-image-frame {
+  background: #f8fafc;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.simple-editor .erg-image-text-image-frame img {
+  aspect-ratio: 4 / 3;
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.simple-editor .erg-image-text-image-actions {
+  display: flex;
+  gap: 0.35rem;
+  opacity: 0;
+  position: absolute;
+  right: 0.6rem;
+  top: 0.6rem;
+  transition: opacity 160ms ease;
+}
+
+.simple-editor .erg-image-text-figure:hover .erg-image-text-image-actions,
+.simple-editor .erg-image-text-node.ProseMirror-selectednode .erg-image-text-image-actions {
+  opacity: 1;
+}
+
+.simple-editor .erg-image-text-image-actions button {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 10px;
+  color: #334155;
+  display: inline-flex;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+
+.simple-editor .erg-image-text-image-actions button:hover,
+.simple-editor .erg-image-text-image-actions button.is-active {
+  background: #00008b;
+  color: #fff;
+}
+
+.simple-editor .erg-image-text-figure figcaption {
+  margin-top: 0.65rem;
+}
+
+.simple-editor .erg-image-text-figure figcaption input {
+  background: transparent;
+  border: 0;
+  color: #71717a;
+  font-size: 0.9rem;
+  font-style: italic;
+  outline: none;
+  text-align: center;
+  width: 100%;
+}
+
+@media screen and (max-width: 900px) {
+  .simple-editor .erg-image-text-grid,
+  .simple-editor .erg-image-text-node[data-layout="image-text"] .erg-image-text-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media screen and (max-width: 480px) {

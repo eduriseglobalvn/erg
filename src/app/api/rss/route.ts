@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { RSS_SOURCE_URL } from '@/lib/rss';
+import { parseRssItemsFromXml, RSS_SOURCE_URL } from '@/lib/rss';
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
         const response = await fetch(RSS_SOURCE_URL, {
             method: 'GET',
@@ -9,7 +9,7 @@ export async function GET() {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             },
-            next: { revalidate: 300 } // Cache 5 phút
+            next: { revalidate: 300 },
         });
 
         if (!response.ok) {
@@ -20,16 +20,30 @@ export async function GET() {
         }
 
         const xmlData = await response.text();
+        const format = new URL(request.url).searchParams.get('format');
+
+        if (format === 'json') {
+            return NextResponse.json(
+                {
+                    data: parseRssItemsFromXml(xmlData),
+                    source: RSS_SOURCE_URL,
+                },
+                {
+                    status: 200,
+                    headers: {
+                        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=59',
+                    },
+                }
+            );
+        }
 
         return new NextResponse(xmlData, {
             status: 200,
             headers: {
                 'Content-Type': 'application/xml; charset=utf-8',
-                // Cache ở phía browser/CDN
                 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=59',
             },
         });
-
     } catch (error) {
         console.error('RSS Fetch Error:', error);
         return NextResponse.json(

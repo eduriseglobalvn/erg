@@ -69,7 +69,7 @@ const NotificationItem = ({ notification, onMarkAsRead, onDelete, onNavigate }: 
         if (notification.actionUrl) {
             onNavigate(notification.actionUrl)
         } else if (notification.metadata?.postId) {
-            onNavigate(`/admin/posts/${notification.metadata.postId}`)
+            onNavigate(`/posts/${notification.metadata.postId}/edit`)
         }
     }
 

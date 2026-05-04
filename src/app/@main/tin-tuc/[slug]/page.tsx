@@ -83,7 +83,7 @@ async function getPost(slug: string, previewId?: string | null): Promise<PostFet
 async function getRecentPosts(): Promise<RecentPostItem[]> {
     try {
         const apiUrl = getPreferredBackendBaseUrl();
-        const res = await fetch(`${apiUrl}/api/posts?limit=5&sortBy=createdAt&order=DESC&status=published`, {
+        const res = await fetch(`${apiUrl}/api/posts?limit=5&sortBy=createdAt&order=DESC&status=PUBLISHED`, {
             next: { revalidate: 60 },
         });
 

@@ -63,7 +63,7 @@ async function getInitialPosts(limit = 9): Promise<NewsListPayload> {
     try {
         const apiUrl = getPreferredBackendBaseUrl();
         const response = await fetch(
-            `${apiUrl}/api/posts?page=1&limit=${limit}&status=published&sortBy=createdAt&order=DESC`,
+            `${apiUrl}/api/posts?page=1&limit=${limit}&status=PUBLISHED&sortBy=createdAt&order=DESC`,
             { next: { revalidate } }
         );
 

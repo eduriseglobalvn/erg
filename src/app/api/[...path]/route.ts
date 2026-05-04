@@ -4,6 +4,17 @@ import { appendAuthCookies, appendLogoutCookies } from '@/lib/auth-cookies';
 
 const ACCESS_COOKIE_NAMES = ['erg_access_token', 'accessToken'];
 const REFRESH_COOKIE_NAMES = ['erg_refresh_token', 'refreshToken'];
+const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+const TRUSTED_REQUEST_HEADERS = [
+    'accept',
+    'accept-language',
+    'authorization',
+    'content-type',
+    'user-agent',
+    'x-tenant-id',
+    'x-request-id',
+    'x-trace-id',
+] as const;
 
 function firstCookie(request: NextRequest, names: string[]) {
     for (const name of names) {
@@ -11,6 +22,49 @@ function firstCookie(request: NextRequest, names: string[]) {
         if (value) return value;
     }
     return undefined;
+}
+
+function hasAuthCookie(request: NextRequest) {
+    return Boolean(
+        firstCookie(request, ACCESS_COOKIE_NAMES) ||
+        firstCookie(request, REFRESH_COOKIE_NAMES)
+    );
+}
+
+function isSameOrigin(value: string, requestOrigin: string) {
+    try {
+        return new URL(value).origin === requestOrigin;
+    } catch {
+        return false;
+    }
+}
+
+function validateMutationOrigin(request: NextRequest) {
+    if (!MUTATING_METHODS.has(request.method)) {
+        return null;
+    }
+
+    const requestOrigin = new URL(request.url).origin;
+    const origin = request.headers.get('origin');
+    if (origin) {
+        return origin === requestOrigin ? null : 'Cross-origin mutation requests are not allowed';
+    }
+
+    const referer = request.headers.get('referer');
+    if (referer) {
+        return isSameOrigin(referer, requestOrigin) ? null : 'Cross-origin mutation requests are not allowed';
+    }
+
+    const secFetchSite = request.headers.get('sec-fetch-site');
+    if (secFetchSite) {
+        return secFetchSite === 'same-origin' || secFetchSite === 'none'
+            ? null
+            : 'Cross-site mutation requests are not allowed';
+    }
+
+    return hasAuthCookie(request)
+        ? 'Missing Origin/Referer for authenticated mutation request'
+        : null;
 }
 
 export async function GET(
@@ -55,6 +109,14 @@ export async function PATCH(
 
 async function proxyRequest(request: NextRequest, pathSegments: string[]) {
     try {
+        const mutationOriginError = validateMutationOrigin(request);
+        if (mutationOriginError) {
+            return NextResponse.json(
+                { error: 'Forbidden', message: mutationOriginError },
+                { status: 403 }
+            );
+        }
+
         const path = pathSegments?.join('/') || '';
         const url = new URL(request.url);
         const backendPath = `/api/${path}${url.search}`;
@@ -62,18 +124,7 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
         // Removed production logs (B-L5)
 
         const headers = new Headers();
-        [
-            'accept',
-            'accept-language',
-            'authorization',
-            'content-type',
-            'user-agent',
-            'x-tenant-id',
-            'x-request-id',
-            'x-trace-id',
-            'x-forwarded-for',
-            'x-real-ip',
-        ].forEach((name) => {
+        TRUSTED_REQUEST_HEADERS.forEach((name) => {
             const value = request.headers.get(name);
             if (value) headers.set(name, value);
         });
@@ -183,7 +234,11 @@ async function proxyRequest(request: NextRequest, pathSegments: string[]) {
         }
 
         if (!response.ok) {
-            console.error('[API Proxy] Backend error:', responseBody);
+            if (process.env.NODE_ENV === 'production') {
+                console.error('[API Proxy] Backend error:', response.status, backendPath);
+            } else {
+                console.error('[API Proxy] Backend error:', responseBody);
+            }
         }
 
         return new NextResponse(responseBody, {

@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { EditorContent, EditorContext, useEditor, Extension } from "@tiptap/react"
+import { useState, useEffect, useRef, type ChangeEvent, type MouseEvent } from "react"
+import { EditorContent, EditorContext, useEditor, Extension, Node, mergeAttributes, NodeViewContent, NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react"
+import { NodeSelection } from "@tiptap/pm/state"
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit"
@@ -65,7 +66,7 @@ import { AIBubbleMenu } from "@/components/admin/shared/editor/tiptap-ui/ai-bubb
 import { ArrowLeftIcon } from "@/components/admin/shared/editor/tiptap-icons/arrow-left-icon"
 import { HighlighterIcon } from "@/components/admin/shared/editor/tiptap-icons/highlighter-icon"
 import { LinkIcon } from "@/components/admin/shared/editor/tiptap-icons/link-icon"
-import { ChevronDown, Loader2, Sparkles, ListTree } from "lucide-react"
+import { ArrowDown, ArrowUp, ChevronDown, Copy, GripVertical, ImagePlus, Loader2, PanelLeft, PanelRight, Sparkles, ListTree, Trash2 } from "lucide-react"
 
 // --- Hooks ---
 import { useIsBreakpoint } from "@/hooks/use-breakpoint"
@@ -81,9 +82,459 @@ import {
 
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils"
+import { cn } from "@/lib/utils"
 
 // --- Styles ---
 import "@/components/admin/shared/editor/tiptap-templates/simple/simple-editor.scss"
+
+function ErgSectionBlockView(props: any) {
+    const { node, editor, selected, getPos } = props
+    const attrs = node.attrs
+
+    const getCurrentPos = () => {
+        if (typeof getPos !== "function") return null
+        const pos = getPos()
+        return typeof pos === "number" ? pos : null
+    }
+
+    const deleteBlock = (event: MouseEvent) => {
+        event.preventDefault()
+        event.stopPropagation()
+        const pos = getCurrentPos()
+        if (pos === null) return
+        editor.chain().focus().deleteRange({ from: pos, to: pos + node.nodeSize }).run()
+    }
+
+    const duplicateBlock = (event: MouseEvent) => {
+        event.preventDefault()
+        event.stopPropagation()
+        const pos = getCurrentPos()
+        if (pos === null) return
+        const { state, view } = editor
+        const tr = state.tr.insert(pos + node.nodeSize, node.copy(node.content))
+        view.dispatch(tr.scrollIntoView())
+        editor.commands.focus()
+    }
+
+    const moveBlock = (direction: "up" | "down") => (event: MouseEvent) => {
+        event.preventDefault()
+        event.stopPropagation()
+        const pos = getCurrentPos()
+        if (pos === null) return
+
+        const { state, view } = editor
+        const blocks: Array<{ pos: number; nodeSize: number }> = []
+        state.doc.forEach((child: any, offset: number) => {
+            blocks.push({ pos: offset, nodeSize: child.nodeSize })
+        })
+
+        const index = blocks.findIndex(block => block.pos === pos)
+        if (index === -1) return
+        const targetIndex = direction === "up" ? index - 1 : index + 1
+        if (targetIndex < 0 || targetIndex >= blocks.length) return
+
+        const selectedBlock = blocks[index]
+        const targetBlock = blocks[targetIndex]
+        const slice = state.doc.slice(selectedBlock.pos, selectedBlock.pos + selectedBlock.nodeSize)
+        let tr = state.tr.delete(selectedBlock.pos, selectedBlock.pos + selectedBlock.nodeSize)
+        const insertPos = direction === "up"
+            ? targetBlock.pos
+            : targetBlock.pos + targetBlock.nodeSize - selectedBlock.nodeSize
+        tr = tr.insert(insertPos, slice.content)
+        view.dispatch(tr.scrollIntoView())
+        editor.commands.focus()
+    }
+
+    return (
+        <NodeViewWrapper
+            className={cn("group/erg-block relative", attrs.class, selected && "ProseMirror-selectednode")}
+            data-erg-block={attrs.dataErgBlock}
+            data-bg={attrs.dataBg}
+            data-tone={attrs.dataTone}
+            data-width={attrs.dataWidth}
+            data-accent={attrs.dataAccent}
+            data-layout={attrs.dataLayout}
+        >
+            <div
+                contentEditable={false}
+                className={cn(
+                    "absolute -top-11 left-3 z-30 flex items-center gap-1 rounded-xl border bg-white/95 p-1 text-zinc-600 opacity-0 shadow-lg backdrop-blur transition group-hover/erg-block:opacity-100",
+                    selected && "opacity-100"
+                )}
+            >
+                <button
+                    type="button"
+                    className="flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold hover:bg-zinc-100"
+                    title="Kéo để đổi vị trí khối"
+                    data-drag-handle
+                >
+                    <GripVertical className="h-4 w-4" />
+                    Khối
+                </button>
+                <button type="button" className="grid h-8 w-8 place-items-center rounded-lg hover:bg-zinc-100" title="Di chuyển lên" onClick={moveBlock("up")}>
+                    <ArrowUp className="h-4 w-4" />
+                </button>
+                <button type="button" className="grid h-8 w-8 place-items-center rounded-lg hover:bg-zinc-100" title="Di chuyển xuống" onClick={moveBlock("down")}>
+                    <ArrowDown className="h-4 w-4" />
+                </button>
+                <button type="button" className="grid h-8 w-8 place-items-center rounded-lg hover:bg-zinc-100" title="Nhân bản khối" onClick={duplicateBlock}>
+                    <Copy className="h-4 w-4" />
+                </button>
+                <button type="button" className="grid h-8 w-8 place-items-center rounded-lg text-red-600 hover:bg-red-50" title="Xóa khối" onClick={deleteBlock}>
+                    <Trash2 className="h-4 w-4" />
+                </button>
+            </div>
+            <NodeViewContent />
+        </NodeViewWrapper>
+    )
+}
+
+const ErgSectionBlock = Node.create({
+    name: "ergSectionBlock",
+    group: "block",
+    content: "block+",
+    defining: true,
+    selectable: true,
+    draggable: true,
+    isolating: true,
+
+    addAttributes() {
+        return {
+            dataErgBlock: {
+                default: "section",
+                parseHTML: element => element.getAttribute("data-erg-block") || "section",
+                renderHTML: attributes => attributes.dataErgBlock ? { "data-erg-block": attributes.dataErgBlock } : {},
+            },
+            class: {
+                default: null,
+                parseHTML: element => element.getAttribute("class"),
+                renderHTML: attributes => attributes.class ? { class: attributes.class } : {},
+            },
+            dataBg: {
+                default: "plain",
+                parseHTML: element => element.getAttribute("data-bg") || "plain",
+                renderHTML: attributes => attributes.dataBg ? { "data-bg": attributes.dataBg } : {},
+            },
+            dataTone: {
+                default: "light",
+                parseHTML: element => element.getAttribute("data-tone") || "light",
+                renderHTML: attributes => attributes.dataTone ? { "data-tone": attributes.dataTone } : {},
+            },
+            dataWidth: {
+                default: "normal",
+                parseHTML: element => element.getAttribute("data-width") || "normal",
+                renderHTML: attributes => attributes.dataWidth ? { "data-width": attributes.dataWidth } : {},
+            },
+            dataAccent: {
+                default: "blue",
+                parseHTML: element => element.getAttribute("data-accent") || "blue",
+                renderHTML: attributes => attributes.dataAccent ? { "data-accent": attributes.dataAccent } : {},
+            },
+            dataLayout: {
+                default: null,
+                parseHTML: element => element.getAttribute("data-layout"),
+                renderHTML: attributes => attributes.dataLayout ? { "data-layout": attributes.dataLayout } : {},
+            },
+        }
+    },
+
+    parseHTML() {
+        return [{ tag: "section[data-erg-block]" }]
+    },
+
+    renderHTML({ HTMLAttributes }) {
+        return ["section", mergeAttributes(HTMLAttributes), 0]
+    },
+
+    addNodeView() {
+        return ReactNodeViewRenderer(ErgSectionBlockView)
+    },
+})
+
+function ImageTextBlockView(props: any) {
+    const { node, editor, selected, getPos } = props
+    const attrs = node.attrs
+    const fileInputRef = useRef<HTMLInputElement | null>(null)
+    const imagePosition = attrs.imagePosition === "left" ? "left" : "right"
+
+    const getCurrentPos = () => {
+        if (typeof getPos !== "function") return null
+        const pos = getPos()
+        return typeof pos === "number" ? pos : null
+    }
+
+    const updateAttrs = (nextAttrs: Record<string, unknown>, focusEditor = false) => {
+        const pos = getCurrentPos()
+        if (pos === null) return
+        const tr = editor.state.tr.setNodeMarkup(pos, undefined, {
+            ...node.attrs,
+            ...nextAttrs,
+        })
+        editor.view.dispatch(tr)
+        if (focusEditor) editor.commands.focus()
+    }
+
+    const deleteBlock = (event: MouseEvent) => {
+        event.preventDefault()
+        event.stopPropagation()
+        const pos = getCurrentPos()
+        if (pos === null) return
+        editor.chain().focus().deleteRange({ from: pos, to: pos + node.nodeSize }).run()
+    }
+
+    const duplicateBlock = (event: MouseEvent) => {
+        event.preventDefault()
+        event.stopPropagation()
+        const pos = getCurrentPos()
+        if (pos === null) return
+        const { state, view } = editor
+        const tr = state.tr.insert(pos + node.nodeSize, node.copy(node.content))
+        view.dispatch(tr.scrollIntoView())
+        editor.commands.focus()
+    }
+
+    const moveBlock = (direction: "up" | "down") => (event: MouseEvent) => {
+        event.preventDefault()
+        event.stopPropagation()
+        const pos = getCurrentPos()
+        if (pos === null) return
+
+        const { state, view } = editor
+        const blocks: Array<{ pos: number; nodeSize: number }> = []
+        state.doc.forEach((child: any, offset: number) => {
+            blocks.push({ pos: offset, nodeSize: child.nodeSize })
+        })
+
+        const index = blocks.findIndex(block => block.pos === pos)
+        if (index === -1) return
+        const targetIndex = direction === "up" ? index - 1 : index + 1
+        if (targetIndex < 0 || targetIndex >= blocks.length) return
+
+        const selectedBlock = blocks[index]
+        const targetBlock = blocks[targetIndex]
+        const slice = state.doc.slice(selectedBlock.pos, selectedBlock.pos + selectedBlock.nodeSize)
+        let tr = state.tr.delete(selectedBlock.pos, selectedBlock.pos + selectedBlock.nodeSize)
+        const insertPos = direction === "up"
+            ? targetBlock.pos
+            : targetBlock.pos + targetBlock.nodeSize - selectedBlock.nodeSize
+        tr = tr.insert(insertPos, slice.content)
+        view.dispatch(tr.scrollIntoView())
+        editor.commands.focus()
+    }
+
+    const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (!file) return
+
+        try {
+            const url = await handleImageUpload(file)
+            updateAttrs({
+                src: url,
+                alt: attrs.alt || file.name.replace(/\.[^.]+$/, ""),
+                caption: attrs.caption || file.name.replace(/\.[^.]+$/, ""),
+            })
+        } catch (error) {
+            console.error("Upload image text block failed:", error)
+        } finally {
+            event.target.value = ""
+        }
+    }
+
+    const image = (
+        <figure contentEditable={false} className="erg-image-text-figure">
+            <div className="erg-image-text-image-frame">
+                <img src={attrs.src} alt={attrs.alt || ""} title={attrs.title || undefined} />
+                <div className="erg-image-text-image-actions">
+                    <button type="button" title="Đổi ảnh" onClick={() => fileInputRef.current?.click()}>
+                        <ImagePlus className="h-4 w-4" />
+                    </button>
+                    <button type="button" title="Ảnh bên trái" className={imagePosition === "left" ? "is-active" : undefined} onClick={() => updateAttrs({ imagePosition: "left" }, true)}>
+                        <PanelLeft className="h-4 w-4" />
+                    </button>
+                    <button type="button" title="Ảnh bên phải" className={imagePosition === "right" ? "is-active" : undefined} onClick={() => updateAttrs({ imagePosition: "right" }, true)}>
+                        <PanelRight className="h-4 w-4" />
+                    </button>
+                </div>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+            </div>
+            <figcaption>
+                <input
+                    value={attrs.caption || ""}
+                    placeholder="Thêm chú thích ảnh..."
+                    onChange={(event) => updateAttrs({ caption: event.target.value })}
+                />
+            </figcaption>
+        </figure>
+    )
+
+    const copy = (
+        <div className="erg-image-text-copy">
+            <NodeViewContent className="erg-image-text-content" />
+        </div>
+    )
+
+    return (
+        <NodeViewWrapper
+            as="section"
+            className={cn(
+                "erg-image-text-node group/image-text relative",
+                selected && "ProseMirror-selectednode"
+            )}
+            data-erg-block="image-text"
+            data-editor-node="image-text"
+            data-layout={imagePosition === "left" ? "image-text" : "text-image"}
+            data-bg={attrs.dataBg}
+            data-tone={attrs.dataTone}
+            data-width={attrs.dataWidth}
+            data-accent={attrs.dataAccent}
+            data-variant={attrs.dataVariant}
+            style={{ "--erg-image-column": `${attrs.imageWidth || 44}%` } as any}
+        >
+            <div
+                contentEditable={false}
+                className={cn(
+                    "absolute -top-11 left-3 z-30 flex items-center gap-1 rounded-xl border bg-white/95 p-1 text-zinc-600 opacity-0 shadow-lg backdrop-blur transition group-hover/image-text:opacity-100",
+                    selected && "opacity-100"
+                )}
+            >
+                <button type="button" className="flex h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold hover:bg-zinc-100" title="Kéo để đổi vị trí khối" data-drag-handle>
+                    <GripVertical className="h-4 w-4" />
+                    Ảnh + chữ
+                </button>
+                <button type="button" className="grid h-8 w-8 place-items-center rounded-lg hover:bg-zinc-100" title="Di chuyển lên" onClick={moveBlock("up")}>
+                    <ArrowUp className="h-4 w-4" />
+                </button>
+                <button type="button" className="grid h-8 w-8 place-items-center rounded-lg hover:bg-zinc-100" title="Di chuyển xuống" onClick={moveBlock("down")}>
+                    <ArrowDown className="h-4 w-4" />
+                </button>
+                <button type="button" className="grid h-8 w-8 place-items-center rounded-lg hover:bg-zinc-100" title="Nhân bản khối" onClick={duplicateBlock}>
+                    <Copy className="h-4 w-4" />
+                </button>
+                <button type="button" className="grid h-8 w-8 place-items-center rounded-lg text-red-600 hover:bg-red-50" title="Xóa khối" onClick={deleteBlock}>
+                    <Trash2 className="h-4 w-4" />
+                </button>
+            </div>
+
+            <div className="erg-image-text-grid">
+                {imagePosition === "left" ? image : copy}
+                {imagePosition === "left" ? copy : image}
+            </div>
+        </NodeViewWrapper>
+    )
+}
+
+const ImageTextBlock = Node.create({
+    name: "imageTextBlock",
+    group: "block",
+    content: "block+",
+    defining: true,
+    selectable: true,
+    draggable: true,
+    isolating: true,
+
+    addAttributes() {
+        return {
+            dataErgBlock: {
+                default: "image-text",
+                renderHTML: () => ({ "data-erg-block": "image-text" }),
+            },
+            src: {
+                default: "https://media.erg.edu.vn/logo/erg.png",
+                parseHTML: element => element.querySelector("img")?.getAttribute("src") || "https://media.erg.edu.vn/logo/erg.png",
+            },
+            alt: {
+                default: "ERG Edurise Global",
+                parseHTML: element => element.querySelector("img")?.getAttribute("alt") || "ERG Edurise Global",
+            },
+            title: {
+                default: null,
+                parseHTML: element => element.querySelector("img")?.getAttribute("title"),
+            },
+            caption: {
+                default: "Hình minh họa chương trình tại ERG",
+                parseHTML: element => element.querySelector("figcaption")?.textContent || element.querySelector("img")?.getAttribute("data-caption"),
+            },
+            imagePosition: {
+                default: "right",
+                parseHTML: element => element.getAttribute("data-layout") === "image-text" ? "left" : "right",
+            },
+            imageWidth: {
+                default: 44,
+                parseHTML: element => Number(element.getAttribute("data-image-width") || 44),
+            },
+            dataBg: {
+                default: "plain",
+                parseHTML: element => element.getAttribute("data-bg") || "plain",
+            },
+            dataTone: {
+                default: "light",
+                parseHTML: element => element.getAttribute("data-tone") || "light",
+            },
+            dataWidth: {
+                default: "wide",
+                parseHTML: element => element.getAttribute("data-width") || "wide",
+            },
+            dataAccent: {
+                default: "blue",
+                parseHTML: element => element.getAttribute("data-accent") || "blue",
+            },
+            dataVariant: {
+                default: "default",
+                parseHTML: element => element.getAttribute("data-variant") || "default",
+            },
+        }
+    },
+
+    parseHTML() {
+        return [
+            { tag: 'section[data-editor-node="image-text"]', contentElement: ".erg-block-copy" },
+            { tag: 'section[data-erg-block="image-text"]', contentElement: ".erg-block-copy" },
+        ]
+    },
+
+    renderHTML({ node }) {
+        const attrs = node.attrs
+        const layout = attrs.imagePosition === "left" ? "image-text" : "text-image"
+        const sectionAttrs = {
+            "data-erg-block": "image-text",
+            "data-editor-node": "image-text",
+            "data-layout": layout,
+            "data-bg": attrs.dataBg || "plain",
+            "data-tone": attrs.dataTone || "light",
+            "data-width": attrs.dataWidth || "wide",
+            "data-accent": attrs.dataAccent || "blue",
+            "data-variant": attrs.dataVariant || "default",
+            "data-image-width": String(attrs.imageWidth || 44),
+            class: "erg-block erg-block-image-text",
+            style: `--erg-image-column: ${attrs.imageWidth || 44}%`,
+        }
+        const figure = [
+            "figure",
+            { class: "erg-figure" },
+            [
+                "img",
+                {
+                    src: attrs.src,
+                    alt: attrs.alt || "",
+                    title: attrs.title || undefined,
+                    "data-caption": attrs.caption || "",
+                    "data-align": "center",
+                    "data-width": "100%",
+                },
+            ],
+            attrs.caption ? ["figcaption", attrs.caption] : ["figcaption", ""],
+        ]
+        const copy = ["div", { class: "erg-block-copy" }, 0]
+
+        return attrs.imagePosition === "left"
+            ? ["section", sectionAttrs, figure, copy]
+            : ["section", sectionAttrs, copy, figure]
+    },
+
+    addNodeView() {
+        return ReactNodeViewRenderer(ImageTextBlockView)
+    },
+})
 
 // BỔ SUNG: Custom FontSize Extension
 const FontSize = Extension.create({
@@ -239,7 +690,7 @@ const MainToolbarContent = ({
             <ToolbarSeparator />
 
             <ToolbarGroup>
-                <ImageUploadButton text="Add" />
+                <ImageUploadButton text="Ảnh" />
                 <Button
                     data-style="ghost"
                     className="h-8 w-8 text-muted-foreground hover:text-foreground border"
@@ -295,6 +746,8 @@ interface SimpleEditorProps {
     initialContent?: string;
     onEditorReady?: (editor: any) => void;
     onRefine?: (text: string, prompt: string) => Promise<string | null>;
+    onContentChange?: (html: string) => void;
+    onSelectionChange?: (selection: any) => void;
     title?: string;
     onTitleChange?: (value: string) => void;
     isRefining?: boolean;
@@ -304,6 +757,8 @@ export function SimpleEditor({
     initialContent = "",
     onEditorReady,
     onRefine,
+    onContentChange,
+    onSelectionChange,
     title = "",
     onTitleChange,
     isRefining
@@ -316,6 +771,66 @@ export function SimpleEditor({
     // [OPTIMIZATION] Dùng local state để gõ title mượt hơn
     const [localTitle, setLocalTitle] = useState(title);
     const syncTimeoutRef = useRef<any>(null);
+
+    const emitSelection = (editor: any) => {
+        if (!onSelectionChange) return;
+        const { selection } = editor.state;
+
+        if (selection instanceof NodeSelection && selection.node?.type?.name === "image") {
+            onSelectionChange({
+                type: "image",
+                attrs: selection.node.attrs,
+                pos: selection.from,
+                nodeSize: selection.node.nodeSize,
+            });
+            return;
+        }
+
+        if (selection instanceof NodeSelection && selection.node?.type?.name === "ergSectionBlock") {
+            onSelectionChange({
+                type: "section",
+                attrs: selection.node.attrs,
+                pos: selection.from,
+                nodeSize: selection.node.nodeSize,
+            });
+            return;
+        }
+
+        if (selection instanceof NodeSelection && selection.node?.type?.name === "imageTextBlock") {
+            onSelectionChange({
+                type: "section",
+                attrs: selection.node.attrs,
+                pos: selection.from,
+                nodeSize: selection.node.nodeSize,
+            });
+            return;
+        }
+
+        const { $from } = selection;
+        for (let depth = $from.depth; depth > 0; depth -= 1) {
+            const node = $from.node(depth);
+            if (node.type.name === "ergSectionBlock") {
+                onSelectionChange({
+                    type: "section",
+                    attrs: node.attrs,
+                    pos: $from.before(depth),
+                    nodeSize: node.nodeSize,
+                });
+                return;
+            }
+            if (node.type.name === "imageTextBlock") {
+                onSelectionChange({
+                    type: "section",
+                    attrs: node.attrs,
+                    pos: $from.before(depth),
+                    nodeSize: node.nodeSize,
+                });
+                return;
+            }
+        }
+
+        onSelectionChange(null);
+    };
 
     // Đồng bộ ngược từ Prop vào Local State 
     // Chỉ cập nhật khi tiêu đề thực sự khác biệt (để AI có thể đổ dữ liệu vào)
@@ -353,6 +868,15 @@ export function SimpleEditor({
         },
         onCreate({ editor }) {
             if (onEditorReady) onEditorReady(editor);
+            onContentChange?.(editor.getHTML());
+            emitSelection(editor);
+        },
+        onUpdate({ editor }) {
+            onContentChange?.(editor.getHTML());
+            emitSelection(editor);
+        },
+        onSelectionUpdate({ editor }) {
+            emitSelection(editor);
         },
         extensions: [
             StarterKit.configure({
@@ -370,6 +894,8 @@ export function SimpleEditor({
             TextStyle,
             FontFamily,
             FontSize,
+            ImageTextBlock,
+            ErgSectionBlock,
             HorizontalRule,
             TextAlign.configure({ types: ["heading", "paragraph"] }),
             TaskList,
@@ -433,12 +959,12 @@ export function SimpleEditor({
                         <AIBubbleMenu editor={editor} onRefine={onRefine} />
                     )}
 
-                    <div className="max-w-[1100px] mx-auto px-12 pt-16 pb-32 min-h-full">
+                    <div className="mx-auto min-h-full w-full max-w-[1280px] px-8 pt-10 pb-32">
 
                         {/* [NEW] TEXTAREA TITLE - Cực mượt với Debounced Sync */}
                         {onTitleChange && (
                             <textarea
-                                className="text-4xl font-extrabold w-full outline-none bg-transparent placeholder:text-gray-300 text-black dark:text-white mb-8 border-none p-0 focus:ring-0 resize-none overflow-hidden min-h-[50px] leading-tight text-center"
+                                className="mb-6 min-h-[50px] w-full resize-none overflow-hidden border-none bg-transparent p-0 text-left text-4xl font-extrabold leading-tight text-black outline-none placeholder:text-gray-300 focus:ring-0 dark:text-white"
                                 placeholder="Tiêu đề bài viết..."
                                 value={localTitle}
                                 rows={1}

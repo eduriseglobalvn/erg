@@ -88,7 +88,7 @@ function useFileUpload(options: UploadOptions) {
   const uploadFile = async (file: File): Promise<string | null> => {
     if (file.size > options.maxSize) {
       const error = new Error(
-        `File size exceeds maximum allowed (${options.maxSize / 1024 / 1024}MB)`
+        `Dung lượng ảnh vượt quá giới hạn (${options.maxSize / 1024 / 1024}MB)`
       )
       options.onError?.(error)
       return null
@@ -109,7 +109,7 @@ function useFileUpload(options: UploadOptions) {
 
     try {
       if (!options.upload) {
-        throw new Error("Upload function is not defined")
+        throw new Error("Chưa cấu hình hàm tải ảnh")
       }
 
       const url = await options.upload(
@@ -124,7 +124,7 @@ function useFileUpload(options: UploadOptions) {
         abortController.signal
       )
 
-      if (!url) throw new Error("Upload failed: No URL returned")
+      if (!url) throw new Error("Tải ảnh thất bại: hệ thống chưa trả về URL")
 
       if (!abortController.signal.aborted) {
         setFileItems((prev) =>
@@ -149,7 +149,7 @@ function useFileUpload(options: UploadOptions) {
           )
         )
         options.onError?.(
-          error instanceof Error ? error : new Error("Upload failed")
+          error instanceof Error ? error : new Error("Tải ảnh thất bại")
         )
       }
       return null
@@ -158,14 +158,14 @@ function useFileUpload(options: UploadOptions) {
 
   const uploadFiles = async (files: File[]): Promise<string[]> => {
     if (!files || files.length === 0) {
-      options.onError?.(new Error("No files to upload"))
+      options.onError?.(new Error("Chưa có ảnh để tải lên"))
       return []
     }
 
     if (options.limit && files.length > options.limit) {
       options.onError?.(
         new Error(
-          `Maximum ${options.limit} file${options.limit === 1 ? "" : "s"} allowed`
+          `Chỉ được tải tối đa ${options.limit} ảnh trong một lần`
         )
       )
       return []
@@ -423,11 +423,10 @@ const DropZoneContent: React.FC<{ maxSize: number; limit: number }> = ({
 
     <div className="tiptap-image-upload-content">
       <span className="tiptap-image-upload-text">
-        <em>Click to upload</em> or drag and drop
+        <em>Click để tải ảnh</em> hoặc kéo thả vào đây
       </span>
       <span className="tiptap-image-upload-subtext">
-        Maximum {limit} file{limit === 1 ? "" : "s"}, {maxSize / 1024 / 1024}MB
-        each.
+        Tối đa {limit} ảnh, mỗi ảnh không quá {maxSize / 1024 / 1024}MB.
       </span>
     </div>
   </>
@@ -460,13 +459,16 @@ export const ImageUploadNode: React.FC<NodeViewProps> = (props) => {
         const imageNodes = urls.map((url, index) => {
           const filename =
             files[index]?.name.replace(/\.[^/.]+$/, "") || "unknown"
-          return {
+            return {
             type: extension.options.type,
             attrs: {
               ...extension.options,
               src: url,
               alt: filename,
               title: filename,
+              caption: "",
+              align: "center",
+              width: "100%",
             },
           }
         })
@@ -486,7 +488,7 @@ export const ImageUploadNode: React.FC<NodeViewProps> = (props) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) {
-      extension.options.onError?.(new Error("No file selected"))
+      extension.options.onError?.(new Error("Chưa chọn ảnh"))
       return
     }
     handleUpload(Array.from(files))
@@ -517,7 +519,7 @@ export const ImageUploadNode: React.FC<NodeViewProps> = (props) => {
         <div className="tiptap-image-upload-previews">
           {fileItems.length > 1 && (
             <div className="tiptap-image-upload-header">
-              <span>Uploading {fileItems.length} files</span>
+              <span>Đang tải {fileItems.length} ảnh</span>
               <Button
                 type="button"
                 data-style="ghost"
@@ -526,7 +528,7 @@ export const ImageUploadNode: React.FC<NodeViewProps> = (props) => {
                   clearAllFiles()
                 }}
               >
-                Clear All
+                Xóa tất cả
               </Button>
             </div>
           )}

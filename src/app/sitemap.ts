@@ -155,7 +155,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // 2. Chỉ gọi BE để lấy bài viết / tin tức động
     try {
-        const response = await fetch(`${apiUrl}/api/sitemap/data?domain=${host}`, {
+        const sitemapQuery = new URLSearchParams({ domain: host });
+        const response = await fetch(`${apiUrl}/api/sitemap/data?${sitemapQuery.toString()}`, {
             cache: 'no-store',
             signal: AbortSignal.timeout(5000), // timeout 5s, không chờ BE mãi
         });

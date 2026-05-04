@@ -92,7 +92,7 @@ export async function GET(request: Request) {
                 'Cache-Control': 'no-cache, no-transform',
                 'Connection': 'keep-alive',
                 'X-Accel-Buffering': 'no',
-                'Access-Control-Allow-Origin': '*',
+                'X-Content-Type-Options': 'nosniff',
             },
         });
     } catch (err: any) {

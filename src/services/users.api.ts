@@ -71,9 +71,9 @@ export const userApi = {
     },
 
     // 6. Lấy danh sách users (Admin)
-    // GET /users?page=1&limit=10&search=keyword
+    // GET /users/?page=1&limit=10&search=keyword
     getAllUsers: (page = 1, limit = 10, search?: string) => {
-        let url = `/users?page=${page}&limit=${limit}`;
+        let url = `/users/?page=${page}&limit=${limit}`;
         if (search) {
             url += `&search=${encodeURIComponent(search)}`;
         }

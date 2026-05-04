@@ -8,6 +8,23 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 })
 
 const isVercel = process.env.VERCEL === '1'
+const localBackendConnectSrc = [
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+    'http://erg.edu.local:8080',
+    'http://admin.erg.edu.local:8080',
+    'http://elearning.erg.edu.local:8080',
+]
+
+const configuredApiOrigin = (() => {
+    try {
+        return process.env.NEXT_PUBLIC_API_URL
+            ? new URL(process.env.NEXT_PUBLIC_API_URL).origin
+            : ''
+    } catch {
+        return ''
+    }
+})()
 
 const nextConfig: NextConfig = {
     ...(isVercel ? {} : { output: 'standalone' as const }),
@@ -70,6 +87,11 @@ const nextConfig: NextConfig = {
     allowedDevOrigins: ['erg.edu.local', '*.erg.edu.local', 'erg.edu.vn', '*.erg.edu.vn'],
     async headers() {
         const isDev = process.env.NODE_ENV === 'development'
+        const directApiConnectSrc = [
+            configuredApiOrigin,
+            ...(isDev ? localBackendConnectSrc : []),
+        ].filter(Boolean).join(' ')
+
         const cspHeader = `
             default-src 'self';
             script-src 'self' 'unsafe-inline' https://www.googletagmanager.com ${isDev ? "'unsafe-eval'" : ''};
@@ -81,7 +103,7 @@ const nextConfig: NextConfig = {
             form-action 'self';
             frame-src 'self' https://www.google.com https://maps.google.com;
             frame-ancestors 'self';
-            connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https: ws: wss:;
+            connect-src 'self' ${directApiConnectSrc} https://www.google-analytics.com https://www.googletagmanager.com https: ws: wss:;
         `.replace(/\s{2,}/g, ' ').trim()
 
         const mediaCacheHeaders = !isDev
@@ -93,9 +115,6 @@ const nextConfig: NextConfig = {
             {
                 source: '/:path*',
                 headers: [
-                    { key: 'Access-Control-Allow-Origin', value: process.env.NEXT_PUBLIC_DOMAIN || 'https://erg.edu.vn' },
-                    { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS' },
-                    { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization' },
                     { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
                     { key: 'X-Content-Type-Options', value: 'nosniff' },
                     { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },

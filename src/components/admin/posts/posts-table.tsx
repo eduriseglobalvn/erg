@@ -194,8 +194,14 @@ export function PostsTable({ categorySlug, status, isTrash }: { categorySlug?: s
         staleTime: 5 * 60 * 1000,
     })
 
-    const posts = queryData?.items || queryData || []
-    const totalItems = queryData?.totalItems || queryData?.total || posts.length
+    const posts = Array.isArray(queryData?.items)
+        ? queryData.items
+        : Array.isArray(queryData?.data)
+            ? queryData.data
+            : Array.isArray(queryData)
+                ? queryData
+                : []
+    const totalItems = Number(queryData?.totalItems ?? queryData?.total ?? posts.length)
 
     const table = useReactTable({
         data: posts,

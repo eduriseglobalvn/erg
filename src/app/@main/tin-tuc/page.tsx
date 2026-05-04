@@ -17,6 +17,7 @@ interface NewsListItem {
     slug: string;
     excerpt?: string;
     createdAt: string;
+    publishedAt?: string;
     thumbnailUrl?: string;
     category?: {
         name?: string;
@@ -34,12 +35,19 @@ interface NewsListPayload {
 
 function normalizeNewsListPayload(data: unknown): NewsListPayload {
     const payload = (typeof data === 'object' && data !== null)
-        ? (data as { items?: NewsListItem[]; meta?: NewsListPayload['meta'] })
+        ? (data as {
+            items?: NewsListItem[];
+            data?: NewsListItem[];
+            meta?: NewsListPayload['meta'];
+            page?: number;
+            total?: number;
+            totalPages?: number;
+        })
         : undefined;
     const items = Array.isArray(payload?.items)
         ? payload.items
-        : (Array.isArray(data) ? data : []);
-    const meta = Array.isArray(data) ? undefined : payload?.meta;
+        : (Array.isArray(payload?.data) ? payload.data : (Array.isArray(data) ? data : []));
+    const meta = Array.isArray(data) ? undefined : (payload?.meta || payload);
 
     return {
         items,
@@ -51,11 +59,11 @@ function normalizeNewsListPayload(data: unknown): NewsListPayload {
     };
 }
 
-async function getInitialPosts(): Promise<NewsListPayload> {
+async function getInitialPosts(limit = 9): Promise<NewsListPayload> {
     try {
         const apiUrl = getPreferredBackendBaseUrl();
         const response = await fetch(
-            `${apiUrl}/api/posts?page=1&limit=9&status=published`,
+            `${apiUrl}/api/posts?page=1&limit=${limit}&status=PUBLISHED&sortBy=createdAt&order=DESC`,
             { next: { revalidate } }
         );
 
@@ -106,9 +114,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Page() {
     const breadcrumbItems = generateBreadcrumbItems('/tin-tuc', 'Tin tức & Sự kiện', 'Trang chủ');
-    const [headerList, initialPostsData, initialRssNews] = await Promise.all([
+    const [headerList, initialPostsData, initialAllPostsData, initialRssNews] = await Promise.all([
         headers(),
-        getInitialPosts(),
+        getInitialPosts(9),
+        getInitialPosts(50),
         getInitialRssNews(),
     ]);
     const siteContext = resolveSiteContextFromHeaders(headerList);
@@ -121,8 +130,9 @@ export default async function Page() {
                 domain={siteContext.hostname}
             />
             <NewsContent
-                initialTab="RSS"
+                initialTab="ALL"
                 initialPostsData={initialPostsData}
+                initialAllPostsData={initialAllPostsData}
                 initialRssNews={initialRssNews}
             />
         </>

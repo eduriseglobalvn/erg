@@ -20,7 +20,7 @@ export interface NotificationPreferences {
 
 export const notificationApi = {
     getNotifications: async (limit = 20, offset = 0): Promise<NotificationListResponse> => {
-        const response: any = await httpClient(`/notifications?limit=${limit}&offset=${offset}`);
+        const response: any = await httpClient(`/notifications/?limit=${limit}&offset=${offset}`);
         return response.data || response;
     },
 

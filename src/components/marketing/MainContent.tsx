@@ -3,13 +3,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { TRAINING_PROGRAMS, getSubdomainLink } from '@/constants/MenuItem';
 import {
     ChevronLeft, ChevronRight, ArrowRight, Star,
 } from 'lucide-react';
 import {
-    HERO_SLIDES, TRAINING_FIELDS, CORE_VALUES, WHY_CHOOSE_US, TESTIMONIALS, LATEST_NEWS
+    HERO_SLIDES, CORE_VALUES, WHY_CHOOSE_US, TESTIMONIALS, LATEST_NEWS
 } from '@/mocks/main.constants';
+import { TRAINING_CONTACT_URL, TRAINING_FIELDS } from '@/constants/training-fields';
 import { NewsCard } from '@/components/shared/news-card';
 
 // --- DECORATIVE COMPONENTS ---
@@ -209,21 +209,14 @@ export default function MainContent() {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        {TRAINING_FIELDS.map((field, index) => {
-                            const fieldKeys = ['thqt', 'thqg', 'thtn', 'kns', 'dtdm', 'ai'] as const;
-                            const key = fieldKeys[index];
-                            const programConfig = TRAINING_PROGRAMS.find(p => p.label === field.title);
-                            const targetUrl = programConfig
-                                ? getSubdomainLink(programConfig.subdomain)
-                                : field.link;
-
+                        {TRAINING_FIELDS.map((field) => {
                             return (
                                 <div key={field.id} className="bg-white rounded-2xl p-8 flex flex-col sm:flex-row gap-8 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 border border-gray-100 group min-h-[280px]">
                                     <div className="w-full sm:w-1/2 rounded-xl overflow-hidden shrink-0 relative h-64 sm:h-auto">
                                         <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-all duration-500 z-10" />
                                         <Image
                                             src={field.image}
-                                            alt={t(`Training.fields.${key}.title`)}
+                                            alt={field.imageAlt}
                                             fill
                                             className="object-cover group-hover:scale-110 transition-transform duration-700"
                                             sizes="(max-width: 640px) 100vw, 300px"
@@ -232,14 +225,14 @@ export default function MainContent() {
 
                                     <div className="flex flex-col h-full items-start justify-center flex-1">
                                         <h3 className="text-2xl font-bold text-[var(--erg-blue)] mb-3 group-hover:text-[var(--erg-red)] transition-colors">
-                                            {t(`Training.fields.${key}.title`)}
+                                            {field.title}
                                         </h3>
                                         <p className="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed">
-                                            {t(`Training.fields.${key}.desc`)}
+                                            {field.description}
                                         </p>
 
                                         <Link
-                                            href={targetUrl}
+                                            href={field.link}
                                             className="text-sm font-bold uppercase tracking-wider text-[var(--erg-red)] hover:underline underline-offset-4"
                                         >
                                             {t('Training.viewProgram')} &rarr;
@@ -248,6 +241,24 @@ export default function MainContent() {
                                 </div>
                             );
                         })}
+                    </div>
+
+                    <div className="mt-10 flex flex-col items-center justify-between gap-4 rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:flex-row">
+                        <div className="text-center md:text-left">
+                            <h3 className="text-xl font-bold text-[var(--erg-blue)]">Chưa biết nên chọn chương trình nào?</h3>
+                            <p className="mt-2 text-sm leading-6 text-gray-600">
+                                ERG sẽ tư vấn nhanh lộ trình phù hợp theo độ tuổi, nền tảng và mục tiêu chứng chỉ.
+                            </p>
+                        </div>
+                        <Link
+                            href={TRAINING_CONTACT_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[var(--erg-red)] px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition hover:bg-red-700"
+                        >
+                            Liên hệ qua Zalo
+                            <ArrowRight size={16} />
+                        </Link>
                     </div>
                 </div>
             </section>

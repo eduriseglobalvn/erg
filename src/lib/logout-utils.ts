@@ -1,4 +1,6 @@
 import type { QueryClient } from '@tanstack/react-query';
+import { buildBackendApiUrl, getPreferredBrowserBackendBaseUrl, shouldUseDirectBrowserApi } from '@/lib/backend-url';
+import { clearClientAuthSession } from '@/lib/client-auth-session';
 import { devWarn } from '@/lib/dev-logger';
 
 // Re-export để dùng ở nơi khác
@@ -35,9 +37,18 @@ export const handleLogoutWithCache = async () => {
             globalQueryClient.removeQueries();
         }
 
-        // 2. Chờ API logout hoàn tất để server/proxy kịp xóa HttpOnly cookies
+        // 2. Notify backend directly in direct API mode; keep proxy as rollback mode.
         try {
-            await fetch('/api/auth/logout', { method: 'POST' });
+            const directApi = shouldUseDirectBrowserApi();
+            await fetch(
+                directApi
+                    ? buildBackendApiUrl('/api/auth/logout', getPreferredBrowserBackendBaseUrl())
+                    : '/api/auth/logout',
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                }
+            );
         } catch (error) {
             devWarn('Logout API failed:', error);
         }
@@ -52,22 +63,10 @@ export const handleLogoutWithCache = async () => {
             devWarn('NextAuth logout failed:', error);
         }
 
-        // Force clear isLoggedIn cookie on client-side (fallback an toàn)
-        document.cookie = 'isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        document.cookie = 'clientUserId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        document.cookie = 'authProvider=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        document.cookie = 'accountType=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        clearClientAuthSession();
 
         // 3. Clear Zustand permission store
         clearPermissionStore();
-
-        // 4. Xóa các localStorage info khác
-        localStorage.removeItem('userId');
-        localStorage.removeItem('user');
-        localStorage.removeItem('permissions');
-        localStorage.removeItem('roles');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
 
         // 5. Redirect
         const currentPath = window.location.pathname;

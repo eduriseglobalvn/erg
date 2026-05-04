@@ -1,4 +1,4 @@
-import { httpClient } from './http-client';
+import { ApiError, httpClient } from './http-client';
 
 // 1. Định nghĩa Interface dựa trên JSON bạn gửi
 export interface PostDetailResponse {
@@ -8,6 +8,8 @@ export interface PostDetailResponse {
         id: string;
         title: string;
         content: string;
+        contentHtml?: string;
+        contentBlocks?: unknown[];
         slug: string;
         excerpt?: string;
         thumbnailUrl?: string;
@@ -75,6 +77,58 @@ export interface CategoriesResponse {
     data: Category[];
 }
 
+const stripStructuredContentFields = (data: any) => {
+    if (!data || typeof data !== 'object') return data;
+    const rest = { ...data };
+    delete rest.contentBlocks;
+    delete rest.contentHtml;
+    return rest;
+};
+
+const shouldRetryWithoutStructuredContent = (error: unknown) => {
+    if (!(error instanceof ApiError)) return false;
+    if (error.status !== 400 && error.status !== 422) return false;
+
+    const message = JSON.stringify(error.data || error.message || '').toLowerCase();
+    return message.includes('contentblocks') ||
+        message.includes('contenthtml') ||
+        message.includes('should not exist') ||
+        message.includes('property');
+};
+
+const withStructuredContentFallback = async <T>(
+    data: any,
+    request: (payload: any) => Promise<T>
+): Promise<T> => {
+    const hasStructuredFields = !!data && typeof data === 'object' && ('contentBlocks' in data || 'contentHtml' in data);
+
+    try {
+        return await request(data);
+    } catch (error) {
+        if (!hasStructuredFields || !shouldRetryWithoutStructuredContent(error)) {
+            throw error;
+        }
+
+        return request(stripStructuredContentFields(data));
+    }
+};
+
+const normalizeStatusParam = (status?: string) => {
+    const value = status?.trim();
+    if (!value) return undefined;
+
+    const normalized = value.toLowerCase();
+    const statusMap: Record<string, string> = {
+        published: 'PUBLISHED',
+        draft: 'DRAFT',
+        scheduled: 'SCHEDULED',
+        archived: 'ARCHIVED',
+        hidden: 'HIDDEN',
+    };
+
+    return statusMap[normalized] || value;
+};
+
 export const postsApi = {
     // 2. Hàm getOne trả về đúng Interface trên
     getOne: (id: string) => {
@@ -84,8 +138,12 @@ export const postsApi = {
         return httpClient<PostDetailResponse>(`/posts/slug/${slug}`);
     },
 
-    create: (data: any) => httpClient('/posts', { method: 'POST', body: JSON.stringify(data) }),
-    update: (id: string, data: any) => httpClient(`/posts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    create: (data: any) => withStructuredContentFallback(data, (payload) =>
+        httpClient('/posts', { method: 'POST', body: JSON.stringify(payload) })
+    ),
+    update: (id: string, data: any) => withStructuredContentFallback(data, (payload) =>
+        httpClient(`/posts/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+    ),
     getAll: (params: {
         page?: number;
         limit?: number;
@@ -100,7 +158,8 @@ export const postsApi = {
         if (params.limit) query.append('limit', params.limit.toString());
         if (params.search) query.append('search', params.search);
         if (params.category) query.append('category', params.category);
-        if (params.status) query.append('status', params.status);
+        const status = normalizeStatusParam(params.status);
+        if (status) query.append('status', status);
         if (params.sortBy) query.append('sortBy', params.sortBy);
         if (params.order) query.append('order', params.order);
 

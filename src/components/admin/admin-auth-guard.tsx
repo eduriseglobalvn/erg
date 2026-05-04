@@ -68,6 +68,8 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
         // TRƯỜNG HỢP 4: Auth data loaded - Validate user status
         if (auth?.user) {
             const userStatus = auth.user.status;
+            const userEmail = auth.user.email;
+            const isRootAdmin = userEmail?.trim().toLowerCase() === 'admin@erg.edu.vn';
 
             // Nếu user bị BANNED hoặc BLOCKED -> Logout ngay
             if (userStatus === 'BANNED' || userStatus === 'BLOCKED') {
@@ -77,7 +79,7 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
             }
 
             // Nếu user vẫn PENDING (chưa verify PIN) -> Redirect về verify
-            if (userStatus === 'PENDING') {
+            if (userStatus === 'PENDING' && !isRootAdmin) {
                 router.replace(`/auth/otp?email=${encodeURIComponent(auth.user.email)}&mode=activation`);
                 return;
             }
@@ -103,12 +105,10 @@ export default function AdminAuthGuard({ children }: { children: React.ReactNode
             // Safe check for roles and user email
             const roles = auth?.roles || [];
             const userRole = auth?.user?.role;
-            const userEmail = auth?.user?.email;
-
             const isAdmin = 
                 roles.some((role: string) => adminRoles.includes(role)) || 
                 (userRole && adminRoles.includes(userRole)) ||
-                userEmail === 'admin@erg.edu.vn';
+                isRootAdmin;
 
             const skipOnboarding = sessionStorage.getItem("skipOnboarding") === "true";
             const isCompleted = auth.user.isProfileCompleted;

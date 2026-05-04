@@ -15,8 +15,11 @@ export function proxy(request: NextRequest) {
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
+    const host = request.headers.get('host') || '';
+    const isAdminSurface = host.split(':')[0].startsWith('admin.') || request.nextUrl.pathname.startsWith('/admin');
+
     // Strict CSP for iframe protection in Admin
-    if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (isAdminSurface) {
         response.headers.set('Content-Security-Policy', "frame-ancestors 'none';");
     }
 

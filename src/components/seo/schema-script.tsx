@@ -1,4 +1,5 @@
 import React from 'react';
+import { resolveSiteContext } from '@/lib/site-context';
 
 type SchemaType =
     | 'WebSite'
@@ -21,6 +22,30 @@ interface SchemaScriptProps {
 
 export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScriptProps) {
     let schemaData = {};
+    const siteContext = resolveSiteContext(domain);
+    const safeBaseUrl = siteContext.baseUrl;
+
+    const safeAbsoluteUrl = (value: unknown, fallback: string) => {
+        if (typeof value !== 'string') return fallback;
+
+        try {
+            const url = new URL(value);
+            const context = resolveSiteContext(url.host);
+            return `${context.baseUrl}${url.pathname}${url.search}${url.hash}`;
+        } catch {
+            return fallback;
+        }
+    };
+
+    const safeRelativeOrAbsoluteUrl = (value: unknown, fallback: string) => {
+        if (typeof value !== 'string' || !value.trim()) return fallback;
+
+        if (value.startsWith('/')) {
+            return `${safeBaseUrl}${value}`;
+        }
+
+        return safeAbsoluteUrl(value, fallback);
+    };
 
     switch (type) {
         case 'WebSite':
@@ -28,12 +53,12 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 "name": data.name || "Edurise Global",
-                "url": data.url || `https://${domain}`,
+                "url": safeAbsoluteUrl(data.url, safeBaseUrl),
                 "potentialAction": {
                     "@type": "SearchAction",
                     "target": {
                         "@type": "EntryPoint",
-                        "urlTemplate": `https://${domain}/tim-kiem?q={search_term_string}`
+                        "urlTemplate": `${safeBaseUrl}/tim-kiem?q={search_term_string}`
                     },
                     "query-input": "required name=search_term_string"
                 }
@@ -46,7 +71,7 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                 "@context": "https://schema.org",
                 "@type": type,
                 "name": "Edurise Global",
-                "url": `https://${domain}`,
+                "url": safeBaseUrl,
                 "logo": "https://media.erg.edu.vn/logo/erg.png",
                 "sameAs": [
                     "https://www.facebook.com/eduriseglobal",
@@ -71,7 +96,7 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                 "position": index + 1,
                 "name": item.label || item.name,
                 "description": item.label || item.name,
-                "url": item.path?.startsWith('http') ? item.path : `https://${domain}${item.path}`
+                "url": item.path?.startsWith('http') ? safeAbsoluteUrl(item.path, safeBaseUrl) : `${safeBaseUrl}${item.path}`
             }));
 
             schemaData = {
@@ -94,7 +119,7 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                 "author": [{
                     "@type": "Person",
                     "name": data.author?.fullName || "Ban biên tập ERG",
-                    "url": data.author?.username ? `https://${domain}/tac-gia/${data.author.username}` : undefined
+                    "url": data.author?.username ? `${safeBaseUrl}/tac-gia/${data.author.username}` : undefined
                 }],
                 "publisher": {
                     "@type": "Organization",
@@ -122,6 +147,17 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                 "@type": "Course",
                 "name": data.title,
                 "description": data.description || data.title,
+                "url": safeRelativeOrAbsoluteUrl(data.url, safeBaseUrl),
+                "image": data.image
+                    ? [safeRelativeOrAbsoluteUrl(data.image, "https://media.erg.edu.vn/logo/erg.png")]
+                    : ["https://media.erg.edu.vn/logo/erg.png"],
+                "keywords": Array.isArray(data.keywords) ? data.keywords.join(", ") : data.keywords,
+                ...(Array.isArray(data.audience) && data.audience.length > 0 && {
+                    "audience": data.audience.map((name: string) => ({
+                        "@type": "Audience",
+                        "audienceType": name,
+                    })),
+                }),
                 "hasCourseInstance": {
                     "@type": "CourseInstance",
                     "courseMode": "Online", // Assuming default, can be extended if data provides it
@@ -129,13 +165,13 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                     "instructor": {
                         "@type": "Organization",
                         "name": "Edurise Global",
-                        "url": `https://${domain}`
+                        "url": safeBaseUrl
                     }
                 },
                 "provider": {
                     "@type": "EducationalOrganization",
                     "name": "Edurise Global",
-                    "sameAs": `https://${domain}`
+                    "sameAs": safeBaseUrl
                 },
                 ...(data.rating && data.rating.count >= 3 && {
                     "aggregateRating": {
@@ -165,7 +201,7 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                     "@type": "ListItem",
                     "position": index + 1,
                     "name": item.label,
-                    "item": item.href ? (item.href.startsWith('http') ? item.href : `https://${domain}${item.href}`) : undefined
+                    "item": item.href ? (item.href.startsWith('http') ? safeAbsoluteUrl(item.href, safeBaseUrl) : `${safeBaseUrl}${item.href}`) : undefined
                 }))
             };
             break;
@@ -197,7 +233,7 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                 "hiringOrganization": {
                     "@type": "Organization",
                     "name": "Edurise Global",
-                    "sameAs": `https://${domain}`
+                    "sameAs": safeBaseUrl
                 },
                 "jobLocation": {
                     "@type": "Place",

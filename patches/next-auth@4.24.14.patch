@@ -1,0 +1,121 @@
+diff --git a/package.json b/package.json
+index c093782..9986690 100644
+--- a/package.json
++++ b/package.json
+@@ -82,8 +82,7 @@
+     "oauth": "^0.9.15",
+     "openid-client": "^5.4.0",
+     "preact": "^10.6.3",
+-    "preact-render-to-string": "^5.1.19",
+-    "uuid": "^8.3.2"
++    "preact-render-to-string": "^5.1.19"
+   },
+   "peerDependencies": {
+     "@auth/core": "0.34.3",
+diff --git a/jwt/index.js b/jwt/index.js
+index 5cd893a..36d2d4a 100644
+--- a/jwt/index.js
++++ b/jwt/index.js
+@@ -14,7 +14,6 @@ exports.encode = encode;
+ exports.getToken = getToken;
+ var _jose = require("jose");
+ var _hkdf = _interopRequireDefault(require("@panva/hkdf"));
+-var _uuid = require("uuid");
+ var _cookie = require("../core/lib/cookie");
+ var _types = require("./types");
+ Object.keys(_types).forEach(function (key) {
+@@ -30,6 +29,28 @@ Object.keys(_types).forEach(function (key) {
+ });
+ const DEFAULT_MAX_AGE = 30 * 24 * 60 * 60;
+ const now = () => Date.now() / 1000 | 0;
++function formatUuidV4(bytes) {
++  bytes[6] = bytes[6] & 0x0f | 0x40;
++  bytes[8] = bytes[8] & 0x3f | 0x80;
++  const hex = Array.from(bytes, byte => byte.toString(16).padStart(2, "0"));
++  return `${hex.slice(0, 4).join("")}-${hex.slice(4, 6).join("")}-${hex.slice(6, 8).join("")}-${hex.slice(8, 10).join("")}-${hex.slice(10, 16).join("")}`;
++}
++function generateJti() {
++  const cryptoObject = globalThis.crypto;
++  if (typeof (cryptoObject === null || cryptoObject === void 0 ? void 0 : cryptoObject.randomUUID) === "function") {
++    return cryptoObject.randomUUID();
++  }
++  if (typeof (cryptoObject === null || cryptoObject === void 0 ? void 0 : cryptoObject.getRandomValues) === "function") {
++    const bytes = new Uint8Array(16);
++    cryptoObject.getRandomValues(bytes);
++    return formatUuidV4(bytes);
++  }
++  const {
++    randomUUID,
++    randomBytes
++  } = require("crypto");
++  return typeof randomUUID === "function" ? randomUUID() : formatUuidV4(randomBytes(16));
++}
+ async function encode(params) {
+   const {
+     token = {},
+@@ -41,7 +62,7 @@ async function encode(params) {
+   return await new _jose.EncryptJWT(token).setProtectedHeader({
+     alg: "dir",
+     enc: "A256GCM"
+-  }).setIssuedAt().setExpirationTime(now() + maxAge).setJti((0, _uuid.v4)()).encrypt(encryptionSecret);
++  }).setIssuedAt().setExpirationTime(now() + maxAge).setJti(generateJti()).encrypt(encryptionSecret);
+ }
+ async function decode(params) {
+   const {
+diff --git a/src/jwt/index.ts b/src/jwt/index.ts
+index f858ed5..1efe39a 100644
+--- a/src/jwt/index.ts
++++ b/src/jwt/index.ts
+@@ -1,6 +1,5 @@
+ import { EncryptJWT, jwtDecrypt } from "jose"
+ import hkdf from "@panva/hkdf"
+-import { v4 as uuid } from "uuid"
+ import { SessionStore } from "../core/lib/cookie"
+ import type { GetServerSidePropsContext, NextApiRequest } from "next"
+ import type { NextRequest } from "next/server"
+@@ -13,6 +12,35 @@ const DEFAULT_MAX_AGE = 30 * 24 * 60 * 60 // 30 days
+-
++
+ const now = () => (Date.now() / 1000) | 0
+-
++
++function formatUuidV4(bytes: Uint8Array) {
++  bytes[6] = (bytes[6] & 0x0f) | 0x40
++  bytes[8] = (bytes[8] & 0x3f) | 0x80
++  const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0"))
++
++  return `${hex.slice(0, 4).join("")}-${hex.slice(4, 6).join("")}-${hex
++    .slice(6, 8)
++    .join("")}-${hex.slice(8, 10).join("")}-${hex.slice(10, 16).join("")}`
++}
++
++function generateJti() {
++  const cryptoObject = globalThis.crypto
++
++  if (typeof cryptoObject?.randomUUID === "function") {
++    return cryptoObject.randomUUID()
++  }
++
++  if (typeof cryptoObject?.getRandomValues === "function") {
++    const bytes = new Uint8Array(16)
++    cryptoObject.getRandomValues(bytes)
++    return formatUuidV4(bytes)
++  }
++
++  const { randomUUID, randomBytes } = require("crypto")
++  return typeof randomUUID === "function"
++    ? randomUUID()
++    : formatUuidV4(randomBytes(16))
++}
++
+ /** Issues a JWT. By default, the JWT is encrypted using "A256GCM". */
+ export async function encode(params: JWTEncodeParams) {
+   /** @note empty `salt` means a session token. See {@link JWTEncodeParams.salt}. */
+@@ -22,6 +50,6 @@ export async function encode(params: JWTEncodeParams) {
+     .setProtectedHeader({ alg: "dir", enc: "A256GCM" })
+     .setIssuedAt()
+     .setExpirationTime(now() + maxAge)
+-    .setJti(uuid())
++    .setJti(generateJti())
+     .encrypt(encryptionSecret)
+ }

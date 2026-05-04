@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi } from '@/services';
-import { RateLimitError } from '@/services/http-client';
+import { isEmailNotVerifiedError, RateLimitError } from '@/services/http-client';
 import { toast } from 'sonner';
 
 interface LoginDto {
@@ -45,7 +45,6 @@ export function useLoginMutation() {
         },
         onError: (error: any) => {
             const errorMessage = error.message || '';
-            const lowered = errorMessage.toLowerCase();
 
             // Xử lý 429 Rate Limit (BE trả khi đăng nhập sai quá nhiều lần)
             if (error instanceof RateLimitError || error.status === 429) {
@@ -57,15 +56,10 @@ export function useLoginMutation() {
                 return;
             }
 
-            // Xử lý lỗi 403 Account not activated
-            if (
-                lowered.includes('not activated') ||
-                lowered.includes('account is not activated') ||
-                lowered.includes('actived') ||
-                lowered.includes('403')
-            ) {
+            // Chỉ hiện activation khi BE trả đúng code EMAIL_NOT_VERIFIED.
+            if (isEmailNotVerifiedError(error)) {
                 toast.warning('Tài khoản chưa kích hoạt. Vui lòng nhập mã PIN đã được gửi tới email để kích hoạt.');
-                return; // Không show error toast
+                return;
             }
 
             toast.error(errorMessage || 'Email hoặc mật khẩu không chính xác');

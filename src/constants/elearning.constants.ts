@@ -211,6 +211,13 @@ const GS6_LEVEL_1_UNITS: ElearningUnit[] = [
 
 const GS6_LEVEL_2_UNITS: ElearningUnit[] = [
     {
+        id: 'gs6-l2-on-tap-lop-7',
+        title: "Chủ đề bổ sung",
+        description: "Luyện tập ôn tập IC3 GS6 dành cho học sinh lớp 7.",
+        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLSer4WwPu4yPRh98p2gFcLpPDM6KVU80xyhvyHYwZAzgbpq1Gg/viewform?usp=dialog",
+        orderLabel: "+"
+    },
+    {
         id: 'gs6-l2-u1',
         title: "Phần 1",
         description: "Ôn luyện IC3 GS6 Level 2 — Phần 1.",
@@ -262,6 +269,13 @@ const GS6_LEVEL_2_UNITS: ElearningUnit[] = [
 ];
 
 const GS6_LEVEL_3_UNITS: ElearningUnit[] = [
+    {
+        id: 'gs6-l3-on-tap-lop-8',
+        title: "Chủ đề bổ sung",
+        description: "Luyện tập ôn tập IC3 GS6 dành cho học sinh lớp 8.",
+        studyLink: "https://docs.google.com/forms/d/e/1FAIpQLSeWH140ASbxxqybPzBogManH7LZ_1NsNmPE8NkJq1CMaFg1IA/viewform?usp=dialog",
+        orderLabel: "+"
+    },
     {
         id: 'gs6-l3-u1',
         title: "Phần 1",

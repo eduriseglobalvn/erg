@@ -1,7 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState, type ComponentType, type ReactNode } from "react"
+import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from "react"
 import dynamic from "next/dynamic"
+import type { Content, Editor } from "@tiptap/core"
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model"
 import {
     ArrowDown,
     ArrowLeft,
@@ -49,9 +51,22 @@ import { PostSidebarTaxonomy } from "@/components/admin/shared/post-sidebar-taxo
 import { PostContentRenderer } from "@/components/shared/post-content-renderer"
 import { cn } from "@/lib/utils"
 import { localSeoAnalyzer } from "@/utils/local-seo"
+import type { BlockNoteEditorBridge } from "@/components/admin/posts/blocknote-post-editor"
 
 const SimpleEditor = dynamic(
     () => import("@/components/admin/shared/editor/tiptap-templates/simple/simple-editor").then(m => ({ default: m.SimpleEditor })),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="flex h-full w-full items-center justify-center bg-white">
+                <div className="h-72 w-full max-w-4xl animate-pulse rounded-2xl bg-zinc-100" />
+            </div>
+        ),
+    }
+)
+
+const BlockNotePostEditor = dynamic(
+    () => import("@/components/admin/posts/blocknote-post-editor"),
     {
         ssr: false,
         loading: () => (
@@ -87,6 +102,7 @@ type PostMetadata = {
 }
 
 type SelectionAttrs = Record<string, string | number | boolean | null | undefined>
+type EditorEngine = "canvas" | "blocknote"
 
 export type EditorSelectionState =
     | {
@@ -115,7 +131,7 @@ interface VisualPostEditorWorkspaceProps {
     aiProgress?: number
     onStartAi?: (topic: string) => void
     onRefine?: (text: string, prompt: string) => Promise<string | null>
-    onEditorReady?: (editor: any) => void
+    onEditorReady?: (editor: Editor) => void
 }
 
 type BlockCategory = "Mẫu bài" | "Nội dung" | "Media" | "Bố cục" | "Giáo dục" | "Chuyển đổi" | "Tin tức" | "SEO/Trust"
@@ -777,7 +793,9 @@ export function VisualPostEditorWorkspace({
     onRefine,
     onEditorReady,
 }: VisualPostEditorWorkspaceProps) {
-    const [editor, setEditor] = useState<any>(null)
+    const [editor, setEditor] = useState<Editor | null>(null)
+    const [editorEngine, setEditorEngine] = useState<EditorEngine>("canvas")
+    const [blockNoteBridge, setBlockNoteBridge] = useState<BlockNoteEditorBridge | null>(null)
     const [selectionState, setSelectionState] = useState<EditorSelectionState>(null)
     const [panelOpen, setPanelOpen] = useState(false)
     const [rightTab, setRightTab] = useState<"preview" | "settings" | "seo" | "block">("preview")
@@ -791,9 +809,7 @@ export function VisualPostEditorWorkspace({
     const currentContent = content || initialContent
     const publishLabel = mode === "edit" ? "Cập nhật bài viết" : "Đăng bài viết"
     const statusLabel = (postMetadata.status || "draft").toLowerCase()
-    const selectedSection = selectionState?.type === "section" ? selectionState : null
-    const selectedImage = selectionState?.type === "image" ? selectionState : null
-    const canInsertBlock = !!editor
+    const canInsertBlock = editorEngine === "canvas" ? !!editor : !!blockNoteBridge
     const isInputVisible = showAiInput || isGenerating
 
     const filteredBlocks = useMemo(() => {
@@ -815,7 +831,7 @@ export function VisualPostEditorWorkspace({
         thumbnailUrl: postMetadata.thumbnailUrl,
     }), [postMetadata.excerpt, postMetadata.thumbnailUrl, title])
 
-    const handleEditorReady = (instance: any) => {
+    const handleEditorReady = (instance: Editor) => {
         setEditor(instance)
         onEditorReady?.(instance)
         onContentChange(instance.getHTML())
@@ -826,6 +842,23 @@ export function VisualPostEditorWorkspace({
             onEditorReady?.(editor)
         }
     }, [editor, onEditorReady])
+
+    const handleEngineChange = (engine: EditorEngine) => {
+        setEditorEngine(engine)
+        setPanelOpen(false)
+        setSelectionState(null)
+        if (engine === "canvas") {
+            onStructuredContentChange?.(null)
+        }
+    }
+
+    const handleBlockNoteReady = (bridge: BlockNoteEditorBridge | null) => {
+        setBlockNoteBridge(bridge)
+        if (bridge) {
+            onContentChange(bridge.getHTML())
+            onStructuredContentChange?.(bridge.getBlocks())
+        }
+    }
 
     const openPanel = (tab: typeof rightTab) => {
         setRightTab(tab)
@@ -1185,7 +1218,7 @@ ${pricing}
         const { doc, selection } = editor.state
         let insertPos = doc.content.size
 
-        doc.forEach((node: any, offset: number) => {
+        doc.forEach((node: ProseMirrorNode, offset: number) => {
             const end = offset + node.nodeSize
             if (selection.from >= offset && selection.from <= end) {
                 insertPos = end
@@ -1201,10 +1234,30 @@ ${pricing}
         const insertPos = getTopLevelInsertPos()
         if (insertPos === null) return
 
-        editor.chain().focus().insertContentAt(insertPos, contentToInsert as any).run()
+        editor.chain().focus().insertContentAt(insertPos, contentToInsert as Content).run()
     }
 
     const insertTemplate = (template: BlockTemplate) => {
+        if (editorEngine === "blocknote") {
+            if (!blockNoteBridge) return
+            if (template.preset) {
+                blockNoteBridge.insertHtml(createCoursePresetHtml(template.preset))
+                return
+            }
+            if (template.command === "image") {
+                blockNoteBridge.insertImagePlaceholder()
+                return
+            }
+            if (template.layoutCommand === "image-text-layout") {
+                blockNoteBridge.insertImageTextLayout(template.layoutImagePosition ?? "right")
+                return
+            }
+            if (template.html) {
+                blockNoteBridge.insertHtml(template.html)
+            }
+            return
+        }
+
         if (!editor) return
         if (template.preset) {
             insertTopLevelContent(createCoursePresetContent(template.preset))
@@ -1284,7 +1337,7 @@ ${pricing}
         if (!editor || !selectionState || selectionState.type !== "section") return
         const { state, view } = editor
         const blocks: Array<{ pos: number; nodeSize: number }> = []
-        state.doc.forEach((node: any, offset: number) => {
+        state.doc.forEach((node: ProseMirrorNode, offset: number) => {
             blocks.push({ pos: offset, nodeSize: node.nodeSize })
         })
 
@@ -1337,9 +1390,29 @@ ${pricing}
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <div className="hidden items-center gap-2 rounded-lg border bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 lg:flex">
-                        <LayoutTemplate className="h-3.5 w-3.5" />
-                        Canvas ERG
+                    <div className="hidden items-center rounded-lg border bg-zinc-100 p-1 text-xs font-bold text-zinc-600 lg:flex">
+                        <button
+                            type="button"
+                            onClick={() => handleEngineChange("canvas")}
+                            className={cn(
+                                "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 transition",
+                                editorEngine === "canvas" ? "bg-white text-blue-700 shadow-sm" : "hover:text-zinc-900"
+                            )}
+                        >
+                            <LayoutTemplate className="h-3.5 w-3.5" />
+                            Canvas ERG
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => handleEngineChange("blocknote")}
+                            className={cn(
+                                "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 transition",
+                                editorEngine === "blocknote" ? "bg-white text-violet-700 shadow-sm" : "hover:text-zinc-900"
+                            )}
+                        >
+                            <SquareStack className="h-3.5 w-3.5" />
+                            BlockNote
+                        </button>
                     </div>
                     <Button type="button" variant="outline" size="sm" onClick={() => openPanel("preview")}>
                         <Monitor className="h-4 w-4" />
@@ -1484,22 +1557,35 @@ ${pricing}
                 </aside>
 
                 <main className="relative min-h-0 bg-[#fbfcfe]">
-                    <SimpleEditor
-                        initialContent={initialContent}
-                        onEditorReady={handleEditorReady}
-                        onRefine={onRefine}
-                        title={title}
-                        onTitleChange={onTitleChange}
-                        onContentChange={(html) => {
-                            onStructuredContentChange?.(null)
-                            onContentChange(html)
-                        }}
-                        onSelectionChange={(selection) => {
-                            setSelectionState(selection)
-                        }}
-                    />
+                    {editorEngine === "canvas" ? (
+                        <SimpleEditor
+                            key={`canvas-${mode}-${postId || "new"}`}
+                            initialContent={currentContent}
+                            onEditorReady={handleEditorReady}
+                            onRefine={onRefine}
+                            title={title}
+                            onTitleChange={onTitleChange}
+                            onContentChange={(html) => {
+                                onStructuredContentChange?.(null)
+                                onContentChange(html)
+                            }}
+                            onSelectionChange={(selection) => {
+                                setSelectionState(selection)
+                            }}
+                        />
+                    ) : (
+                        <BlockNotePostEditor
+                            key={`blocknote-${mode}-${postId || "new"}`}
+                            title={title}
+                            onTitleChange={onTitleChange}
+                            initialContent={currentContent}
+                            onContentChange={onContentChange}
+                            onBlocksChange={(blocks) => onStructuredContentChange?.(blocks)}
+                            onBridgeReady={handleBlockNoteReady}
+                        />
+                    )}
 
-                    {selectionState?.type === "section" && (
+                    {editorEngine === "canvas" && selectionState?.type === "section" && (
                         <div className="pointer-events-none absolute bottom-4 left-1/2 z-20 -translate-x-1/2 rounded-full border bg-white/95 px-3 py-2 text-xs font-semibold text-zinc-600 shadow-lg backdrop-blur">
                             Đang chọn khối: {String(selectionState.attrs.dataErgBlock || "section")} · mở tab Khối để chỉnh màu, xóa hoặc di chuyển
                         </div>
@@ -1662,6 +1748,7 @@ function PreviewPanel({
                     <article className="max-h-[calc(100vh-220px)] overflow-y-auto bg-white">
                         {previewPost.thumbnailUrl && (
                             <div className="aspect-[16/9] bg-zinc-100">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={previewPost.thumbnailUrl} alt="" className="h-full w-full object-cover" />
                             </div>
                         )}
@@ -2087,6 +2174,7 @@ function ImageInspector({
             <SectionCard title="Ảnh trong bài viết" description="Các thuộc tính này được dùng lại ở public renderer.">
                 {typeof attrs.src === "string" && attrs.src && (
                     <div className="mb-4 overflow-hidden rounded-xl border bg-zinc-50">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={attrs.src} alt={String(attrs.alt || "")} className="max-h-52 w-full object-contain" />
                     </div>
                 )}

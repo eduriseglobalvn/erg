@@ -8,7 +8,6 @@ const KNOWN_SITE_SUBDOMAINS = new Set([
   'dientoandammay',
   'elearning',
   'elerning',
-  'noibo',
   'tinhocquocgia',
   'tinhocquocte',
   'tinhocthieunhi',

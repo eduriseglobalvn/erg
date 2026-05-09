@@ -370,14 +370,33 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                   <div key={item.label} className="border-b border-gray-50 last:border-none">
                     {hasSubmenu ? (
                       <>
-                        <button
-                          onClick={() => toggleMobileSubmenu(item.label)}
-                          className={`flex items-center justify-between w-full py-4 text-left text-lg font-bold uppercase transition-colors ${isOpen ? 'text-highlight' : 'text-primary'
+                        <div
+                          className={`flex items-center justify-between py-4 text-lg font-bold uppercase transition-colors ${isOpen ? 'text-highlight' : 'text-primary'
                             }`}
                         >
-                          {translateLabel(item.label)}
-                          <ChevronDown size={20} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-                        </button>
+                          <Link
+                            href={item.path}
+                            className="min-w-0 flex-1 text-left"
+                            onClick={(e) => {
+                              if (item.path.startsWith('#')) {
+                                e.preventDefault();
+                                window.dispatchEvent(new CustomEvent('open-elearning-modal', { detail: item.path.substring(1) }));
+                              }
+                              setIsMobileMenuOpen(false);
+                            }}
+                          >
+                            {translateLabel(item.label)}
+                          </Link>
+                          <button
+                            type="button"
+                            aria-expanded={isOpen}
+                            aria-label={`${isOpen ? 'Close' : 'Open'} ${translateLabel(item.label)} submenu`}
+                            onClick={() => toggleMobileSubmenu(item.label)}
+                            className="ml-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-current transition-colors hover:bg-gray-100"
+                          >
+                            <ChevronDown size={20} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                          </button>
+                        </div>
 
                         <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
                           <div className="bg-gray-50 rounded-lg mb-4 p-2 space-y-1">

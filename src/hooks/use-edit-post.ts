@@ -30,20 +30,27 @@ export function useEditPost(
 
     const { updateImages, getDeletedImages, cleanupDeletedImages } = useImageTracker();
 
-    const getCurrentContent = () => contentOverride || editorInstance?.getHTML() || fetchedPost?.content || "";
-    const getStructuredFields = (html: string) => ({
-        contentHtml: html,
-        ...(contentBlocks?.length ? { contentBlocks } : {}),
-    });
-
     const { data: fetchedPost, isLoading } = useQuery({
         queryKey: ['post', id],
         queryFn: () => postsApi.getOne(id).then(res => res.data),
         enabled: !!id,
     })
 
+    const fetchedContent = fetchedPost?.contentHtml || fetchedPost?.content || "";
+    const getCurrentContent = () => contentOverride || editorInstance?.getHTML() || fetchedContent;
+    const getStructuredFields = (html: string) => {
+        const resolvedBlocks = contentBlocks?.length ? contentBlocks : fetchedPost?.contentBlocks;
+
+        return {
+            contentHtml: html,
+            ...(resolvedBlocks?.length ? { contentBlocks: resolvedBlocks } : {}),
+        };
+    };
+
     useEffect(() => {
         if (fetchedPost && !hasInitializedMetadata.current) {
+            // Hydrate the edit form once from the fetched post; user edits stay local after this point.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTitle(fetchedPost.title || "");
             setPostMetadata({
                 slug: fetchedPost.slug || "",
@@ -59,11 +66,11 @@ export function useEditPost(
 
     useEffect(() => {
         if (fetchedPost && editorInstance && !hasInitializedEditor.current) {
-            editorInstance.commands.setContent(fetchedPost.content || "");
-            updateImages(fetchedPost.content || "");
+            editorInstance.commands.setContent(fetchedContent);
+            updateImages(fetchedContent);
             hasInitializedEditor.current = true;
         }
-    }, [fetchedPost, editorInstance, updateImages])
+    }, [fetchedContent, fetchedPost, editorInstance, updateImages])
 
     const updateMutation = useMutation({
         mutationFn: async (data: Record<string, unknown>) => {

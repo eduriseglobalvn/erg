@@ -6,7 +6,11 @@ import { toast } from "sonner"
 import { postsApi } from "@/services/posts.api"
 import { localSeoAnalyzer } from "@/utils/local-seo"
 
-export function useCreatePost(editorInstance: Editor | null) {
+export function useCreatePost(
+    editorInstance: Editor | null,
+    contentOverride = "",
+    contentBlocks?: unknown[] | null
+) {
     const router = useRouter();
     const queryClient = useQueryClient();
 
@@ -33,13 +37,19 @@ export function useCreatePost(editorInstance: Editor | null) {
         }
     })
 
+    const getCurrentContent = () => contentOverride || editorInstance?.getHTML() || "";
+    const getStructuredFields = (html: string) => ({
+        contentHtml: html,
+        ...(contentBlocks?.length ? { contentBlocks } : {}),
+    });
+
     const handleSave = () => {
         if (!title.trim()) {
             toast.error("Vui lòng nhập tiêu đề bài viết");
             return;
         }
 
-        const content = editorInstance?.getHTML() || "";
+        const content = getCurrentContent();
         const seoResult = localSeoAnalyzer(
             content,
             title,
@@ -51,6 +61,7 @@ export function useCreatePost(editorInstance: Editor | null) {
             ...postMetadata,
             title,
             content,
+            ...getStructuredFields(content),
             focusKeyword: ((postMetadata as Record<string, unknown>).keywords as string) || "",
             seoScore: seoResult.overallScore,
             readabilityScore: seoResult.contentAnalysis.readabilityScore,
@@ -63,7 +74,7 @@ export function useCreatePost(editorInstance: Editor | null) {
             setTitle("Bản nháp mới");
         }
 
-        const content = editorInstance?.getHTML() || "";
+        const content = getCurrentContent();
         const finalTitle = title || "Bản nháp mới";
 
         const seoResult = localSeoAnalyzer(
@@ -77,6 +88,7 @@ export function useCreatePost(editorInstance: Editor | null) {
             ...postMetadata,
             title: finalTitle,
             content,
+            ...getStructuredFields(content),
             status: "draft",
             focusKeyword: ((postMetadata as Record<string, unknown>).keywords as string) || "",
             seoScore: seoResult.overallScore,

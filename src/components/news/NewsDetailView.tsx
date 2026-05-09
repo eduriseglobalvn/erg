@@ -11,6 +11,7 @@ import { SchemaScript } from '@/components/seo/schema-script';
 import { AiSearchSummaryBox } from '@/components/seo/ai-search-summary';
 import { PostDetailResponse } from '@/services/posts.api';
 import { ReviewStats } from '@/services/reviews.api';
+import { TRAINING_CONTACT_URL } from '@/constants/training-fields';
 
 interface RecentPostItem {
     id: string;
@@ -75,12 +76,12 @@ export const NewsDetailView: React.FC<NewsDetailViewProps> = ({
                 hour: '2-digit',
                 minute: '2-digit'
             }).format(new Date(dateString));
-        } catch (e) {
+        } catch {
             return dateString;
         }
     };
 
-    const postContent = post.content || '';
+    const postContent = post.contentHtml || post.content || '';
     const isVisualArticle = postContent.includes('data-erg-block') || postContent.includes('data-editor-node');
 
     return (
@@ -145,7 +146,7 @@ export const NewsDetailView: React.FC<NewsDetailViewProps> = ({
                         </h1>
 
                         <div className={isVisualArticle ? 'post-content-container visual-post-content-container' : 'post-content-container'}>
-                            <AiSearchSummaryBox post={post} />
+                            {!isVisualArticle && <AiSearchSummaryBox post={post} />}
                             <PostContentRenderer content={postContent} />
                         </div>
 
@@ -177,8 +178,10 @@ export const NewsDetailView: React.FC<NewsDetailViewProps> = ({
                                 <p className={`${isVisualArticle ? 'mb-3 text-xs leading-5' : 'mb-4 text-sm'} text-blue-100`}>
                                     Liên hệ ngay với chuyên gia ERG để được hỗ trợ tốt nhất.
                                 </p>
-                                <Button className={`${isVisualArticle ? 'h-9 text-sm' : ''} w-full bg-white font-bold text-[#00008b] hover:bg-gray-100`}>
-                                    0766.144.888
+                                <Button asChild className={`${isVisualArticle ? 'h-9 text-sm' : ''} w-full bg-white font-bold text-[#00008b] hover:bg-gray-100`}>
+                                    <Link href={TRAINING_CONTACT_URL} target="_blank" rel="noopener noreferrer">
+                                        0766.144.888
+                                    </Link>
                                 </Button>
                             </div>
                             <div className="absolute -bottom-4 -right-4 rotate-12 opacity-10 transition-transform group-hover:scale-110">

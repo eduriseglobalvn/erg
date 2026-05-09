@@ -124,7 +124,6 @@ export default async function RootLayout(props: {
     tuyendung: React.ReactNode;
     elearning: React.ReactNode;
     admin: React.ReactNode;
-    noibo: React.ReactNode;
 }) {
     const [headerList, cookieStore] = await Promise.all([
         headers(),
@@ -177,9 +176,6 @@ export default async function RootLayout(props: {
         case 'elerning':
             content = slotOrChildren(props.elearning);
             currentMenu = ELEARNING_MENU_ITEMS;
-            break;
-        case 'noibo':
-            content = slotOrChildren(props.noibo);
             break;
         case 'admin':
             content = slotOrChildren(props.admin);

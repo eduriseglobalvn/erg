@@ -1,13 +1,24 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import type { Editor } from "@tiptap/core"
 import { Sparkles } from "lucide-react"
 import { useAiWriter } from "@/hooks/use-ai-writer"
 import { useEditPost } from "@/hooks/use-edit-post"
 import { VisualPostEditorWorkspace } from "@/components/admin/posts/visual-post-editor-workspace"
 
+type AiWriterResult = {
+    title?: string
+    content?: string
+    slug?: string
+    excerpt?: string
+    category?: { id?: string }
+    categoryId?: string
+    thumbnailUrl?: string | null
+}
+
 export function EditPostPageClient({ postId }: { postId: string }) {
-    const [editorInstance, setEditorInstance] = useState<any>(null)
+    const [editorInstance, setEditorInstance] = useState<Editor | null>(null)
     const [content, setContent] = useState("")
     const [contentBlocks, setContentBlocks] = useState<unknown[] | null>(null)
 
@@ -24,14 +35,9 @@ export function EditPostPageClient({ postId }: { postId: string }) {
     } = useEditPost(postId, editorInstance, content, contentBlocks)
 
     const { isGenerating, progress, generateFullPost, refineText } = useAiWriter(editorInstance)
+    const fetchedContent = fetchedPost?.contentHtml || fetchedPost?.content || ""
 
-    useEffect(() => {
-        if (fetchedPost?.content) {
-            setContent(fetchedPost.content)
-        }
-    }, [fetchedPost?.content])
-
-    const handleAiSuccess = (aiData: any) => {
+    const handleAiSuccess = (aiData: AiWriterResult) => {
         if (aiData.title) setTitle(aiData.title)
         if (editorInstance && aiData.content) {
             editorInstance.commands.setContent(aiData.content)
@@ -88,8 +94,8 @@ export function EditPostPageClient({ postId }: { postId: string }) {
             postId={postId}
             title={title}
             onTitleChange={setTitle}
-            initialContent={fetchedPost.content || ""}
-            content={content || fetchedPost.content || ""}
+            initialContent={fetchedContent}
+            content={content || fetchedContent}
             onContentChange={setContent}
             onStructuredContentChange={setContentBlocks}
             postMetadata={postMetadata}

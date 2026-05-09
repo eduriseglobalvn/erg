@@ -1,16 +1,33 @@
 "use client"
 
 import { useState } from "react"
+import type { Editor } from "@tiptap/core"
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { useAiWriter } from "@/hooks/use-ai-writer"
 import { postsApi } from "@/services/posts.api"
 import { VisualPostEditorWorkspace } from "@/components/admin/posts/visual-post-editor-workspace"
+import { localSeoAnalyzer } from "@/utils/local-seo"
+
+type CreatePostResponse = {
+    data?: { id?: string }
+    id?: string
+}
+
+type AiWriterResult = {
+    title?: string
+    content?: string
+    slug?: string
+    excerpt?: string
+    category?: { id?: string }
+    categoryId?: string
+    thumbnailUrl?: string | null
+}
 
 export default function CreatePostPage() {
     const router = useRouter()
-    const [editorInstance, setEditorInstance] = useState<any>(null)
+    const [editorInstance, setEditorInstance] = useState<Editor | null>(null)
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
     const [contentBlocks, setContentBlocks] = useState<unknown[] | null>(null)
@@ -26,14 +43,17 @@ export default function CreatePostPage() {
     const { isGenerating, progress, generateFullPost, refineText } = useAiWriter(editorInstance)
 
     const createMutation = useMutation({
-        mutationFn: (data: any) => postsApi.create(data),
-        onSuccess: (res: any) => {
+        mutationFn: async (data: Record<string, unknown>): Promise<CreatePostResponse> => {
+            return postsApi.create(data) as Promise<CreatePostResponse>
+        },
+        onSuccess: (res: CreatePostResponse) => {
             const id = res.data?.id || res.id
             toast.success("Đã đăng bài viết thành công!")
             router.push(`/posts/${id}/edit`)
         },
-        onError: (error: any) => {
-            toast.error(error.message || "Lỗi khi đăng bài viết")
+        onError: (error: unknown) => {
+            const message = error instanceof Error ? error.message : "Lỗi khi đăng bài viết"
+            toast.error(message)
         },
     })
 
@@ -44,6 +64,12 @@ export default function CreatePostPage() {
         }
 
         const finalContent = content || editorInstance?.getHTML() || ""
+        const seoResult = localSeoAnalyzer(
+            finalContent,
+            title,
+            ((postMetadata as Record<string, unknown>).metaDescription as string) || "",
+            ((postMetadata as Record<string, unknown>).keywords as string) || ""
+        )
 
         createMutation.mutate({
             ...postMetadata,
@@ -51,10 +77,14 @@ export default function CreatePostPage() {
             content: finalContent,
             contentHtml: finalContent,
             ...(contentBlocks?.length ? { contentBlocks } : {}),
+            focusKeyword: ((postMetadata as Record<string, unknown>).keywords as string) || "",
+            seoScore: seoResult.overallScore,
+            readabilityScore: seoResult.contentAnalysis.readabilityScore,
+            keywordDensity: seoResult.contentAnalysis.keywordDensity,
         })
     }
 
-    const handleAiSuccess = (aiData: any) => {
+    const handleAiSuccess = (aiData: AiWriterResult) => {
         if (aiData.title) setTitle(aiData.title)
         if (editorInstance && aiData.content) {
             editorInstance.commands.setContent(aiData.content)

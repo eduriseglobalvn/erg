@@ -1,11 +1,15 @@
 import { PostsTable } from "@/components/admin/posts/posts-table"
 import { Metadata } from "next"
 import { Skeleton } from "@/components/admin/ui/skeleton"
+import { createPageMetadata } from "@/utils/seo/page-metadata"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
     title: "Quản lý bài viết | ERG Admin",
     description: "Danh sách tất cả bài viết trên hệ thống",
-}
+    path: "/admin/posts",
+    imageAlt: "ERG Admin posts",
+    robots: { index: false, follow: false },
+})
 
 // ✅ Phase 4: Suspense boundary for async data fetching
 function PostsTableSkeleton() {

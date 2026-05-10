@@ -1,14 +1,18 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
 import KidsCoursesContent from '@/components/tinhocthieunhi/KidsCoursesContent';
 import { SchemaScript } from '@/components/seo/schema-script';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 import { headers } from 'next/headers';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
     title: 'Khóa học Lập trình Thiếu nhi | ERG Global',
     description: 'Chương trình lập trình Scratch và Python cho học sinh từ Tiểu học đến THCS. Phát triển tư duy sáng tạo và logic qua dự án thực tế.',
-};
+    path: '/khoa-hoc',
+    image: '/util/cnttcb.jpg',
+    imageAlt: 'Kh?a h?c l?p tr?nh thi?u nhi t?i ERG',
+});
 
 export default async function Page() {
     const breadcrumbItems = generateBreadcrumbItems('/khoa-hoc', 'Chương trình đào tạo', 'Tin học Thiếu nhi');

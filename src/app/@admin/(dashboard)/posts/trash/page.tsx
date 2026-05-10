@@ -1,10 +1,14 @@
 import { Metadata } from "next"
 import { PostsTable } from "@/components/admin/posts/posts-table"
+import { createPageMetadata } from "@/utils/seo/page-metadata"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
     title: "Thung rac bai viet | ERG Admin",
     description: "Danh sach bai viet da xoa mem trong he thong",
-}
+    path: "/posts/trash",
+    imageAlt: "ERG Admin trash posts",
+    robots: { index: false, follow: false },
+})
 
 export default function TrashPostsPage() {
     return (

@@ -6,17 +6,18 @@ import { Card, CardContent, CardFooter } from "@/components/admin/ui/card";
 import { Breadcrumb } from "@/components/seo/breadcrumb";
 import { SchemaScript } from "@/components/seo/schema-script";
 import { Metadata } from "next";
+import { createPageMetadata } from "@/utils/seo/page-metadata";
 
 export async function generateMetadata({ searchParams }: { searchParams: { q?: string } }): Promise<Metadata> {
     const query = searchParams.q || "";
     const title = query ? `Kết quả tìm kiếm cho "${query}" | Tin Học Quốc Tế ERG` : `Tìm kiếm khóa học | Tin Học Quốc Tế ERG`;
-    return {
+    return createPageMetadata({
         title,
         description: `Tìm kiếm các khóa học tin học quốc tế MOS, IC3... phù hợp với nhu cầu của bạn.`,
-        alternates: {
-            canonical: `https://tinhocquocte.erg.edu.vn/tim-kiem`
-        }
-    };
+        path: '/tim-kiem',
+        imageAlt: 'International IT course search at ERG',
+        robots: { index: false, follow: true },
+    });
 }
 
 export default function SearchPage({ searchParams }: { searchParams: { q?: string } }) {

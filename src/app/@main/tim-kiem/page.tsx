@@ -1,15 +1,18 @@
 import React, { Suspense } from 'react';
 import { Metadata } from 'next';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
 import SearchContent from '@/components/news/SearchContent';
 import { SchemaScript } from '@/components/seo/schema-script';
 import { headers } from 'next/headers';
 import { NewsGridSkeleton } from '@/components/shared/news-card-skeleton';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
     title: 'Tìm kiếm | Edurise Global',
     description: 'Tìm kiếm tin tức và tài liệu giáo dục tại Edurise Global.',
-    robots: { index: false, follow: true } // Không index trang search kết quả
-};
+    path: '/tim-kiem',
+    imageAlt: 'Edurise Global search',
+    robots: { index: false, follow: true },
+});
 
 export default async function Page() {
     const headerList = await headers();

@@ -5,6 +5,7 @@ import ApplyForm from '@/components/features/recruitment/apply-form';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
 
 interface Props {
     params: Promise<{ slug: string }>;
@@ -15,16 +16,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     try {
         const res = await recruitmentApi.getJobBySlug(slug);
         const job = res.data;
-        return {
+        return createPageMetadata({
             title: `Ứng tuyển: ${job.title} | ERG Careers`,
             description: `Nộp hồ sơ ứng tuyển vị trí ${job.title} tại Edurise Global.`,
+            path: `/tuyen-dung/${slug}/ung-tuyen`,
+            imageAlt: `${job.title} application at ERG`,
             robots: { index: false, follow: true },
-        };
+        });
     } catch {
-        return {
+        return createPageMetadata({
             title: 'Ứng tuyển | ERG Careers',
+            description: 'Nộp hồ sơ ứng tuyển tại Edurise Global.',
+            path: `/tuyen-dung/${slug}/ung-tuyen`,
+            imageAlt: 'ERG Careers application',
             robots: { index: false, follow: true },
-        };
+        });
     }
 }
 

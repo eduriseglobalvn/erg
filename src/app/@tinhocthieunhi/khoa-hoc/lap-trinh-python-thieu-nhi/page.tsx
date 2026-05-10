@@ -1,15 +1,19 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
 import PythonCourseContent from '@/components/tinhocthieunhi/PythonCourseContent';
 import { SchemaScript } from '@/components/seo/schema-script';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 import { headers } from 'next/headers';
 import { COURSES } from '@/constants/courses';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
     title: 'Khóa học Lập trình Python thiếu nhi | ERG Global',
     description: 'Chương trình lập trình Python dành cho học sinh từ lớp 6 trở lên. Rèn luyện tư duy logic, tiếp cận ngôn ngữ lập trình thực tế số 1 thế giới.',
-};
+    path: '/khoa-hoc/lap-trinh-python-thieu-nhi',
+    image: '/util/cnttnc.jpg',
+    imageAlt: 'Kh?a h?c Python thi?u nhi t?i ERG',
+});
 
 export default async function Page() {
     const courseData = COURSES.tinhocthieunhi.find(c => c.id === 'python-kids');

@@ -1,16 +1,19 @@
 import React, { Suspense } from 'react';
 import { Metadata } from 'next';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
 import SearchContent from '@/components/news/SearchContent';
 import { SchemaScript } from '@/components/seo/schema-script';
 import { headers } from 'next/headers';
 import { NewsGridSkeleton } from '@/components/shared/news-card-skeleton';
 import { SEO_DATA } from '@/constants/seo.constants';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
     title: `Tìm kiếm | ${SEO_DATA.ai.title}`,
     description: `Tìm kiếm bài viết và tài liệu AI tại ${SEO_DATA.ai.title}.`,
-    robots: { index: false, follow: true }
-};
+    path: '/tim-kiem',
+    imageAlt: 'AI search at ERG',
+    robots: { index: false, follow: true },
+});
 
 export default async function Page() {
     const headerList = await headers();

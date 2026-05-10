@@ -1,10 +1,14 @@
 import { Metadata } from "next"
 import { PostsTable } from "@/components/admin/posts/posts-table"
+import { createPageMetadata } from "@/utils/seo/page-metadata"
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
     title: "Danh muc bai viet | ERG Admin",
     description: "Danh sach bai viet theo danh muc",
-}
+    path: "/posts",
+    imageAlt: "ERG Admin category posts",
+    robots: { index: false, follow: false },
+})
 
 export default async function CategoryPostsPage({
     params,

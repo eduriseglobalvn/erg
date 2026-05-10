@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { documentsService } from '@/services/documents.service';
 import { PdfViewer } from '@/components/shared/pdf-viewer';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -13,12 +14,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params;
   try {
     const doc = await documentsService.getDocument(id);
-    return {
+    return createPageMetadata({
       title: doc.title,
       description: doc.description || `Tài liệu: ${doc.title}`,
-    };
+      path: `/pdf/${id}`,
+      imageAlt: doc.title,
+    });
   } catch {
-    return { title: 'Tài liệu' };
+    return createPageMetadata({
+      title: 'Tài liệu',
+      description: 'Tài liệu công khai của Edurise Global.',
+      path: `/pdf/${id}`,
+      imageAlt: 'Edurise Global document',
+    });
   }
 }
 

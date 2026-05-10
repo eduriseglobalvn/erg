@@ -1,14 +1,17 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
 import ComingSoon from "@/components/helper/ComingSoon";
 import { SchemaScript } from '@/components/seo/schema-script';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 import { headers } from 'next/headers';
 
-export const metadata: Metadata = {
-  title: 'Đối tác chiến lược',
-  description: 'Mạng lưới đối tác chiến lược của ERG Global bao gồm các tổ chức giáo dục, doanh nghiệp công nghệ hàng đầu trong và ngoài nước.',
-};
+export const metadata: Metadata = createPageMetadata({
+    title: 'Đối tác chiến lược',
+    description: 'Mạng lưới đối tác chiến lược của ERG Global bao gồm các tổ chức giáo dục, doanh nghiệp công nghệ hàng đầu trong và ngoài nước.',
+    path: '/doi-tac',
+    imageAlt: '??i t?c chi?n l??c ERG',
+});
 
 export default async function DoiTacChienLuocPage() {
   const breadcrumbItems = generateBreadcrumbItems('/doi-tac', 'Đối tác chiến lược', 'Trang chủ');

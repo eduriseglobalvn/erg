@@ -144,6 +144,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
   const [currentLocale, setCurrentLocale] = useState('vi');
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
 
   // Read locale from cookie on mount
@@ -182,6 +183,17 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
     }
   }, [isSearchOpen]);
 
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (!headerRef.current) return;
+      document.documentElement.style.setProperty('--erg-header-height', `${headerRef.current.offsetHeight}px`);
+    };
+
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, [isScrolled, hideTopBar]);
+
   const tc = useTranslations('common.Header');
 
   // Vercel Best Practice: Use stable lookups and hoist mapping logic where possible
@@ -212,6 +224,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
 
       {/* --- HEADER DESKTOP (Giữ nguyên) --- */}
       <header
+        ref={headerRef}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
         bg-white border-b border-gray-100 shadow-sm py-2
         lg:border-none
@@ -333,6 +346,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
             </button>
           </div>
         </div>
+
       </header>
 
       {/* --- MOBILE MENU DRAWER (CẬP NHẬT) --- */}

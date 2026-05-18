@@ -6,6 +6,7 @@ import { NewsDetailView } from '@/components/news/NewsDetailView';
 import { generateFullMetadata } from '@/utils/seo/seo-metadata';
 import { getPreferredBackendBaseUrl } from '@/lib/backend-url';
 import { resolveSiteContextFromHeaders } from '@/lib/site-context';
+import { getErgNewsMockBySlug, getErgNewsMockRecentPosts } from '@/mocks/erg-news';
 
 // Import Interface
 import { PostDetailResponse } from '@/services/posts.api';
@@ -45,6 +46,11 @@ async function getReviewStats(targetId: string): Promise<ReviewStats | null> {
 
 // Fetch function for Server Component
 async function getPost(slug: string, previewId?: string | null): Promise<PostFetchResult> {
+    const mockPost = !previewId ? getErgNewsMockBySlug(slug) : null;
+    if (mockPost) {
+        return { data: mockPost, status: 200 };
+    }
+
     try {
         const apiUrl = getPreferredBackendBaseUrl();
 
@@ -81,6 +87,8 @@ async function getPost(slug: string, previewId?: string | null): Promise<PostFet
 }
 
 async function getRecentPosts(): Promise<RecentPostItem[]> {
+    const mockRecentPosts = getErgNewsMockRecentPosts();
+
     try {
         const apiUrl = getPreferredBackendBaseUrl();
         const res = await fetch(`${apiUrl}/api/posts?limit=5&sortBy=createdAt&order=DESC&status=PUBLISHED`, {
@@ -94,13 +102,17 @@ async function getRecentPosts(): Promise<RecentPostItem[]> {
             } | RecentPostItem[];
         };
         const data = json.data;
-        return Array.isArray(data)
+        const apiPosts = Array.isArray(data)
             ? data
             : Array.isArray(data?.items)
                 ? data.items
                 : [];
+        const merged = [...mockRecentPosts, ...apiPosts].filter(
+            (post, index, allPosts) => allPosts.findIndex((item) => item.slug === post.slug) === index
+        );
+        return merged.slice(0, 5);
     } catch (error) {
-        return [];
+        return mockRecentPosts;
     }
 }
 
@@ -176,7 +188,9 @@ export default async function PostDetailPage({
     }
 
     // Fetch stats for schema and UI
-    const reviewStats = post ? await getReviewStats(post.id) : null;
+    const reviewStats = post && !post.id.startsWith('mock-')
+        ? await getReviewStats(post.id)
+        : null;
 
     if (!post) return null;
 

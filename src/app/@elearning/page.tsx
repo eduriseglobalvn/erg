@@ -1,9 +1,6 @@
-"use client";
-
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { GraduationCap, MousePointer2, ArrowRight, Star } from 'lucide-react';
 
 const GS6_LEVELS = [
@@ -42,18 +39,14 @@ export default function ElearningHomePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
                 <div className="absolute inset-0 flex flex-col items-center justify-end pb-20 md:pb-32 container mx-auto px-4 text-center text-white">
-                    <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.8 }}
-                    >
+                    <div>
                         <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight">
                             Học Mọi Lúc, Mọi Nơi
                         </h1>
                         <p className="text-lg md:text-2xl font-medium text-gray-200 max-w-2xl mx-auto opacity-90">
                             Truy cập trên điện thoại, máy tính bảng, laptop. Khám phá tri thức không giới hạn.
                         </p>
-                    </motion.div>
+                    </div>
                 </div>
 
                 <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
@@ -65,12 +58,7 @@ export default function ElearningHomePage() {
 
             {/* ── Main card ── */}
             <section className="flex-1 container mx-auto px-4 -mt-16 md:-mt-24 relative z-10 pb-20">
-                <motion.div
-                    initial={{ y: 40, opacity: 0 }}
-                    whileInView={{ y: 0, opacity: 1 }}
-                    viewport={{ once: true }}
-                    className="bg-white rounded-[40px] shadow-2xl p-10 md:p-20 text-center border border-gray-100"
-                >
+                <div className="bg-white rounded-[40px] shadow-2xl p-10 md:p-20 text-center border border-gray-100">
                     {/* Title */}
                     <div className="mb-10">
                         <h2 className="text-4xl md:text-6xl font-black text-blue-600 mb-6 uppercase tracking-tight">
@@ -112,9 +100,7 @@ export default function ElearningHomePage() {
                         </div>
                         <div className="p-8 rounded-3xl bg-green-50/50 border border-green-100">
                             <div className="w-14 h-14 bg-green-600 rounded-2xl flex items-center justify-center text-white mb-6 mx-auto">
-                                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 2 }}>
-                                    <Star size={32} />
-                                </motion.div>
+                                <Star size={32} />
                             </div>
                             <h4 className="text-xl font-bold mb-3">Kiểm tra kiến thức</h4>
                             <p className="text-gray-500 text-sm">Hệ thống bài tập trắc nghiệm mô phỏng kỳ thi thực tế.</p>
@@ -127,7 +113,7 @@ export default function ElearningHomePage() {
                             <p className="text-gray-500 text-sm">Biết ngay điểm số và đáp án sau khi hoàn thành bài thi.</p>
                         </div>
                     </div>
-                </motion.div>
+                </div>
             </section>
 
             <footer className="py-10 text-center text-gray-400 text-sm border-t border-gray-100 bg-white">

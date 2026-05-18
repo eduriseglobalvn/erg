@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { Calendar } from 'lucide-react';
@@ -39,6 +39,13 @@ export function RecentPostsSidebar({ initialData, compact = false }: RecentPosts
             ? recentPostsResponse.items
             : [];
 
+    const mergedPosts = useMemo(() => {
+        const seededPosts = initialData || [];
+        return [...seededPosts, ...posts].filter(
+            (post, index, allPosts) => allPosts.findIndex((item) => item.slug === post.slug) === index
+        );
+    }, [initialData, posts]);
+
     return (
         <div className={`${compact ? 'rounded-lg' : 'rounded-xl'} overflow-hidden border border-gray-100 bg-white shadow-sm`}>
             <div className={`flex items-center gap-2 bg-[#0088cc] font-bold text-white ${compact ? 'px-4 py-2.5 text-sm' : 'px-5 py-3'}`}>
@@ -53,12 +60,12 @@ export function RecentPostsSidebar({ initialData, compact = false }: RecentPosts
                             <Skeleton className="mt-2 h-4 w-2/3" />
                         </div>
                     ))
-                ) : posts.length === 0 ? (
+                ) : mergedPosts.length === 0 ? (
                     <p className={`${compact ? 'p-4 text-xs' : 'p-6 text-sm'} text-center italic text-gray-400`}>
                         Chưa có bài viết nào.
                     </p>
                 ) : (
-                    posts.map((post) => (
+                    mergedPosts.map((post) => (
                         <Link
                             key={post.id}
                             href={`/tin-tuc/${post.slug}`}

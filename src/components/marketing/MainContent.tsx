@@ -7,10 +7,11 @@ import {
     ChevronLeft, ChevronRight, ArrowRight, Star,
 } from 'lucide-react';
 import {
-    HERO_SLIDES, CORE_VALUES, WHY_CHOOSE_US, TESTIMONIALS, LATEST_NEWS
+    HERO_SLIDES, CORE_VALUES, WHY_CHOOSE_US, TESTIMONIALS
 } from '@/mocks/main.constants';
 import { TRAINING_CONTACT_URL, TRAINING_FIELDS } from '@/constants/training-fields';
 import { NewsCard } from '@/components/shared/news-card';
+import { ERG_NEWS_MOCKS } from '@/mocks/erg-news';
 
 // --- DECORATIVE COMPONENTS ---
 const DotGrid = ({ className }: { className?: string }) => (
@@ -280,12 +281,12 @@ export default function MainContent() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {LATEST_NEWS.map((news) => (
+                        {ERG_NEWS_MOCKS.map((news) => (
                             <NewsCard
                                 key={news.id}
                                 title={news.title}
                                 excerpt={news.summary}
-                                date={news.date}
+                                date={news.displayDate}
                                 thumbnail={news.image}
                                 slug={news.slug}
                                 categoryName={t('News.category')}

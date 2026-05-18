@@ -4,7 +4,6 @@ import { Metadata } from 'next';
 import { ArrowLeft, BookOpen, GraduationCap, ClipboardCheck, Sparkles, ChevronRight } from 'lucide-react';
 import { ELEARNING_DATA } from '@/constants/elearning.constants';
 import { notFound } from 'next/navigation';
-import { Reveal, ScaleIn, FadeIn } from '@/components/shared/motion-wrapper';
 
 interface LevelPageProps {
     params: Promise<{
@@ -75,22 +74,22 @@ export default async function LevelPage({ params }: LevelPageProps) {
 
                 {/* Level Title */}
                 <div className="text-center mb-16 max-w-4xl mx-auto">
-                    <Reveal>
+                    <div>
                         <h1 className="text-4xl md:text-6xl font-black text-[#00008b] mb-4 tracking-tight leading-tight">
                             {level.title}
                         </h1>
-                    </Reveal>
-                    <FadeIn delay={0.2}>
+                    </div>
+                    <div>
                         <p className="text-lg md:text-xl text-slate-500 font-medium">
                             {level.description}
                         </p>
-                    </FadeIn>
+                    </div>
                 </div>
 
                 {/* Units */}
                 <div className="flex flex-col gap-6 max-w-4xl mx-auto">
                     {level.units.map((unit, index) => (
-                        <ScaleIn key={unit.id} delay={index * 0.05}>
+                        <div key={unit.id}>
                             <div className="group bg-white rounded-3xl p-6 md:p-8 border border-slate-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] hover:shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:border-[#00008b]/10 transition-all duration-300">
                                 <div className="flex flex-col md:flex-row md:items-center gap-6">
                                     <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-[#00008b] font-black text-xl group-hover:bg-[#00008b] group-hover:text-white transition-all duration-300">
@@ -142,7 +141,7 @@ export default async function LevelPage({ params }: LevelPageProps) {
                                     </div>
                                 </div>
                             </div>
-                        </ScaleIn>
+                        </div>
                     ))}
 
                     {level.units.length === 0 && (

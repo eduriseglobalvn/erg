@@ -1,3 +1,5 @@
+import { buildSeoKeywords } from "@/utils/seo/keywords";
+
 export type TrainingField = {
     id: number;
     slug: string;
@@ -370,7 +372,7 @@ export function getTrainingFieldBySlug(slug: string) {
 }
 
 export function getTrainingFieldSeo(field: TrainingField) {
-    const keywords = Array.from(new Set([
+    const seedKeywords = [
         field.title,
         field.badge,
         field.group,
@@ -378,8 +380,30 @@ export function getTrainingFieldSeo(field: TrainingField) {
         `khóa học ${field.title}`,
         `đào tạo ${field.title}`,
         `chương trình ${field.title}`,
+        `khóa học ${field.group}`,
+        "học tin học tại ERG",
+        "chương trình đào tạo ERG",
+        "lộ trình học tin học",
+        "học công nghệ cho học sinh",
+        "trung tâm đào tạo công nghệ",
         ...TRAINING_BASE_KEYWORDS,
-    ]));
+    ];
+    const keywords = buildSeoKeywords({
+        title: field.title,
+        description: field.description,
+        content: field.intro,
+        sections: [
+            field.badge,
+            field.group,
+            field.imageAlt,
+            field.assessment,
+            ...field.highlights,
+            ...field.outcomes,
+            ...field.audience,
+            ...field.curriculum,
+        ],
+        seedKeywords,
+    });
 
     return {
         title: `${field.title} | Chương trình đào tạo CNTT ERG`,

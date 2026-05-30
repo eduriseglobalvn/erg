@@ -1,4 +1,5 @@
 import type { PostDetailResponse } from '@/services/posts.api';
+import { buildSeoKeywords } from '@/utils/seo/keywords';
 
 export interface ErgNewsMockItem {
     id: number;
@@ -198,7 +199,7 @@ const ERG_NEWS_POST_DETAILS: MockPostDetail[] = [
         updatedAt: '2026-05-18T08:00:00.000Z',
         metaTitle: 'Khóa bán trú hè 2026 tại ERG | Hè bứt phá - Kiến tạo tương lai',
         metaDescription: 'Chi tiết chương trình bán trú hè 2026 tại ERG cho học sinh Tiền Tiểu học, Tiểu học và THCS với 5 môn cốt lõi và đầu ra dự án rõ ràng.',
-        keywords: 'khóa hè 2026, bán trú hè, ERG, STEM, tiếng Anh giao tiếp, toán tư duy',
+        keywords: 'khóa hè 2026, khóa bán trú hè 2026, bán trú hè, trại hè bán trú, hè bán trú ERG, lớp bán trú hè, chương trình hè, chương trình hè cho THCS, hè cho học sinh tiểu học, hè cho học sinh cấp 1, hè cho học sinh cấp 2, tiền tiểu học, chuẩn bị vào lớp 1, Toán tư duy, Tiếng Việt, rèn chữ, luyện viết chữ đẹp, Tiếng Anh giao tiếp, Tin học ứng dụng, STEM, STEM Lập trình, Scratch Jr, Scratch, Python, Arduino, Robotics, IC3 Spark, MOS, Word, Excel, PowerPoint, dự án PowerPoint, ngày hội Tin học STEM, sản phẩm Scratch, mô hình robot, sân khấu hóa, Gala, Gala tổng kết, kỹ năng thuyết trình, làm việc nhóm, học hè 2026, ERG',
         content: buildSummerProgramContent(),
         contentHtml: buildSummerProgramContent(),
         author: ERG_NEWS_AUTHOR,
@@ -217,7 +218,7 @@ const ERG_NEWS_POST_DETAILS: MockPostDetail[] = [
         updatedAt: '2026-05-16T08:00:00.000Z',
         metaTitle: 'Tin học văn phòng – Kỹ năng bắt buộc trong thời đại số | ERG',
         metaDescription: 'Khóa học Tin học văn phòng tại ERG giúp học viên thành thạo Word, Excel, PowerPoint theo lộ trình thực tế, dễ hiểu và phù hợp cho người mới bắt đầu.',
-        keywords: 'ERG, tin học văn phòng, Word, Excel, PowerPoint, kỹ năng số',
+        keywords: 'ERG, tin học văn phòng, khóa học tin học văn phòng, tin học văn phòng cơ bản, tin học văn phòng nâng cao, Word, Excel, PowerPoint, kỹ năng số, kỹ năng máy tính, kỹ năng văn phòng, chứng chỉ tin học, MOS, Microsoft Office Specialist, thực hành 80%, người mới bắt đầu, học sinh sinh viên, nhân viên văn phòng, người mất gốc tin học, soạn thảo văn bản, hàm Excel, thiết kế slide, trình bày báo cáo, làm việc hiệu quả',
         content: buildAcademicEnglishContent(),
         contentHtml: buildAcademicEnglishContent(),
         author: ERG_NEWS_AUTHOR,
@@ -236,7 +237,7 @@ const ERG_NEWS_POST_DETAILS: MockPostDetail[] = [
         updatedAt: '2026-05-14T08:00:00.000Z',
         metaTitle: 'Học Tin học từ sớm – Mở rộng tương lai số cùng ERG',
         metaDescription: 'Từ Tin học văn phòng, IC3, Scratch đến Python, ERG xây dựng lộ trình kỹ năng số rõ ràng giúp học sinh và người mới bắt đầu tự tin làm chủ công nghệ.',
-        keywords: 'ERG, IC3, Scratch, Python, tin học cho học sinh, công dân số',
+        keywords: 'ERG, IC3, IC3 GS6, IC3 Spark, Scratch, Python, tin học cho học sinh, công dân số, kỹ năng số, làm chủ công nghệ, học tin học từ sớm, tin học thiếu nhi, lập trình Scratch, lập trình Python, chứng chỉ tin học quốc tế, tin học văn phòng, Word, Excel, PowerPoint, chương trình tin học, lộ trình tin học, tư duy logic, tư duy thuật toán, robot giáo dục, STEM Robotics, AI, trí tuệ nhân tạo, hành trang số, công nghệ tương lai',
         content: buildMosStemContent(),
         contentHtml: buildMosStemContent(),
         author: ERG_NEWS_AUTHOR,
@@ -244,7 +245,19 @@ const ERG_NEWS_POST_DETAILS: MockPostDetail[] = [
         tags: ['IC3', 'Scratch', 'Python', 'Công dân số'],
         schemaType: 'NewsArticle',
     },
-];
+].map((post) => ({
+    ...post,
+    keywords: buildSeoKeywords({
+        title: post.metaTitle || post.title,
+        description: post.metaDescription || post.excerpt,
+        content: post.contentHtml || post.content,
+        seedKeywords: [
+            ...(post.keywords?.split(',') || []),
+            ...(post.tags || []),
+            post.category?.name,
+        ].filter(Boolean) as string[],
+    }).join(', '),
+}));
 
 export const ERG_NEWS_MOCKS: ErgNewsMockItem[] = ERG_NEWS_POST_DETAILS.map((post, index) => ({
     id: index + 1,

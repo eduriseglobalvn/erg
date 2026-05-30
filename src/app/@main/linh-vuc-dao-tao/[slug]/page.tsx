@@ -22,6 +22,7 @@ import {
 } from '@/constants/training-fields';
 import { SchemaScript } from '@/components/seo/schema-script';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
+import { generateCanonical } from '@/utils/seo/seo-metadata';
 
 type PageProps = {
     params: Promise<{ slug: string }>;
@@ -43,13 +44,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 
     const seo = getTrainingFieldSeo(field);
+    const headerList = await headers();
+    const host = headerList.get('host') || 'erg.edu.vn';
+    const canonicalUrl = generateCanonical(host, field.link);
+    const imageUrl = field.image.startsWith('http')
+        ? field.image
+        : generateCanonical(host, field.image);
 
     return {
         title: seo.title,
         description: seo.description,
         keywords: seo.keywords,
         alternates: {
-            canonical: field.link,
+            canonical: canonicalUrl,
         },
         robots: {
             index: true,
@@ -59,14 +66,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             type: 'website',
             title: seo.title,
             description: seo.description,
-            url: field.link,
-            images: [{ url: field.image, alt: field.imageAlt, width: 1200, height: 630 }]
+            url: canonicalUrl,
+            images: [{ url: imageUrl, alt: field.imageAlt, width: 1200, height: 630 }]
         },
         twitter: {
             card: 'summary_large_image',
             title: seo.title,
             description: seo.description,
-            images: [field.image],
+            images: [imageUrl],
         },
     };
 }

@@ -3,8 +3,45 @@ import { headers } from 'next/headers';
 import { resolveSiteContext, resolveSiteContextFromHeaders } from '@/lib/site-context';
 import { getPreferredBackendBaseUrl } from '@/lib/backend-url';
 import { TRAINING_FIELDS } from '@/constants/training-fields';
+import { ERG_NEWS_MOCKS } from '@/mocks/erg-news';
+import { MOCK_JOBS } from '@/mocks/recruitment/data';
 
 export const dynamic = 'force-dynamic';
+
+type SitemapEntry = MetadataRoute.Sitemap[number];
+type ChangeFrequency = NonNullable<SitemapEntry['changeFrequency']>;
+type StaticSitemapRoute = {
+    path: string;
+    priority: number;
+    changefreq: string;
+    images?: string[];
+};
+type BackendSitemapImage = {
+    loc?: string;
+};
+type BackendSitemapItem = {
+    loc?: string;
+    lastmod?: string | Date;
+    changefreq?: string;
+    priority?: number;
+    images?: BackendSitemapImage[];
+};
+
+const CHANGE_FREQUENCIES = new Set<ChangeFrequency>([
+    'always',
+    'hourly',
+    'daily',
+    'weekly',
+    'monthly',
+    'yearly',
+    'never',
+]);
+
+function normalizeChangeFrequency(value?: string): ChangeFrequency {
+    return CHANGE_FREQUENCIES.has(value as ChangeFrequency)
+        ? value as ChangeFrequency
+        : 'weekly';
+}
 
 // ─── Static pages config ───────────────────────────────────────────────────
 // Toàn bộ trang tĩnh của từng subdomain — KHÔNG phụ thuộc BE.
@@ -12,14 +49,21 @@ export const dynamic = 'force-dynamic';
 const PAGES_CONFIG = {
     main: [
         { path: '', priority: 1, changefreq: 'daily' },
-        { path: '/linh-vuc-dao-tao', priority: 0.9, changefreq: 'weekly' },
+        { path: '/linh-vuc-dao-tao', priority: 0.9, changefreq: 'weekly', images: ['/util/ic3.jpg'] },
         ...TRAINING_FIELDS.map((field) => ({
             path: field.link,
             priority: 0.82,
-            changefreq: 'weekly'
+            changefreq: 'weekly',
+            images: [field.image],
         })),
         { path: '/tin-tuc', priority: 0.8, changefreq: 'hourly' },
+        { path: '/tim-kiem', priority: 0.65, changefreq: 'weekly' },
         { path: '/tuyen-dung', priority: 0.8, changefreq: 'daily' },
+        ...MOCK_JOBS.map((job) => ({
+            path: `/tuyen-dung/${job.slug}`,
+            priority: 0.72,
+            changefreq: 'weekly'
+        })),
         { path: '/gia-tri-cot-loi', priority: 0.7, changefreq: 'monthly' },
         { path: '/tam-nhin-su-menh', priority: 0.7, changefreq: 'monthly' },
         { path: '/cau-chuyen-cua-erg', priority: 0.7, changefreq: 'monthly' },
@@ -30,7 +74,21 @@ const PAGES_CONFIG = {
     ],
     tuyendung: [
         { path: '', priority: 1, changefreq: 'daily' },
+        { path: '/gioi-thieu', priority: 0.75, changefreq: 'monthly' },
         { path: '/tuyen-dung', priority: 0.9, changefreq: 'daily' },
+        ...MOCK_JOBS.flatMap((job) => [
+            {
+                path: `/tuyen-dung/${job.slug}`,
+                priority: 0.82,
+                changefreq: 'weekly'
+            },
+            {
+                path: `/tuyen-dung/${job.slug}/ung-tuyen`,
+                priority: 0.55,
+                changefreq: 'weekly'
+            },
+        ]),
+        { path: '/tuyen-dung/theo-doi', priority: 0.45, changefreq: 'monthly' },
         { path: '/van-hoa', priority: 0.7, changefreq: 'monthly' },
         { path: '/chinh-sach', priority: 0.7, changefreq: 'monthly' },
         { path: '/lien-he', priority: 0.7, changefreq: 'monthly' },
@@ -42,6 +100,7 @@ const PAGES_CONFIG = {
         { path: '/khoa-hoc/ic3-gs6', priority: 0.9, changefreq: 'weekly' },
         { path: '/khoa-hoc/ic3-spark-gs6', priority: 0.9, changefreq: 'weekly' },
         { path: '/tin-tuc', priority: 0.8, changefreq: 'hourly' },
+        { path: '/tim-kiem', priority: 0.65, changefreq: 'weekly' },
         { path: '/gioi-thieu', priority: 0.7, changefreq: 'monthly' },
         { path: '/lo-trinh', priority: 0.7, changefreq: 'monthly' },
         { path: '/doi-ngu-giao-vien', priority: 0.7, changefreq: 'monthly' },
@@ -53,6 +112,7 @@ const PAGES_CONFIG = {
         { path: '/khoa-hoc/cntt-co-ban', priority: 0.9, changefreq: 'weekly' },
         { path: '/khoa-hoc/cntt-nang-cao', priority: 0.9, changefreq: 'weekly' },
         { path: '/tin-tuc', priority: 0.8, changefreq: 'hourly' },
+        { path: '/tim-kiem', priority: 0.65, changefreq: 'weekly' },
         { path: '/lo-trinh', priority: 0.7, changefreq: 'monthly' },
         { path: '/doi-ngu-giao-vien', priority: 0.7, changefreq: 'monthly' },
         { path: '/lien-he', priority: 0.7, changefreq: 'monthly' },
@@ -69,6 +129,7 @@ const PAGES_CONFIG = {
     ai: [
         { path: '', priority: 1, changefreq: 'daily' },
         { path: '/tin-tuc', priority: 0.8, changefreq: 'hourly' },
+        { path: '/tim-kiem', priority: 0.65, changefreq: 'weekly' },
         { path: '/khoa-hoc', priority: 0.9, changefreq: 'weekly' },
         { path: '/doi-ngu-giao-vien', priority: 0.7, changefreq: 'monthly' },
         { path: '/lien-he', priority: 0.7, changefreq: 'monthly' },
@@ -76,6 +137,7 @@ const PAGES_CONFIG = {
     congdanso: [
         { path: '', priority: 1, changefreq: 'daily' },
         { path: '/tin-tuc', priority: 0.8, changefreq: 'hourly' },
+        { path: '/tim-kiem', priority: 0.65, changefreq: 'weekly' },
         { path: '/lo-trinh', priority: 0.7, changefreq: 'monthly' },
         { path: '/lien-he', priority: 0.7, changefreq: 'monthly' },
     ],
@@ -84,11 +146,22 @@ const PAGES_CONFIG = {
     ],
     elearning: [
         { path: '', priority: 1, changefreq: 'weekly' },
+        { path: '/khoa-hoc', priority: 0.9, changefreq: 'weekly' },
+        { path: '/lo-trinh-hoc', priority: 0.8, changefreq: 'weekly' },
+        { path: '/giao-vien', priority: 0.7, changefreq: 'monthly' },
+        { path: '/ho-tro', priority: 0.7, changefreq: 'monthly' },
+        { path: '/kien-thuc', priority: 0.75, changefreq: 'weekly' },
+        { path: '/kien-thuc/blog', priority: 0.7, changefreq: 'weekly' },
+        { path: '/kien-thuc/tai-lieu', priority: 0.7, changefreq: 'weekly' },
+        { path: '/kien-thuc/video', priority: 0.7, changefreq: 'weekly' },
         { path: '/level/secondary/gs6-level-1', priority: 0.9, changefreq: 'weekly' },
         { path: '/level/secondary/gs6-level-2', priority: 0.9, changefreq: 'weekly' },
         { path: '/level/secondary/gs6-level-3', priority: 0.9, changefreq: 'weekly' },
     ],
-};
+    forum: [
+        { path: '', priority: 0.8, changefreq: 'daily' },
+    ],
+} satisfies Record<string, StaticSitemapRoute[]>;
 
 // ─── Helper ────────────────────────────────────────────────────────────────
 function buildStaticEntries(host: string, deployDate: Date): MetadataRoute.Sitemap {
@@ -105,8 +178,9 @@ function buildStaticEntries(host: string, deployDate: Date): MetadataRoute.Sitem
             entries.push({
                 url: `${domain}${route.path}`,
                 lastModified: deployDate,
-                changeFrequency: route.changefreq as any,
+                changeFrequency: normalizeChangeFrequency(route.changefreq),
                 priority: route.priority,
+                images: route.images?.map((image) => normalizeSitemapImage(domain, image)),
             });
         });
 
@@ -124,7 +198,7 @@ function buildStaticEntries(host: string, deployDate: Date): MetadataRoute.Sitem
                 });
             });
     } else {
-        const subRoutes =
+        const subRoutes: StaticSitemapRoute[] =
             PAGES_CONFIG[siteContext.siteKey as keyof typeof PAGES_CONFIG] ||
             [{ path: '', priority: 1, changefreq: 'daily' }];
 
@@ -132,13 +206,45 @@ function buildStaticEntries(host: string, deployDate: Date): MetadataRoute.Sitem
             entries.push({
                 url: `${domain}${route.path}`,
                 lastModified: deployDate,
-                changeFrequency: route.changefreq as any,
+                changeFrequency: normalizeChangeFrequency(route.changefreq),
                 priority: route.priority,
+                images: route.images?.map((image) => normalizeSitemapImage(domain, image)),
             });
         });
     }
 
     return entries;
+}
+
+function normalizeSitemapImage(domain: string, image: string) {
+    const normalizedImage = image.startsWith('http') ? image : `${domain}${image.startsWith('/') ? image : `/${image}`}`;
+    return normalizedImage.replace(/&(?!amp;)/g, '&amp;');
+}
+
+function buildMockPostEntries(domain: string): MetadataRoute.Sitemap {
+    return ERG_NEWS_MOCKS.map((post) => ({
+        url: `${domain}/tin-tuc/${post.slug}`,
+        lastModified: post.date ? new Date(post.date) : new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.68,
+        images: post.image ? [normalizeSitemapImage(domain, post.image)] : undefined,
+    }));
+}
+
+function appendUniqueEntries(
+    baseEntries: MetadataRoute.Sitemap,
+    extraEntries: MetadataRoute.Sitemap
+): MetadataRoute.Sitemap {
+    const existingUrls = new Set(baseEntries.map((entry) => entry.url));
+    const finalEntries: MetadataRoute.Sitemap = [...baseEntries];
+
+    for (const entry of extraEntries) {
+        if (existingUrls.has(entry.url)) continue;
+        finalEntries.push(entry);
+        existingUrls.add(entry.url);
+    }
+
+    return finalEntries;
 }
 
 // ─── Main export ───────────────────────────────────────────────────────────
@@ -158,6 +264,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // 1. Luôn build static entries trước — không cần BE
     const staticEntries = buildStaticEntries(host, deployDate);
+    const siteContext = resolveSiteContext(host);
+    const domain = siteContext.baseUrl;
+    const fallbackMockEntries = siteContext.isRoot ? buildMockPostEntries(domain) : [];
+    const staticWithFallbackEntries = appendUniqueEntries(staticEntries, fallbackMockEntries);
 
     // 2. Chỉ gọi BE để lấy bài viết / tin tức động
     try {
@@ -169,18 +279,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         if (!response.ok) {
             console.error(`[Sitemap] BE returned ${response.status} for ${host}`);
-            return staticEntries;
+            return staticWithFallbackEntries;
         }
 
-        const json = await response.json();
-        const dynamicUrls: any[] = json.data?.urls || [];
+        const json = await response.json() as { data?: { urls?: BackendSitemapItem[] } };
+        const dynamicUrls = json.data?.urls || [];
 
-        if (!dynamicUrls.length) return staticEntries;
+        if (!dynamicUrls.length) return staticWithFallbackEntries;
 
-        const siteContext = resolveSiteContext(host);
-        const domain = siteContext.baseUrl;
-        const existingUrls = new Set(staticEntries.map(e => e.url));
-        const finalEntries: MetadataRoute.Sitemap = [...staticEntries];
+        const existingUrls = new Set(staticWithFallbackEntries.map(e => e.url));
+        const finalEntries: MetadataRoute.Sitemap = [...staticWithFallbackEntries];
 
         for (const item of dynamicUrls) {
             if (!item?.loc) continue;
@@ -205,13 +313,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             finalEntries.push({
                 url: loc,
                 lastModified: item.lastmod || new Date(),
-                changeFrequency: item.changefreq || 'weekly',
+                changeFrequency: normalizeChangeFrequency(item.changefreq),
                 priority,
-                images: item.images?.map((img: any) => ({
-                    url: img.loc,
-                    title: img.title,
-                    caption: img.caption,
-                })),
+                images: item.images?.flatMap((img) => img.loc ? [normalizeSitemapImage(domain, img.loc)] : []),
             });
             existingUrls.add(loc);
         }
@@ -220,6 +324,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     } catch (error) {
         // BE không khả dụng — trả về static đầy đủ, Google vẫn index được tất cả trang
         console.error(`[Sitemap] BE unavailable for ${host}:`, (error as Error).message);
-        return staticEntries;
+        return staticWithFallbackEntries;
     }
 }

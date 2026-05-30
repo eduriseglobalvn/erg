@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { Button } from '@/components/admin/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/admin/ui/card';
+import { Button } from '@/components/cms/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/cms/ui/card';
 import { recruitmentApi } from '@/services/recruitment.api';
 import { Job } from '@/types/recruitment';
 import { Briefcase, MapPin, ArrowRight, Flame, Zap } from 'lucide-react';

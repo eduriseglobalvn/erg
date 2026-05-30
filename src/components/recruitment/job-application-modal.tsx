@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from 'react'
-import { Button } from '@/components/admin/ui/button'
-import { Input } from '@/components/admin/ui/input'
-import { Label } from '@/components/admin/ui/label'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/admin/ui/dialog'
+import { Button } from '@/components/cms/ui/button'
+import { Input } from '@/components/cms/ui/input'
+import { Label } from '@/components/cms/ui/label'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/cms/ui/dialog'
 import { recruitmentApi } from '@/services/recruitment.api'
 import { toast } from 'sonner'
 import { Loader2, Upload } from 'lucide-react'

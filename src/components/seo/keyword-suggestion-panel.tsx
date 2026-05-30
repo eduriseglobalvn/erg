@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { seoApi } from '@/services/seo.api';
 import { useDebounce } from 'use-debounce';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/admin/ui/card';
-import { Checkbox } from '@/components/admin/ui/checkbox';
-import { Button } from '@/components/admin/ui/button';
-import { Skeleton } from '@/components/admin/ui/skeleton';
-import { Badge } from '@/components/admin/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/cms/ui/card';
+import { Checkbox } from '@/components/cms/ui/checkbox';
+import { Button } from '@/components/cms/ui/button';
+import { Skeleton } from '@/components/cms/ui/skeleton';
+import { Badge } from '@/components/cms/ui/badge';
 import { AlertCircle, Flame, MessageCircleQuestion, Link2, TrendingUp, CheckCircle2 } from 'lucide-react';
 import { KeywordScoreBadge } from './keyword-score-badge';
 

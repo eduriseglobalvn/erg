@@ -7,13 +7,13 @@ import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useVerifyPinMutation, useResendPinMutation } from "@/hooks/use-verify-pin"
-import { Button } from "@/components/admin/ui/button"
+import { Button } from "@/components/cms/ui/button"
 import {
     Card, CardContent, CardDescription, CardHeader, CardTitle
-} from "@/components/admin/ui/card"
+} from "@/components/cms/ui/card"
 import {
     InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator
-} from "@/components/admin/ui/input-otp"
+} from "@/components/cms/ui/input-otp"
 
 export function OTPForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
     const router = useRouter()

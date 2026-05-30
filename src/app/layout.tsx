@@ -123,7 +123,8 @@ export default async function RootLayout(props: {
     dientoandammay: React.ReactNode;
     tuyendung: React.ReactNode;
     elearning: React.ReactNode;
-    admin: React.ReactNode;
+    cms: React.ReactNode;
+    forum: React.ReactNode;
 }) {
     const [headerList, cookieStore] = await Promise.all([
         headers(),
@@ -177,8 +178,12 @@ export default async function RootLayout(props: {
             content = slotOrChildren(props.elearning);
             currentMenu = ELEARNING_MENU_ITEMS;
             break;
-        case 'admin':
-            content = slotOrChildren(props.admin);
+        case 'cms':
+            content = slotOrChildren(props.cms);
+            break;
+        case 'forum':
+            content = slotOrChildren(props.forum);
+            currentMenu = MAIN_MENU_ITEMS;
             break;
         case '':
         case 'www':
@@ -190,7 +195,8 @@ export default async function RootLayout(props: {
     }
 
     const locale = cookieStore.get('NEXT_LOCALE')?.value || 'vi';
-    const messages = await getMessages();
+    const isForum = siteContext.siteKey === 'forum';
+    const messages = isForum ? {} : await getMessages();
 
     return (
         <html lang={locale} suppressHydrationWarning className={`${inter.variable} ${lora.variable} ${jetBrainsMono.variable} ${oswald.variable}`}>
@@ -205,32 +211,36 @@ export default async function RootLayout(props: {
                 <QueryProvider>
                     <QueryDevtoolsWrapper />
                     <NextIntlClientProvider locale={locale} messages={messages}>
-                        <AnalyticsTracker />
-                        <ConsentBanner />
+                        {!isForum && <AnalyticsTracker />}
+                        {!isForum && <ConsentBanner />}
                         <Toaster position="top-center" richColors />
-                        <React.Suspense fallback={null}>
-                            <RedirectNotification />
-                        </React.Suspense>
-                        <OfflineIndicator />
+                        {!isForum && (
+                            <>
+                                <React.Suspense fallback={null}>
+                                    <RedirectNotification />
+                                </React.Suspense>
+                                <OfflineIndicator />
 
-                        <SchemaScript type="Organization" data={{}} domain={siteContext.hostname} />
-                        <SchemaScript
-                            type="WebSite"
-                            data={{ name: SEO_DATA[seoKey]?.title || "Edurise Global" }}
-                            domain={siteContext.hostname}
-                        />
-                        <SchemaScript
-                            type="SiteNavigationElement"
-                            data={currentMenu}
-                            domain={siteContext.hostname}
-                        />
+                                <SchemaScript type="Organization" data={{}} domain={siteContext.hostname} />
+                                <SchemaScript
+                                    type="WebSite"
+                                    data={{ name: SEO_DATA[seoKey]?.title || "Edurise Global" }}
+                                    domain={siteContext.hostname}
+                                />
+                                <SchemaScript
+                                    type="SiteNavigationElement"
+                                    data={currentMenu}
+                                    domain={siteContext.hostname}
+                                />
+                            </>
+                        )}
 
                         <NextTopLoader color="#00008b" showSpinner={false} />
 
                         {content}
 
-                        <SpeedInsights />
-                        <Analytics />
+                        {!isForum && <SpeedInsights />}
+                        {!isForum && <Analytics />}
                     </NextIntlClientProvider>
                 </QueryProvider>
             </body>

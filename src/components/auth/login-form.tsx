@@ -11,17 +11,17 @@ import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { useLoginMutation } from "@/hooks/use-login"
 import { isEmailNotVerifiedError } from "@/services/http-client"
-import { Button } from "@/components/admin/ui/button"
+import { Button } from "@/components/cms/ui/button"
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle
-} from "@/components/admin/ui/card"
-import { Input } from "@/components/admin/ui/input"
-import { Label } from "@/components/admin/ui/label"
-import { Checkbox } from "@/components/admin/ui/checkbox"
+} from "@/components/cms/ui/card"
+import { Input } from "@/components/cms/ui/input"
+import { Label } from "@/components/cms/ui/label"
+import { Checkbox } from "@/components/cms/ui/checkbox"
 
 const AppleIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">

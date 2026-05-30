@@ -16,7 +16,7 @@ export function proxy(request: NextRequest) {
     response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
     const host = request.headers.get('host') || '';
-    const isAdminSurface = host.split(':')[0].startsWith('admin.') || request.nextUrl.pathname.startsWith('/admin');
+    const isAdminSurface = host.split(':')[0].startsWith('cms.') || request.nextUrl.pathname.startsWith('/cms');
 
     // Strict CSP for iframe protection in Admin
     if (isAdminSurface) {

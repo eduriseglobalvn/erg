@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { ZoomIn, ZoomOut, ChevronsLeft, ChevronsRight, Maximize } from 'lucide-react';
-import { Button, buttonVariants } from '@/components/admin/ui/button';
+import { Button, buttonVariants } from '@/components/cms/ui/button';
 import { cn } from '@/lib/utils';
 
 interface PdfToolbarProps {

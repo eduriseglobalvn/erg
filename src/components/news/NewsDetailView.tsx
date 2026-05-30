@@ -1,7 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Calendar, FolderOpen, Share2, Star, User } from 'lucide-react';
-import { Button } from '@/components/admin/ui/button';
+import { Button } from '@/components/cms/ui/button';
 import { PostContentRenderer } from '@/components/shared/post-content-renderer';
 import { RecentPostsSidebar } from '@/components/marketing/recent-posts-sidebar';
 import { Breadcrumb } from '@/components/shared/breadcrumb';
@@ -60,9 +61,12 @@ export const NewsDetailView: React.FC<NewsDetailViewProps> = ({
     if (!post) return null;
 
     const postWithRating = { ...post, rating: reviewStats };
+    const categoryHref = post.category?.slug
+        ? `/tin-tuc/danh-muc/${post.category.slug}`
+        : '/tin-tuc';
     const breadcrumbItems = [
         { label: 'Trang chủ', href: '/' },
-        { label: post.category?.name || 'Tin tức', href: `/tin-tuc/danh-muc/${post.category?.slug || ''}` },
+        { label: post.category?.name || 'Tin tức', href: categoryHref },
         { label: post.title, href: `/tin-tuc/${post.slug}` }
     ];
 
@@ -145,14 +149,31 @@ export const NewsDetailView: React.FC<NewsDetailViewProps> = ({
                             {post.title}
                         </h1>
 
+                        {post.thumbnailUrl && (
+                            <div className="mb-8 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+                                <div className="relative aspect-[16/9] w-full">
+                                    <Image
+                                        src={post.thumbnailUrl}
+                                        alt={post.title}
+                                        fill
+                                        className="object-cover"
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 70vw, 900px"
+                                        priority
+                                    />
+                                </div>
+                            </div>
+                        )}
+
                         <div className={isVisualArticle ? 'post-content-container visual-post-content-container' : 'post-content-container'}>
                             {!isVisualArticle && <AiSearchSummaryBox post={post} />}
                             <PostContentRenderer content={postContent} />
                         </div>
 
-                        <div className="mt-20 border-t border-gray-100 pt-10">
-                            <Reviews targetId={post.id} targetType="post" />
-                        </div>
+                        {!post.id.startsWith('mock-') && (
+                            <div className="mt-20 border-t border-gray-100 pt-10">
+                                <Reviews targetId={post.id} targetType="post" />
+                            </div>
+                        )}
                     </div>
 
                     <aside className={isVisualArticle ? 'space-y-5 xl:sticky xl:top-24 xl:self-start' : 'space-y-8 lg:col-span-4'}>

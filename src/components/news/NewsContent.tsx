@@ -5,16 +5,14 @@ import {
     ChevronLeft,
     ChevronRight,
 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
 import { useLocale, useTranslations } from 'next-intl';
-import { postsApi } from '@/services/posts.api';
 import { NewsCard } from '@/components/shared/news-card';
 import { NewsGridSkeleton } from '@/components/shared/news-card-skeleton';
 import { devWarn } from '@/lib/dev-logger';
+import { ERG_NEWS_MOCKS } from '@/mocks/erg-news';
 
 const DEFAULT_IMAGE = 'https://media.erg.edu.vn/posts/default-thumbnail.webp';
 const ITEMS_PER_PAGE = 9;
-const ALL_ERG_POST_LIMIT = 50;
 
 interface NewsItem {
     id?: string;
@@ -28,32 +26,8 @@ interface NewsItem {
 
 type TabType = 'ALL' | 'RSS' | 'ERG';
 
-interface NewsPost {
-    id: string;
-    title: string;
-    slug: string;
-    excerpt?: string;
-    createdAt: string;
-    publishedAt?: string;
-    thumbnailUrl?: string;
-    category?: {
-        name?: string;
-    };
-}
-
-interface NewsPostsData {
-    items: NewsPost[];
-    meta?: {
-        totalPages?: number;
-        page?: number;
-        total?: number;
-    };
-}
-
 interface NewsContentProps {
     initialTab?: TabType;
-    initialPostsData?: NewsPostsData;
-    initialAllPostsData?: NewsPostsData;
     initialRssNews?: NewsItem[];
 }
 
@@ -73,30 +47,6 @@ interface DisplayNewsItem {
     categoryName?: string;
 }
 
-function normalizePostsPayload(payload: unknown): NewsPostsData {
-    const normalizedPayload = (typeof payload === 'object' && payload !== null)
-        ? (payload as NewsPostsData & {
-            data?: NewsPost[];
-            page?: number;
-            total?: number;
-            totalPages?: number;
-        })
-        : undefined;
-    const items = Array.isArray(normalizedPayload?.items)
-        ? normalizedPayload.items
-        : (Array.isArray(normalizedPayload?.data) ? normalizedPayload.data : (Array.isArray(payload) ? payload : []));
-    const meta = normalizedPayload?.meta || normalizedPayload;
-
-    return {
-        items,
-        meta: {
-            totalPages: Number(meta?.totalPages) || 1,
-            page: Number(meta?.page) || 1,
-            total: Number(meta?.total) || items.length,
-        },
-    };
-}
-
 function normalizeRssPayload(payload: unknown): NewsItem[] {
     const data = (typeof payload === 'object' && payload !== null)
         ? (payload as RssApiPayload).data
@@ -109,8 +59,6 @@ function normalizeRssPayload(payload: unknown): NewsItem[] {
 
 export default function NewsContent({
     initialTab = 'ALL',
-    initialPostsData,
-    initialAllPostsData,
     initialRssNews = [],
 }: NewsContentProps) {
     const t = useTranslations('news.Page');
@@ -121,34 +69,6 @@ export default function NewsContent({
     const [loadingRss, setLoadingRss] = useState(
         (initialTab === 'ALL' || initialTab === 'RSS') && initialRssNews.length === 0
     );
-
-    const { data: postsResponse, isLoading: isLoadingApi, isError } = useQuery({
-        queryKey: ['news', 'erg', currentPage],
-        queryFn: () => postsApi.getAll({
-            page: currentPage,
-            limit: ITEMS_PER_PAGE,
-            status: 'published',
-            sortBy: 'createdAt',
-            order: 'DESC',
-        }).then((res) => normalizePostsPayload(res.data)),
-        enabled: activeTab === 'ERG',
-        initialData: currentPage === 1 ? initialPostsData : undefined,
-        staleTime: 5 * 60 * 1000,
-    });
-
-    const { data: allPostsResponse, isLoading: isLoadingAllPosts } = useQuery({
-        queryKey: ['news', 'all', 'erg-posts'],
-        queryFn: () => postsApi.getAll({
-            page: 1,
-            limit: ALL_ERG_POST_LIMIT,
-            status: 'published',
-            sortBy: 'createdAt',
-            order: 'DESC',
-        }).then((res) => normalizePostsPayload(res.data)),
-        enabled: activeTab === 'ALL',
-        initialData: initialAllPostsData || initialPostsData,
-        staleTime: 5 * 60 * 1000,
-    });
 
     const formatDate = (dateString: string) => {
         try {
@@ -196,15 +116,15 @@ export default function NewsContent({
         fetchRss();
     }, [activeTab, rssNews.length]);
 
-    const mapPostToDisplay = (item: NewsPost): DisplayNewsItem => ({
+    const mapMockErgToDisplay = (item: typeof ERG_NEWS_MOCKS[number]): DisplayNewsItem => ({
         key: `erg-${item.id}`,
         title: item.title,
-        excerpt: item.excerpt || t('noExcerpt'),
-        dateRaw: item.publishedAt || item.createdAt,
-        thumbnail: item.thumbnailUrl || DEFAULT_IMAGE,
+        excerpt: item.summary || t('noExcerpt'),
+        dateRaw: item.date,
+        thumbnail: item.image || DEFAULT_IMAGE,
         source: 'ERG',
         slug: item.slug,
-        categoryName: item.category?.name || t('ergNews'),
+        categoryName: t('ergNews'),
     });
 
     const mapRssToDisplay = (item: NewsItem, index: number): DisplayNewsItem => ({
@@ -218,9 +138,10 @@ export default function NewsContent({
         categoryName: t('educationHighlights'),
     });
 
-    const postsData = postsResponse || initialPostsData;
-    const ergNews = Array.isArray(postsData?.items) ? postsData.items : [];
-    const allErgNews = Array.isArray(allPostsResponse?.items) ? allPostsResponse.items : [];
+    const ergNews = useMemo(
+        () => ERG_NEWS_MOCKS.map(mapMockErgToDisplay),
+        [t]
+    );
 
     const displayedRssNews = useMemo(
         () => rssNews.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
@@ -229,10 +150,10 @@ export default function NewsContent({
 
     const allNews = useMemo(() => {
         return [
-            ...allErgNews.map(mapPostToDisplay),
+            ...ergNews,
             ...rssNews.map(mapRssToDisplay),
-        ].sort((left, right) => new Date(right.dateRaw).getTime() - new Date(left.dateRaw).getTime());
-    }, [allErgNews, rssNews, t]);
+        ];
+    }, [ergNews, rssNews, t]);
 
     const displayedAllNews = useMemo(
         () => allNews.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
@@ -240,15 +161,15 @@ export default function NewsContent({
     );
 
     const totalPages = activeTab === 'ERG'
-        ? (postsData?.meta?.totalPages || 1)
+        ? Math.max(Math.ceil(ergNews.length / ITEMS_PER_PAGE), 1)
         : activeTab === 'ALL'
             ? Math.max(Math.ceil(allNews.length / ITEMS_PER_PAGE), 1)
             : Math.max(Math.ceil(rssNews.length / ITEMS_PER_PAGE), 1);
 
     const isLoadingCurrentTab = activeTab === 'ERG'
-        ? isLoadingApi
+        ? false
         : activeTab === 'ALL'
-            ? (isLoadingAllPosts || loadingRss)
+            ? loadingRss
             : loadingRss;
 
     const paginate = (page: number) => {
@@ -328,26 +249,11 @@ export default function NewsContent({
 
                 {isLoadingCurrentTab ? (
                     <NewsGridSkeleton count={6} />
-                ) : isError && activeTab === 'ERG' ? (
-                    <div className="text-center py-20 text-red-500 font-medium border rounded-xl bg-red-50">
-                        {t('loadingError')}
-                    </div>
                 ) : (
                     <>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 mb-16">
                             {activeTab === 'ALL' && renderDisplayCards(displayedAllNews)}
-                            {activeTab === 'ERG' && ergNews.map((item) => (
-                                <NewsCard
-                                    key={item.id}
-                                    title={item.title}
-                                    excerpt={item.excerpt || t('noExcerpt')}
-                                    date={formatDate(item.publishedAt || item.createdAt)}
-                                    thumbnail={item.thumbnailUrl || DEFAULT_IMAGE}
-                                    slug={item.slug}
-                                    categoryName={item.category?.name || t('ergNews')}
-                                    isNew={isRecentNews(item.publishedAt || item.createdAt)}
-                                />
-                            ))}
+                            {activeTab === 'ERG' && renderDisplayCards(ergNews)}
                             {activeTab === 'RSS' && renderDisplayCards(displayedRssNews.map(mapRssToDisplay))}
                         </div>
 

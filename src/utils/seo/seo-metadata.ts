@@ -18,7 +18,9 @@ export interface SEOptions {
  * Lấy protocol và root domain tự động hỗ trợ cho cả môi trường dev (localhost) và production.
  */
 export function getBaseUrl(host: string): string {
-    const protocol = host.includes('localhost') || host.includes('.local') ? 'http' : 'https';
+    const isLocalHost = host.includes('localhost') || host.includes('127.0.0.1') || host.includes('.local');
+    const isDevPort = process.env.NODE_ENV !== 'production' && /:\d+$/.test(host);
+    const protocol = isLocalHost || isDevPort ? 'http' : 'https';
     return `${protocol}://${host}`;
 }
 

@@ -1,4 +1,4 @@
-import { Skeleton } from '@/components/admin/ui/skeleton';
+import { Skeleton } from '@/components/cms/ui/skeleton';
 
 export default function Loading() {
   return (

@@ -6,12 +6,12 @@ import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useResetPasswordMutation } from "@/hooks/use-verify-pin"
-import { Button } from "@/components/admin/ui/button"
+import { Button } from "@/components/cms/ui/button"
 import {
     Card, CardContent, CardDescription, CardHeader, CardTitle
-} from "@/components/admin/ui/card"
-import { Input } from "@/components/admin/ui/input"
-import { Label } from "@/components/admin/ui/label"
+} from "@/components/cms/ui/card"
+import { Input } from "@/components/cms/ui/input"
+import { Label } from "@/components/cms/ui/label"
 import { toast } from "sonner"
 
 export function ChangePasswordForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {

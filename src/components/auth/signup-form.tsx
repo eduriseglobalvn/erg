@@ -9,12 +9,12 @@ import { Loader2, Eye, EyeOff } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { authApi } from "@/services"
 import { RateLimitError } from "@/services/http-client"
-import { Button } from "@/components/admin/ui/button"
+import { Button } from "@/components/cms/ui/button"
 import {
     Card, CardContent, CardDescription, CardHeader, CardTitle
-} from "@/components/admin/ui/card"
-import { Input } from "@/components/admin/ui/input"
-import { Label } from "@/components/admin/ui/label"
+} from "@/components/cms/ui/card"
+import { Input } from "@/components/cms/ui/input"
+import { Label } from "@/components/cms/ui/label"
 
 interface SignupFormProps extends React.ComponentPropsWithoutRef<"div"> {
     embedded?: boolean

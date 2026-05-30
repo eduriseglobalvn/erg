@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Search, Filter, BookOpen, Clock, Star } from "lucide-react";
-import { Button } from "@/components/admin/ui/button"; // Note: reusing admin ui components for now
-import { Input } from "@/components/admin/ui/input";
-import { Card, CardContent, CardFooter } from "@/components/admin/ui/card";
-import { Badge } from "@/components/admin/ui/badge";
+import { Button } from "@/components/cms/ui/button"; // Note: reusing admin ui components for now
+import { Input } from "@/components/cms/ui/input";
+import { Card, CardContent, CardFooter } from "@/components/cms/ui/card";
+import { Badge } from "@/components/cms/ui/badge";
 import { Metadata } from "next";
 import { generateFullMetadata } from "@/utils/seo/seo-metadata";
 import { headers } from "next/headers";

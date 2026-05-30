@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Calendar, FolderOpen, Share2, Star, User } from 'lucide-react';
-import { Button } from '@/components/admin/ui/button';
+import { Button } from '@/components/cms/ui/button';
 import { PostContentRenderer } from '@/components/shared/post-content-renderer';
 import { RecentPostsSidebar } from '@/components/marketing/recent-posts-sidebar';
 import { Breadcrumb } from '@/components/shared/breadcrumb';

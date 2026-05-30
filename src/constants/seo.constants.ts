@@ -139,11 +139,20 @@ export const SEO_DATA = {
         ],
         ogImage: 'https://media.erg.edu.vn/logo/og-image.jpg'
     },
-    admin: {
-        title: `ADMIN | ${BRAND_SUFFIX}`,
-        navName: "Hệ thống Quản trị",
+    cms: {
+        title: `CMS | ${BRAND_SUFFIX}`,
+        navName: "Hệ thống Quản trị nội dung",
         description: "Hệ thống quản trị nội dung website Trung Tâm Ngoại Ngữ Tin Học ERG.",
-        keywords: ["quản trị hệ thống", "admin dashboard"],
+        keywords: ["quản trị hệ thống", "cms dashboard"],
+        ogImage: 'https://media.erg.edu.vn/logo/og-image.jpg'
+    },
+    forum: {
+        title: "Forum",
+        navName: "Forum",
+        description: "Khong gian mang xa hoi demo voi bang tin, binh luan nhieu cap va reaction.",
+        keywords: [
+            "forum", "social feed", "reaction", "nested comments", "community"
+        ],
         ogImage: 'https://media.erg.edu.vn/logo/og-image.jpg'
     },
     elearning: {

@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { Calendar } from 'lucide-react';
-import { Skeleton } from '@/components/admin/ui/skeleton';
+import { Skeleton } from '@/components/cms/ui/skeleton';
 import { postsApi } from '@/services/posts.api';
 
 interface RecentPostItem {

@@ -2,12 +2,13 @@ const DEFAULT_ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN ||
   (process.env.NODE_ENV === 'production' ? 'erg.edu.vn' : 'erg.edu.local')
 const DEFAULT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://erg.edu.vn'
 const KNOWN_SITE_SUBDOMAINS = new Set([
-  'admin',
+  'cms',
   'ai',
   'congdanso',
   'dientoandammay',
   'elearning',
   'elerning',
+  'forum',
   'tinhocquocgia',
   'tinhocquocte',
   'tinhocthieunhi',
@@ -99,7 +100,8 @@ function detectProtocol(host: string, hostname: string): 'http' | 'https' {
     hostname.includes('localhost') ||
     hostname === '127.0.0.1' ||
     hostname === '::1' ||
-    hostname.endsWith('.local')
+    hostname.endsWith('.local') ||
+    (process.env.NODE_ENV !== 'production' && /:\d+$/.test(host))
   ) {
     return 'http'
   }
@@ -157,7 +159,7 @@ export function resolveSiteContext(rawHost: string, rootDomain?: string): SiteCo
     subdomain,
     siteKey,
     isRoot: siteKey === 'main',
-    isAdmin: siteKey === 'admin',
+    isAdmin: siteKey === 'cms',
     protocol,
     baseUrl,
   }

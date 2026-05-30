@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { Button } from '@/components/admin/ui/button'
-import { Input } from '@/components/admin/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/admin/ui/card'
+import { Button } from '@/components/cms/ui/button'
+import { Input } from '@/components/cms/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/cms/ui/card'
 import { Search, CheckCircle, Clock, XCircle, FileText, User } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { recruitmentApi } from '@/services/recruitment.api'

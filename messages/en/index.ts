@@ -5,7 +5,7 @@ import courses from './courses.json';
 import recruitment from './recruitment.json';
 import news from './news.json';
 import contact from './contact.json';
-import admin from './admin.json';
+import cms from './cms.json';
 import roadmap from './roadmap.json';
 
 const messages = {
@@ -16,7 +16,7 @@ const messages = {
     recruitment,
     news,
     contact,
-    admin,
+    cms,
     roadmap,
 };
 

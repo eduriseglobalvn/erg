@@ -233,7 +233,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
             : 'lg:bg-white/95 lg:backdrop-blur-md lg:shadow-sm lg:py-4'
           }`}
       >
-        <div className="container mx-auto px-4 md:px-6">
+        <div className="mx-auto w-full max-w-[1760px] px-4 md:px-6 xl:px-10 2xl:px-14">
           {/* ... (Phần Top Bar và Logo giữ nguyên code cũ) ... */}
           <div className={`hidden lg:flex justify-between items-center text-xs font-medium text-gray-500 mb-2 border-b border-gray-100 pb-2 transition-all duration-300 ${hideTopBar || isScrolled ? 'h-0 opacity-0 overflow-hidden mb-0 pb-0' : 'opacity-100'}`}>
             <div className="flex gap-4">
@@ -255,9 +255,9 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-6 xl:gap-10">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group">
+            <Link href="/" className="flex shrink-0 items-center gap-3 group">
               <div className="flex-shrink-0">
                 <Image
                   src="https://media.erg.edu.vn/logo/erg.png"
@@ -280,52 +280,57 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:ml-8 lg:flex lg:flex-1 lg:flex-nowrap lg:items-center lg:justify-end lg:gap-4 xl:gap-6 2xl:gap-8">
-              {menuItems.map((item) => {
-                const hasSubmenu = item.children && item.children.length > 0;
-                const isActive = isMenuItemActive(item, pathname);
+            <div className="hidden lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-center lg:gap-5 xl:gap-7 2xl:gap-9">
+              <nav className="flex min-w-0 flex-1 flex-nowrap items-center justify-center gap-5 xl:gap-7 2xl:gap-9">
+                {menuItems.map((item) => {
+                  const hasSubmenu = item.children && item.children.length > 0;
+                  const isActive = isMenuItemActive(item, pathname);
+                  const isExternal = item.path.startsWith('http');
 
-                return (
-                  <div key={item.label} className="relative group py-4">
-                    <Link
-                      href={item.path}
-                      onClick={(e) => {
-                        if (item.path.startsWith('#')) {
-                          e.preventDefault();
-                          window.dispatchEvent(new CustomEvent('open-elearning-modal', { detail: item.path.substring(1) }));
-                        }
-                      }}
-                      className={`flex shrink-0 items-center gap-1 whitespace-nowrap text-[15px] xl:text-[16px] 2xl:text-[17px] font-bold uppercase tracking-[0.04em] transition-all duration-300 relative
+                  return (
+                    <div key={item.label} className="relative group flex shrink-0 justify-center py-4">
+                      <Link
+                        href={item.path}
+                        target={isExternal ? "_blank" : undefined}
+                        rel={isExternal ? "noopener noreferrer" : undefined}
+                        onClick={(e) => {
+                          if (item.path.startsWith('#')) {
+                            e.preventDefault();
+                            window.dispatchEvent(new CustomEvent('open-elearning-modal', { detail: item.path.substring(1) }));
+                          }
+                        }}
+                        className={`flex items-center gap-1 whitespace-nowrap text-[15px] xl:text-[16px] 2xl:text-[17px] font-bold uppercase tracking-[0.04em] transition-all duration-300 relative
                                 ${isActive ? 'text-highlight' : 'text-primary hover:text-highlight'}
                                 ${!hasSubmenu ? "after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[3px] after:bg-highlight after:transition-all after:duration-300 group-hover:after:w-full" : ''}
                             `}
-                    >
-                      {translateLabel(item.label)}
-                      {hasSubmenu && (
-                        <ChevronDown
-                          size={16}
-                          className="group-hover:rotate-180 transition-transform duration-300"
-                          strokeWidth={3}
-                        />
-                      )}
-                    </Link>
-                    {hasSubmenu && (
-                      <div
-                        className="absolute top-full left-1/2 z-50 pt-3 opacity-0 invisible -translate-x-1/2 translate-y-2 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible"
                       >
-                        <DesktopDropdownList
-                          items={item.children || []}
-                          pathname={pathname}
-                          translateLabel={translateLabel}
-                        />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                        {translateLabel(item.label)}
+                        {hasSubmenu && (
+                          <ChevronDown
+                            size={16}
+                            className="group-hover:rotate-180 transition-transform duration-300"
+                            strokeWidth={3}
+                          />
+                        )}
+                      </Link>
+                      {hasSubmenu && (
+                        <div
+                          className="absolute top-full left-1/2 z-50 pt-3 opacity-0 invisible -translate-x-1/2 translate-y-2 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible"
+                        >
+                          <DesktopDropdownList
+                            items={item.children || []}
+                            pathname={pathname}
+                            translateLabel={translateLabel}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </nav>
 
               {/* Search Desktop */}
-              <div className="flex items-center ml-2 relative">
+              <div className="relative ml-auto flex shrink-0 items-center">
                 <div className={`flex items-center overflow-hidden transition-all duration-300 ease-in-out ${isSearchOpen ? 'w-60 opacity-100 mr-2' : 'w-0 opacity-0 mr-0'}`}>
                   <input
                     ref={searchInputRef}
@@ -338,7 +343,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                   {isSearchOpen ? <X size={24} /> : <Search size={24} />}
                 </button>
               </div>
-            </nav>
+            </div>
 
             {/* Mobile Toggle Button (Menu Icon) */}
             <button className="lg:hidden p-2 text-primary" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -390,6 +395,8 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                         >
                           <Link
                             href={item.path}
+                            target={item.path.startsWith('http') ? "_blank" : undefined}
+                            rel={item.path.startsWith('http') ? "noopener noreferrer" : undefined}
                             className="min-w-0 flex-1 text-left"
                             onClick={(e) => {
                               if (item.path.startsWith('#')) {
@@ -477,6 +484,8 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                     ) : (
                       <Link
                         href={item.path}
+                        target={item.path.startsWith('http') ? "_blank" : undefined}
+                        rel={item.path.startsWith('http') ? "noopener noreferrer" : undefined}
                         className="block py-4 text-lg font-bold uppercase text-primary hover:text-highlight transition-colors"
                         onClick={(e) => {
                           if (item.path.startsWith('#')) {

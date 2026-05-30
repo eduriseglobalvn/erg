@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge } from "@/components/admin/ui/badge";
+import { Badge } from "@/components/cms/ui/badge";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 export interface KeywordScoreBadgeProps {

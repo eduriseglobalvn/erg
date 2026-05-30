@@ -1,0 +1,28 @@
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+- Environments: .env.local
+✓ Ready in 546ms
+- Experiments (use with caution):
+  · optimizePackageImports
+  · serverActions
+
+○ Compiling / ...
+ GET / 200 in 10.0s (next.js: 8.9s, proxy.ts: 131ms, application-code: 1045ms)
+ GET / 200 in 606ms (next.js: 6ms, proxy.ts: 5ms, application-code: 595ms)
+ GET / 200 in 449ms (next.js: 3ms, proxy.ts: 4ms, application-code: 442ms)
+ GET / 200 in 517ms (next.js: 5ms, proxy.ts: 7ms, application-code: 505ms)
+ POST /api/insight/session/begin 403 in 991ms (next.js: 974ms, application-code: 17ms)
+✓ Compiled in 245ms
+ GET / 200 in 785ms (next.js: 122ms, proxy.ts: 42ms, application-code: 622ms)
+ GET / 200 in 345ms (next.js: 11ms, proxy.ts: 28ms, application-code: 306ms)
+ GET / 200 in 993ms (next.js: 7ms, proxy.ts: 4ms, application-code: 982ms)
+ GET / 200 in 476ms (next.js: 5ms, proxy.ts: 7ms, application-code: 464ms)
+ GET / 200 in 457ms (next.js: 4ms, proxy.ts: 4ms, application-code: 449ms)
+ GET / 200 in 915ms (next.js: 12ms, proxy.ts: 7ms, application-code: 896ms)
+✓ Compiled in 366ms
+ GET / 200 in 895ms (next.js: 355ms, proxy.ts: 67ms, application-code: 473ms)
+ GET / 200 in 900ms (next.js: 195ms, proxy.ts: 67ms, application-code: 637ms)
+ GET / 200 in 931ms (next.js: 6ms, proxy.ts: 7ms, application-code: 918ms)
+ GET / 200 in 1076ms (next.js: 5ms, proxy.ts: 6ms, application-code: 1066ms)
+ GET / 200 in 638ms (next.js: 5ms, proxy.ts: 5ms, application-code: 628ms)

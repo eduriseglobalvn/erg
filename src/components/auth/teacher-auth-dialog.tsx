@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { Sparkles } from "lucide-react"
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/admin/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/admin/ui/tabs"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/cms/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/cms/ui/tabs"
 import { LoginForm } from "@/components/auth/login-form"
 import { SignupForm } from "@/components/auth/signup-form"
 

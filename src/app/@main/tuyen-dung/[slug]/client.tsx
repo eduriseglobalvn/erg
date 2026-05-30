@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { Button } from '@/components/admin/ui/button'
+import { Button } from '@/components/cms/ui/button'
 import { JobApplicationModal } from '@/components/recruitment/job-application-modal'
 import { Job } from '@/types/recruitment'
 import { Send } from 'lucide-react'

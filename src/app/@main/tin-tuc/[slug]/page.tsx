@@ -39,7 +39,7 @@ async function getReviewStats(targetId: string): Promise<ReviewStats | null> {
         if (!res.ok) return null;
         const json = await res.json() as ReviewStatsResponse;
         return json.stats || null;
-    } catch (error) {
+    } catch {
         return null;
     }
 }
@@ -81,7 +81,7 @@ async function getPost(slug: string, previewId?: string | null): Promise<PostFet
 
         const json = await res.json();
         return { data: json.data, status: 200 };
-    } catch (error) {
+    } catch {
         return { data: null, status: 500 };
     }
 }
@@ -111,7 +111,7 @@ async function getRecentPosts(): Promise<RecentPostItem[]> {
             (post, index, allPosts) => allPosts.findIndex((item) => item.slug === post.slug) === index
         );
         return merged.slice(0, 5);
-    } catch (error) {
+    } catch {
         return mockRecentPosts;
     }
 }
@@ -151,7 +151,7 @@ export async function generateMetadata({ params, searchParams }: {
     return generateFullMetadata({
         title: isDraft ? `[PREVIEW] ${seoTitle}` : seoTitle,
         description: seoDesc,
-        keywords: post.keywords?.split(',') || [],
+        keywords: post.keywords?.split(',').map((keyword) => keyword.trim()).filter(Boolean) || [],
         path: `/tin-tuc/${post.slug}`,
         host: siteContext.host,
         type: 'article',

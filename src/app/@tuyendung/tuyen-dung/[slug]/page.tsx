@@ -1,21 +1,20 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { getJobDetailBySlug, EMPLOYER_INFO } from '@/mocks/jobs.mock';
+import { EMPLOYER_INFO } from '@/mocks/jobs.mock';
 import { recruitmentApi } from '@/services/recruitment.api';
 import JobDetailContent from '@/components/tuyendung/JobDetailContent';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
 import { SchemaScript } from '@/components/seo/schema-script';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 import { headers } from 'next/headers';
 
-import { notFound, permanentRedirect, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 interface Props {
     params: Promise<{ slug: string }>;
 }
 
 import { generateFullMetadata } from '@/utils/seo/seo-metadata';
+import { buildSeoKeywords } from '@/utils/seo/keywords';
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params;
@@ -26,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     try {
         const res = await recruitmentApi.getJobBySlug(slug);
         job = res.data;
-    } catch (e) {
+    } catch {
         // Fallback
     }
 
@@ -39,6 +38,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return generateFullMetadata({
         title: job.title,
         description: job.summary,
+        keywords: buildSeoKeywords({
+            title: job.title,
+            description: job.summary,
+            sections: [
+                job.location,
+                job.workType,
+                ...(job.description || []),
+                ...(job.requirements || []),
+                ...(job.benefits || []),
+            ],
+            seedKeywords: ['ERG tuyển dụng', 'việc làm ERG', job.title],
+        }),
         path: `/tuyen-dung/${slug}`,
         host,
         type: 'website',
@@ -51,7 +62,7 @@ export default async function Page({ params }: Props) {
     try {
         const res = await recruitmentApi.getJobBySlug(slug);
         job = res.data;
-    } catch (e) {
+    } catch {
         // Fallback
     }
 

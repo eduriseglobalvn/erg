@@ -14,10 +14,10 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     const subdomain = isRoot ? '' : hostname.replace(`.${rootDomain}`, '');
 
     const allowPaths = ['/'];
-    const disallowPaths = ['/api/', '/_next/', '/auth/', '/preview/', '/onboarding/', '/verify-pin/'];
+    const disallowPaths = ['/api/', '/auth/', '/preview/', '/onboarding/', '/verify-pin/'];
 
-    if (isRoot || subdomain === 'admin') {
-        disallowPaths.push('/admin/');
+    if (isRoot || subdomain === 'cms') {
+        disallowPaths.push('/cms/');
     }
 
     return {

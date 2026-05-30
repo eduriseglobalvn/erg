@@ -65,8 +65,10 @@ export default function TrainingFieldsContent() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {TRAINING_FIELDS.map((item) => {
                         return (
-                            <div
+                            <Link
                                 key={item.id}
+                                href={item.link}
+                                aria-label={`Xem chi tiết ${item.title}`}
                                 className="group bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-2xl transition-all duration-300 flex flex-col md:flex-row gap-6 items-stretch relative overflow-hidden"
                             >
                                 {/* Thanh màu trang trí bên trái khi hover */}
@@ -105,16 +107,15 @@ export default function TrainingFieldsContent() {
                                     </div>
 
                                     {/* Action Link */}
-                                    <Link
-                                        href={item.link}
+                                    <span
                                         className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider hover:gap-3 transition-all mt-auto group/btn w-fit"
                                         style={{ color: '#cc0022' }}
                                     >
                                         {t('fields.more')}
                                         <ArrowRight size={16} className="transform group-hover/btn:translate-x-1 transition-transform" />
-                                    </Link>
+                                    </span>
                                 </div>
-                            </div>
+                            </Link>
                         );
                     })}
                 </div>

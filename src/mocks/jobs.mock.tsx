@@ -208,7 +208,7 @@ export const EMPLOYER_INFO: EmployerInfo = {
     nameOfOrganization: "CÔNG TY TNHH EDURISE GLOBAL",
     tax: "0319007722",
     mainAddress: "Tầng 6 Toà nhà 83B Hoàng Sa – Phường Tân Định – TP Hồ Chí Minh",
-    location: "Trung tâm tin học ERG, 40-42 Bình Phú – Phường Bình Phú – TP Hồ Chí Minh.",
+    location: "ERG Academy, Số 21 Đường Huỳnh Văn Một, Phú Thạnh, Hồ Chí Minh.",
     fieldOfActivity: [
         "Cung cấp giải pháp CNTT, Hoạt động chuyên môn, khoa học và công nghệ khác chưa phân đầu vào, Hoạt động các trung tâm, đại lý tư vấn, giới thiệu lao động và việc làm.",
         "Đào tạo sơ cấp.",

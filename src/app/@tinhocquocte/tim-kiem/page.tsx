@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Search, BookOpen, Clock, Star } from "lucide-react";
-import { Input } from "@/components/admin/ui/input";
-import { Button } from "@/components/admin/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/admin/ui/card";
+import { Input } from "@/components/cms/ui/input";
+import { Button } from "@/components/cms/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/cms/ui/card";
 import { Breadcrumb } from "@/components/seo/breadcrumb";
 import { SchemaScript } from "@/components/seo/schema-script";
 import { Metadata } from "next";

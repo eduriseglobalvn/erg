@@ -12,7 +12,7 @@ const localBackendConnectSrc = [
     'http://127.0.0.1:8080',
     'http://localhost:8080',
     'http://erg.edu.local:8080',
-    'http://admin.erg.edu.local:8080',
+    'http://cms.erg.edu.local:8080',
     'http://elearning.erg.edu.local:8080',
 ]
 

@@ -133,7 +133,7 @@ export default function ContactPage() {
                     Bất kể khối cha co giãn thế nào, iframe cũng sẽ đi theo
                  */}
                 <iframe
-                    src="https://maps.google.com/maps?q=40-42%20B%C3%ACnh%20Ph%C3%BA%2C%20P%20B%C3%ACnh%20Ph%C3%BA%2C%20TP.%20H%E1%BB%93%20Ch%C3%AD%20Minh&t=&z=15&ie=UTF8&iwloc=&output=embed" // Map link
+                    src="https://maps.google.com/maps?q=ERG+Academy%2C+S%E1%BB%91+21+%C4%90%C6%B0%E1%BB%9Dng+Hu%E1%BB%B3nh+V%C4%83n+M%E1%BB%99t%2C+Ph%C3%BA+Th%E1%BA%A1nh%2C+H%E1%BB%93+Ch%C3%AD+Minh&t=&z=15&ie=UTF8&iwloc=&output=embed" // Map link
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
@@ -153,10 +153,10 @@ export default function ContactPage() {
                         <div>
                             <h4 className="font-bold text-sm text-gray-900 mb-1">Trung tâm Tin học ERG</h4>
                             <p className="text-xs text-gray-500 leading-relaxed">
-                                Số 40-42 Bình Phú, P. Bình Phú, TP. Hồ Chí Minh
+                                ERG Academy, Số 21 Đường Huỳnh Văn Một, Phú Thạnh, Hồ Chí Minh
                             </p>
                             <a
-                                href="https://maps.app.goo.gl/..."
+                                href="https://maps.app.goo.gl/sdPoXANxt3RHuEnTA"
                                 target="_blank"
                                 className="inline-flex items-center gap-1 text-xs font-bold text-[#00008b] mt-3 hover:underline"
                             >

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Clock, Star, PlayCircle, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/admin/ui/button"; // Reusing admin UI components for demo
-import { Card, CardContent } from "@/components/admin/ui/card";
-import { Badge } from "@/components/admin/ui/badge";
+import { Button } from "@/components/cms/ui/button"; // Reusing admin UI components for demo
+import { Card, CardContent } from "@/components/cms/ui/card";
+import { Badge } from "@/components/cms/ui/badge";
 import { Breadcrumb } from "@/components/seo/breadcrumb";
 import { SchemaScript } from "@/components/seo/schema-script";
 import { Metadata } from "next";

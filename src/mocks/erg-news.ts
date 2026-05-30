@@ -135,7 +135,7 @@ function buildAcademicEnglishContent() {
         <section>
             <h2 id="cta">Sẵn sàng nâng cấp kỹ năng cùng ERG?</h2>
             <p><strong>Thành thạo Tin học văn phòng hôm nay — mở rộng cơ hội học tập và nghề nghiệp ngày mai.</strong> Nếu bạn đang cần một khóa học thực tế, dễ tiếp cận và có lộ trình rõ ràng, ERG - EDURISE GLOBAL chính là nơi phù hợp để bắt đầu.</p>
-            <p>Inbox ngay để được tư vấn khóa học phù hợp với trình độ của bạn. Trung tâm hiện hỗ trợ tư vấn tại <strong>40-42, Phường Bình Phú, TP. Hồ Chí Minh</strong>.</p>
+            <p>Inbox ngay để được tư vấn khóa học phù hợp với trình độ của bạn. Trung tâm hiện hỗ trợ tư vấn tại <strong>ERG Academy, Số 21 Đường Huỳnh Văn Một, Phú Thạnh, Hồ Chí Minh</strong>.</p>
         </section>
     `;
 }

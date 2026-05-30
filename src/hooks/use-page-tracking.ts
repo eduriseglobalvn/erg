@@ -34,8 +34,8 @@ export function usePageTracking() {
 
                     const host = window.location.hostname;
                     
-                    const skipPaths = ['/admin', '/auth'];
-                    if (host.includes('admin') || skipPaths.some(p => pathname?.startsWith(p))) {
+                    const skipPaths = ['/cms', '/auth'];
+                    if (host.includes('cms') || skipPaths.some(p => pathname?.startsWith(p))) {
                         return;
                     }
 

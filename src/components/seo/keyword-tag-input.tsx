@@ -2,8 +2,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { Input } from '@/components/admin/ui/input';
-import { Badge } from '@/components/admin/ui/badge';
+import { Input } from '@/components/cms/ui/input';
+import { Badge } from '@/components/cms/ui/badge';
 
 interface KeywordTagInputProps {
     value: string[];

@@ -173,7 +173,7 @@ const JobDetailContent = ({ job, employer }: JobDetailContentProps) => {
                             </p>
                             <div className="h-64 rounded-lg overflow-hidden border border-gray-200">
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.8998521705817!2d106.62756084016806!3d10.742201459866777!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f005ce5dca9%3A0x973ca9cb9b1195ff!2zR3M0MC00MiBCw6xuaCBQaMO6!5e0!3m2!1sen!2s!4v1774510064238!5m2!1sen!2s"
+                                    src="https://maps.google.com/maps?q=ERG+Academy%2C+S%E1%BB%91+21+%C4%90%C6%B0%E1%BB%9Dng+Hu%E1%BB%B3nh+V%C4%83n+M%E1%BB%99t%2C+Ph%C3%BA+Th%E1%BA%A1nh%2C+H%E1%BB%93+Ch%C3%AD+Minh&t=&z=15&ie=UTF8&iwloc=&output=embed"
                                     width="100%"
                                     height="100%"
                                     style={{ border: 0 }}

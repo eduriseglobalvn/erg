@@ -99,12 +99,12 @@ const FooterWaveFix = async () => {
                                 <div>
                                     <span className="text-slate-500 text-xs font-bold uppercase block mb-1">{t('address')}</span>
                                     <a
-                                        href="https://maps.app.goo.gl/A5izGLp4PALPgjX26"
+                                        href="https://maps.app.goo.gl/sdPoXANxt3RHuEnTA"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-[#00008b] font-semibold leading-tight block hover:text-[#cc0022] transition-colors"
                                     >
-                                        Trung tâm Tin học ERG, Số 40-42, Đường Bình Phú, Phường Bình Phú, TP. Hồ Chí Minh
+                                        ERG Academy, Số 21 Đường Huỳnh Văn Một, Phú Thạnh, Hồ Chí Minh
                                     </a>
                                 </div>
                             </li>

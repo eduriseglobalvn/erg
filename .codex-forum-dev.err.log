@@ -1,0 +1,22 @@
+$ next dev --turbo --hostname "0.0.0.0"
+[browser] [Analytics] Session begin error: ApiError: Cross-origin mutation requests are not allowed
+    at httpClient (src/services/http-client.ts:364:15)
+    at async Object.trackSessionBegin (src/services/analytics.api.ts:112:20)
+    at async usePageTracking.useEffect.trackSessionBegin (src/hooks/use-page-tracking.ts:59:60)
+  362 |         }
+  363 |
+> 364 |         throw new ApiError(
+      |               ^
+  365 |             errorData.message || errorData.error || `HTTP Error ${response.status}`,
+  366 |             response.status,
+  367 |             errorData (src/lib/dev-logger.ts:16:11)
+[browser] [Analytics] Session begin failed: Error: Analytics API error: Cross-origin mutation requests are not allowed
+    at Object.trackSessionBegin (src/services/analytics.api.ts:119:19)
+    at async usePageTracking.useEffect.trackSessionBegin (src/hooks/use-page-tracking.ts:59:60)
+  117 |         } catch (error: unknown) {
+  118 |             devWarn('[Analytics] Session begin error:', error);
+> 119 |             throw new Error(
+      |                   ^
+  120 |                 `Analytics API error: ${error instanceof Error ? error.message : 'Unknown...
+  121 |             );
+  122 |         } (src/lib/dev-logger.ts:16:11)

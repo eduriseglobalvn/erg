@@ -30,6 +30,7 @@ export const FUNCTIONAL_SUBDOMAINS = [
     { label: "Tuyển dụng", subdomain: "tuyendung" },
     { label: "E-Learning", subdomain: "elearning" },
     { label: "E-Learning (Alias)", subdomain: "elerning" },
+    { label: "Cộng đồng", subdomain: "forum" },
 ];
 
 // 3. EXPORT DANH SÁCH SUBDOMAIN (CẬP NHẬT)
@@ -42,6 +43,7 @@ export const VALID_SUBDOMAINS = [
 // --- THÊM MỚI: HELPER LINKS ---
 // Export sẵn link để dùng trong code cho tiện
 export const RECRUITMENT_LINK = getSubdomainLink("tuyendung");
+export const COMMUNITY_LINK = getSubdomainLink("forum");
 
 
 // 4. MENU ITEMS (Giữ nguyên hoặc cập nhật nếu cần)
@@ -72,6 +74,7 @@ export const MAIN_MENU_ITEMS = [
     { label: "CÔNG KHAI", path: "/cong-khai", children: PUBLIC_DISCLOSURE_MENU_ITEMS },
     { label: "CƠ HỘI NGHỀ NGHIỆP", path: "/co-hoi-nghe-nghiep" },
     { label: "LIÊN HỆ", path: "/lien-he" },
+    { label: "CỘNG ĐỒNG", path: COMMUNITY_LINK },
 ];
 export const THQT_MENU_ITEMS = [
     {

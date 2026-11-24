@@ -6,7 +6,19 @@ import { COURSES } from '@/constants/courses';
 import { SchemaScript } from '@/components/seo/schema-script';
 import { headers } from 'next/headers';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
 
+
+export const metadata: Metadata = {
+    ...createPageMetadata({
+        title: "Tin học thiếu nhi: lập trình Scratch, Python cho bé | ERG",
+        description: "Khóa học tin học thiếu nhi tại ERG: lập trình Scratch, Python và Robotics theo phương pháp STEAM, giúp trẻ phát triển tư duy logic và đam mê công nghệ từ sớm.",
+        path: "/",
+        image: SEO_DATA.tinhocthieunhi.ogImage,
+        imageAlt: "Lớp lập trình Scratch, Python cho trẻ em tại ERG",
+    }),
+    title: { absolute: "Tin học thiếu nhi: lập trình Scratch, Python cho bé | ERG" },
+};
 
 export default async function KidsCodingPage() {
   const headerList = await headers();

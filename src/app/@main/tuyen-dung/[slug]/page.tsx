@@ -1,23 +1,73 @@
-import { notFound, permanentRedirect, redirect } from 'next/navigation';
+import type { Metadata } from 'next';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { SchemaScript } from '@/components/seo/schema-script';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
 import { recruitmentApi } from '@/services/recruitment.api';
 import { JobDetailClient } from './client'; // Client component for interactivity
 import { Briefcase, MapPin, Clock, DollarSign, Calendar } from 'lucide-react';
 
-export default async function JobDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
-    let job;
+type Props = { params: Promise<{ slug: string }> };
 
+async function getJob(slug: string) {
     try {
         const res = await recruitmentApi.getJobBySlug(slug);
-        job = res.data;
-    } catch (e) {
-        // Fallback or ignore
+        return res.data;
+    } catch {
+        return undefined;
     }
+}
+
+// Chỉ nhận định dạng dd/mm/yyyy hoặc yyyy-mm-dd; giá trị khác bỏ qua để không phát sinh ngày sai vào dữ liệu có cấu trúc.
+function toIsoDate(value?: string) {
+    if (!value) return undefined;
+    const vn = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (vn) return `${vn[3]}-${vn[2].padStart(2, '0')}-${vn[1].padStart(2, '0')}`;
+    return /^\d{4}-\d{2}-\d{2}/.test(value) ? value.slice(0, 10) : undefined;
+}
+
+function toEmploymentType(workType?: string) {
+    if (!workType) return undefined;
+    if (/toàn thời gian|full/i.test(workType)) return 'FULL_TIME';
+    if (/bán thời gian|part/i.test(workType)) return 'PART_TIME';
+    if (/thực tập|intern/i.test(workType)) return 'INTERN';
+    return undefined;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { slug } = await params;
+    const job = await getJob(slug);
+    if (!job) return { title: 'Không tìm thấy vị trí tuyển dụng', robots: { index: false, follow: true } };
+
+    const title = `${job.title} - Tuyển dụng | ERG`;
+    const base = (job.summary || `Ứng tuyển vị trí ${job.title} tại ERG (Edurise Global)${job.location ? ` làm việc tại ${job.location}` : ''}.`).replace(/\s+/g, ' ').trim();
+    const full = base.length < 110 ? `${base} Xem mô tả công việc, yêu cầu, quyền lợi và hạn nộp hồ sơ.` : base;
+    const description = full.length > 160 ? `${full.slice(0, 157).replace(/\s+\S*$/, '')}...` : full;
+
+    return {
+        ...createPageMetadata({ title, description, path: `/tuyen-dung/${slug}`, imageAlt: `Tuyển dụng ${job.title} tại ERG` }),
+        title: { absolute: title },
+    };
+}
+
+export default async function JobDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const job = await getJob(slug);
 
     if (!job) {
         // [SEO] Redirect về trang tuyển dụng kèm thông báo
         redirect('/tuyen-dung?reason=not-found');
     }
+
+    const host = (await headers()).get('host') || 'erg.edu.vn';
+    const datePosted = toIsoDate(job.postDate) || toIsoDate(job.createdAt);
+    const employmentType = toEmploymentType(job.workType);
+    const jobDescription = (job.description || []).join(' ');
+    const breadcrumbItems = [
+        { label: 'Trang chủ', href: '/' },
+        { label: 'Tuyển dụng', href: '/tuyen-dung' },
+        { label: job.title },
+    ];
 
     // Helper to render lists
     const renderList = (items: string[]) => (
@@ -29,6 +79,23 @@ export default async function JobDetailPage({ params }: { params: Promise<{ slug
     );
 
     return (
+        <>
+        <SchemaScript type="BreadcrumbList" data={{ items: breadcrumbItems }} domain={host} />
+        {/* JobPosting chỉ phát khi có đủ ngày đăng, mô tả, địa điểm và loại hình làm việc thật từ dữ liệu tin tuyển dụng */}
+        {datePosted && employmentType && jobDescription && job.location && (
+            <SchemaScript
+                type="JobPosting"
+                data={{
+                    title: job.title,
+                    description: jobDescription,
+                    postedAt: datePosted,
+                    validThrough: toIsoDate(job.deadline),
+                    type: employmentType,
+                    location: job.location,
+                }}
+                domain={host}
+            />
+        )}
         <div className="min-h-screen bg-gray-50 py-12">
             <div className="container mx-auto px-4 max-w-5xl">
 
@@ -113,5 +180,6 @@ export default async function JobDetailPage({ params }: { params: Promise<{ slug
                 </div>
             </div>
         </div>
+        </>
     );
 }

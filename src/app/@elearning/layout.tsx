@@ -3,7 +3,6 @@ import React from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ELEARNING_MENU_ITEMS } from "@/constants/MenuItem";
-import { ElearningModalManager } from "@/components/elearning/elearning-modal-manager";
 
 export default function ElearningLayout({
     children,
@@ -20,7 +19,6 @@ export default function ElearningLayout({
             </main>
 
             <Footer />
-            <ElearningModalManager />
         </>
     );
 }

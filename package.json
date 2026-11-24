@@ -10,6 +10,12 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "security:check": "node scripts/security-regression-check.mjs",
+    "quality:boundary": "node scripts/check-public-cms-boundary.mjs",
+    "quality:boundary:test": "node --test scripts/public-cms-quality.test.mjs",
+    "test:tiptap": "node --test scripts/tiptap-simple-editor-split.policy.test.mjs && bun test scripts/tiptap-image-upload.test.mjs scripts/tiptap-url-utils.test.mjs",
+    "bundle:check": "node scripts/check-public-cms-bundle.mjs",
+    "smoke:public": "node scripts/public-cms-smoke.mjs",
+    "verify:public-cms": "bun run quality:boundary && bun run test:tiptap && bun run lint && bun run typecheck && bun run security:check && bun run build && bun run bundle:check",
     "refresh-baseline-browser-mapping": "bun add baseline-browser-mapping@latest -D"
   },
   "dependencies": {

@@ -1,0 +1,37 @@
+name: Public CMS quality
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "config/public-cms-boundary.json"
+      - "package.json"
+      - "bun.lock"
+      - ".github/workflows/public-cms-quality.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "config/public-cms-boundary.json"
+      - "package.json"
+      - "bun.lock"
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.11
+      - run: bun install --frozen-lockfile
+      - run: node --test scripts/public-cms-quality.test.mjs scripts/visual-post-editor-split.policy.test.mjs
+      - run: bun test scripts/visual-post-editor-model.test.mjs
+      - run: bun run verify:public-cms
+      - name: Start production server and run smoke paths
+        run: |
+          bun run start -- --hostname 127.0.0.1 > /tmp/erg-public-cms.log 2>&1 &
+          bun run smoke:public

@@ -2,11 +2,31 @@ import React from 'react';
 import Image from 'next/image';
 import { GraduationCap, Quote, Star, BookOpen, Facebook, Linkedin, Mail } from 'lucide-react';
 import {TEACHERS} from "@/mocks/constants";
+import type { Metadata } from 'next';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
+import { SEO_DATA } from '@/constants/seo.constants';
+import { headers } from 'next/headers';
+import { SchemaScript } from '@/components/seo/schema-script';
+import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 // DATA MẪU (Dựa trên ảnh của bạn, nhưng đã tách text ra khỏi ảnh)
 
 
-export default function TeachersPage() {
+export const metadata: Metadata = {
+    ...createPageMetadata({
+        title: "Giáo viên luyện thi IC3 GS6, MOS tâm huyết",
+        description: "Gặp gỡ đội ngũ giáo viên ERG phụ trách luyện thi IC3 GS6, IC3 Spark và MOS, đồng hành cùng học viên từ làm quen công cụ thi đến khi hoàn thành chứng chỉ quốc tế.",
+        path: "/doi-ngu-giao-vien",
+        image: SEO_DATA.tinhocquocte.ogImage,
+        imageAlt: "Đội ngũ giáo viên luyện thi IC3, MOS tại ERG",
+    }),
+};
+
+export default async function TeachersPage() {
+    const breadcrumbItems = generateBreadcrumbItems("/doi-ngu-giao-vien", "Đội ngũ giáo viên", "Tin học Quốc tế");
+    const host = (await headers()).get('host') || "tinhocquocte.erg.edu.vn";
     return (
+<>
+<SchemaScript type="BreadcrumbList" data={{ items: breadcrumbItems }} domain={host} />
         <div className="min-h-screen bg-gray-50 pb-20">
 
             {/* 1. HERO SECTION: Giới thiệu đội ngũ */}
@@ -30,10 +50,12 @@ export default function TeachersPage() {
 
                             {/* Ảnh chân dung (Tỉ lệ 4:5 hoặc 1:1) */}
                             <div className="relative aspect-[4/5] overflow-hidden bg-gray-200">
-                                <img
+                                <Image
                                     src={teacher.image}
-                                    alt={teacher.name}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    alt={`Chân dung ${teacher.name}, ${teacher.role} tại ERG`}
+                                    fill
+                                    sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                                    className="object-cover group-hover:scale-105 transition-transform duration-500"
                                 />
                                 {/* Overlay gradient khi hover */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--erg-blue)]/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
@@ -105,5 +127,6 @@ export default function TeachersPage() {
             </section>
 
         </div>
+</>
     );
 }

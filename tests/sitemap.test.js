@@ -18,30 +18,52 @@ describe("sitemap", () => {
         });
     });
 
-    test("keeps public static routes and mock news posts when backend sitemap is unavailable", async () => {
+    test("keeps static routes and no mock posts when backend sitemap is unavailable", async () => {
         const { default: sitemap } = await import("../src/app/sitemap");
 
         const urls = (await sitemap()).map((entry) => entry.url);
 
-        expect(urls).toContain("https://erg.edu.vn");
+        expect(urls).toContain("https://erg.edu.vn/");
         expect(urls).toContain("https://erg.edu.vn/tin-tuc");
         expect(urls).toContain("https://erg.edu.vn/tuyen-dung");
         expect(urls).not.toContain("https://erg.edu.vn/cong-khai");
         expect(urls).toContain("https://erg.edu.vn/tim-kiem");
-        expect(urls).toContain("https://erg.edu.vn/tin-tuc/khoa-ban-tru-he-2026-he-but-pha-kien-tao-tuong-lai");
-        expect(urls).toContain("https://erg.edu.vn/tin-tuc/tin-hoc-van-phong-ky-nang-bat-buoc-trong-thoi-dai-so-cung-erg");
-        expect(urls).toContain("https://erg.edu.vn/tin-tuc/hoc-tin-hoc-tu-som-mo-rong-tuong-lai-so-cung-erg-edurise-global");
+        expect(urls.filter((url) => url.startsWith("https://erg.edu.vn/tin-tuc/"))).toEqual([]);
+        expect(urls.filter((url) => url.startsWith("https://erg.edu.vn/tuyen-dung/"))).toEqual([]);
+        expect(urls.some((url) => url.includes("elearning.") || url.includes("forum."))).toBe(false);
     });
 
-    test("keeps mock news posts when backend sitemap returns no dynamic urls", async () => {
+    test("returns only static routes when backend sitemap returns no dynamic urls", async () => {
         const { default: sitemap } = await import("../src/app/sitemap");
         globalThis.fetch = mock(async () => Response.json({ data: { urls: [] } }));
 
         const urls = (await sitemap()).map((entry) => entry.url);
 
-        expect(urls).toContain("https://erg.edu.vn/tin-tuc/khoa-ban-tru-he-2026-he-but-pha-kien-tao-tuong-lai");
-        expect(urls).toContain("https://erg.edu.vn/tin-tuc/tin-hoc-van-phong-ky-nang-bat-buoc-trong-thoi-dai-so-cung-erg");
-        expect(urls).toContain("https://erg.edu.vn/tin-tuc/hoc-tin-hoc-tu-som-mo-rong-tuong-lai-so-cung-erg-edurise-global");
+        expect(urls.filter((url) => url.startsWith("https://erg.edu.vn/tin-tuc/"))).toEqual([]);
+    });
+
+    test("adds backend urls with real lastmod, drops other hosts and normalizes trailing slash", async () => {
+        const { default: sitemap } = await import("../src/app/sitemap");
+        globalThis.fetch = mock(async () => Response.json({ data: { urls: [
+            { loc: "/tin-tuc/bai-that/", lastmod: "2026-05-01T00:00:00.000Z" },
+            { loc: "https://other.example/tin-tuc/x" },
+            { loc: "/tin-tuc/khong-lastmod" },
+        ] } }));
+
+        const entries = await sitemap();
+        const real = entries.find((entry) => entry.url === "https://erg.edu.vn/tin-tuc/bai-that");
+        const noDate = entries.find((entry) => entry.url === "https://erg.edu.vn/tin-tuc/khong-lastmod");
+
+        expect(real?.lastModified).toBe("2026-05-01T00:00:00.000Z");
+        expect(noDate?.lastModified).toBeUndefined();
+        expect(entries.some((entry) => entry.url.includes("other.example"))).toBe(false);
+    });
+
+    test("sitemap is empty for non-indexed elearning host", async () => {
+        mockedHost = "elearning.erg.edu.vn";
+        const { default: sitemap } = await import("../src/app/sitemap");
+
+        expect(await sitemap()).toEqual([]);
     });
 
     test("uses http urls and image sitemap entries for local dev domain with port", async () => {
@@ -54,7 +76,6 @@ describe("sitemap", () => {
 
         expect(urls).toContain("http://erg.edu.vn:3000/linh-vuc-dao-tao");
         expect(urls).toContain("http://erg.edu.vn:3000/linh-vuc-dao-tao/ic3-gs6");
-        expect(urls).toContain("http://erg.edu.vn:3000/tin-tuc/khoa-ban-tru-he-2026-he-but-pha-kien-tao-tuong-lai");
         expect(trainingDetail?.images).toContain("http://erg.edu.vn:3000/util/ic3.jpg");
     });
 

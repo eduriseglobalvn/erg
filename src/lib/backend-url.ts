@@ -23,6 +23,9 @@ export function getBackendBaseCandidates(): string[] {
 }
 
 export function getPreferredBackendBaseUrl(): string {
+    const configured = normalizeBaseUrl(process.env.BACKEND_URL) || normalizeBaseUrl(process.env.NEXT_PUBLIC_API_URL);
+    if (configured) return configured;
+    if (process.env.NODE_ENV === 'production') return 'https://api.erg.edu.vn';
     return getBackendBaseCandidates()[0] || 'http://localhost:8080';
 }
 
@@ -38,6 +41,13 @@ export function getPreferredBrowserBackendBaseUrl(): string {
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
             return 'http://localhost:8080';
         }
+        if (hostname.endsWith('.erg.edu.vn') || hostname.endsWith('.vercel.app')) {
+            return 'https://api.erg.edu.vn';
+        }
+    }
+
+    if (process.env.NODE_ENV === 'production') {
+        return 'https://api.erg.edu.vn';
     }
 
     return 'http://localhost:8080';

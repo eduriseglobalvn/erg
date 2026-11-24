@@ -10,7 +10,7 @@ export const metadata: Metadata = createPageMetadata({
     title: 'Liên hệ',
     description: 'Liên hệ với ERG Global để được tư vấn các khóa học Tin học Quốc tế, Tin học Quốc gia, STEM và các giải pháp đào tạo CNTT.',
     path: '/lien-he',
-    imageAlt: 'Li?n h? ERG',
+    imageAlt: 'Liên hệ ERG (Edurise Global)',
 });
 
 export default async function Page() {

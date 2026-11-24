@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React, { useState } from 'react';
 import {
     Briefcase, CheckCircle, Users, Award, Heart,
@@ -85,9 +86,12 @@ export default function CareerContent() {
             {/* --- HERO SECTION --- */}
             <section className="relative h-[450px] flex items-center justify-center">
                 <div className="absolute inset-0 z-0">
-                    <img
+                    <Image
                         src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2000&auto=format&fit=crop"
-                        alt="Edurise Background"
+                        alt="Môi trường làm việc và đào tạo tại Edurise Global"
+                        fill
+                        priority
+                        sizes="100vw"
                         className="w-full h-full object-cover brightness-[0.35]"
                     />
                 </div>
@@ -176,9 +180,12 @@ export default function CareerContent() {
                                 </div>
                                 <div className="lg:w-1/2">
                                     <div className="relative rounded-2xl overflow-hidden shadow-2xl group">
-                                        <img
+                                        <Image
                                             src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop"
-                                            alt="Edurise Culture"
+                                            alt="Văn hóa làm việc tại Edurise Global"
+                                            width={1000}
+                                            height={667}
+                                            sizes="(max-width: 1024px) 100vw, 50vw"
                                             className="w-full h-auto transform group-hover:scale-105 transition-transform duration-700"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-[#00008b]/60 to-transparent"></div>
@@ -198,10 +205,12 @@ export default function CareerContent() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                     {trainingPrograms.map((item, idx) => (
                                         <div key={idx} className="group bg-gray-50 rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-[#cc0022]/30">
-                                            <div className="h-48 overflow-hidden">
-                                                <img
+                                            <div className="relative h-48 overflow-hidden">
+                                                <Image
                                                     src={item.image}
                                                     alt={item.title}
+                                                    fill
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                 />
                                             </div>
@@ -293,9 +302,12 @@ export default function CareerContent() {
                                                 <div className="absolute top-0 left-0 bg-[#cc0022] text-white font-bold py-1 px-4 z-10 rounded-br-lg">
                                                     Bước {step.step}
                                                 </div>
-                                                <img
+                                                <Image
                                                     src={step.img}
                                                     alt={step.title}
+                                                    width={1000}
+                                                    height={256}
+                                                    sizes="(max-width: 1024px) 100vw, 50vw"
                                                     className="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-500"
                                                 />
                                             </div>

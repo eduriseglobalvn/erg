@@ -6,9 +6,21 @@ import { COURSES } from '@/constants/courses';
 import { SchemaScript } from '@/components/seo/schema-script';
 import { headers } from 'next/headers';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
 
 export const revalidate = 300;
 
+
+export const metadata: Metadata = {
+    ...createPageMetadata({
+        title: "Khóa học Trí tuệ nhân tạo AI và Machine Learning | ERG",
+        description: "Khóa học Trí tuệ nhân tạo (AI) thực chiến tại ERG, từ cơ bản đến nâng cao: làm chủ công nghệ AI, Machine Learning và ứng dụng vào thực tế công việc.",
+        path: "/",
+        image: SEO_DATA.ai.ogImage,
+        imageAlt: "Khóa học Trí tuệ nhân tạo AI tại ERG",
+    }),
+    title: { absolute: "Khóa học Trí tuệ nhân tạo AI và Machine Learning | ERG" },
+};
 
 export default async function AiLearningPage() {
   const headerList = await headers();

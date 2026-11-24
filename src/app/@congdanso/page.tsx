@@ -6,7 +6,19 @@ import { COURSES } from '@/constants/courses';
 import { SchemaScript } from '@/components/seo/schema-script';
 import { headers } from 'next/headers';
 import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
 
+
+export const metadata: Metadata = {
+    ...createPageMetadata({
+        title: "Kỹ năng Công dân số: An toàn thông tin cho học sinh | ERG",
+        description: "Chương trình Công dân số của ERG trang bị năng lực số toàn diện: an toàn thông tin, bảo mật dữ liệu cá nhân và kỹ năng sử dụng Internet văn minh, hiệu quả.",
+        path: "/",
+        image: SEO_DATA.congdanso.ogImage,
+        imageAlt: "Chương trình Kỹ năng Công dân số tại ERG",
+    }),
+    title: { absolute: "Kỹ năng Công dân số: An toàn thông tin cho học sinh | ERG" },
+};
 
 export default async function DigitalCitizenshipPage() {
   const headerList = await headers();

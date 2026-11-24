@@ -1,6 +1,11 @@
 import React from 'react';
 import { BookOpen, CheckCircle2, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
+import { headers } from 'next/headers';
+import { SchemaScript } from '@/components/seo/schema-script';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
+import { SEO_DATA } from '@/constants/seo.constants';
 
 const RoadmapSection = () => {
     const roadmapSteps = [
@@ -89,9 +94,9 @@ const RoadmapSection = () => {
                         <BookOpen size={16} className="text-[var(--erg-blue)]" />
                         <span className="text-xs font-bold tracking-wide text-[var(--erg-blue)] uppercase">Lộ trình chuẩn hóa</span>
                     </div>
-                    <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">
+                    <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">
                         Lộ Trình <span className="text-[var(--erg-blue)]">Học Tập Chi Tiết</span>
-                    </h2>
+                    </h1>
                 </div>
             </section>
 
@@ -236,4 +241,22 @@ const RoadmapSection = () => {
     );
 };
 
-export default RoadmapSection;
+export const metadata: Metadata = createPageMetadata({
+    title: "Lộ trình học Tin học quốc gia từ cơ bản đến nâng cao",
+    description: "Lộ trình 4 bước tại ERG: xây nền tảng số, chinh phục chứng chỉ CNTT cơ bản, nâng cao kỹ năng chuyên sâu và về đích với chứng chỉ nâng cao qua kỳ thi cuối cùng.",
+    path: '/lo-trinh',
+    image: SEO_DATA.tinhocquocgia.ogImage,
+    imageAlt: "Lộ trình học Tin học quốc gia tại ERG",
+});
+
+export default async function Page() {
+    const host = (await headers()).get('host') || 'tinhocquocgia.erg.edu.vn';
+    const items = [{ label: "Tin học Quốc gia", href: '/' }, { label: 'Lộ trình' }];
+    return (
+        <>
+            <SchemaScript type="BreadcrumbList" data={{ items }} domain={host} />
+            <RoadmapSection />
+        </>
+    );
+}
+

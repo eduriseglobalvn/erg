@@ -227,9 +227,9 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                 "@type": "JobPosting",
                 "title": data.title,
                 "description": data.description,
-                "datePosted": data.postedAt || data.createdAt,
+                "datePosted": data.postedAt || data.datePosted || data.createdAt,
                 "validThrough": data.validThrough,
-                "employmentType": data.type || "FULL_TIME",
+                "employmentType": data.type || data.employmentType || "FULL_TIME",
                 "hiringOrganization": {
                     "@type": "Organization",
                     "name": "Edurise Global",
@@ -239,7 +239,7 @@ export function SchemaScript({ type, data, domain = 'erg.edu.vn' }: SchemaScript
                     "@type": "Place",
                     "address": {
                         "@type": "PostalAddress",
-                        "addressLocality": data.location || "Toàn quốc",
+                        "addressLocality": data.location || data.jobLocation?.address?.addressLocality || "Toàn quốc",
                         "addressCountry": "VN"
                     }
                 }

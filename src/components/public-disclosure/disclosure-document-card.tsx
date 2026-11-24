@@ -27,6 +27,7 @@ export function DisclosureDocumentCard({ document, href }: DisclosureDocumentCar
               src={document.thumbnailUrl}
               alt={document.title}
               fill
+              sizes="(max-width: 768px) 100vw, 320px"
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
           ) : (

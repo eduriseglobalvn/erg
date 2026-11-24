@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     // 1. Kiểm tra secret (Bảo mật - chỉ dùng ENV)
     const PREVIEW_SECRET = process.env.PREVIEW_SECRET;
 
-    if (secret !== PREVIEW_SECRET || !id || !slug) {
+    if (!PREVIEW_SECRET || secret !== PREVIEW_SECRET || !id || !slug) {
         return new Response("Invalid request", { status: 401 });
     }
 
@@ -24,5 +24,5 @@ export async function GET(request: NextRequest) {
 
     // 3. Chuyển hướng về trang chi tiết bài viết kèm previewId
     // Page này nằm trong @main slot, URL thực tế là /tin-tuc/[slug]
-    redirect(`/tin-tuc/${slug}?previewId=${id}`);
+    redirect(`/tin-tuc/${encodeURIComponent(slug)}?previewId=${encodeURIComponent(id)}`);
 }

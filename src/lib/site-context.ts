@@ -8,6 +8,7 @@ const KNOWN_SITE_SUBDOMAINS = new Set([
   'dientoandammay',
   'elearning',
   'elerning',
+  'lms',
   'forum',
   'tinhocquocgia',
   'tinhocquocte',
@@ -133,7 +134,7 @@ export function normalizeSiteKey(subdomain: string) {
     return 'main'
   }
 
-  if (subdomain === 'elerning') {
+  if (subdomain === 'elerning' || subdomain === 'lms') {
     return 'elearning'
   }
 

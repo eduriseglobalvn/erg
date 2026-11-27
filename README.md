@@ -24,6 +24,10 @@ Xem thử giao diện lễ/Tết ở bất kỳ ngày nào: thêm `?season=tet` 
 - `src/data/`: nội dung mẫu. Sửa ở đây để đổi nội dung trang. Hotline, Zalo, Messenger ở `site.ts`; tên thương hiệu, từ khóa SEO, ảnh chia sẻ ở `seo.ts`.
 - `src/lib/season.ts`: lịch lễ. Ngày âm lịch (Tết, Giỗ Tổ, Trung thu) được tính tự động lúc build cho năm build −1 đến +10. Chỉ cần deploy lại ít nhất 10 năm một lần.
 
+## Triển khai Vercel
+
+`vercel.json` ép framework Astro, build `bun run build`, xuất `dist` và chứa các redirect đường dẫn (Vercel không đọc `public/_redirects`). Không cần chỉnh Framework Preset trong dashboard: `vercel.json` ghi đè. Biến môi trường cũ của Next.js trong project Vercel không còn dùng.
+
 ## Triển khai Cloudflare Pages
 
 - Build command: `bun run build`

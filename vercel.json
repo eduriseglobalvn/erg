@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "astro",
+  "installCommand": "bun install --frozen-lockfile",
+  "buildCommand": "bun run build",
+  "outputDirectory": "dist",
+  "redirects": [
+    { "source": "/co-hoi-nghe-nghiep/:path*", "destination": "/tuyen-dung", "permanent": true },
+    { "source": "/cong-khai/:path*", "destination": "/", "permanent": true }
+  ]
+}

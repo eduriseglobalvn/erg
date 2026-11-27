@@ -1,88 +1,52 @@
-# ERG - EduRise Global Platform
+# erg.edu.vn
 
-> **"Khơi nguồn trí tuệ – Dẫn lối tương lai"**
+Website tĩnh của ERG – Edurise Global, viết bằng [Astro](https://astro.build) và triển khai trên Cloudflare Pages. Không có SSR hay backend: nội dung là dữ liệu mẫu trong `src/data/*.ts`.
 
-Chào mừng đến với mã nguồn chính thức của **ERG (EduRise Global)**. Đây là nền tảng giáo dục tiên phong kết hợp công nghệ, cung cấp các giải pháp giáo dục thông minh và lộ trình đào tạo chuyên sâu (Cloud DevOps, Chuyển đổi số, v.v.).
+## Chạy local
 
-## 🌟 Giới thiệu
+Cần [Bun](https://bun.sh) 1.x.
 
-ERG ra đời với sứ mệnh biến công nghệ trở thành cầu nối bền vững giữa tri thức và con người. Tên gọi ERG đại diện cho:
-*   **Edu (Education)**: Giáo dục là nền tảng cốt lõi.
-*   **Rise (Vươn tầm)**: Khát vọng đổi mới và phát triển không ngừng.
-*   **Global (Toàn cầu)**: Tầm nhìn và tiêu chuẩn quốc tế.
+```bash
+bun install
+bun run dev      # http://localhost:4321
+bun run check    # kiểm tra kiểu và template
+bun run build    # xuất HTML tĩnh vào dist/
+bun run preview  # xem bản build
+```
 
-## 🛠 Công nghệ sử dụng
+Xem thử giao diện lễ/Tết ở bất kỳ ngày nào: thêm `?season=tet` (hoặc `noel`, `newyear`, `hungvuong`, `thongnhat`, `thieunhi`, `quockhanh`, `trungthu`, `nhagiao`, `none`). Lựa chọn được nhớ trong tab khi chuyển trang; `?season=auto` để về theo ngày thật. Khách thường không cần tham số này: giao diện tự đổi theo ngày, từ 3 ngày trước dịp lễ đến hết ngày lễ.
 
-Dự án được xây dựng trên nền tảng công nghệ hiện đại, tối ưu cho hiệu năng và trải nghiệm người dùng:
+## Cấu trúc
 
--   **Framework**: Next.js 16+ (App Router)
--   **Language**: TypeScript
--   **Styling**: Tailwind CSS
--   **Icons**: Lucide React
--   **Runtime**: Bun v1.2+ (Khuyến nghị) / Node.js v20.19.4+
+- `src/pages/`: mỗi file là một route.
+- `src/layouts/Base.astro`: khung trang (SEO, header, footer, chọn mùa lễ).
+- `src/components/`: header, footer, quả cầu 3D và component theo từng khu vực.
+- `src/data/`: nội dung mẫu. Sửa ở đây để đổi nội dung trang. Hotline, Zalo, Messenger ở `site.ts`; tên thương hiệu, từ khóa SEO, ảnh chia sẻ ở `seo.ts`.
+- `src/lib/season.ts`: lịch lễ. Ngày âm lịch (Tết, Giỗ Tổ, Trung thu) được tính tự động lúc build cho năm build −1 đến +10. Chỉ cần deploy lại ít nhất 10 năm một lần.
 
-## 🚀 Cài đặt và Chạy Local
+## Triển khai Cloudflare Pages
 
-Để chạy dự án trên máy cá nhân, vui lòng thực hiện các bước sau:
+- Build command: `bun run build`
+- Output directory: `dist`
+- `public/_redirects` xử lý chuyển hướng theo đường dẫn (ví dụ `/co-hoi-nghe-nghiep` → `/tuyen-dung`).
 
-1.  **Clone repository:**
-    ```bash
-    git clone <your-repo-url>
-    cd erg
-    ```
+Các subdomain cũ phải chuyển hướng 301 bằng **Bulk Redirects** trong Cloudflare dashboard (`_redirects` không xử lý được host khác):
 
-2.  **Cài đặt dependencies:**
-    ```bash
-    bun install
-    ```
+| Nguồn | Đích |
+|---|---|
+| tinhocquocte.erg.edu.vn | https://erg.edu.vn/chuong-trinh/tin-hoc-quoc-te |
+| tinhocquocgia.erg.edu.vn | https://erg.edu.vn/chuong-trinh/tin-hoc-quoc-gia |
+| tinhocthieunhi.erg.edu.vn | https://erg.edu.vn/chuong-trinh/tin-hoc-thieu-nhi |
+| congdanso.erg.edu.vn | https://erg.edu.vn/chuong-trinh/cong-dan-so |
+| dientoandammay.erg.edu.vn | https://erg.edu.vn/chuong-trinh/dien-toan-dam-may |
+| ai.erg.edu.vn | https://erg.edu.vn/chuong-trinh/tri-tue-nhan-tao |
+| tuyendung.erg.edu.vn | https://erg.edu.vn/tuyen-dung |
 
-3.  **Cấu hình Môi trường (Multi-domain):**
+Forum đã ngừng; CMS chuyển sang `erg-system`.
 
-    Dự án hỗ trợ chạy Multi-domain. Để môi trường dev hoạt động đúng với các subdomain, bạn cần cấu hình như sau:
+## Giới hạn hiện tại
 
-    -   Tạo file `.env.local` tại thư mục gốc dự án:
-        ```env
-        NEXT_PUBLIC_ROOT_DOMAIN=localhost:3000
-        ```
-    -   **Lưu ý:** Trình duyệt hiện đại hỗ trợ sẵn subdomain trên localhost (ví dụ: `app.localhost:3000`), nên bạn thường không cần sửa file hosts.
-    -   Nếu muốn giả lập domain production (ví dụ: `erg.local`), hãy thêm vào file hosts (`/etc/hosts` hoặc `C:\Windows\System32\drivers\etc\hosts`):
-        ```text
-        127.0.0.1 erg.local
-        127.0.0.1 app.erg.local
-        ```
-        Và cập nhật `.env.local` thành: `NEXT_PUBLIC_ROOT_DOMAIN=erg.local:3000`.
-
-4.  **Chạy môi trường phát triển:**
-    ```bash
-    bun dev
-    ```
-    Truy cập http://localhost:3000 để xem kết quả.
-
-## 📦 Quy trình Deploy (CI/CD)
-
-Dự án sử dụng **GitHub Actions** để tự động hóa quy trình triển khai lên hosting cPanel thông qua giao thức FTP.
-
-### Workflow: `Deploy Next.js to cPanel`
-
-Quy trình sẽ tự động kích hoạt khi có code mới được push vào nhánh `production`.
-
-1.  **Build**:
-    -   Sử dụng Node.js v20.19.4.
-    -   Chạy `npm run build` để tạo bản build production (chế độ Standalone).
-2.  **Prepare**:
-    -   Đóng gói `standalone`, `static`, và `public` assets.
-    -   Tạo file `deploy.js` entry point cho Node server.
-    -   Nén toàn bộ thành `build.zip`.
-3.  **Deploy**:
-    -   Upload `build.zip` lên server qua FTP.
-    -   Trigger script giải nén (`unzip.php`) trên server để hoàn tất cập nhật.
-
-## 📂 Cấu trúc dự án
-
--   `src/app`: Mã nguồn chính (Next.js App Router).
-    -   `(main)/cau-chuyen-cua-erg`: Trang giới thiệu về ERG.
--   `src/components`: Các UI components tái sử dụng (ví dụ: `RoadmapSection`).
--   `.github/workflows`: Cấu hình CI/CD pipeline.
-
----
-© 2024 ERG Workspace. All rights reserved.
+- Mục "Điểm tin giáo dục" ở `/tin-tuc` lấy 12 bài mới nhất từ RSS Báo Giáo dục và Thời đại (`src/lib/eduFeed.ts`) **lúc build**. Workflow `.github/workflows/refresh-news.yml` gọi Deploy Hook của Cloudflare Pages lúc 6h, 12h, 18h (giờ VN) để build lại. Cài một lần: Cloudflare Pages → Settings → Builds & deployments → Deploy hooks → tạo hook cho nhánh production, rồi lưu URL vào GitHub secret `CF_PAGES_DEPLOY_HOOK`. GitHub chỉ chạy lịch trên nhánh mặc định và tạm dừng lịch nếu repo không có hoạt động 60 ngày. Có thể chạy tay ở tab Actions → Refresh news digest → Run workflow. Nếu RSS lỗi, build vẫn chạy và mục này để trống.
+- Google Analytics (G-PF00V6RJDD) chỉ gửi số liệu khi chạy trên tên miền erg.edu.vn.
+- Các form (liên hệ, ứng tuyển, tra cứu hồ sơ) chưa gửi đi đâu: chỉ hiện ghi chú gọi hotline. Cần một endpoint (ví dụ Cloudflare Pages Function) khi có backend.
+- Ảnh thật chưa có ở nhiều chỗ, đang dùng khung giữ chỗ.

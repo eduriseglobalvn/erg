@@ -1,0 +1,5 @@
+# Cloudflare Pages path redirects. Old subdomains (tinhocquocte.erg.edu.vn …) need Bulk Redirects in the Cloudflare dashboard, see README.
+/co-hoi-nghe-nghiep    /tuyen-dung    301
+/co-hoi-nghe-nghiep/*  /tuyen-dung    301
+/cong-khai             /              301
+/cong-khai/*           /              301

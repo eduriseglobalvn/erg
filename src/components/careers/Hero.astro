@@ -1,0 +1,59 @@
+---
+import Scene3D from '@/components/Scene3D.astro';
+interface Props { crumbs: { label: string; href?: string }[]; title: string; lead: string; scene?: boolean }
+const { crumbs, title, lead, scene = true } = Astro.props;
+---
+<section class="cr-hero">
+  <div class="cr-hero__in">
+    <div class="cr-hero__text">
+      <nav aria-label="Breadcrumb" class="cr-hero__crumbs">
+        <a href="/">Trang chủ</a>
+        {crumbs.map((c, i) => (<>
+          <span aria-hidden="true">/</span>
+          {c.href ? <a href={c.href}>{c.label}</a> : <span aria-current={i === crumbs.length - 1 ? 'page' : undefined}>{c.label}</span>}
+        </>))}
+      </nav>
+      <slot name="badge" />
+      <h1>{title}</h1>
+      <p class="clamp-3">{lead}</p>
+      <slot name="actions" />
+    </div>
+    <slot name="side">{scene && <div class="cr-hero__side only-desktop"><Scene3D compact embedded /></div>}</slot>
+    <slot name="foot" />
+  </div>
+</section>
+
+<style>
+  .cr-hero { position: relative; overflow: hidden; color: #fff; border-radius: 0 0 56px 56px; background: radial-gradient(900px 560px at 80% 62%, color-mix(in srgb, var(--glow) 70%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(640px 400px at 6% 100%, color-mix(in srgb, var(--red) 42%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(180deg, var(--navy-night) 0%, var(--navy-2) 100%); }
+  .cr-hero__in { max-width: 1200px; margin: 0 auto; padding: 40px 24px 72px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px 48px; }
+  .cr-hero__text { flex: 1.4 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .cr-hero__crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; color: var(--tint-1); }
+  .cr-hero__crumbs a { color: #fff; text-decoration: none; }
+  h1 { font-size: 52px; line-height: 1.08; font-weight: 700; letter-spacing: -1.2px; text-wrap: balance; }
+  p { font-size: 17.5px; line-height: 1.65; color: var(--tint-1); max-width: 640px; }
+  .cr-hero__side { flex: 1 1 300px; min-width: 0; }
+  @media (max-width: 767px) {
+    .cr-hero { border-radius: 0 0 32px 32px; }
+    .cr-hero__in { padding: 24px 16px 44px; }
+    h1 { font-size: 30px; }
+  }
+</style>
+
+<style is:global>
+  .cr-chip { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: var(--red-soft); color: var(--red-deep); font-size: 13.5px; font-weight: 700; }
+  .cr-tag { padding: 4px 12px; border-radius: 999px; background: var(--soft); color: var(--navy); font-size: 13px; font-weight: 600; }
+  .cr-tag--alt { background: var(--tint-5); color: #2C3560; }
+  .cr-card { background: #fff; border-radius: 22px; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); }
+  .cr-panel { max-width: 1360px; margin: 0 auto; border-radius: 48px; background: linear-gradient(180deg, var(--tint-3) 0%, #F7F8FC 100%); padding: 88px 0; }
+  .cr-white-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 20px; border-radius: 999px; background: #fff; color: var(--navy); box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); font-weight: 600; font-size: 15px; text-decoration: none; }
+  .cr-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .cr-field label, .cr-field .cr-label { font-size: 13.5px; font-weight: 600; }
+  .cr-field input:not([type='checkbox']):not([type='file']), .cr-field select { width: 100%; height: 54px; padding: 0 14px; border: 1px solid #B9C0D8; border-radius: 16px; font-size: 15.5px; color: #0F1738; background: #fff; }
+  .cr-field input[readonly] { color: #4A5578; background: var(--tint-5); }
+  .cr-field textarea { width: 100%; min-height: 120px; padding: 14px; border: 1px solid #B9C0D8; border-radius: 18px; font-size: 15.5px; line-height: 1.6; background: #fff; resize: vertical; }
+  .cr-field small { font-size: 12.5px; color: #4A5578; }
+  .cr-note { margin-top: 12px; padding: 14px 18px; border-radius: 18px; background: var(--soft); color: #2C3560; font-size: 14.5px; line-height: 1.6; }
+  .cr-note[hidden] { display: none; }
+  .cr-submit { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 52px; padding: 0 28px; border: 0; border-radius: 999px; background: var(--red); color: #fff; box-shadow: 0 18px 32px -14px var(--red), inset 0 1px 0 rgba(255,255,255,0.35); font-weight: 700; font-size: 16px; cursor: pointer; }
+  @media (max-width: 767px) { .cr-panel { border-radius: 32px; padding: 40px 0; } }
+</style>

@@ -1,0 +1,49 @@
+---
+import { KEYWORDS } from '@/data/seo';
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/careers/Hero.astro';
+---
+<Base title="Tra cứu hồ sơ ứng tuyển" keywords={KEYWORDS.careers} description="Cập nhật tiến độ ứng tuyển của bạn nhanh chóng và minh bạch." active="careers">
+  <div>
+    <Hero crumbs={[{ label: 'Tuyển dụng', href: '/tuyen-dung' }, { label: 'Tra cứu hồ sơ' }]} title="Tra cứu hồ sơ ứng tuyển" lead="Cập nhật tiến độ ứng tuyển của bạn nhanh chóng và minh bạch." />
+
+    <section class="panelwrap">
+      <div class="cr-panel">
+        <div class="in">
+          <form class="cr-card box" data-static-form>
+            <div class="bh"><h2>Nhập thông tin hồ sơ</h2><p>Mã hồ sơ được gửi cho bạn ngay sau khi nộp.</p></div>
+            <div class="cols">
+              <div class="cr-field"><label for="tk-code">Mã hồ sơ</label><input id="tk-code" name="code" type="text" autocomplete="off" required placeholder="VD: REF-123456" style="text-transform:uppercase" /><small>Mã tra cứu của bạn</small></div>
+              <div class="cr-field"><label for="tk-contact">Email hoặc số điện thoại</label><input id="tk-contact" name="contact" type="text" autocomplete="email" required placeholder="example@gmail.com hoặc 09xx xxx xxx" /><small>Thông tin bạn đã dùng khi nộp hồ sơ</small></div>
+            </div>
+            <button type="submit" class="cr-submit self">
+              <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" class="ic"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 0 0 0-14z M21 21l-5-5" /></svg>Tra cứu</button>
+            <p data-form-note hidden tabindex="-1" role="status" class="cr-note">Chức năng gửi trực tuyến đang được hoàn thiện. Vui lòng gọi hotline 0938.830.098 hoặc email info@erg.edu.vn.</p>
+          </form>
+          <!-- The design's example result and "not found" states are omitted: there is no lookup backend and a fake result would mislead. -->
+        </div>
+      </div>
+    </section>
+
+  </div>
+</Base>
+
+<style>
+  .ic { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  h2 { font-size: 22px; line-height: 1.25; font-weight: 700; letter-spacing: -0.4px; }
+  .panelwrap { padding: 0 24px; margin-top: 0; }
+  .in { max-width: 800px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 32px; }
+  .box { display: flex; flex-direction: column; gap: 22px; padding: 32px; border-radius: 32px; }
+  .bh { display: flex; flex-direction: column; gap: 6px; }
+  .bh p { font-size: 16px; color: #4A5578; }
+  .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+  .self { align-self: flex-start; padding: 0 32px; }
+  .sec { padding: 88px 0; }
+  @media (max-width: 767px) {
+    .panelwrap { padding: 0 8px; }
+    .in { padding: 0 14px; gap: 20px; }
+    .box { padding: 20px 16px; gap: 16px; }
+    .cols { grid-template-columns: 1fr; gap: 16px; }
+    .sec { padding: 40px 0; }
+  }
+</style>

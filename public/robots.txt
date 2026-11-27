@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://erg.edu.vn/sitemap-index.xml

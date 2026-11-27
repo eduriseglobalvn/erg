@@ -1,0 +1,96 @@
+---
+import Base from '@/layouts/Base.astro';
+import Scene3D from '@/components/Scene3D.astro';
+
+const links = [
+  { title: 'Giới thiệu', text: 'Câu chuyện, giá trị và đội ngũ ERG', href: '/gioi-thieu/cau-chuyen-cua-erg', icon: 'M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18z M12 11v5 M12 8v.5' },
+  { title: 'Chương trình đào tạo', text: 'Lĩnh vực và nhóm chương trình', href: '/linh-vuc-dao-tao', icon: 'M3 5h18v11H3z M8 20h8 M12 16v4' },
+  { title: 'Tin tức', text: 'Tin tức và sự kiện mới nhất', href: '/tin-tuc', icon: 'M6 3h9l4 4v14H6z M14 3v5h5 M9 13h7 M9 17h7' },
+  { title: 'Liên hệ', text: 'Đăng ký tư vấn cùng ERG', href: '/lien-he', icon: 'M3 6h18v12H3z M3 7l9 6l9-6' },
+];
+---
+<Base title="Không tìm thấy trang" description="Xin lỗi, trang bạn tìm kiếm không tồn tại hoặc đã bị xóa." noindex>
+  <div>
+    <section class="top">
+      <div class="dark">
+        <div class="dark__in">
+          <div class="txt">
+            <span class="big only-desktop" aria-hidden="true">404</span>
+            <span class="pill">Lỗi 404</span>
+            <h1>Không tìm thấy trang</h1>
+            <p class="clamp-3">Xin lỗi, trang bạn tìm kiếm không tồn tại hoặc đã bị xóa. Hãy thử tìm lại bằng từ khóa khác hoặc quay về trang chủ.</p>
+            <form action="/tim-kiem" method="get" role="search" class="sf">
+              <label for="nf-search">Tìm trên erg.edu.vn</label>
+              <input id="nf-search" name="q" type="search" autocomplete="off" placeholder="Nhập từ khóa, ví dụ: MOS, IC3, lập trình" />
+              <button type="submit">Tìm kiếm</button>
+            </form>
+            <div class="btns">
+              <a class="home" href="/">Về trang chủ</a>
+              <a class="ghost only-desktop" href="/linh-vuc-dao-tao">Xem chương trình đào tạo</a>
+            </div>
+          </div>
+          <div class="scene only-desktop"><Scene3D compact embedded /></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="quick">
+      <div class="wrap">
+        <h2>Hoặc truy cập nhanh</h2>
+        <div class="grid">
+          {links.map((l) => (
+            <a href={l.href}>
+              <span class="ic"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d={l.icon}></path></svg></span>
+              <span class="lt"><span class="lt__t">{l.title}</span><span class="lt__d clamp-1">{l.text}</span></span>
+              <svg class="arr" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14 M13 6l6 6l-6 6"></path></svg>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  .top { padding: 88px 24px 64px; }
+  .dark { position: relative; overflow: hidden; max-width: 1360px; margin: 0 auto; border-radius: 48px; background: radial-gradient(760px 420px at 92% 8%, color-mix(in srgb, var(--glow) 60%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(620px 380px at 0% 100%, color-mix(in srgb, var(--red) 34%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(160deg, var(--navy-night) 0%, var(--navy-2) 100%); color: #fff; padding: 88px 0; }
+  .dark__in { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 32px 56px; }
+  .txt { flex: 1.2 1 340px; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+  .scene { flex: 1 1 300px; min-width: 0; }
+  .big { font-size: 168px; font-weight: 700; letter-spacing: -4px; line-height: 1; }
+  .pill { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,0.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2); font-size: 13.5px; font-weight: 700; }
+  h1 { margin: 0; font-size: 52px; line-height: 1.08; font-weight: 700; letter-spacing: -1.2px; text-wrap: balance; }
+  .txt p { margin: 0; font-size: 17px; line-height: 1.7; color: var(--tint-1); max-width: 520px; }
+  .sf { width: 100%; max-width: 520px; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; text-align: left; }
+  .sf label { flex: 1 0 100%; font-size: 13.5px; font-weight: 600; color: var(--tint-1); }
+  .sf input { flex: 1 1 260px; min-width: 0; height: 54px; padding: 0 18px; border: 1px solid #D5DAE8; border-radius: 16px; background: #fff; font-family: inherit; font-size: 15.5px; color: #0F1738; box-sizing: border-box; }
+  .sf button { flex: none; height: 54px; padding: 0 28px; border: 0; border-radius: 999px; background: #fff; color: var(--navy); font-family: inherit; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 18px 30px -16px rgba(0,0,0,0.6); }
+  .btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+  .home, .ghost { display: inline-flex; align-items: center; height: 54px; border-radius: 999px; color: #fff; font-size: 16px; text-decoration: none; }
+  .home { padding: 0 28px; background: var(--red); font-weight: 700; box-shadow: 0 18px 32px -14px var(--red), inset 0 1px 0 rgba(255,255,255,0.35); }
+  .ghost { padding: 0 26px; background: rgba(255,255,255,0.10); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4); font-weight: 600; }
+  .quick { padding: 0 0 88px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 var(--pad-x); display: flex; flex-direction: column; gap: 40px; }
+  .quick h2 { margin: 0; font-size: 30px; line-height: 1.15; font-weight: 700; letter-spacing: -0.6px; }
+  .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .grid a { display: flex; align-items: center; gap: 14px; padding: 20px 22px; border-radius: 22px; background: #fff; text-decoration: none; color: #0F1738; min-height: 44px; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 18px 36px -24px rgba(15,23,56,0.2); }
+  .ic { flex: none; width: 44px; height: 44px; border-radius: 16px; background: linear-gradient(145deg, var(--accent) 0%, var(--navy) 100%); color: #fff; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 12px 20px -10px color-mix(in srgb, var(--navy) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4); }
+  .ic svg { stroke-width: 1.9; }
+  .lt { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .lt__t { font-size: 16.5px; font-weight: 700; letter-spacing: -0.2px; }
+  .lt__d { font-size: 13.5px; color: #4A5578; }
+  .arr { flex: none; color: var(--navy); stroke-width: 2.2; }
+  @media (max-width: 767px) {
+    .top { padding: 40px 8px 32px; }
+    .dark { border-radius: 32px; padding: 40px 0; }
+    .dark__in { padding: 0 14px; }
+    h1 { font-size: 30px; }
+    .quick { padding-bottom: 40px; }
+    .wrap { gap: 16px; }
+    .quick h2 { font-size: 22px; }
+    .grid { grid-template-columns: 1fr; }
+    .grid a { padding: 12px 14px; }
+    .lt__d { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  }
+</style>

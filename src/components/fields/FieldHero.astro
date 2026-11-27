@@ -1,0 +1,33 @@
+---
+import Scene3D from '@/components/Scene3D.astro';
+interface Props { crumbs: { label: string; href?: string }[]; badge?: string; title: string; text: string; topic?: 'all' | 'quocte' | 'mos' | 'mos3' }
+const { crumbs, badge, title, text, topic = 'all' } = Astro.props;
+---
+<section class="hero">
+  <div class="in">
+    <div class="copy">
+      <nav aria-label="Đường dẫn">
+        {crumbs.map((c, i) => (<>
+          {i > 0 && <span aria-hidden="true">/</span>}
+          {c.href ? <a href={c.href}>{c.label}</a> : <span aria-current="page">{c.label}</span>}
+        </>))}
+      </nav>
+      {badge && <span class="badge">{badge}</span>}
+      <h1>{title}</h1>
+      <p class="clamp-3">{text}</p>
+    </div>
+    <div class="only-desktop scene"><Scene3D compact embedded topic={topic} /></div>
+  </div>
+</section>
+<style>
+  .hero { position: relative; overflow: hidden; color: #fff; border-radius: 0 0 56px 56px; background: radial-gradient(900px 560px at 80% 62%, color-mix(in srgb, var(--glow) 70%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(640px 400px at 6% 100%, color-mix(in srgb, var(--red) 42%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(180deg, var(--navy-night) 0%, var(--navy-2) 100%); }
+  .in { max-width: 1200px; margin: 0 auto; padding: 40px 24px 72px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px 48px; }
+  .copy { flex: 1.4 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .scene { flex: 1 1 300px; min-width: 0; }
+  nav { display: flex; flex-wrap: wrap; gap: 6px 10px; font-size: 14px; color: var(--tint-1); }
+  nav a { color: #fff; text-decoration: none; }
+  .badge { display: inline-flex; align-self: flex-start; padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,0.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2); font-size: 13.5px; font-weight: 700; }
+  h1 { margin: 0; font-size: 52px; line-height: 1.08; font-weight: 700; letter-spacing: -1.2px; text-wrap: balance; }
+  p { margin: 0; font-size: 17.5px; line-height: 1.7; color: var(--tint-1); max-width: 640px; }
+  @media (max-width: 767px) { .hero { border-radius: 0 0 32px 32px; } .in { padding: 24px 16px 44px; } h1 { font-size: 30px; } }
+</style>

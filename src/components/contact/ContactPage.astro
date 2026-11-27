@@ -1,0 +1,166 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHero from '@/components/PageHero.astro';
+import { PLACES } from '@/data/site';
+
+const hero = 'Chúng tôi luôn sẵn sàng hỗ trợ bạn để bắt đầu hành trình học tập tốt nhất.';
+const programs = ['Tin học Quốc tế', 'Tin học Quốc gia', 'Tin học Thiếu nhi', 'Giáo dục kỹ năng công dân số', 'Điện toán đám mây', 'Trí tuệ nhân tạo (AI)'];
+const phone = 'M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z';
+const pin = 'M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z';
+const chat = 'M4 5h16v11H9l-5 4z';
+---
+<Base title="Liên hệ tư vấn khóa học" description={hero} active="contact">
+  <div>
+    <PageHero crumb="Liên hệ" title="Liên hệ với chúng tôi" text={hero} />
+
+    <section class="sec">
+      <div class="wrap">
+        <form class="form" data-static-form>
+          <div class="form__head">
+            <span class="pill">Tư vấn</span>
+            <h2>Gửi yêu cầu tư vấn</h2>
+            <p class="clamp-3">Để lại thông tin, ERG sẽ liên hệ lại để tư vấn lộ trình phù hợp.</p>
+          </div>
+          <div class="grid">
+            <div class="f"><label for="ct-name">Họ và tên *</label><input id="ct-name" name="name" type="text" placeholder="Nguyễn Văn A" autocomplete="name" required /></div>
+            <div class="f"><label for="ct-phone">Số điện thoại *</label><input id="ct-phone" name="phone" type="tel" placeholder="0912 345 678" autocomplete="tel" required /></div>
+            <div class="f"><label for="ct-email">Email</label><input id="ct-email" name="email" type="email" placeholder="email@example.com" autocomplete="email" /></div>
+            <div class="f">
+              <label for="ct-prog">Chương trình quan tâm</label>
+              <select id="ct-prog" name="program">
+                <option>Bạn đang quan tâm đến nội dung nào?</option>
+                {programs.map((p) => <option>{p}</option>)}
+              </select>
+            </div>
+          </div>
+          <div class="f">
+            <label for="ct-msg">Nội dung</label>
+            <textarea id="ct-msg" name="message" rows="4" placeholder="Hãy cho chúng tôi biết yêu cầu của bạn..."></textarea>
+          </div>
+          <div class="consent">
+            <input id="ct-consent" name="consent" type="checkbox" required />
+            <label for="ct-consent">Tôi đồng ý để ERG liên hệ và lưu thông tin này nhằm mục đích tư vấn.</label>
+          </div>
+          <button type="submit" class="btn btn--primary submit">Gửi yêu cầu tư vấn
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="stroke-width: 2.2"><path d="M5 12h14 M13 6l6 6l-6 6"></path></svg>
+          </button>
+          <p data-form-note hidden tabindex="-1" role="status" class="formnote">Chức năng gửi trực tuyến đang được hoàn thiện. Vui lòng gọi hotline 0938.830.098 hoặc email info@erg.edu.vn.</p>
+        </form>
+
+        <div class="side">
+          {PLACES.map((p) => (
+            <div class="card">
+              <div class="card__h">
+                <span class="ico"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d={pin}></path></svg></span>
+                <h3>{p.name}</h3>
+              </div>
+              <p class="clamp-3">{p.address}</p>
+              <div class="lines">
+                <a href={p.tel} class="line"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d={phone}></path></svg>Hotline: {p.hotline}</a>
+                <a href={`mailto:${p.email}`} class="line"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 6h18v12H3z M3 7l9 6l9-6"></path></svg>{p.email}</a>
+              </div>
+              {p.hours && <span class="hours">{p.hours}</span>}
+            </div>
+          ))}
+
+          <div class="quick">
+            <span class="quick__t">Liên hệ nhanh</span>
+            <div class="quick__r">
+              <a href="tel:0938830098" class="q q--navy" style="flex: 1 1 140px"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d={phone}></path></svg>Gọi điện</a>
+              <a href="https://zalo.me/0938830098" target="_blank" rel="noopener" class="q q--white" style="flex: 1 1 110px"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d={chat}></path></svg>Zalo</a>
+              <a href="https://www.facebook.com/eduriseerg" class="q q--white" style="flex: 1 1 180px"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d={chat}></path></svg>Facebook Messenger</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mapsec">
+      <div class="panel">
+        <div class="panel__in">
+          <div class="mhead">
+            <span class="pill">Bản đồ</span>
+            <h2>Tìm ERG trên bản đồ</h2>
+            <p class="clamp-3">Hai địa điểm tiếp đón học viên và phụ huynh tại TP. Hồ Chí Minh.</p>
+          </div>
+          <div class="map" role="img" aria-label="Bản đồ vị trí Trụ sở chính và Chi nhánh ERG">
+            <div class="mk mk--1">
+              <span class="mk__d" style="background: linear-gradient(145deg, var(--red-bright) 0%, var(--red) 100%); box-shadow: 0 12px 20px -10px color-mix(in srgb, var(--red) 80%, transparent)"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="stroke-width: 2"><path d={pin}></path></svg></span>
+              <span class="mk__l">Trụ sở chính</span>
+            </div>
+            <div class="mk mk--2">
+              <span class="mk__d" style="background: linear-gradient(145deg, var(--accent) 0%, var(--navy) 100%); box-shadow: 0 12px 20px -10px color-mix(in srgb, var(--navy) 70%, transparent)"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" style="stroke-width: 2"><path d={pin}></path></svg></span>
+              <span class="mk__l">Chi nhánh ERG Academy</span>
+            </div>
+            <span class="map__cap">Bản đồ: vị trí Trụ sở chính và Chi nhánh</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .sec { padding: 88px 0; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px 40px; }
+  .pill { display: inline-flex; align-self: flex-start; padding: 6px 14px; border-radius: 999px; background: var(--red-soft); color: var(--red-deep); font-size: 13.5px; font-weight: 700; }
+  .form { flex: 1.25 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 24px; padding: 40px; border-radius: 32px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); }
+  .form__head { display: flex; flex-direction: column; gap: 8px; }
+  .form h2 { margin: 0; font-size: 26px; line-height: 1.25; font-weight: 700; letter-spacing: -0.5px; }
+  .form__head p { margin: 0; font-size: 16px; line-height: 1.65; color: #4A5578; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
+  .f { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .f label { font-size: 13.5px; font-weight: 600; }
+  input[type='text'], input[type='tel'], input[type='email'], select, textarea { width: 100%; box-sizing: border-box; height: 54px; padding: 0 14px; border: 1px solid #D5DAE8; border-radius: 16px; font: inherit; font-size: 15.5px; color: #0F1738; background: #FFFFFF; }
+  textarea { min-height: 130px; height: auto; padding: 14px; border-radius: 18px; line-height: 1.6; resize: vertical; }
+  .consent { display: flex; align-items: flex-start; gap: 12px; min-height: 44px; }
+  .consent input { flex: none; width: 22px; height: 22px; margin: 11px 0 0; accent-color: var(--navy); }
+  .consent label { font-size: 14.5px; line-height: 1.6; color: #4A5578; padding-top: 10px; }
+  .submit { align-self: flex-start; height: 52px; padding: 0 28px; }
+  .formnote { margin: 0; padding: 12px 16px; border-radius: 16px; background: var(--soft); color: var(--navy); font-size: 14.5px; line-height: 1.6; font-weight: 600; }
+  .side { flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .card { display: flex; flex-direction: column; gap: 12px; padding: 28px; border-radius: 28px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); }
+  .card__h { display: flex; align-items: center; gap: 14px; }
+  .ico { flex: none; width: 44px; height: 44px; border-radius: 16px; background: linear-gradient(145deg, var(--red-soft-2) 0%, var(--red-soft) 100%); color: var(--red); box-shadow: inset 0 1px 0 #FFFFFF, 0 10px 18px -12px color-mix(in srgb, var(--red) 50%, transparent); display: inline-flex; align-items: center; justify-content: center; }
+  .card h3 { margin: 0; font-size: 19px; font-weight: 700; }
+  .card p { margin: 0; font-size: 16px; line-height: 1.65; color: #4A5578; }
+  .lines { display: flex; flex-direction: column; gap: 4px; }
+  .line { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; font-weight: 600; color: #0F1738; text-decoration: none; }
+  .line svg { stroke: var(--navy); }
+  .hours { font-size: 13.5px; color: #4A5578; }
+  .quick { display: flex; flex-direction: column; gap: 12px; }
+  .quick__t { font-size: 13.5px; font-weight: 600; }
+  .quick__r { display: flex; flex-wrap: wrap; gap: 10px; }
+  .q { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 18px; border-radius: 999px; font-size: 15px; text-decoration: none; }
+  .q svg { stroke-width: 2; }
+  .q--navy { background: var(--navy); color: #FFFFFF; font-weight: 700; box-shadow: 0 16px 28px -14px color-mix(in srgb, var(--navy) 80%, transparent); }
+  .q--white { background: #FFFFFF; color: var(--navy); font-weight: 600; box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); }
+  .mapsec { padding: 0 24px; }
+  .panel { max-width: 1360px; margin: 0 auto; border-radius: 48px; background: linear-gradient(180deg, var(--tint-3) 0%, #F7F8FC 100%); padding: 88px 0; }
+  .panel__in { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 24px; }
+  .mhead { display: flex; flex-direction: column; gap: 12px; max-width: 720px; }
+  .mhead h2 { margin: 0; font-size: 42px; line-height: 1.15; font-weight: 700; letter-spacing: -1px; text-wrap: balance; }
+  .mhead p { margin: 0; font-size: 16.5px; line-height: 1.7; color: #4A5578; }
+  .map { position: relative; height: 440px; border-radius: 36px; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); background: linear-gradient(150deg, var(--soft) 0%, var(--tint-2) 100%); border: 1px dashed #9AA3C7; overflow: hidden; }
+  .mk { position: absolute; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .mk--1 { left: 24%; top: 22%; }
+  .mk--2 { left: 58%; top: 48%; }
+  .mk__d { width: 40px; height: 40px; border-radius: 20px; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; }
+  .mk__l { font-size: 13px; font-weight: 700; color: #0F1738; background: #FFFFFF; padding: 5px 12px; border-radius: 999px; }
+  .map__cap { position: absolute; left: 20px; bottom: 20px; font-size: 13px; color: #2C3560; background: #FFFFFF; padding: 6px 12px; border-radius: 999px; }
+  @media (max-width: 767px) {
+    .sec { padding: 40px 0; }
+    .wrap { padding: 0 16px; }
+    .form { padding: 20px 16px; gap: 16px; }
+    .grid { grid-template-columns: 1fr; }
+    .card { padding: 16px; }
+    .mapsec { padding: 0 8px; }
+    .panel { border-radius: 32px; padding: 40px 0; }
+    .panel__in { padding: 0 14px; }
+    .mhead h2 { font-size: 24px; }
+    .map { height: 240px; }
+    .mk--1 { left: 12%; top: 18%; }
+    .mk--2 { left: 46%; top: 52%; }
+  }
+</style>

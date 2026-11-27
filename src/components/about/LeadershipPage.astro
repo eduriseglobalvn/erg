@@ -1,0 +1,114 @@
+---
+import Base from '@/layouts/Base.astro';
+import AboutHero from './AboutHero.astro';
+import { LEADERS, PARTNERS } from '@/data/about';
+interface Props { current: 'leaders' | 'partners' }
+const { current } = Astro.props;
+const META = {
+  leaders: { title: 'Đội ngũ lãnh đạo', crumb: 'Đội ngũ lãnh đạo', anchor: 'lanh-dao', description: 'Gặp gỡ những người đang dẫn dắt sứ mệnh khai phóng tiềm năng tri thức của ERG.' },
+  partners: { title: 'Đối tác chiến lược', crumb: 'Đối tác chiến lược', anchor: 'doi-tac', description: 'ERG tự hào hợp tác với các tổ chức giáo dục, doanh nghiệp công nghệ uy tín trong và ngoài nước.' },
+};
+const m = META[current];
+---
+<Base title={m.title} description={m.description} active="about">
+  <AboutHero current={current} crumb={m.crumb} title="Đội ngũ lãnh đạo & đối tác" lead="Gặp gỡ những người đang dẫn dắt sứ mệnh khai phóng tiềm năng tri thức của ERG, cùng mạng lưới đối tác chiến lược đồng hành." />
+
+  <section id="lanh-dao" class="ab-sec">
+    <div class="ab-in">
+      <div class="ab-head">
+        <span class="ab-chip">Những người dẫn dắt ERG</span>
+        <h2>Đội ngũ lãnh đạo</h2>
+        <p class="clamp-3">Đội ngũ lãnh đạo tâm huyết và giàu kinh nghiệm, những người đang dẫn dắt sứ mệnh khai phóng tiềm năng tri thức tại ERG Global.</p>
+      </div>
+      <div class="leaders">
+        {LEADERS.map((l) => (
+          <div class="ab-card lead">
+            <div role="img" aria-label={l.aria} class="lead__pic"><span class="only-desktop">{l.cap}</span></div>
+            <div class="lead__txt">
+              <h3>{l.name}</h3>
+              <span class="lead__role">{l.title}</span>
+              <p class="clamp-2 lead__bio">{l.bio}</p>
+              {l.quote && <p class="clamp-2 lead__quote">{l.quote}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="doi-tac" class="ab-panelwrap">
+    <div class="ab-panel">
+      <div class="ab-in">
+        <div class="ab-head">
+          <span class="ab-chip">Mạng lưới hợp tác</span>
+          <h2>Đối tác chiến lược</h2>
+          <p class="clamp-3">ERG tự hào hợp tác với các tổ chức giáo dục, doanh nghiệp công nghệ uy tín trong và ngoài nước.</p>
+        </div>
+        <div class="partners" id="partners">
+          {PARTNERS.map((p) => (
+            <div role="img" aria-label={`Logo đối tác ${p.name}`} class="ab-card partner">
+              <span class="partner__n">{p.name}</span>
+              <span class="partner__t">{p.note}</span>
+            </div>
+          ))}
+        </div>
+        <button type="button" class="all only-mobile" data-all aria-controls="partners" aria-expanded="false">
+          Xem tất cả {PARTNERS.length} đối tác
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14 M13 6l6 6l-6 6"></path></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="end">
+    <div class="ab-cta">
+      <div class="ab-cta__txt">
+        <h2>Trở thành đối tác của ERG</h2>
+        <p class="clamp-3">Trường học, doanh nghiệp và tổ chức quan tâm đến hợp tác đào tạo có thể liên hệ để cùng thiết kế chương trình phù hợp.</p>
+      </div>
+      <div class="ab-cta__btns">
+        <a href="/lien-he" class="ab-btn-white">Liên hệ hợp tác</a>
+        <a href="/tuyen-dung" class="ab-btn-glass only-desktop">Gia nhập đội ngũ ERG</a>
+      </div>
+    </div>
+  </section>
+
+  {current !== 'leaders' && <script is:inline define:vars={{ anchor: m.anchor }}>document.getElementById(anchor)?.scrollIntoView();</script>}
+  <script>
+    const all = document.querySelector<HTMLButtonElement>('[data-all]');
+    all?.addEventListener('click', () => {
+      document.getElementById('partners')?.classList.add('is-all');
+      all.hidden = true;
+    });
+  </script>
+</Base>
+
+<style>
+  .leaders { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+  .lead { display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+  .lead__pic { aspect-ratio: 1 / 1; background: linear-gradient(150deg, var(--soft) 0%, var(--tint-2) 100%); border-bottom: 1px dashed #9AA3C7; display: flex; align-items: flex-end; padding: 16px; box-sizing: border-box; flex: none; }
+  .lead__pic span { font-size: 12.5px; color: #2C3560; background: #fff; padding: 5px 11px; border-radius: 999px; }
+  .lead__txt { padding: 22px 24px 26px; display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+  .lead__txt h3 { font-size: 18px; font-weight: 700; }
+  .lead__role { font-size: 13.5px; font-weight: 700; color: var(--red); }
+  .lead__bio { margin-top: 4px !important; }
+  .lead__quote { margin: 6px 0 0 !important; padding: 14px 16px; border-radius: 18px; background: var(--soft); font-size: 15px !important; line-height: 1.6; color: #0F1738 !important; font-weight: 600; }
+  .partners { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+  .partner { min-height: 132px; border: 1px dashed #9AA3C7; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 16px; box-sizing: border-box; text-align: center; }
+  .partner__n { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .partner__t { font-size: 12.5px; color: #4A5578; }
+  .all { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 50px; padding: 0 24px; border: 0; border-radius: 999px; background: #fff; font: inherit; font-size: 15px; font-weight: 700; color: var(--navy); box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); width: 100%; box-sizing: border-box; cursor: pointer; }
+  .all svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .end { padding: 88px 24px; }
+
+  @media (max-width: 767px) {
+    .leaders { grid-template-columns: 1fr; gap: 12px; }
+    .lead { flex-direction: row; align-items: flex-start; padding: 12px; }
+    .lead__pic { width: 96px; height: 96px; border-radius: 18px; padding: 0; }
+    .lead__txt { padding: 0; }
+    .partners { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .partner { min-height: 96px; border-radius: 22px; }
+    .partners:not(.is-all) .partner:nth-child(n+5) { display: none; }
+    .end { padding: 40px 16px; }
+  }
+</style>

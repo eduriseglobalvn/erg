@@ -1,0 +1,10 @@
+---
+import { HOME_TITLE } from '@/data/seo';
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/home/Hero.astro';
+import Sections from '@/components/home/Sections.astro';
+---
+<Base title={HOME_TITLE} active="home">
+  <Hero />
+  <Sections />
+</Base>

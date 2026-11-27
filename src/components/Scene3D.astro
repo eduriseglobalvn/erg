@@ -1,0 +1,148 @@
+---
+// 3D globe with orbiting subject pills, from Scene3D.dc.html. Pure CSS 3D + Web Animations.
+// The geometry is computed at build time for desktop and for mobile; CSS shows the one that fits.
+interface Props { compact?: boolean; topic?: 'all' | 'quocte' | 'mos' | 'mos3'; embedded?: boolean; label?: string }
+const { compact = false, topic = 'all', embedded = false, label = 'Mô hình 3D: quả cầu dữ liệu xoay, xung quanh là các môn học trong chương trình của ERG' } = Astro.props;
+
+const TOPICS = {
+  all: ['Tin học cơ bản & nâng cao', 'MOS', 'IC3 GS6', 'Python', 'STEM Robotics', 'Lập trình thi đấu (CP)', 'Scratch', 'IC3 Spark', 'AI', 'Điện toán đám mây'],
+  quocte: ['MOS Specialist', 'MOS', 'IC3 GS6', 'MOS Master', 'IC3 Spark GS6', 'MOS Expert'],
+  mos: ['MOS Word', 'MOS Excel', 'MOS PowerPoint', 'MOS Outlook', 'MOS Access'],
+  mos3: ['Word', 'Excel', 'PowerPoint'],
+};
+const px = (n: number) => Math.round(n) + 'px';
+const cyan = 'rgba(94,230,255,';
+const accent = '#FF3355', accentDark = '#8A0018';
+const cell = compact ? 26 : 36;
+
+function geometry(mobile: boolean) {
+  const R = compact ? (mobile ? 66 : 92) : (mobile ? 100 : 146);
+  const H = compact ? (mobile ? 230 : 300) : (mobile ? 350 : 480);
+  const D = R * 2;
+  const meridians = [0, 30, 60, 90, 120, 150].map((a, i) => ({ tf: `rotateY(${a}deg)`, c: cyan + (i % 2 ? '0.34)' : '0.6)') }));
+  const parallels = [-60, -30, 0, 30, 60].map((lat) => {
+    const w = D * Math.cos((lat * Math.PI) / 180);
+    return { w: px(w), m: px(-w / 2), c: lat === 0 ? cyan + '0.75)' : cyan + '0.36)', tf: `translateY(${px(-R * Math.sin((lat * Math.PI) / 180))}) rotateX(90deg)` };
+  });
+  const pts = [[20, 10], [48, 70], [-15, 120], [35, 200], [-40, 250], [10, 300], [62, 330], [-55, 40], [0, 160], [28, 262], [-28, 340], [50, 140], [-8, 60], [-62, 190]];
+  const nodes = pts.map(([lat, lon], i) => {
+    const s = i % 4 === 0 ? 9 : 6;
+    const c = i % 5 === 0 ? '#FF4D6D' : i % 3 === 0 ? '#FFFFFF' : '#5EE6FF';
+    return { s: px(s), m: px(-s / 2), c, tf: `rotateY(${lon}deg) rotateX(${-lat}deg) translateZ(${px(R)})` };
+  });
+  const sparks = Array.from({ length: compact ? 6 : 12 }, (_, i) => ({
+    left: 8 + ((i * 37) % 84) + '%', top: 30 + ((i * 23) % 55) + '%', size: px(3 + (i % 3)), z: px(-120 + ((i * 53) % 280)),
+    c: i % 4 === 0 ? '#FF6B85' : i % 3 === 0 ? '#FFFFFF' : '#5EE6FF', dur: String(5200 + (i % 5) * 900),
+  }));
+  let names = TOPICS[topic] ?? TOPICS.all;
+  if (mobile || compact) names = names.filter((t) => t.length <= 14).slice(0, mobile ? 5 : 7);
+  const dots = ['#5EE6FF', '#FF4D6D', '#5EE6A8', '#FFD479'];
+  const rx = mobile ? 34 : compact ? 40 : 46, ry = compact ? 40 : 43;
+  const subjects = names.map((title, i) => {
+    const t = ((-90 + (i * 360) / names.length) * Math.PI) / 180, z = 40 + ((i * 53) % 110);
+    return { title, z, c: dots[i % dots.length], left: (50 + rx * Math.cos(t)).toFixed(1) + '%', top: (47 + ry * Math.sin(t)).toFixed(1) + '%', tf: `translate(-50%, -50%) translate3d(0, 0, ${z}px)` };
+  });
+  return {
+    mobile, H, meridians, parallels, nodes, sparks, subjects,
+    d: px(D), dM: px(-R), dMT: px(-R - H * 0.06),
+    haloW: px(D * 1.5), haloM: px(-D * 0.75), haloMT: px(-D * 0.75 - H * 0.06),
+    ringA: px(D * 1.42), ringAM: px(-D * 0.71), ringB: px(D * 1.86), ringBM: px(-D * 0.93),
+    floorW: px(D * 2.3), floorM: px(-D * 1.15), floorTop: px(-D * 1.15 + R * 1.25),
+    pillPad: mobile || compact ? '8px 13px 8px 10px' : '11px 18px 11px 13px', pillF: mobile || compact ? '13px' : '15px',
+  };
+}
+const variants = [geometry(false), geometry(true)];
+const bg = embedded ? 'transparent' : 'radial-gradient(520px 360px at 70% 40%, rgba(64,110,255,0.6) 0%, rgba(64,110,255,0) 70%), linear-gradient(180deg, #00003D 0%, #00007A 100%)';
+---
+{variants.map((g) => (
+  <div class:list={['s3d', g.mobile ? 'only-mobile' : 'only-desktop']} data-cell={cell} role="img" aria-label={label}
+    style={`height: ${g.H}px; background: ${bg}; overflow: ${embedded ? 'visible' : 'hidden'}`}>
+    <div class="s3d-stage" aria-hidden="true">
+      <div class="s3d-floor" style={`width: ${g.floorW}; height: ${g.floorW}; margin-left: ${g.floorM}; margin-top: ${g.floorTop}`}>
+        <div data-grid class="s3d-grid" style={`background-size: ${cell}px ${cell}px`}></div>
+        <div data-pulse class="s3d-pulse"></div>
+        <div class="s3d-glow"></div>
+      </div>
+      <div class="s3d-halo" style={`width: ${g.haloW}; height: ${g.haloW}; margin-left: ${g.haloM}; margin-top: ${g.haloMT}`}></div>
+      <div class="s3d-globe-wrap" style={`width: ${g.d}; height: ${g.d}; margin-left: ${g.dM}; margin-top: ${g.dMT}`}>
+        <div class="s3d-fill">
+          <div data-globe class="s3d-fill s3d-3d">
+            {g.meridians.map((m) => <div class="s3d-ring" style={`border-color: ${m.c}; transform: ${m.tf}`}></div>)}
+            {g.parallels.map((p) => <div class="s3d-par" style={`width: ${p.w}; height: ${p.w}; margin-left: ${p.m}; margin-top: ${p.m}; border-color: ${p.c}; transform: ${p.tf}`}></div>)}
+            {g.nodes.map((n) => <span class="s3d-node" style={`width: ${n.s}; height: ${n.s}; margin-left: ${n.m}; margin-top: ${n.m}; background: ${n.c}; box-shadow: 0 0 12px 2px ${n.c}; transform: ${n.tf}`}></span>)}
+          </div>
+        </div>
+        <div class="s3d-core" style={`background: radial-gradient(circle at 36% 30%, #FFFFFF 0%, ${accent} 40%, ${accentDark} 100%); box-shadow: 0 0 50px 6px ${accent}`}></div>
+        <div data-spin="18" class="s3d-orbit s3d-orbit-a" style={`width: ${g.ringA}; height: ${g.ringA}; margin-left: ${g.ringAM}; margin-top: ${g.ringAM}`}><span></span></div>
+        <div data-spin="-30" class="s3d-orbit s3d-orbit-b" style={`width: ${g.ringB}; height: ${g.ringB}; margin-left: ${g.ringBM}; margin-top: ${g.ringBM}`}>
+          <span style={`background: radial-gradient(circle at 32% 28%, #FFFFFF 0%, ${accent} 50%, ${accentDark} 100%); box-shadow: 0 0 18px 3px ${accent}`}></span><span></span>
+        </div>
+      </div>
+      {g.sparks.map((s) => <span data-rise={s.dur} class="s3d-spark" style={`left: ${s.left}; top: ${s.top}; width: ${s.size}; height: ${s.size}; background: ${s.c}; box-shadow: 0 0 10px 2px ${s.c}; transform: translate3d(0, 0, ${s.z})`}></span>)}
+      {g.subjects.map((c) => (
+        <div data-float data-z={c.z} class="s3d-pill" style={`left: ${c.left}; top: ${c.top}; transform: ${c.tf}; padding: ${g.pillPad}; font-size: ${g.pillF}`}>
+          <span style={`background: ${c.c}; box-shadow: 0 0 10px 2px ${c.c}`}></span>{c.title}
+        </div>
+      ))}
+    </div>
+  </div>
+))}
+
+<script>
+  // Runs once per page for every globe. Reduced-motion users get the still picture.
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (const root of document.querySelectorAll<HTMLElement>('.s3d')) {
+    const st = root.querySelector<HTMLElement>('.s3d-stage')!;
+    root.addEventListener('pointermove', (e) => {
+      const r = root.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      st.style.transform = `rotateX(${(-6 - y * 16).toFixed(1)}deg) rotateY(${(x * 26).toFixed(1)}deg)`;
+    });
+    root.addEventListener('pointerleave', () => { st.style.transform = 'rotateX(-6deg) rotateY(0deg)'; });
+    if (still) continue;
+    const loop = { iterations: Infinity };
+    const add = (el: Element, frames: Keyframe[], opts: KeyframeAnimationOptions) => el.animate(frames, { ...loop, ...opts });
+    add(st.querySelector('[data-globe]')!, [{ transform: 'rotateY(0deg)' }, { transform: 'rotateY(360deg)' }], { duration: 30000 });
+    st.querySelectorAll<HTMLElement>('[data-spin]').forEach((el) => {
+      const secs = Number(el.dataset.spin);
+      add(el, [{ transform: 'rotateX(78deg) rotateZ(0deg)' }, { transform: `rotateX(78deg) rotateZ(${secs < 0 ? -360 : 360}deg)` }], { duration: Math.abs(secs) * 1000 });
+    });
+    st.querySelectorAll<HTMLElement>('[data-float]').forEach((el, i) => {
+      const base = 'translate(-50%, -50%) translate3d(0, ', z = el.dataset.z + 'px)';
+      add(el, [{ transform: base + '0, ' + z }, { transform: base + '-12px, ' + z }], { duration: 3600 + (i % 5) * 600, direction: 'alternate', easing: 'ease-in-out' });
+    });
+    st.querySelectorAll('[data-grid]').forEach((el) => add(el, [{ backgroundPosition: '0 0, 0 0' }, { backgroundPosition: `0 ${root.dataset.cell}px, 0 0` }], { duration: 2600 }));
+    st.querySelectorAll('[data-pulse]').forEach((el) => add(el, [{ transform: 'scale(0.55)', opacity: 0.9 }, { transform: 'scale(2.1)', opacity: 0 }], { duration: 3200, easing: 'ease-out' }));
+    st.querySelectorAll<HTMLElement>('[data-rise]').forEach((el, i) => {
+      const base = el.style.transform;
+      add(el, [{ transform: base + ' translateY(0)', opacity: 0 }, { opacity: 0.9, offset: 0.2 }, { transform: base + ' translateY(-120px)', opacity: 0 }], { duration: Number(el.dataset.rise), delay: -i * 700, easing: 'ease-in-out' });
+    });
+  }
+</script>
+
+<style>
+  .s3d { position: relative; width: 100%; perspective: 1200px; border-radius: 28px; }
+  .s3d-stage { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(-6deg) rotateY(0deg); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+  .s3d-floor { position: absolute; left: 50%; top: 50%; transform: rotateX(78deg); transform-style: preserve-3d; }
+  .s3d-grid { position: absolute; inset: 0; border-radius: 50%; background-image: linear-gradient(rgba(94, 230, 255, 0.55) 1px, rgba(94, 230, 255, 0) 1px), linear-gradient(90deg, rgba(94, 230, 255, 0.55) 1px, rgba(94, 230, 255, 0) 1px); -webkit-mask-image: radial-gradient(closest-side, #000 0%, rgba(0, 0, 0, 0.55) 45%, rgba(0, 0, 0, 0) 100%); mask-image: radial-gradient(closest-side, #000 0%, rgba(0, 0, 0, 0.55) 45%, rgba(0, 0, 0, 0) 100%); }
+  .s3d-pulse { position: absolute; left: 27%; top: 27%; width: 46%; height: 46%; border-radius: 50%; border: 2px solid rgba(94, 230, 255, 0.7); box-shadow: 0 0 30px rgba(94, 230, 255, 0.6), inset 0 0 30px rgba(94, 230, 255, 0.35); }
+  .s3d-glow { position: absolute; left: 35%; top: 35%; width: 30%; height: 30%; border-radius: 50%; background: radial-gradient(closest-side, rgba(94, 230, 255, 0.75), rgba(94, 230, 255, 0)); }
+  .s3d-halo { position: absolute; left: 50%; top: 50%; border-radius: 50%; background: radial-gradient(circle at 36% 30%, rgba(150, 235, 255, 0.42) 0%, rgba(64, 110, 255, 0.26) 38%, rgba(20, 30, 160, 0.12) 60%, rgba(20, 30, 160, 0) 72%); }
+  .s3d-globe-wrap { position: absolute; left: 50%; top: 50%; transform-style: preserve-3d; transform: rotateZ(-16deg) rotateX(-10deg); }
+  .s3d-fill { position: absolute; inset: 0; }
+  .s3d-3d { transform-style: preserve-3d; }
+  .s3d-ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid; }
+  .s3d-par { position: absolute; left: 50%; top: 50%; border-radius: 50%; border: 1px solid; }
+  .s3d-node { position: absolute; left: 50%; top: 50%; border-radius: 50%; }
+  .s3d-core { position: absolute; left: 35%; top: 35%; width: 30%; height: 30%; transform: translateZ(1px); border-radius: 50%; }
+  .s3d-orbit { position: absolute; left: 50%; top: 50%; border-radius: 50%; transform: rotateX(78deg) rotateZ(0deg); transform-style: preserve-3d; }
+  .s3d-orbit span { position: absolute; border-radius: 50%; }
+  .s3d-orbit-a { border: 1.5px solid rgba(94, 230, 255, 0.5); box-shadow: 0 0 18px rgba(94, 230, 255, 0.25); }
+  .s3d-orbit-a span { left: -8px; top: 50%; width: 16px; height: 16px; margin-top: -8px; background: radial-gradient(circle at 32% 28%, #FFFFFF 0%, #5EE6FF 50%, #1466C8 100%); box-shadow: 0 0 20px 4px rgba(94, 230, 255, 0.9); }
+  .s3d-orbit-b { border: 1px dashed rgba(255, 255, 255, 0.3); }
+  .s3d-orbit-b span:first-child { right: -7px; top: 50%; width: 14px; height: 14px; margin-top: -7px; }
+  .s3d-orbit-b span + span { left: 50%; top: -5px; width: 10px; height: 10px; margin-left: -5px; background: #FFFFFF; box-shadow: 0 0 14px 3px rgba(255, 255, 255, 0.8); }
+  .s3d-spark { position: absolute; border-radius: 50%; opacity: 0.8; }
+  .s3d-pill { position: absolute; display: flex; align-items: center; gap: 9px; border-radius: 999px; background: rgba(6, 12, 48, 0.72); border: 1px solid rgba(94, 230, 255, 0.4); box-shadow: 0 0 0 4px rgba(94, 230, 255, 0.06), 0 18px 36px -14px rgba(0, 0, 20, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.16); color: #FFFFFF; font-weight: 600; line-height: 1; white-space: nowrap; }
+  .s3d-pill span { flex: none; width: 8px; height: 8px; border-radius: 50%; }
+</style>

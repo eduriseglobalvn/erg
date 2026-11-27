@@ -1,0 +1,34 @@
+---
+import Scene3D from '@/components/Scene3D.astro';
+interface Props { crumb: string; title: string; text: string }
+const { crumb, title, text } = Astro.props;
+---
+<section class="hero">
+  <div class="hero__in">
+    <div class="hero__txt">
+      <nav aria-label="Breadcrumb" class="crumb">
+        <a href="/">Trang chủ</a>
+        <span aria-hidden="true">/</span>
+        <span>{crumb}</span>
+      </nav>
+      <h1>{title}</h1>
+      <p class="clamp-3">{text}</p>
+    </div>
+    <div class="hero__scene only-desktop"><Scene3D compact embedded /></div>
+  </div>
+</section>
+<style>
+  .hero { position: relative; overflow: hidden; color: #FFFFFF; border-radius: 0 0 56px 56px; background: radial-gradient(900px 560px at 80% 62%, color-mix(in srgb, var(--glow) 70%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(640px 400px at 6% 100%, color-mix(in srgb, var(--red) 42%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(180deg, var(--navy-night) 0%, var(--navy-2) 100%); }
+  .hero__in { max-width: 1200px; margin: 0 auto; padding: 40px 24px 72px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px 48px; }
+  .hero__txt { flex: 1.4 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .hero__scene { flex: 1 1 300px; min-width: 0; }
+  .crumb { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; color: var(--tint-1); }
+  .crumb a { color: #FFFFFF; text-decoration: none; }
+  h1 { margin: 0; font-size: 52px; line-height: 1.08; font-weight: 700; letter-spacing: -1.2px; text-wrap: balance; }
+  p { margin: 0; font-size: 17.5px; line-height: 1.65; color: var(--tint-1); max-width: 640px; }
+  @media (max-width: 767px) {
+    .hero { border-radius: 0 0 32px 32px; }
+    .hero__in { padding: 24px 16px 44px; }
+    h1 { font-size: 30px; }
+  }
+</style>

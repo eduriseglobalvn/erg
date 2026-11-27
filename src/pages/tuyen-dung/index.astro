@@ -1,0 +1,220 @@
+---
+import { KEYWORDS } from '@/data/seo';
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/careers/Hero.astro';
+import { JOBS, HIRING_STEPS } from '@/data/jobs';
+
+const arrow = 'M5 12h14 M13 6l6 6l-6 6';
+const policy = ['Công bằng & Minh bạch', 'Cạnh tranh thị trường', 'Ghi nhận đóng góp'];
+const benefits = [
+  { title: 'Phúc lợi toàn diện', text: 'BHXH, thưởng lễ tết, du lịch.', icon: 'M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z' },
+  { title: 'Đào tạo chuyên sâu', text: 'Tài trợ thi chứng chỉ Quốc tế.', icon: 'M12 3a5 5 0 1 0 0 10a5 5 0 0 0 0-10z M9 12.5L8 21l4-2l4 2l-1-8.5' },
+  { title: 'Văn hóa mở', text: 'Sếp lắng nghe, đồng nghiệp sẻ chia.', icon: 'M9 11a3.5 3.5 0 1 0 0-7a3.5 3.5 0 0 0 0 7z M2 20a7 7 0 0 1 14 0 M17 4.5a3.5 3.5 0 0 1 0 6.5 M22 20a6 6 0 0 0-4-5.6' },
+  { title: 'Tiện nghi', text: 'Laptop, PC cấu hình cao.', icon: 'M3 5h18v11H3z M8 20h8 M12 16v4' },
+];
+const uniq = (k: 'dept' | 'type' | 'place') => [...new Set(JOBS.map((j) => j[k]))];
+const typeOpts = ['Toàn thời gian', 'Bán thời gian', 'Thực tập', 'Hybrid'];
+---
+<Base title="Tuyển dụng giáo viên, nhân sự giáo dục" keywords={KEYWORDS.careers} description="Gia nhập ERG để cùng mang chuẩn Tin học Quốc tế đến hàng triệu học sinh Việt Nam." active="careers">
+  <div>
+    <Hero crumbs={[{ label: 'Tuyển dụng' }]} title="Cơ hội nghề nghiệp" lead="Gia nhập ERG để cùng mang chuẩn Tin học Quốc tế đến hàng triệu học sinh Việt Nam.">
+      <span slot="badge" class="hero-badge">Tuyển dụng Giáo dục &amp; CNTT</span>
+      <div slot="actions" class="hero-actions">
+        <a href="#vi-tri" class="btn btn--primary" style="height:52px;padding:0 26px">Xem vị trí đang tuyển
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" class="ic" style="stroke-width:2.2"><path d={arrow} /></svg></a>
+        <a href="/tuyen-dung/theo-doi" class="btn btn--glass only-desktop" style="height:52px;padding:0 24px">Tra cứu hồ sơ</a>
+      </div>
+      <div slot="side" class="hero-side">
+        <div role="img" aria-label="Ảnh đội ngũ ERG tại nơi làm việc" class="hero-ph"><span>Ảnh: đội ngũ ERG tại nơi làm việc</span></div>
+      </div>
+    </Hero>
+
+    <section class="sec">
+      <div class="in">
+        <div class="why">
+          <div class="why__text">
+            <span class="cr-chip">Vì sao chọn ERG</span>
+            <h2>Môi trường tôn trọng &amp; phát triển không giới hạn</h2>
+            <p class="clamp-4 body">Tại Edurise Global, chúng tôi cam kết tạo ra môi trường làm việc nơi mỗi cá nhân đều có cơ hội phát triển. Giáo viên không chỉ giảng dạy mà còn được định hướng lộ trình nghề nghiệp rõ ràng.</p>
+            <a href="#vi-tri" class="only-mobile more">Xem thêm</a>
+            <div class="policy">
+              {policy.map((t) => (
+                <div class="cr-card policy__row"><span class="tick"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="ic" style="stroke-width:2.4"><path d="M5 12l5 5l9-10" /></svg></span>{t}</div>
+              ))}
+            </div>
+            <div class="stats">
+              <div class="cr-card stat"><span class="stat__n" style="color:var(--red)">100%</span><span class="stat__l">GIÁO VIÊN ĐẠT CHUẨN</span></div>
+              <div class="cr-card stat"><span class="stat__n" style="color:var(--navy)">100%</span><span class="stat__l">CHỨNG CHỈ QUỐC TẾ</span></div>
+            </div>
+          </div>
+          <div class="why__img only-desktop"><div role="img" aria-label="Ảnh văn hóa làm việc tại ERG" class="ph2"><span>Ảnh: văn hóa làm việc tại ERG</span></div></div>
+        </div>
+        <ul class="grid g4">
+          {benefits.map((b) => (
+            <li class="cr-card item">
+              <span class="icon"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" class="ic"><path d={b.icon} /></svg></span>
+              <div class="item__t"><h3>{b.title}</h3><p class="clamp-2">{b.text}</p></div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="panelwrap">
+      <div class="cr-panel">
+        <div class="in in--panel">
+          <div class="head">
+            <span class="cr-chip">Hành trình gia nhập</span>
+            <h2>Lộ trình gia nhập Edurise Global</h2>
+            <p class="clamp-3 body">Sáu bước từ lúc gửi hồ sơ đến khi chính thức trở thành thành viên của ERG.</p>
+          </div>
+          <ol class="grid g3 steps">
+            {HIRING_STEPS.map((s) => (
+              <li class="cr-card item">
+                <span class="icon icon--no">{s.no}</span>
+                <div class="item__t"><h3>{s.title}</h3><p class="clamp-2">{s.text}</p></div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="vi-tri" class="sec">
+      <div class="in">
+        <div class="head">
+          <span class="cr-chip">Đang tuyển dụng</span>
+          <h2>Vị trí đang tuyển dụng</h2>
+          <p class="clamp-3 body">Danh sách vị trí được cập nhật từ hệ thống tuyển dụng của ERG.</p>
+        </div>
+
+        <div class="cr-card filters" role="search">
+          <div class="cr-field"><label for="jk">Từ khóa</label><input id="jk" type="search" placeholder="Nhập vị trí (VD: Giáo viên tin học, IT...)" /></div>
+          <div class="cr-field"><label for="jd">Bộ phận</label>
+            <select id="jd"><option value="">Tất cả bộ phận</option>{uniq('dept').map((v) => <option>{v}</option>)}</select></div>
+          <div class="cr-field"><label for="jt">Hình thức</label>
+            <select id="jt"><option value="">Tất cả hình thức</option>{typeOpts.map((v) => <option>{v}</option>)}</select></div>
+          <div class="cr-field"><label for="jl">Địa điểm</label>
+            <select id="jl"><option value="">Tất cả địa điểm</option><option>Hồ Chí Minh</option>{uniq('place').map((v) => <option>{v}</option>)}</select></div>
+        </div>
+
+        <div class="jobs" id="jobs">
+          {JOBS.map((j) => (
+            <article class="cr-card job" data-title={j.title} data-dept={j.dept} data-type={j.type} data-place={j.place}>
+              <div class="job__main">
+                <h3>{j.title}</h3>
+                <div class="tags"><span class="cr-tag">{j.dept}</span><span class="cr-tag cr-tag--alt">{j.type}</span></div>
+                <div class="meta">
+                  <span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="ic"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z M12 7.5a2.5 2.5 0 1 0 0 5a2.5 2.5 0 0 0 0-5z" /></svg>{j.place}</span>
+                  <span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="ic"><path d="M4 6h16v14H4z M4 10h16 M8 3v4 M16 3v4" /></svg>Hạn nộp: {j.deadline}</span>
+                  <span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="ic"><path d="M3 8h18v12H3z M9 8V5h6v3 M3 13h18" /></svg>Mức lương: {j.salary}</span>
+                </div>
+              </div>
+              <a href={`/tuyen-dung/${j.slug}`} class="cr-white-btn">Xem chi tiết <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="ic" style="stroke-width:2.2"><path d={arrow} /></svg></a>
+            </article>
+          ))}
+          <p id="jobs-empty" hidden class="foot">Không có vị trí phù hợp với bộ lọc.</p>
+        </div>
+        <p class="foot">Vị trí, bộ phận, mức lương và hạn nộp được tải từ hệ thống tuyển dụng.</p>
+      </div>
+    </section>
+
+    <section class="ctawrap">
+      <div class="cta">
+        <div class="cta__t"><h2>Đã nộp hồ sơ?</h2><p class="clamp-2">Nhập mã hồ sơ để theo dõi tiến độ xét duyệt của bạn bất cứ lúc nào.</p></div>
+        <a href="/tuyen-dung/theo-doi" class="btn cta__btn">Tra cứu hồ sơ</a>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  const q = (id: string) => document.getElementById(id) as HTMLInputElement;
+  const rows = [...document.querySelectorAll<HTMLElement>('#jobs .job')];
+  const apply = () => {
+    const k = q('jk').value.trim().toLowerCase();
+    const f = { dept: q('jd').value, type: q('jt').value, place: q('jl').value };
+    let n = 0;
+    rows.forEach((r) => {
+      const ok = (!k || (r.dataset.title ?? '').toLowerCase().includes(k)) &&
+        (!f.dept || r.dataset.dept === f.dept) && (!f.type || r.dataset.type === f.type) && (!f.place || r.dataset.place === f.place);
+      r.hidden = !ok; if (ok) n++;
+    });
+    document.getElementById('jobs-empty')!.hidden = n > 0;
+  };
+  ['jk', 'jd', 'jt', 'jl'].forEach((id) => q(id).addEventListener('input', apply));
+</script>
+
+<style>
+  .ic { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  h2 { font-size: 42px; line-height: 1.15; font-weight: 700; letter-spacing: -1px; text-wrap: balance; }
+  h3 { font-size: 16px; font-weight: 700; line-height: 1.3; letter-spacing: -0.2px; }
+  .body { font-size: 16.5px; line-height: 1.7; color: #4A5578; }
+  .sec { padding: 88px 0; }
+  .in { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px; }
+  .head { display: flex; flex-direction: column; gap: 12px; max-width: 640px; }
+  .hero-badge { display: inline-flex; align-self: flex-start; padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,0.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2); font-size: 13.5px; font-weight: 700; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+  .hero-side { flex: 1 1 320px; min-width: 0; }
+  .hero-ph { aspect-ratio: 5 / 4; border-radius: 36px; border: 1px dashed rgba(255,255,255,0.45); background: repeating-linear-gradient(135deg, rgba(255,255,255,0.09) 0 14px, rgba(255,255,255,0.03) 14px 28px); display: flex; align-items: flex-end; padding: 20px; }
+  .hero-ph span { font-size: 13px; color: #fff; background: rgba(0,0,0,0.45); padding: 6px 12px; border-radius: 999px; }
+  .why { display: flex; flex-wrap: wrap; align-items: center; gap: 24px 64px; }
+  .why__text { flex: 1 1 0; min-width: 320px; max-width: 560px; display: flex; flex-direction: column; gap: 16px; }
+  .why__img { flex: 1 1 0; min-width: 320px; }
+  .ph2 { aspect-ratio: 4 / 3; border-radius: 36px; background: linear-gradient(150deg, var(--soft) 0%, var(--tint-2) 100%); border: 1px dashed #9AA3C7; display: flex; align-items: flex-end; padding: 20px; }
+  .ph2 span { font-size: 13px; color: #2C3560; background: #fff; padding: 6px 12px; border-radius: 999px; }
+  .more { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; color: var(--navy); font-weight: 700; font-size: 15px; text-decoration: none; }
+  .policy { display: flex; flex-direction: column; gap: 10px; }
+  .policy__row { display: flex; align-items: center; gap: 12px; padding: 12px 18px 12px 14px; font-size: 15.5px; font-weight: 600; }
+  .tick { flex: none; width: 28px; height: 28px; border-radius: 14px; background: var(--red-soft); color: var(--red); display: inline-flex; align-items: center; justify-content: center; }
+  .stats { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; }
+  .stat { flex: 1 1 140px; display: flex; flex-direction: column; gap: 2px; padding: 18px 22px; border-radius: 24px; }
+  .stat__n { font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 1.1; }
+  .stat__l { font-size: 13px; font-weight: 700; letter-spacing: 0.4px; color: #2C3560; }
+  .grid { display: grid; gap: 20px; list-style: none; margin: 0; padding: 0; }
+  .g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .item { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 28px; }
+  .item__t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  .item p { font-size: 15px; line-height: 1.6; color: #4A5578; }
+  .icon { flex: none; width: 48px; height: 48px; border-radius: 16px; background: linear-gradient(145deg, var(--accent) 0%, var(--navy) 100%); color: #fff; box-shadow: 0 12px 20px -10px color-mix(in srgb, var(--navy) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4); display: inline-flex; align-items: center; justify-content: center; }
+  .icon--no { width: 40px; height: 40px; border-radius: 20px; font-weight: 700; font-size: 16px; }
+  .panelwrap { padding: 0 24px; }
+  .filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; padding: 28px; border-radius: 32px; align-items: end; }
+  .jobs { display: flex; flex-direction: column; gap: 16px; }
+  .job { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding: 28px; }
+  .job[hidden] { display: none; }
+  .job__main { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+  .job h3 { font-size: 17px; line-height: 1.35; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: #4A5578; }
+  .meta span { display: inline-flex; align-items: center; gap: 7px; }
+  .foot { font-size: 13.5px; color: #4A5578; }
+  .wide { height: 48px; width: 100%; }
+  .ctawrap { padding: 0 24px 88px; }
+  .cta { max-width: 1152px; margin: 0 auto; border-radius: 48px; color: #fff; padding: 48px 56px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px 40px; background: radial-gradient(760px 420px at 92% 8%, color-mix(in srgb, var(--glow) 60%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(620px 380px at 0% 100%, color-mix(in srgb, var(--red) 34%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(160deg, var(--navy-night) 0%, var(--navy-2) 100%); }
+  .cta__t { display: flex; flex-direction: column; gap: 10px; flex: 1 1 320px; min-width: 0; }
+  .cta p { font-size: 17px; line-height: 1.65; color: var(--tint-1); }
+  .cta__btn { height: 54px; padding: 0 28px; background: #fff; color: var(--navy); box-shadow: 0 18px 30px -16px rgba(0,0,0,0.6); }
+  @media (max-width: 767px) {
+    h2 { font-size: 24px; }
+    .sec { padding: 40px 0; }
+    .in { gap: 20px; padding: 0 16px; }
+    .panelwrap { padding: 0 8px; }
+    .panelwrap .in { padding: 0 14px; }
+    .hero-ph { aspect-ratio: 16 / 9; }
+    .why__text { min-width: 0; }
+    .policy__row { padding: 8px 14px 8px 12px; }
+    .stat { padding: 12px 14px; }
+    .stat__n { font-size: 24px; }
+    .g4, .g3, .filters { grid-template-columns: 1fr; }
+    .grid { gap: 12px; }
+    .item { flex-direction: row; align-items: center; padding: 16px; }
+    .icon { width: 44px; height: 44px; }
+    .icon--no { width: 40px; height: 40px; }
+    .filters { padding: 16px; }
+    .job { padding: 16px; }
+    .ctawrap { padding: 0 16px 40px; }
+    .cta { border-radius: 32px; padding: 32px 22px; }
+  }
+</style>

@@ -1,0 +1,126 @@
+---
+// Shared page shell: head/SEO, holiday pick, header and footer.
+import '@/styles/global.css';
+import SiteHeader from '@/components/SiteHeader.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import { FIXED, LUNAR, SEASONS } from '@/lib/season';
+import FloatingContact from '@/components/FloatingContact.astro';
+import { CONTACT, type NavKey } from '@/data/site';
+import { BRAND, KEYWORDS, OG_IMAGE, LOGO } from '@/data/seo';
+
+interface Props {
+  title: string; description?: string; active?: NavKey; image?: string; noindex?: boolean;
+  keywords?: string[]; type?: 'website' | 'article'; schema?: Record<string, unknown>;
+}
+const {
+  title,
+  description = 'Trung Tâm Ngoại Ngữ - Tin Học ERG chuyên đào tạo và tổ chức thi các chứng chỉ quốc tế MOS, IC3 và các khóa học lập trình, kỹ năng số chuẩn quốc tế.',
+  active = 'home',
+  image = OG_IMAGE,
+  noindex = false,
+  keywords = KEYWORDS.main,
+  type = 'website',
+  schema,
+} = Astro.props;
+const fullTitle = title.includes(BRAND) ? title : `${title} | ${BRAND}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const site = new URL('/', Astro.site).href;
+const org = {
+  '@type': 'EducationalOrganization', '@id': `${site}#org`, name: BRAND, alternateName: ['ERG', 'Edurise Global'], url: site, logo: LOGO,
+  email: CONTACT.email, telephone: CONTACT.hotlineTel, sameAs: [CONTACT.facebook],
+  contactPoint: { '@type': 'ContactPoint', telephone: CONTACT.hotlineTel, contactType: 'customer service', areaServed: 'VN', availableLanguage: 'Vietnamese' },
+};
+const graph = [
+  ...(Astro.url.pathname === '/' ? [org, {
+    '@type': 'WebSite', '@id': `${site}#web`, url: site, name: BRAND, inLanguage: 'vi', publisher: { '@id': `${site}#org` },
+    potentialAction: { '@type': 'SearchAction', target: `${site}tim-kiem?q={search_term_string}`, 'query-input': 'required name=search_term_string' },
+  }] : []),
+  // Course wants a provider; Article wants an author and publisher.
+  ...(schema ? [schema['@type'] === 'Course' ? { ...schema, provider: org } : { ...schema, author: org, publisher: org }] : []),
+];
+---
+<!doctype html>
+<html lang="vi" data-season="none">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords.join(', ')} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={BRAND} />
+    <meta property="og:locale" content="vi_VN" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@eduriseglobal" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, Astro.site)} />
+    {graph.length > 0 && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\u003c')} />}
+    <link rel="icon" href="/iconerg.png" />
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-PF00V6RJDD"></script>
+    <script is:inline>
+      // Google Analytics, same property as the old site. Only the live domain reports, so local and preview builds stay out of the stats.
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      if (/(^|\.)erg\.edu\.vn$/.test(location.hostname)) { gtag('js', new Date()); gtag('config', 'G-PF00V6RJDD'); }
+    </script>
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" />
+    <script is:inline define:vars={{ FIXED, LUNAR, SEASONS }}>
+      // Pick today's holiday look before first paint. ?season=tet previews any look.
+      (function () {
+        var q = new URLSearchParams(location.search).get('season');
+        var d = new Date(), pad = function (n) { return String(n).padStart(2, '0'); };
+        var md = pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+        var ymd = d.getFullYear() + '-' + md;
+        var s = 'none';
+        LUNAR.forEach(function (r) { if (ymd >= r[1] && ymd <= r[2]) s = r[0]; });
+        if (s === 'none') FIXED.forEach(function (r) {
+          var hit = r[1] <= r[2] ? md >= r[1] && md <= r[2] : md >= r[1] || md <= r[2];
+          if (hit) s = r[0];
+        });
+        // A preview is remembered for the tab, so links to other pages keep it; ?season=auto clears it.
+        var st = null;
+        try { st = sessionStorage; } catch (e) {}
+        if (q === 'auto') { if (st) st.removeItem('season'); q = null; }
+        else if (q && SEASONS.indexOf(q) >= 0) { if (st) st.setItem('season', q); }
+        else q = st && st.getItem('season');
+        if (q && SEASONS.indexOf(q) >= 0) s = q;
+        document.documentElement.dataset.season = s;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Bỏ qua điều hướng</a>
+    <SiteHeader active={active} />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+    <FloatingContact />
+    <script>
+      // shortcut: there is no backend yet, so forms marked data-static-form only show their [data-form-note]; wire a real endpoint (e.g. a Cloudflare Pages Function) when one exists.
+      document.addEventListener('submit', (e) => {
+        const form = e.target as HTMLFormElement;
+        if (!form.matches('[data-static-form]')) return;
+        e.preventDefault();
+        if (!form.reportValidity()) return;
+        const note = form.querySelector<HTMLElement>('[data-form-note]');
+        if (note) { note.hidden = false; note.focus(); }
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip { position: absolute; left: 12px; top: -60px; z-index: 100; padding: 10px 16px; border-radius: 12px; background: #FFFFFF; color: var(--navy); font-weight: 700; }
+  .skip:focus { top: 12px; }
+</style>

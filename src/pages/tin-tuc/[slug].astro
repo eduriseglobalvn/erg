@@ -1,0 +1,227 @@
+---
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/news/Hero.astro';
+import NewsCard from '@/components/news/NewsCard.astro';
+import { NEWS } from '@/data/news';
+
+export function getStaticPaths() {
+  return NEWS.map((a) => ({ params: { slug: a.slug }, props: { a } }));
+}
+const { a } = Astro.props;
+const lead = a.lead ?? a.text;
+const iso = (d: string) => { const [day, m, y] = d.split('/'); return `${y}-${m.padStart(2, '0')}-${day.padStart(2, '0')}`; }; // news dates are d/m/yyyy
+const related = NEWS.filter((n) => n.slug !== a.slug);
+const toc = [1, 2, 3, 4].map((n) => ({ no: String(n), label: `[TIÊU ĐỀ MỤC ${n}]`, href: `#muc-${n}` }));
+const bullets = [1, 2, 3, 4].map((n) => `[NỘI DUNG GẠCH ĐẦU DÒNG ${n}]`);
+const rows = [1, 2, 3].map((n) => [`[HẠNG MỤC ${n}]`, '[GIÁ TRỊ]', '[GIÁ TRỊ]']);
+const shares = [
+  { label: 'Facebook', icon: 'M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z' },
+  { label: 'Zalo', icon: 'M4 5h16v11H9l-5 4z' },
+  { label: 'Sao chép liên kết', icon: 'M8 12h8 M10 8H7a4 4 0 0 0 0 8h3 M14 8h3a4 4 0 0 1 0 8h-3' },
+];
+const ctaTitle = a.sample ? 'Đăng ký khóa bán trú hè 2026' : 'Đăng ký tư vấn';
+const cover = a.sample ? 'Ảnh bìa: khóa bán trú hè 2026' : 'Ảnh bìa bài viết';
+---
+<Base title={a.title} description={lead} active="news" type="article" schema={{ '@type': 'Article', headline: a.title, description: lead, datePublished: iso(a.date), inLanguage: 'vi', mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).href }}>
+  <div>
+    <Hero crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Tin tức', href: '/tin-tuc' }, { label: a.title }]}>
+      <span class="cat">{a.cat}</span>
+      <h1>{a.title}</h1>
+      <div class="meta">
+        <span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 6h16v14H4z M4 10h16 M8 3v4 M16 3v4"></path></svg>{a.date}</span>
+        <span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 4a4 4 0 1 0 0 8a4 4 0 0 0 0-8z M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"></path></svg>[TÁC GIẢ]</span>
+        <span><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18z M12 7v5l3 2"></path></svg>[THỜI GIAN ĐỌC]</span>
+      </div>
+    </Hero>
+
+    <section class="cover-sec">
+      <div class="wrap">
+        <div class="ph-cover" role="img" aria-label={cover}><span>{cover}</span></div>
+      </div>
+    </section>
+
+    <section class="body-sec">
+      <div class="wrap body">
+        {a.sample && (
+          <details class="toc-m only-mobile">
+            <summary>Mục lục
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6l6-6"></path></svg></summary>
+            <ol>{toc.map((t) => <li><a href={t.href}><span>{t.no}</span><span>{t.label}</span></a></li>)}</ol>
+          </details>
+        )}
+
+        <article class="art">
+          <p class="lead">{lead}</p>
+          {a.sample ? (
+            <>
+              <h2 id="muc-1">[TIÊU ĐỀ MỤC 1]</h2>
+              <p>[ĐOẠN NỘI DUNG BÀI VIẾT]</p>
+              <p>[ĐOẠN NỘI DUNG BÀI VIẾT]</p>
+              <h2 id="muc-2">[TIÊU ĐỀ MỤC 2]</h2>
+              <p>[ĐOẠN NỘI DUNG BÀI VIẾT]</p>
+              <h3>[TIÊU ĐỀ MỤC PHỤ]</h3>
+              <ul class="bul">
+                {bullets.map((b) => (
+                  <li><span class="tick"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M5 12l5 5l9-10"></path></svg></span><span>{b}</span></li>
+                ))}
+              </ul>
+              <blockquote>
+                <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M4 18v-5c0-4 2-7 6-8v3c-2 1-3 2-3 4h3v6z M14 18v-5c0-4 2-7 6-8v3c-2 1-3 2-3 4h3v6z"></path></svg>
+                <p>[TRÍCH DẪN NỔI BẬT TRONG BÀI VIẾT]</p>
+                <span>[NGƯỜI ĐƯỢC TRÍCH DẪN]</span>
+              </blockquote>
+              <h2 id="muc-3">[TIÊU ĐỀ MỤC 3]</h2>
+              <p>[ĐOẠN NỘI DUNG BÀI VIẾT]</p>
+              <figure>
+                <div class="ph-fig" role="img" aria-label="Ảnh minh họa trong bài viết"><span>Ảnh: hoạt động trong khóa bán trú hè</span></div>
+                <figcaption>[CHÚ THÍCH ẢNH]</figcaption>
+              </figure>
+              <h2 id="muc-4">[TIÊU ĐỀ MỤC 4]</h2>
+              <p>[ĐOẠN NỘI DUNG BÀI VIẾT]</p>
+              <div class="tbl">
+                <table>
+                  <thead><tr><th scope="col">[CỘT 1]</th><th scope="col">[CỘT 2]</th><th scope="col">[CỘT 3]</th></tr></thead>
+                  <tbody>{rows.map((r) => <tr><th scope="row">{r[0]}</th><td>{r[1]}</td><td>{r[2]}</td></tr>)}</tbody>
+                </table>
+              </div>
+              <p>[ĐOẠN NỘI DUNG BÀI VIẾT]</p>
+            </>
+          ) : (
+            <p>[Nội dung bài viết]</p>
+          )}
+
+          <div class="foot">
+            <div class="row">
+              <span class="lbl">Chia sẻ</span>
+              {shares.map((s) => (
+                <a class="share" href="#"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d={s.icon}></path></svg>{s.label}</a>
+              ))}
+            </div>
+            <div class="row">
+              <span class="lbl">Thẻ</span>
+              {a.tags.map((t) => <a class="tag" href="/tin-tuc">{t}</a>)}
+            </div>
+          </div>
+        </article>
+
+        <aside>
+          {a.sample && (
+            <nav aria-label="Mục lục" class="toc-d only-desktop">
+              <h2>Mục lục</h2>
+              <ol>{toc.map((t) => <li><a href={t.href}><span>{t.no}</span><span>{t.label}</span></a></li>)}</ol>
+            </nav>
+          )}
+          <div class="cta">
+            <h2>{ctaTitle}</h2>
+            <p class="only-desktop">Để lại thông tin, ERG sẽ tư vấn chương trình theo độ tuổi của con.</p>
+            <a class="cta__btn" href="/lien-he">Đăng ký tư vấn</a>
+            <a class="cta__tel only-desktop" href="tel:0938830098">Hoặc gọi 0938.830.098</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel-sec">
+      <div class="panel">
+        <div class="panel__in">
+          <div class="head">
+            <div class="head__t">
+              <span class="badge">Đọc tiếp</span>
+              <h2>Bài viết liên quan</h2>
+            </div>
+            <a class="all only-desktop" href="/tin-tuc">Xem tất cả
+              <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M5 12h14 M13 6l6 6l-6 6"></path></svg></a>
+          </div>
+          <div class="grid">{related.map((n) => <NewsCard a={n} />)}</div>
+          <a class="all-m only-mobile" href="/tin-tuc">Xem tất cả</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  h1 { margin: 0; font-size: 52px; line-height: 1.12; font-weight: 700; letter-spacing: -1.2px; text-wrap: balance; max-width: 900px; }
+  .cat { align-self: flex-start; padding: 6px 14px; border-radius: 999px; background: var(--red); color: #fff; font-size: 13.5px; font-weight: 700; box-shadow: 0 12px 20px -10px var(--red), inset 0 1px 0 rgba(255,255,255,0.35); }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; font-size: 14.5px; color: var(--tint-1); }
+  .meta span { display: inline-flex; align-items: center; gap: 7px; }
+  .meta svg { stroke-width: 2; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 var(--pad-x); }
+  .cover-sec { padding: 44px 0 0; }
+  .ph-cover { aspect-ratio: 21 / 9; border-radius: 36px; background: linear-gradient(150deg, var(--soft) 0%, var(--tint-2) 100%); border: 1px dashed #9AA3C7; box-shadow: 0 50px 80px -40px color-mix(in srgb, var(--navy) 45%, transparent); display: flex; align-items: flex-end; padding: 20px; box-sizing: border-box; }
+  .ph-cover span, .ph-fig span { font-size: 13px; color: #2C3560; background: #fff; padding: 6px 12px; border-radius: 999px; }
+  .body-sec { padding: 88px 0; }
+  .body { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px 56px; }
+  .toc-m { flex: 1 1 100%; min-width: 0; border-radius: 22px; background: #fff; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 18px 36px -24px rgba(15,23,56,0.2); }
+  .toc-m summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 0 20px; font-size: 16px; font-weight: 700; cursor: pointer; }
+  .toc-m svg { flex: none; stroke: var(--navy); stroke-width: 2.2; }
+  .toc-m ol { margin: 0; padding: 0 20px 12px; list-style: none; display: flex; flex-direction: column; gap: 2px; }
+  .toc-d { border-radius: 28px; padding: 26px; display: flex; flex-direction: column; gap: 14px; background: #fff; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); }
+  .toc-d h2 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -0.2px; }
+  .toc-d ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; }
+  ol a { display: flex; gap: 12px; align-items: baseline; min-height: 44px; padding: 8px 0; font-size: 14.5px; line-height: 1.5; color: #0F1738; text-decoration: none; border-bottom: 1px solid #EEF1F7; }
+  ol a span:first-child { flex: none; font-weight: 700; color: var(--red); min-width: 18px; }
+  .art { flex: 1 1 520px; max-width: 760px; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
+  .art p { margin: 0; font-size: 17.5px; line-height: 1.85; color: #2C3560; }
+  .art p.lead { font-size: 21px; line-height: 1.75; font-weight: 500; color: #0F1738; }
+  .art h2 { margin: 22px 0 0; font-size: 28px; line-height: 1.25; font-weight: 700; letter-spacing: -0.5px; scroll-margin-top: 110px; }
+  .art h2 ~ h2 { margin-top: 8px; }
+  .art h3 { margin: 8px 0 0; font-size: 21px; line-height: 1.35; font-weight: 700; }
+  .bul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .bul li { display: flex; gap: 12px; align-items: flex-start; font-size: 17px; line-height: 1.7; color: #2C3560; }
+  .tick { flex: none; width: 24px; height: 24px; border-radius: 50%; background: #E6F4EC; color: #0E7A4B; display: inline-flex; align-items: center; justify-content: center; margin-top: 3px; }
+  .tick svg { stroke-width: 2.6; }
+  blockquote { margin: 14px 0; padding: 32px 36px; border-radius: 28px; background: var(--tint-3); display: flex; flex-direction: column; gap: 14px; }
+  blockquote svg { fill: var(--red); stroke: none; }
+  .art blockquote p { font-size: 23px; line-height: 1.55; font-weight: 700; color: var(--navy); }
+  blockquote span { font-size: 14px; font-weight: 600; color: #4A5578; }
+  figure { margin: 10px 0; display: flex; flex-direction: column; gap: 10px; }
+  .ph-fig { aspect-ratio: 16 / 9; border-radius: 28px; background: linear-gradient(150deg, var(--soft) 0%, var(--tint-2) 100%); border: 1px dashed #9AA3C7; display: flex; align-items: flex-end; padding: 16px; box-sizing: border-box; }
+  figcaption { font-size: 14px; line-height: 1.6; color: #4A5578; }
+  .tbl { overflow-x: auto; border-radius: 24px; background: #fff; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); }
+  table { width: 100%; min-width: 520px; border-collapse: collapse; font-size: 15px; }
+  thead th { text-align: left; padding: 14px 18px; background: var(--tint-5); color: var(--navy); font-size: 13px; letter-spacing: 0.6px; text-transform: uppercase; }
+  tbody th { text-align: left; padding: 14px 18px; border-bottom: 1px solid #EEF1F7; background: var(--tint-5); font-weight: 700; }
+  td { padding: 14px 18px; border-bottom: 1px solid #EEF1F7; color: #4A5578; }
+  .foot { margin-top: 26px; padding-top: 26px; border-top: 1px solid #EEF1F7; display: flex; flex-direction: column; gap: 22px; }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .lbl { font-size: 14px; font-weight: 700; margin-right: 4px; }
+  .share { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 999px; background: #fff; color: var(--navy); box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); font-size: 14px; font-weight: 600; text-decoration: none; }
+  .share svg { stroke-width: 2; }
+  .tag { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; background: var(--soft); color: var(--navy); font-size: 13.5px; font-weight: 600; text-decoration: none; }
+  aside { flex: 1 1 300px; max-width: 360px; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+  .cta { position: relative; overflow: hidden; border-radius: 32px; background: radial-gradient(760px 420px at 92% 8%, color-mix(in srgb, var(--glow) 60%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(620px 380px at 0% 100%, color-mix(in srgb, var(--red) 34%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(160deg, var(--navy-night) 0%, var(--navy-2) 100%); color: #fff; padding: 28px; display: flex; flex-direction: column; gap: 14px; }
+  .cta h2 { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.3; letter-spacing: -0.3px; }
+  .cta p { margin: 0; font-size: 16px; line-height: 1.65; color: var(--tint-1); }
+  .cta__btn { display: inline-flex; align-items: center; justify-content: center; height: 50px; border-radius: 999px; background: var(--red); color: #fff; font-weight: 700; font-size: 15.5px; text-decoration: none; box-shadow: 0 18px 32px -14px var(--red), inset 0 1px 0 rgba(255,255,255,0.35); }
+  .cta__tel { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; color: #fff; font-weight: 600; font-size: 14.5px; text-decoration: none; }
+  .panel-sec { padding: 0 24px; }
+  .panel { max-width: 1360px; margin: 0 auto; border-radius: 48px; background: linear-gradient(180deg, var(--tint-3) 0%, #F7F8FC 100%); padding: 88px 0; }
+  .panel__in { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px; }
+  .head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; }
+  .head__t { display: flex; flex-direction: column; gap: 14px; max-width: 640px; }
+  .badge { align-self: flex-start; padding: 6px 14px; border-radius: 999px; background: var(--red-soft); color: var(--red-deep); font-size: 13.5px; font-weight: 700; }
+  .head h2 { margin: 0; font-size: 42px; line-height: 1.15; font-weight: 700; letter-spacing: -1px; text-wrap: balance; }
+  .all, .all-m { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 24px; border-radius: 999px; font-size: 15px; font-weight: 600; text-decoration: none; background: #fff; color: var(--navy); box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); }
+  .all svg { stroke-width: 2.2; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .grid :global(.nc) { height: 100%; box-sizing: border-box; }
+  @media (max-width: 767px) {
+    h1 { font-size: 30px; }
+    .cover-sec { padding-top: 24px; }
+    .ph-cover { aspect-ratio: 16 / 9; }
+    .body-sec { padding: 40px 0; }
+    .art p.lead { font-size: 18.5px; }
+    .art h2 { font-size: 24px; }
+    blockquote { padding: 24px 22px; }
+    .art blockquote p { font-size: 19px; }
+    .cta { border-radius: 24px; padding: 20px; }
+    .panel-sec { padding: 0 8px; }
+    .panel { border-radius: 32px; padding: 40px 0; }
+    .panel__in { padding: 0 14px; gap: 20px; }
+    .head h2 { font-size: 24px; }
+    .grid { grid-template-columns: 1fr; gap: 12px; }
+    .all-m { display: flex; }
+  }
+</style>

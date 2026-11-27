@@ -1,9 +1,29 @@
 import React from 'react';
 import Link from 'next/link';
 import { Target, Compass, Award, Users, BookOpen, Star, CheckCircle2, Globe, TrendingUp } from 'lucide-react';
+import type { Metadata } from 'next';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
+import { SEO_DATA } from '@/constants/seo.constants';
+import { headers } from 'next/headers';
+import { SchemaScript } from '@/components/seo/schema-script';
+import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 
-export default function AboutPage() {
+export const metadata: Metadata = {
+    ...createPageMetadata({
+        title: "Về Edurise Global: Đào tạo Tin học chuẩn quốc tế",
+        description: "Tìm hiểu Edurise Global (ERG): sứ mệnh chuẩn hóa kỹ năng tin học theo chuẩn quốc tế, tầm nhìn xây dựng nhân tài số Việt Nam, lộ trình đào tạo và đối tác chứng nhận.",
+        path: "/gioi-thieu",
+        image: SEO_DATA.tinhocquocte.ogImage,
+        imageAlt: "Giới thiệu Edurise Global (ERG)",
+    }),
+};
+
+export default async function AboutPage() {
+    const breadcrumbItems = generateBreadcrumbItems("/gioi-thieu", "Giới thiệu", "Tin học Quốc tế");
+    const host = (await headers()).get('host') || "tinhocquocte.erg.edu.vn";
     return (
+<>
+<SchemaScript type="BreadcrumbList" data={{ items: breadcrumbItems }} domain={host} />
         <div className="min-h-screen bg-white">
 
             {/* 1. HERO SECTION: Giới thiệu chung */}
@@ -230,5 +250,6 @@ export default function AboutPage() {
             </section>
 
         </div>
+</>
     );
 }

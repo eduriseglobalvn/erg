@@ -270,9 +270,9 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                 />
               </div>
               <div className="flex flex-col">
-                <h1 className="text-xl md:text-2xl font-extrabold leading-none tracking-tight text-primary">
+                <p className="text-xl md:text-2xl font-extrabold leading-none tracking-tight text-primary">
                   EDURISE GLOBAL
-                </h1>
+                </p>
                 <p className="text-[10px] md:text-xs font-semibold tracking-widest text-gray-500 uppercase mt-1">
                   Learn today, Lead tomorrow
                 </p>
@@ -293,12 +293,6 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                         href={item.path}
                         target={isExternal ? "_blank" : undefined}
                         rel={isExternal ? "noopener noreferrer" : undefined}
-                        onClick={(e) => {
-                          if (item.path.startsWith('#')) {
-                            e.preventDefault();
-                            window.dispatchEvent(new CustomEvent('open-elearning-modal', { detail: item.path.substring(1) }));
-                          }
-                        }}
                         className={`flex items-center gap-1 whitespace-nowrap text-[15px] xl:text-[16px] 2xl:text-[17px] font-bold uppercase tracking-[0.04em] transition-all duration-300 relative
                                 ${isActive ? 'text-highlight' : 'text-primary hover:text-highlight'}
                                 ${!hasSubmenu ? "after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[3px] after:bg-highlight after:transition-all after:duration-300 group-hover:after:w-full" : ''}
@@ -398,11 +392,7 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                             target={item.path.startsWith('http') ? "_blank" : undefined}
                             rel={item.path.startsWith('http') ? "noopener noreferrer" : undefined}
                             className="min-w-0 flex-1 text-left"
-                            onClick={(e) => {
-                              if (item.path.startsWith('#')) {
-                                e.preventDefault();
-                                window.dispatchEvent(new CustomEvent('open-elearning-modal', { detail: item.path.substring(1) }));
-                              }
+                            onClick={() => {
                               setIsMobileMenuOpen(false);
                             }}
                           >
@@ -487,14 +477,8 @@ const Header: React.FC<HeaderProps> = ({ menuData = MAIN_MENU_ITEMS, hideTopBar 
                         target={item.path.startsWith('http') ? "_blank" : undefined}
                         rel={item.path.startsWith('http') ? "noopener noreferrer" : undefined}
                         className="block py-4 text-lg font-bold uppercase text-primary hover:text-highlight transition-colors"
-                        onClick={(e) => {
-                          if (item.path.startsWith('#')) {
-                            e.preventDefault();
-                            window.dispatchEvent(new CustomEvent('open-elearning-modal', { detail: item.path.substring(1) }));
-                            setIsMobileMenuOpen(false);
-                          } else {
-                            setIsMobileMenuOpen(false);
-                          }
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
                         }}
                       >
                         {translateLabel(item.label)}

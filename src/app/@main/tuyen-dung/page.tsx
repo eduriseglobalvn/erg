@@ -4,10 +4,28 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { recruitmentApi } from '@/services/recruitment.api';
 import { Job } from '@/types/recruitment';
 import { Briefcase, MapPin, ArrowRight, Flame, Zap } from 'lucide-react';
+import type { Metadata } from 'next';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
+import { SEO_DATA } from '@/constants/seo.constants';
+import { headers } from 'next/headers';
+import { SchemaScript } from '@/components/seo/schema-script';
 
 export const dynamic = 'force-dynamic';
 
+export const metadata: Metadata = {
+    ...createPageMetadata({
+        title: "Tuyển dụng việc làm giáo dục, công nghệ | ERG Edurise Global",
+        description: "Xem các vị trí đang tuyển tại ERG (Edurise Global): mô tả ngắn, địa điểm, mức lương và chi tiết công việc. Gia nhập đội ngũ kiến tạo giáo dục và công nghệ.",
+        path: "/tuyen-dung",
+        image: SEO_DATA.main.ogImage,
+        imageAlt: "Tuyển dụng tại ERG Edurise Global",
+    }),
+    title: { absolute: "Tuyển dụng việc làm giáo dục, công nghệ | ERG Edurise Global" },
+};
+
 export default async function RecruitmentPage() {
+    const breadcrumbItems = [{ label: 'Trang chủ', href: '/' }, { label: 'Tuyển dụng' }];
+    const host = (await headers()).get('host') || 'erg.edu.vn';
     let jobs: Job[] = [];
     try {
         const res = await recruitmentApi.getJobs();
@@ -17,6 +35,8 @@ export default async function RecruitmentPage() {
     }
 
     return (
+<>
+<SchemaScript type="BreadcrumbList" data={{ items: breadcrumbItems }} domain={host} />
         <div className="min-h-screen bg-gray-50 py-12">
             <div className="container mx-auto px-4 max-w-6xl">
                 <div className="text-center mb-16">
@@ -90,5 +110,6 @@ export default async function RecruitmentPage() {
                 )}
             </div>
         </div>
+</>
     );
 }

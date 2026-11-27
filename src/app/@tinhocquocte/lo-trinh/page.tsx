@@ -1,7 +1,25 @@
 import React from 'react';
 import { Target, Flag, Trophy } from 'lucide-react';
+import type { Metadata } from 'next';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
+import { SEO_DATA } from '@/constants/seo.constants';
+import { headers } from 'next/headers';
+import { SchemaScript } from '@/components/seo/schema-script';
+import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 
-export default function RoadmapPage() {
+export const metadata: Metadata = {
+    ...createPageMetadata({
+        title: "Lộ trình đào tạo Tin học quốc tế theo năm học",
+        description: "Lộ trình Tin học quốc tế tại ERG: học chương trình HK1, HK2, làm quen phần mềm thi Gmetrix, đánh giá hai lần, luyện thi nước rút và thi chứng chỉ vào tháng 5.",
+        path: "/lo-trinh",
+        image: SEO_DATA.tinhocquocte.ogImage,
+        imageAlt: "Lộ trình đào tạo Tin học quốc tế tại ERG",
+    }),
+};
+
+export default async function RoadmapPage() {
+    const breadcrumbItems = generateBreadcrumbItems("/lo-trinh", "Lộ trình", "Tin học Quốc tế");
+    const host = (await headers()).get('host') || "tinhocquocte.erg.edu.vn";
     const steps = [
         {
             id: 1,
@@ -67,6 +85,8 @@ export default function RoadmapPage() {
     ];
 
     return (
+<>
+<SchemaScript type="BreadcrumbList" data={{ items: breadcrumbItems }} domain={host} />
         <div className="min-h-screen bg-white font-sans text-gray-800">
 
             {/* HEADER */}
@@ -213,5 +233,6 @@ export default function RoadmapPage() {
                 </div>
             </section>
         </div>
+</>
     );
 }

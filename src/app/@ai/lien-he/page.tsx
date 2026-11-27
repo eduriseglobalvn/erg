@@ -1,5 +1,11 @@
 import React from 'react';
 import { MapPin, Send } from 'lucide-react';
+import type { Metadata } from 'next';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
+import { SEO_DATA } from '@/constants/seo.constants';
+import { headers } from 'next/headers';
+import { SchemaScript } from '@/components/seo/schema-script';
+import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 
 const ERG_BLUE = '#00008b';
 const ERG_RED = '#cc0022';
@@ -9,11 +15,25 @@ const INTEREST_TOPICS = [
     "Chứng chỉ công nghệ thông tin nâng cao"
 ];
 
-export default function ContactPage() {
+export const metadata: Metadata = {
+    ...createPageMetadata({
+        title: "Liên hệ tư vấn khóa học Trí tuệ nhân tạo (AI)",
+        description: "Để lại thông tin để chuyên viên ERG tư vấn khóa học Trí tuệ nhân tạo (AI) và lộ trình học phù hợp mục tiêu của bạn. ERG sẽ liên hệ lại trong vòng 24 giờ.",
+        path: "/lien-he",
+        image: SEO_DATA.ai.ogImage,
+        imageAlt: "Liên hệ tư vấn khóa học AI tại ERG",
+    }),
+};
+
+export default async function ContactPage() {
+    const breadcrumbItems = generateBreadcrumbItems("/lien-he", "Liên hệ", "AI");
+    const host = (await headers()).get('host') || "ai.erg.edu.vn";
     return (
         // [LAYOUT FIX]
         // 1. Dùng min-h-screen: Đảm bảo trang luôn cao ít nhất bằng màn hình
         // 2. flex-row: Để 2 cột (Form và Map) tự động cao bằng nhau
+<>
+<SchemaScript type="BreadcrumbList" data={{ items: breadcrumbItems }} domain={host} />
         <div className="font-sans text-slate-800 bg-white min-h-screen flex flex-col lg:flex-row">
 
             {/* --- 1. LEFT SIDE: CONTENT & FORM --- */}
@@ -169,5 +189,6 @@ export default function ContactPage() {
             </div>
 
         </div>
+</>
     );
 }

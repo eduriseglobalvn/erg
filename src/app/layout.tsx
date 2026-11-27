@@ -77,7 +77,7 @@ export async function generateMetadata(): Promise<Metadata> {
         robots,
         title: {
             default: currentSeo.title,
-            template: `%s | ${siteContext.isRoot ? 'Trung Tâm Ngoai Ngu Tin Hoc ERG' : 'ERG'}`,
+            template: `%s | ${siteContext.isRoot ? 'Trung Tâm Ngoại Ngữ Tin Học ERG' : 'ERG'}`,
         },
         description: currentSeo.description,
         keywords: currentSeo.keywords.join(", "),

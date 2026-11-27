@@ -31,8 +31,9 @@ export function AuthSplitLayout({
             <div className="relative hidden bg-muted lg:block">
                 <Image
                     src={imageSrc}
-                    alt="Authentication Background"
+                    alt="Hình nền trang đăng nhập ERG"
                     fill
+                    sizes="50vw"
                     className="object-cover dark:brightness-[0.2] dark:grayscale"
                     priority
                 />

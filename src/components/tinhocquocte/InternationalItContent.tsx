@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Award, Users, Globe, ShieldCheck } from 'lucide-react';
@@ -34,9 +35,11 @@ const CertificateCarousel = () => {
             </div>
 
             <div className="absolute inset-0 w-full h-full transition-opacity duration-500">
-                <img
+                <Image
                     src={images[current].src}
                     alt={images[current].label}
+                    fill
+                    sizes="100vw"
                     className="w-full h-full object-cover"
                     onError={(e) => {
                         (e.target as HTMLImageElement).style.opacity = '0';

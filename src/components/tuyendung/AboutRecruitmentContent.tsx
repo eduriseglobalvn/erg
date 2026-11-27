@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React from 'react';
 import Link from 'next/link';
 import {
@@ -19,9 +20,12 @@ export default function AboutRecruitmentContent() {
             {/* --- 1. HERO: EMPLOYER BRAND STORY --- */}
             <section className="relative py-28 bg-[#00008b] text-white overflow-hidden">
                 <div className="absolute inset-0 opacity-20">
-                    <img
+                    <Image
                         src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-                        alt="ERG Team"
+                        alt="Đội ngũ nhân sự ERG"
+                        fill
+                        priority
+                        sizes="100vw"
                         className="w-full h-full object-cover"
                     />
                 </div>
@@ -47,9 +51,12 @@ export default function AboutRecruitmentContent() {
                         <div className="w-full lg:w-1/2 order-2 lg:order-1">
                             <div className="relative">
                                 <div className="rounded-[40px] overflow-hidden shadow-2xl border-8 border-gray-50">
-                                    <img
+                                    <Image
                                         src="https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                                        alt="Education Vision"
+                                        alt="Tầm nhìn giáo dục của ERG"
+                                        width={1200}
+                                        height={800}
+                                        sizes="(max-width: 1024px) 100vw, 50vw"
                                         className="w-full h-auto"
                                     />
                                 </div>

@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react'
-import parse, { DOMNode, Element } from 'html-react-parser'
-import { sanitizeHTML } from '@/utils/sanitize-html'
+import parse, { DOMNode, Element, HTMLReactParserOptions, domToReact } from 'html-react-parser'
+import { filterElement, sanitizeHTML } from '@/utils/sanitize-html'
 import { TOCBox, TOCItem } from '@/components/shared/toc-box'
 
 export function PostContentRenderer({ content }: { content: string }) {
@@ -23,8 +23,17 @@ export function PostContentRenderer({ content }: { content: string }) {
         return false
     }
 
-    const options = {
+    const options: HTMLReactParserOptions = {
         replace: (domNode: DOMNode) => {
+            // Allow-list enforced here too: DOMPurify is a no-op during SSR (no DOM).
+            if ('name' in domNode && 'attribs' in domNode) {
+                const element = domNode as Element
+                const { action, attribs } = filterElement(element.name, element.attribs)
+                if (action === 'drop') return <></>
+                if (action === 'unwrap') return <>{domToReact(element.children as DOMNode[], options)}</>
+                element.attribs = attribs
+            }
+
             if (domNode.type === 'tag') {
                 const element = domNode as Element
                 if (element.name === 'section' && element.attribs?.['data-erg-block'] && isNestedErgBlock(domNode)) {

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 import { Eye, Target, ArrowRight, CheckCircle2, BookOpen } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -10,9 +11,12 @@ export default function VisionMissionContent() {
             {/* --- HERO SECTION --- */}
             <section className="relative h-[450px] flex items-center justify-center bg-[#00008b] overflow-hidden">
                 <div className="absolute inset-0 opacity-40 mix-blend-overlay">
-                    <img
+                    <Image
                         src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2000&auto=format&fit=crop"
-                        alt="Education Vision Background"
+                        alt="Lớp học và định hướng giáo dục của ERG"
+                        fill
+                        priority
+                        sizes="100vw"
                         className="w-full h-full object-cover"
                     />
                 </div>
@@ -55,9 +59,12 @@ export default function VisionMissionContent() {
                         {/* Image Block (Left) */}
                         <div className="w-full lg:w-1/2 relative group">
                             <div className="relative rounded-2xl overflow-hidden shadow-2xl border-[8px] border-white">
-                                <img
+                                <Image
                                     src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop"
-                                    alt="ERG Future Vision Team"
+                                    alt="Đội ngũ ERG hướng tới tầm nhìn tương lai"
+                                    width={1000}
+                                    height={500}
+                                    sizes="(max-width: 1024px) 100vw, 50vw"
                                     className="w-full h-[400px] lg:h-[500px] object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#00008b]/50 to-transparent opacity-30"></div>
@@ -122,9 +129,12 @@ export default function VisionMissionContent() {
                         {/* Image Block (Right) */}
                         <div className="w-full lg:w-1/2 relative group">
                             <div className="relative rounded-tl-[80px] rounded-br-[80px] rounded-tr-2xl rounded-bl-2xl overflow-hidden shadow-2xl border-4 border-white">
-                                <img
+                                <Image
                                     src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1000&auto=format&fit=crop"
-                                    alt="ERG Practical Mission"
+                                    alt="Sứ mệnh đào tạo thực tiễn của ERG"
+                                    width={1000}
+                                    height={500}
+                                    sizes="(max-width: 1024px) 100vw, 50vw"
                                     className="w-full h-[400px] lg:h-[500px] object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                                 <div className="absolute inset-0 bg-[#00008b] opacity-10 group-hover:opacity-0 transition-opacity"></div>

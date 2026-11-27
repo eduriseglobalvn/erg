@@ -9,6 +9,11 @@ import {
     GraduationCap
 } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
+import { headers } from 'next/headers';
+import { SchemaScript } from '@/components/seo/schema-script';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
+import { SEO_DATA } from '@/constants/seo.constants';
 
 const DigitalCitizenshipRoadmap = () => {
     // Dữ liệu lộ trình - Đã thêm thuộc tính 'position' để xếp bố cục
@@ -85,9 +90,9 @@ const DigitalCitizenshipRoadmap = () => {
                         <Globe size={16} className="text-[var(--erg-blue)]" />
                         <span className="text-xs font-bold tracking-wide text-[var(--erg-blue)] uppercase">Hành trình trưởng thành</span>
                     </div>
-                    <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">
+                    <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">
                         Lộ Trình <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">Công Dân Số</span>
-                    </h2>
+                    </h1>
                     <p className="text-gray-600 max-w-2xl mx-auto text-lg">
                         Từ nhận thức an toàn đến hành động trách nhiệm - 4 bước toàn diện để làm chủ cuộc sống trong kỷ nguyên số.
                     </p>
@@ -242,4 +247,22 @@ const DigitalCitizenshipRoadmap = () => {
     );
 };
 
-export default DigitalCitizenshipRoadmap;
+export const metadata: Metadata = createPageMetadata({
+    title: "Lộ trình Công dân số: 4 bước làm chủ kỷ nguyên số",
+    description: "Lộ trình Công dân số tại ERG gồm 4 bước: an toàn và bảo mật số, văn hóa giao tiếp số, năng lực thông tin và tư duy phản biện, trách nhiệm và sống cân bằng.",
+    path: '/lo-trinh',
+    image: SEO_DATA.congdanso.ogImage,
+    imageAlt: "Lộ trình Công dân số tại ERG",
+});
+
+export default async function Page() {
+    const host = (await headers()).get('host') || 'congdanso.erg.edu.vn';
+    const items = [{ label: "Công dân số", href: '/' }, { label: 'Lộ trình' }];
+    return (
+        <>
+            <SchemaScript type="BreadcrumbList" data={{ items }} domain={host} />
+            <DigitalCitizenshipRoadmap />
+        </>
+    );
+}
+

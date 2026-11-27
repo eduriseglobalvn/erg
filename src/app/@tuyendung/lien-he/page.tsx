@@ -1,6 +1,12 @@
 import React from 'react';
 import { MapPin, Send, Mail, Phone } from 'lucide-react';
 import { RecruitmentCvUpload } from '@/components/tuyendung/recruitment-cv-upload';
+import type { Metadata } from 'next';
+import { createPageMetadata } from '@/utils/seo/page-metadata';
+import { SEO_DATA } from '@/constants/seo.constants';
+import { headers } from 'next/headers';
+import { SchemaScript } from '@/components/seo/schema-script';
+import { generateBreadcrumbItems } from '@/utils/seo/generate-breadcrumb';
 
 const ERG_BLUE = '#00008b';
 const ERG_RED = '#cc0022';
@@ -15,8 +21,22 @@ const JOB_CATEGORIES = [
     "Thực tập sinh (Internship)"
 ];
 
-export default function RecruitmentContactPage() {
+export const metadata: Metadata = {
+    ...createPageMetadata({
+        title: "Gửi CV ứng tuyển, liên hệ bộ phận Nhân sự",
+        description: "Chưa thấy vị trí phù hợp? Để lại thông tin và CV, bộ phận Nhân sự ERG sẽ liên hệ khi có cơ hội. Tìm hiểu các nhóm vị trí giáo viên, trợ giảng, giáo vụ, IT Helpdesk.",
+        path: "/lien-he",
+        image: SEO_DATA.tuyendung.ogImage,
+        imageAlt: "Gửi CV ứng tuyển tại ERG",
+    }),
+};
+
+export default async function RecruitmentContactPage() {
+    const breadcrumbItems = generateBreadcrumbItems("/lien-he", "Ứng tuyển ngay", "ERG");
+    const host = (await headers()).get('host') || "tuyendung.erg.edu.vn";
     return (
+<>
+<SchemaScript type="BreadcrumbList" data={{ items: breadcrumbItems }} domain={host} />
         <div className="font-sans text-slate-800 bg-white min-h-screen flex flex-col lg:flex-row">
 
             {/* --- 1. LEFT SIDE: RECRUITMENT FORM --- */}
@@ -184,5 +204,6 @@ export default function RecruitmentContactPage() {
             </div>
 
         </div>
+</>
     );
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import {
@@ -185,17 +186,21 @@ export default function RecruitmentContent() {
                         <div className="w-full md:w-1/2">
                             <div className="relative">
                                 <div className="grid grid-cols-2 gap-4 items-center">
-                                    <div className="h-64 rounded-2xl w-full overflow-hidden shadow-lg transform translate-y-8">
-                                        <img
+                                    <div className="relative h-64 rounded-2xl w-full overflow-hidden shadow-lg transform translate-y-8">
+                                        <Image
                                             src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                                             alt="Lớp học ERG"
+                                            fill
+                                            sizes="(max-width: 768px) 50vw, 25vw"
                                             className="w-full h-full object-cover"
                                         />
                                     </div>
-                                    <div className="h-64 rounded-2xl w-full overflow-hidden shadow-lg transform -translate-y-8">
-                                        <img
+                                    <div className="relative h-64 rounded-2xl w-full overflow-hidden shadow-lg transform -translate-y-8">
+                                        <Image
                                             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                                            alt="Team ERG"
+                                            alt="Đội ngũ ERG"
+                                            fill
+                                            sizes="(max-width: 768px) 50vw, 25vw"
                                             className="w-full h-full object-cover"
                                         />
                                     </div>

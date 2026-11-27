@@ -77,6 +77,8 @@ export default function ImageGallery({
                 <img
                     src={currentImage.src}
                     alt={currentImage.alt}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transition-all duration-700 ease-in-out"
                 />
 
@@ -116,7 +118,7 @@ export default function ImageGallery({
                                         : 'border-transparent opacity-60 hover:opacity-100 hover:border-gray-300'
                                 }`}
                             >
-                                <img src={imgData.src} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
+                                <img src={imgData.src} alt={`Ảnh thu nhỏ ${idx + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                             </button>
                         );
                     })}

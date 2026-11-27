@@ -13,29 +13,32 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     const isRoot = hostname === rootDomain || hostname === 'localhost' || hostname === `www.${rootDomain}`;
     const subdomain = isRoot ? '' : hostname.replace(`.${rootDomain}`, '');
 
-    const allowPaths = ['/'];
-    const disallowPaths = ['/api/', '/auth/', '/preview/', '/onboarding/', '/verify-pin/'];
+    const sitemap = [`${domain}/sitemap.xml`, `${domain}/sitemap-images.xml`];
 
-    if (isRoot || subdomain === 'cms') {
-        disallowPaths.push('/cms/');
+    // Host quản trị: chặn toàn bộ.
+    if (subdomain === 'cms' || siteContext.isAdmin) {
+        return { rules: [{ userAgent: '*', disallow: ['/'] }] };
     }
+
+    const disallowPaths = [
+        '/cms', '/api/', '/auth/', '/preview/', '/onboarding/', '/verify-pin/',
+        '/tuyen-dung/track/', '/tuyen-dung/theo-doi',
+    ];
 
     return {
         rules: [
             {
                 userAgent: '*',
-                allow: allowPaths,
+                allow: ['/'],
                 disallow: disallowPaths,
             },
             {
                 userAgent: 'CocCocBot-Web',
                 allow: ['/'],
+                disallow: disallowPaths,
             },
         ],
-        sitemap: [
-            `${domain}/sitemap.xml`,
-            `${domain}/sitemap-images.xml`,
-        ],
+        sitemap,
         host: domain,
     };
 }

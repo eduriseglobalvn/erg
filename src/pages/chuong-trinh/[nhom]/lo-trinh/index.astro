@@ -1,0 +1,100 @@
+---
+import ProgramLayout from '@/components/program/ProgramLayout.astro';
+import { PROGRAMS, CONTACT } from '@/data/site';
+import { GROUPS, programOf } from '@/data/programs';
+
+export function getStaticPaths() {
+  return PROGRAMS.map((p) => ({ params: { nhom: p.slug } }));
+}
+const { nhom } = Astro.params;
+const p = programOf(nhom!);
+const g = GROUPS[nhom!];
+const r = g.roadmap;
+const base = `/chuong-trinh/${nhom}`;
+const head = ['Giai đoạn', 'Thời gian', 'Trọng tâm', 'Đánh giá', 'Kết quả đầu ra'];
+---
+<ProgramLayout
+  title={r.title} description={r.text} nhom={nhom!} firstCourse={g.courses[0].slug} current="roadmap"
+  crumbs={[{ label: 'Trang chủ', href: '/' }, { label: p.title, href: base }, { label: 'Lộ trình' }]}
+  heading={r.title} lead={r.text} topic={g.topic}
+>
+  <section class="pg-sec">
+    <div class="pg-wrap">
+      <div class="pg-head">
+        <span class="pg-pill">{r.eyebrow}</span>
+        <h2 class="pg-h2">{r.heading}</h2>
+        <p class="pg-p clamp-3">{r.lead}</p>
+      </div>
+      <ol class="pg-grid pg-c3 pg-cap" id="stages" style="margin: 0; padding: 0; list-style: none">
+        {r.stages.map((s, i) => (
+          <li class="pg-card pg-card--sm">
+            <span class:list={['pg-ico pg-ico--round', i === r.stages.length - 1 && 'last']} style="font-size: 16px">{i + 1}</span>
+            <div class="pg-body">
+              <span class="pg-month">{s.month}</span>
+              <h3 class="pg-ct" style="line-height: 1.3">{s.title}</h3>
+              <p class="pg-cd c1" style="flex: 1">{s.text}</p>
+              <div class="chips">
+                {s.chips.map((c) => <span class="pg-chip">{c}</span>)}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+      {r.stages.length > 4 && <button type="button" class="pg-more only-mobile" data-reveal="stages">Xem tất cả {r.stages.length} mốc</button>}
+    </div>
+  </section>
+
+  <section class="pg-panel-o">
+    <div class="pg-panel">
+      <div class="pg-wrap">
+        <div class="pg-head">
+          <span class="pg-pill">So sánh giai đoạn</span>
+          <h2 class="pg-h2">Bốn giai đoạn trong một nhìn</h2>
+        </div>
+        <div class="tbl">
+          <table>
+            <thead>
+              <tr>{head.map((h) => <th scope="col">{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {r.rows.map((x) => (
+                <tr>
+                  <th scope="row">{x.stage}</th>
+                  <td>{x.time}</td><td>{x.focus}</td><td>{x.check}</td>
+                  <td class="out">{x.out}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pg-cta-o">
+    <div class="pg-cta">
+      <div class="pg-cta-t">
+        <h2 class="pg-h2">{r.ctaTitle}</h2>
+        <p class="clamp-3">{r.ctaText}</p>
+      </div>
+      <div class="pg-actions" style="margin: 0">
+        <a class="pg-btn-w" href="/lien-he">Đăng ký tư vấn</a>
+        <a class="btn btn--glass" href={`tel:${CONTACT.hotlineTel}`} style="padding: 0 26px">Gọi {CONTACT.hotline}</a>
+      </div>
+    </div>
+  </section>
+</ProgramLayout>
+
+<style>
+  .last { background: linear-gradient(145deg, var(--red-bright) 0%, var(--red) 100%); box-shadow: 0 12px 20px -10px color-mix(in srgb, var(--red) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tbl { overflow-x: auto; border-radius: 24px; background: #FFFFFF; box-shadow: var(--pg-shadow); }
+  .tbl table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 14.5px; }
+  .tbl thead th { text-align: left; padding: 16px 18px; background: var(--tint-5); color: var(--navy); font-size: 13px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; }
+  .tbl tbody th { text-align: left; padding: 16px 18px; border-bottom: 1px solid #EEF1F7; font-weight: 700; vertical-align: top; }
+  .tbl td { padding: 16px 18px; border-bottom: 1px solid #EEF1F7; color: #4A5578; vertical-align: top; }
+  .tbl td.out { color: #0F1738; font-weight: 600; }
+  .pg-ct { font-size: var(--pg-ct); }
+  @media (min-width: 768px) { .pg-ct { font-size: 19px; } }
+  @media (max-width: 767px) { .chips { display: none; } .c1 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; -webkit-line-clamp: 1; } }
+</style>

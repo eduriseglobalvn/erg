@@ -1,0 +1,40 @@
+---
+// Quick-contact buttons pinned to the right edge on every page.
+import { CONTACT } from '@/data/site';
+
+const items = [
+  { label: `Gọi ${CONTACT.hotline}`, href: `tel:${CONTACT.hotlineTel}`, cls: 'fc-tel', icon: 'M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z' },
+  { label: 'Chat Zalo', href: CONTACT.zalo, cls: 'fc-zalo', text: 'Zalo' },
+  { label: 'Chat Messenger', href: CONTACT.messenger, cls: 'fc-msg', icon: 'M12 3C7 3 3 6.7 3 11.3c0 2.6 1.3 4.9 3.3 6.4V21l3-1.7c.9.3 1.8.4 2.7.4c5 0 9-3.7 9-8.4S17 3 12 3z M8 13l3-3l2 2l3-3' },
+  { label: CONTACT.email, href: `mailto:${CONTACT.email}`, cls: 'fc-mail', icon: 'M3 6h18v12H3z M3 7l9 6l9-6' },
+];
+---
+<nav class="fc" aria-label="Liên hệ nhanh">
+  {items.map((it) => (
+    <a class={`fc-btn ${it.cls}`} href={it.href} aria-label={it.label} {...(it.href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}>
+      {it.icon ? <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d={it.icon} /></svg> : <span class="fc-txt" aria-hidden="true">{it.text}</span>}
+      <span class="fc-tip" aria-hidden="true">{it.label}</span>
+    </a>
+  ))}
+</nav>
+
+<style>
+  .fc { position: fixed; right: 18px; bottom: 24px; z-index: 40; display: flex; flex-direction: column; gap: 12px; }
+  .fc-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 26px; color: #FFFFFF; text-decoration: none; box-shadow: 0 10px 24px -8px rgba(0, 0, 40, 0.45); transition: transform 0.2s ease; }
+  .fc-btn:hover, .fc-btn:focus-visible { transform: scale(1.08); }
+  .fc-btn svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .fc-tel { background: #22A94F; }
+  .fc-tel::after { content: ''; position: absolute; inset: 0; border-radius: inherit; border: 2px solid #22A94F; animation: fc-ring 2s ease-out infinite; }
+  .fc-zalo { background: #0068FF; }
+  .fc-msg { background: linear-gradient(135deg, #0A7CFF, #A033FF 60%, #FF5280); }
+  .fc-mail { background: var(--navy); }
+  .fc-txt { font-size: 13px; font-weight: 800; }
+  .fc-tip { position: absolute; right: calc(100% + 10px); padding: 6px 10px; border-radius: 10px; background: #1B1F3B; color: #FFFFFF; font-size: 13px; font-weight: 600; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; }
+  .fc-btn:hover .fc-tip, .fc-btn:focus-visible .fc-tip { opacity: 1; }
+  @keyframes fc-ring { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.6); opacity: 0; } }
+  @media (max-width: 767px) {
+    .fc { right: 12px; bottom: 16px; gap: 10px; }
+    .fc-btn { width: 46px; height: 46px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .fc-tel::after { animation: none; } .fc-btn { transition: none; } }
+</style>

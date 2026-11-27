@@ -1,0 +1,172 @@
+---
+// Shared shell for the four programme screens: hero, sub-navigation tabs and the design's shared section styles.
+import Base from '@/layouts/Base.astro';
+import Scene3D from '@/components/Scene3D.astro';
+import type { Topic } from '@/data/programs';
+import { KEYWORDS } from '@/data/seo';
+
+interface Props {
+  title: string; description: string;
+  nhom: string; firstCourse: string;
+  current?: 'overview' | 'courses' | 'roadmap' | 'teachers';
+  crumbs: { label: string; href?: string }[];
+  heading: string; lead: string;
+  topic?: Topic; sceneMobile?: boolean; tabs?: boolean; schema?: Record<string, unknown>;
+}
+const { title, description, nhom, firstCourse, current, crumbs, heading, lead, topic = 'all', sceneMobile = false, tabs = true, schema } = Astro.props;
+const base = `/chuong-trinh/${nhom}`;
+const nav = [
+  { key: 'overview', label: 'Tổng quan', href: base },
+  { key: 'courses', label: 'Khóa học', href: `${base}/khoa-hoc/${firstCourse}` },
+  { key: 'roadmap', label: 'Lộ trình', href: `${base}/lo-trinh` },
+  { key: 'teachers', label: 'Đội ngũ giáo viên', href: `${base}/doi-ngu-giao-vien` },
+  { key: 'contact', label: 'Liên hệ', href: '/lien-he' },
+];
+---
+<Base title={title} description={description} active="programs" keywords={KEYWORDS[nhom]} schema={schema}>
+  <div class="pg">
+    <section class="pg-hero">
+      <div class="pg-hero-in">
+        <div class="pg-hero-text">
+          <nav aria-label="Breadcrumb" class="pg-crumb">
+            {crumbs.map((c, i) => (
+              <>
+                {i > 0 && <span aria-hidden="true">/</span>}
+                {c.href ? <a href={c.href}>{c.label}</a> : <span>{c.label}</span>}
+              </>
+            ))}
+          </nav>
+          <slot name="pill" />
+          <h1 class="pg-h1">{heading}</h1>
+          <p class="pg-hero-p clamp-3">{lead}</p>
+          <slot name="actions" />
+        </div>
+        <div class:list={['pg-scene', !sceneMobile && 'only-desktop']}>
+          <Scene3D {topic} compact embedded />
+        </div>
+        <slot name="bottom" />
+      </div>
+    </section>
+
+    {tabs && (
+      <section class="pg-tabs-w">
+        <nav aria-label="Menu nhóm chương trình" class="pg-tabs">
+          {nav.map((n) => <a href={n.href} aria-current={n.key === current ? 'page' : undefined}>{n.label}</a>)}
+        </nav>
+      </section>
+    )}
+
+    <slot />
+  </div>
+</Base>
+
+<script>
+  // Mobile "Xem thêm / Xem tất cả" buttons: reveal the clamped text or hidden list items.
+  document.querySelectorAll<HTMLButtonElement>('[data-reveal]').forEach((b) => {
+    b.addEventListener('click', () => {
+      document.getElementById(b.dataset.reveal!)?.classList.add('is-open');
+      b.hidden = true;
+    });
+  });
+</script>
+
+<style is:global>
+  .pg {
+    --pg-x: 24px; --pg-in: 24px; --pg-sec: 88px; --pg-block: 40px; --pg-grid: 20px;
+    --pg-card-pad: 28px; --pg-card-r: 28px; --pg-card-gap: 16px; --pg-icon: 48px; --pg-ct: 18px; --pg-desc: 16px;
+    --pg-panel-r: 48px; --pg-panel-gap: 24px; --pg-h1: 52px; --pg-h2: 42px;
+    --pg-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22);
+    --pg-shadow-sm: 0 1px 2px rgba(15,23,56,0.04), 0 18px 36px -24px rgba(15,23,56,0.2);
+    --pg-grad: linear-gradient(145deg, var(--accent) 0%, var(--navy) 100%);
+    color: var(--ink); line-height: 1.5;
+  }
+  @media (max-width: 767px) {
+    .pg {
+      --pg-x: 16px; --pg-in: 14px; --pg-sec: 40px; --pg-block: 20px; --pg-grid: 12px;
+      --pg-card-pad: 16px; --pg-card-r: 22px; --pg-card-gap: 14px; --pg-icon: 44px; --pg-ct: 16px; --pg-desc: 15px;
+      --pg-panel-r: 32px; --pg-panel-gap: 8px; --pg-h1: 30px; --pg-h2: 24px;
+    }
+  }
+  .pg a { text-decoration: none; }
+  .pg-hero { position: relative; overflow: hidden; color: #FFFFFF; border-radius: 0 0 56px 56px;
+    background: radial-gradient(900px 560px at 80% 62%, color-mix(in srgb, var(--glow) 70%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(640px 400px at 6% 100%, color-mix(in srgb, var(--red) 42%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(180deg, var(--navy-night) 0%, var(--navy-2) 100%); }
+  .pg-hero-in { max-width: 1200px; margin: 0 auto; padding: 40px 24px 72px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px 48px; }
+  .pg-hero-text { flex: 1.4 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .pg-scene { flex: 1 1 300px; min-width: 0; }
+  .pg-crumb { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; color: var(--tint-1); }
+  .pg-crumb a { color: #FFFFFF; display: inline-flex; align-items: center; min-height: 24px; }
+  .pg-h1 { margin: 0; font-size: var(--pg-h1); line-height: 1.08; font-weight: 700; letter-spacing: -1.2px; text-wrap: balance; }
+  .pg-hero-p { margin: 0; font-size: 17.5px; line-height: 1.7; color: var(--tint-1); max-width: 640px; }
+  .pg-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+  .pg-pill-w { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: rgba(255,255,255,0.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2); color: #FFFFFF; font-size: 13.5px; font-weight: 700; }
+  @media (max-width: 767px) {
+    .pg-hero { border-radius: 0 0 32px 32px; }
+    .pg-hero-in { padding: 24px 16px 44px; }
+  }
+
+  .pg-tabs-w { position: relative; padding: 0 var(--pg-x); }
+  .pg-tabs { max-width: 1152px; margin: -28px auto 0; box-sizing: border-box; padding: 6px; border-radius: 999px; background: #FFFFFF; box-shadow: var(--pg-shadow); display: flex; gap: 4px; overflow-x: auto; }
+  .pg-tabs a { display: inline-flex; align-items: center; flex: none; height: 44px; padding: 0 18px; border-radius: 999px; font-size: 15px; font-weight: 600; white-space: nowrap; color: #1B2447; }
+  .pg-tabs a[aria-current='page'] { background: var(--navy); color: #FFFFFF; }
+  @media (max-width: 767px) { .pg-tabs { border-radius: 26px; } }
+
+  .pg-sec { padding: var(--pg-sec) 0; }
+  .pg-wrap { max-width: 1200px; margin: 0 auto; padding: 0 var(--pg-x); display: flex; flex-direction: column; gap: var(--pg-block); }
+  .pg-row { max-width: 1200px; margin: 0 auto; padding: 0 var(--pg-x); display: flex; align-items: center; gap: 64px; }
+  .pg-panel-o { padding: 0 var(--pg-panel-gap); }
+  .pg-panel { max-width: 1360px; margin: 0 auto; border-radius: var(--pg-panel-r); background: linear-gradient(180deg, var(--tint-3) 0%, #F7F8FC 100%); padding: var(--pg-sec) 0; }
+  .pg-panel > .pg-wrap, .pg-panel > .pg-row { padding: 0 var(--pg-in); }
+  .pg-head { display: flex; flex-direction: column; gap: 14px; max-width: 640px; }
+  .pg-head-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; }
+  .pg-pill { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: var(--red-soft); color: var(--red-deep); font-size: 13.5px; font-weight: 700; }
+  .pg-h2 { margin: 0; font-size: var(--pg-h2); line-height: 1.15; font-weight: 700; letter-spacing: -1px; text-wrap: balance; }
+  .pg-p { margin: 0; font-size: 17px; line-height: 1.75; color: #4A5578; }
+  .pg-half { flex: 1 1 0; min-width: 0; }
+  .pg-half-text { max-width: 560px; display: flex; flex-direction: column; gap: 14px; }
+  @media (max-width: 767px) {
+    .pg-row { flex-direction: column; align-items: stretch; gap: 24px; }
+    .pg-half { flex: none; }
+  }
+
+  .pg-grid { display: grid; gap: var(--pg-grid); }
+  .pg-c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pg-c4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .pg-c5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .pg-c2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 767px) { .pg-c2, .pg-c3, .pg-c4, .pg-c5 { grid-template-columns: 1fr; } }
+  .pg-card { display: flex; flex-direction: column; gap: var(--pg-card-gap); padding: var(--pg-card-pad); border-radius: var(--pg-card-r); background: #FFFFFF; box-shadow: var(--pg-shadow); }
+  .pg-card--sm { box-shadow: var(--pg-shadow-sm); }
+  @media (max-width: 767px) { .pg-card { flex-direction: row; } }
+  .pg-ico { flex: none; width: var(--pg-icon); height: var(--pg-icon); border-radius: 16px; background: var(--pg-grad); color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 12px 20px -10px color-mix(in srgb, var(--navy) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4); }
+  .pg-ico--round { border-radius: 50%; font-weight: 700; font-size: 15px; }
+  .pg-ico svg, .pg-arrow { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .pg-body { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
+  .pg-ct { margin: 0; font-size: var(--pg-ct); font-weight: 700; line-height: 1.35; letter-spacing: -0.2px; }
+  .pg-cd { margin: 0; font-size: var(--pg-desc); line-height: 1.6; color: #4A5578; }
+  .pg-month { font-size: 12.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--red); }
+  .pg-tag { align-self: flex-start; padding: 4px 12px; border-radius: 999px; background: var(--red-soft); color: var(--red); font-size: 12.5px; font-weight: 700; }
+  .pg-chip { display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 999px; background: var(--soft); color: var(--navy); font-size: 13px; font-weight: 600; }
+  .pg-more { display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; border: 0; border-radius: 999px; background: #FFFFFF; color: var(--navy); font-family: inherit; font-weight: 600; font-size: 15px; cursor: pointer; box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); }
+  .pg-more[hidden] { display: none; }
+  .pg-more-link { display: inline-flex; align-items: center; gap: 8px; height: 50px; padding: 0 24px; border-radius: 999px; background: #FFFFFF; color: var(--navy); font-weight: 600; font-size: 15px; box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); }
+  .pg-link { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: var(--navy); }
+  .pg-btn-w { display: inline-flex; align-items: center; height: 54px; padding: 0 28px; border-radius: 999px; background: #FFFFFF; color: var(--navy); font-weight: 700; font-size: 16px; box-shadow: 0 18px 30px -16px rgba(0,0,0,0.6); }
+  .pg-more-link--m { display: none; }
+  @media (max-width: 767px) { .pg-more-link--m { display: flex; justify-content: center; } }
+
+  /* mobile: show only the first 4 items until "Xem tất cả" is pressed */
+  @media (max-width: 767px) { .pg-cap:not(.is-open) > :nth-child(n+5) { display: none; } }
+  @media (max-width: 767px) { .pg-clamp4:not(.is-open) { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; -webkit-line-clamp: 4; } }
+  @media (min-width: 768px) { [data-reveal] { display: none; } }
+
+  .pg-ph { aspect-ratio: 16 / 10; border-radius: 24px; background: linear-gradient(150deg, var(--soft) 0%, var(--tint-2) 100%); border: 1px dashed #9AA3C7; display: flex; align-items: flex-end; padding: 14px; box-sizing: border-box; }
+  .pg-ph span { font-size: 12.5px; color: #2C3560; background: #FFFFFF; padding: 5px 11px; border-radius: 999px; }
+
+  .pg-cta-o { padding: var(--pg-sec) var(--pg-x); }
+  .pg-cta { position: relative; overflow: hidden; max-width: 1152px; margin: 0 auto; border-radius: var(--pg-panel-r); color: #FFFFFF; padding: 48px 56px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px 40px;
+    background: radial-gradient(760px 420px at 92% 8%, color-mix(in srgb, var(--glow) 60%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(620px 380px at 0% 100%, color-mix(in srgb, var(--red) 34%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(160deg, var(--navy-night) 0%, var(--navy-2) 100%); }
+  .pg-cta-t { display: flex; flex-direction: column; gap: 12px; flex: 1 1 320px; min-width: 0; }
+  .pg-cta-t p { margin: 0; font-size: 17px; line-height: 1.65; color: var(--tint-1); }
+  .pg-cta .pg-btn-w, .pg-cta .btn--glass { height: 54px; font-size: 16px; }
+  @media (max-width: 767px) { .pg-cta { padding: 28px 20px; } }
+</style>

@@ -1,0 +1,158 @@
+---
+import { KEYWORDS } from '@/data/seo';
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/careers/Hero.astro';
+import { JOBS } from '@/data/jobs';
+
+export function getStaticPaths() {
+  return JOBS.map((job) => ({ params: { slug: job.slug }, props: { job } }));
+}
+const { job } = Astro.props;
+const back = `/tuyen-dung/${job.slug}`;
+const arrow = 'M5 12h14 M13 6l6 6l-6 6';
+const stepper = [['1', 'Thông tin cá nhân', true], ['2', 'Hồ sơ & CV', true], ['3', 'Xác nhận', false]] as const;
+const summary = [['Địa điểm', job.place], ['Mức lương', job.salary], ['Hạn nộp', job.deadline]];
+const exp = ['Chưa có kinh nghiệm', 'Dưới 1 năm', 'Từ 1 đến 3 năm', 'Từ 3 đến 5 năm', 'Trên 5 năm'];
+---
+<Base title={`Ứng tuyển ${job.title}`} keywords={KEYWORDS.careers} noindex description="Điền thông tin và đính kèm CV. HR sẽ xem xét hồ sơ trong vòng 3-5 ngày làm việc." active="careers">
+  <div>
+    <Hero crumbs={[{ label: 'Tuyển dụng', href: '/tuyen-dung' }, { label: job.title, href: back }, { label: 'Ứng tuyển' }]} title={`Ứng tuyển: ${job.title}`} lead="Điền thông tin và đính kèm CV. HR sẽ xem xét hồ sơ trong vòng 3-5 ngày làm việc." />
+
+    <section class="steprow">
+      <ol class="cr-card stepper" aria-label="Các bước ứng tuyển">
+        {stepper.map(([no, label, on]) => (
+          <li class:list={{ on }}><span class="bar"></span><span class="no">Bước {no}</span><span class="lb">{label}</span></li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="sec">
+      <div class="in">
+        <form class="form" data-static-form>
+          <div class="cr-card box">
+            <div class="bh"><h2>Thông tin cá nhân</h2><p>Các trường có dấu * là bắt buộc.</p></div>
+            <div class="cols">
+              <div class="cr-field"><label for="ap-name">Họ và tên *</label><input id="ap-name" name="fullName" type="text" autocomplete="name" required minlength="2" placeholder="Nguyễn Văn A" /><small>Tối thiểu 2 ký tự</small></div>
+              <div class="cr-field"><label for="ap-dob">Ngày sinh</label><input id="ap-dob" name="birthDate" type="text" autocomplete="bday" placeholder="ngày / tháng / năm" /><small>Định dạng ngày/tháng/năm</small></div>
+              <div class="cr-field"><label for="ap-phone">Số điện thoại *</label><input id="ap-phone" name="phone" type="tel" autocomplete="tel" required minlength="10" placeholder="09xx xxx xxx" /><small>Tối thiểu 10 chữ số</small></div>
+              <div class="cr-field"><label for="ap-email">Email *</label><input id="ap-email" name="email" type="email" autocomplete="email" required placeholder="example@gmail.com" /></div>
+              <div class="cr-field full"><label for="ap-addr">Địa chỉ</label><input id="ap-addr" name="address" type="text" autocomplete="street-address" placeholder="Số nhà, đường, phường/xã, tỉnh/thành" /><small>Nơi bạn đang sinh sống</small></div>
+            </div>
+          </div>
+
+          <div class="cr-card box">
+            <div class="bh"><h2>Hồ sơ &amp; CV</h2><p class="clamp-2">Kinh nghiệm và tài liệu giúp HR đánh giá hồ sơ của bạn.</p></div>
+            <div class="cols">
+              <div class="cr-field"><label for="ap-job">Vị trí ứng tuyển</label><input id="ap-job" name="position" type="text" value={job.title} readonly /><small>Không thể chỉnh sửa</small></div>
+              <div class="cr-field"><label for="ap-exp">Kinh nghiệm</label>
+                <select id="ap-exp" name="experience"><option value="">Chọn số năm kinh nghiệm</option>{exp.map((e) => <option>{e}</option>)}</select>
+                <small>Tính theo kinh nghiệm liên quan vị trí</small></div>
+            </div>
+            <div class="cr-field"><label for="ap-intro">Giới thiệu bản thân</label><textarea id="ap-intro" name="intro" rows="4" placeholder="Giới thiệu ngắn về bản thân..."></textarea><small>Không bắt buộc</small></div>
+            <div class="cr-field">
+              <span class="cr-label" id="cv-l">Tải hồ sơ (CV) *</span>
+              <div class="cvwrap">
+                <input id="ap-cv" class="sr-only" name="cv" type="file" accept=".pdf,.doc,.docx" required aria-labelledby="cv-l" />
+                <label for="ap-cv" class="cv">
+                  <span class="cv__ic"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" class="ic"><path d="M12 16V5 M7 9l5-5l5 5 M5 20h14" /></svg></span>
+                  <span class="cv__t"><b>Tải lên CV</b> hoặc kéo thả vào đây</span>
+                  <span class="cv__s">Hỗ trợ PDF, DOC, DOCX (tối đa 2MB)</span>
+                </label>
+              </div>
+            </div>
+            <div class="cr-field"><label for="ap-link">Liên kết hồ sơ năng lực</label><input id="ap-link" name="portfolio" type="url" autocomplete="url" placeholder="https://" /><small>Portfolio, GitHub hoặc LinkedIn (không bắt buộc)</small></div>
+          </div>
+
+          <div class="end">
+            <div class="consent">
+              <input id="ap-consent" name="consent" type="checkbox" required />
+              <label for="ap-consent">Tôi xác nhận thông tin đã cung cấp là chính xác và đồng ý để ERG lưu trữ hồ sơ phục vụ mục đích tuyển dụng.</label>
+            </div>
+            <div class="acts">
+              <a href={back} class="cr-white-btn" style="height:52px;padding:0 24px;font-size:16px">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" class="ic" style="stroke-width:2.2"><path d="M19 12H5 M11 6l-6 6l6 6" /></svg>Quay lại</a>
+              <button type="submit" class="cr-submit grow">Nộp hồ sơ
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" class="ic" style="stroke-width:2.2"><path d={arrow} /></svg></button>
+            </div>
+          </div>
+          <p data-form-note hidden tabindex="-1" role="status" class="cr-note">Chức năng gửi trực tuyến đang được hoàn thiện. Vui lòng gọi hotline 0938.830.098 hoặc email info@erg.edu.vn.</p>
+        </form>
+
+        <aside>
+          <div class="cr-card side">
+            <span class="cr-chip">Vị trí ứng tuyển</span>
+            <h3>{job.title}</h3>
+            <div class="tags"><span class="cr-tag">{job.dept}</span><span class="cr-tag cr-tag--alt">{job.type}</span></div>
+            <dl class="sum">{summary.map(([l, v]) => (<div><dt>{l}</dt><dd>{v}</dd></div>))}</dl>
+            <a href={back} class="lnk">Xem lại mô tả công việc</a>
+          </div>
+          <div class="info">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" class="ic" style="flex:none;stroke:var(--navy)"><path d="M12 3a9 9 0 1 0 0 18a9 9 0 0 0 0-18z M12 11v5 M12 7.5v.5" /></svg>
+            <span>Sau khi nộp, bạn nhận mã tra cứu để theo dõi tiến độ tại <a href="/tuyen-dung/theo-doi">Tra cứu hồ sơ</a>.</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .ic { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  h2 { font-size: 22px; line-height: 1.25; font-weight: 700; letter-spacing: -0.4px; }
+  .steprow { position: relative; padding: 0 24px 32px; }
+  .stepper { list-style: none; max-width: 1152px; margin: -28px auto 0; padding: 20px 24px; border-radius: 28px; display: flex; gap: 12px; }
+  .stepper li { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; color: #4A5578; }
+  .stepper li.on { color: var(--navy); }
+  .bar { height: 4px; border-radius: 2px; background: #E1E5EF; }
+  .on .bar { background: var(--navy); }
+  .no { font-size: 12.5px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; }
+  .lb { font-size: 15px; font-weight: 600; line-height: 1.35; }
+  .sec { padding: 0 0 88px; }
+  .in { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px 40px; }
+  .form { flex: 2 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+  .box { display: flex; flex-direction: column; gap: 24px; padding: 36px; border-radius: 32px; }
+  .bh { display: flex; flex-direction: column; gap: 6px; }
+  .bh p { font-size: 16px; color: #4A5578; }
+  .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .full { grid-column: 1 / -1; }
+  .cvwrap { position: relative; }
+  .cv { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 160px; padding: 24px; border: 1.5px dashed #9AA3C7; border-radius: 24px; background: linear-gradient(150deg, var(--tint-5) 0%, var(--soft) 100%); text-align: center; cursor: pointer; }
+  .cvwrap:focus-within .cv { outline: 3px solid var(--accent-2); outline-offset: 2px; }
+  .cv__ic { width: 52px; height: 52px; border-radius: 18px; background: linear-gradient(145deg, var(--accent) 0%, var(--navy) 100%); color: #fff; box-shadow: 0 12px 20px -10px color-mix(in srgb, var(--navy) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4); display: inline-flex; align-items: center; justify-content: center; }
+  .cv__t { font-size: 15px; font-weight: 600; }
+  .cv__t b { color: var(--navy); }
+  .cv__s { font-size: 13px; color: #4A5578; }
+  .end { display: flex; flex-direction: column; gap: 20px; }
+  .consent { display: flex; align-items: flex-start; gap: 12px; min-height: 44px; }
+  .consent input { flex: none; width: 22px; height: 22px; margin: 11px 0 0; accent-color: var(--navy); }
+  .consent label { font-size: 14.5px; line-height: 1.6; color: #4A5578; padding-top: 10px; }
+  .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .grow { flex: 1 1 200px; }
+  aside { flex: 1 1 300px; max-width: 380px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .side { display: flex; flex-direction: column; gap: 14px; padding: 28px; border-radius: 32px; }
+  .side h3 { font-size: 19px; font-weight: 700; line-height: 1.35; letter-spacing: -0.2px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sum { margin: 0; display: flex; flex-direction: column; border-top: 1px solid #EEF1F7; }
+  .sum div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #EEF1F7; font-size: 14.5px; }
+  .sum dt { color: #4A5578; }
+  .sum dd { margin: 0; font-weight: 700; text-align: right; }
+  .lnk { display: inline-flex; align-items: center; min-height: 44px; font-size: 14.5px; font-weight: 700; color: var(--navy); text-decoration: none; }
+  .info { display: flex; gap: 12px; padding: 18px 22px; border-radius: 24px; background: var(--soft); color: #2C3560; font-size: 14px; line-height: 1.6; }
+  .info a { color: var(--navy); font-weight: 700; }
+  @media (max-width: 767px) {
+    .steprow { padding: 0 16px 24px; }
+    .stepper { padding: 20px 24px; }
+    .lb { font-size: 13px; }
+    .sec { padding-bottom: 40px; }
+    .in { padding: 0 16px; }
+    .form { gap: 16px; }
+    .box { padding: 20px 16px; gap: 16px; }
+    .cols { grid-template-columns: 1fr; gap: 14px; }
+    .cv { min-height: 120px; padding: 16px; }
+    .cr-field textarea { min-height: 96px; }
+    aside { max-width: 100%; }
+    .side { padding: 16px; }
+    .sum div { padding: 8px 0; }
+    .info { padding: 14px 16px; }
+  }
+</style>

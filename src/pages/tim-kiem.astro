@@ -1,0 +1,183 @@
+---
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/news/Hero.astro';
+import { PROGRAMS, FIELDS } from '@/data/site';
+import { NEWS } from '@/data/news';
+
+// shortcut: no job posts indexed (the design only shows a placeholder), add them when real postings exist.
+const index = [
+  ...PROGRAMS.map((p) => ({ title: p.title, text: p.text, url: `/chuong-trinh/${p.slug}`, type: 'Chương trình' })),
+  ...FIELDS.map((f) => ({ title: f.title, text: f.text, url: `/linh-vuc-dao-tao/${f.slug}`, type: 'Chương trình' })),
+  ...NEWS.map((n) => ({ title: n.title, text: n.text, url: `/tin-tuc/${n.slug}`, type: 'Tin tức' })),
+];
+const tabs = ['Tất cả', 'Chương trình', 'Tin tức', 'Tuyển dụng'];
+const suggestions = [
+  { label: 'Xem chương trình', href: '/linh-vuc-dao-tao' },
+  { label: 'Tin tức mới nhất', href: '/tin-tuc' },
+  { label: 'Liên hệ tư vấn', href: '/lien-he' },
+];
+---
+<Base title="Tìm kiếm" description="Tìm chương trình, bài viết và tin tuyển dụng trên toàn bộ erg.edu.vn." noindex>
+  <div>
+    <Hero crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Tìm kiếm' }]}>
+      <h1>Tìm kiếm</h1>
+      <p class="hero-p clamp-3">Tìm chương trình, bài viết và tin tuyển dụng trên toàn bộ erg.edu.vn.</p>
+      <form action="/tim-kiem" method="get" role="search" class="sf">
+        <div class="sf__box">
+          <label for="site-search" class="sr-only">Từ khóa tìm kiếm</label>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 0 0 0-14z M20 20l-4-4"></path></svg>
+          <input id="site-search" name="q" type="search" autocomplete="off" />
+        </div>
+        <button type="submit">Tìm kiếm</button>
+      </form>
+    </Hero>
+
+    <section class="res-sec">
+      <div class="wrap res">
+        <div class="top">
+          <p id="count" aria-live="polite"></p>
+          <div class="chips" role="group" aria-label="Lọc kết quả theo loại">
+            {tabs.map((t, i) => <button type="button" class="chip" data-type={t} aria-pressed={i === 0 ? 'true' : 'false'}>{t}</button>)}
+          </div>
+        </div>
+        <ul id="results" class="list"></ul>
+        <button type="button" id="more" class="more" hidden></button>
+      </div>
+    </section>
+
+    <section class="panel-sec" id="empty" hidden>
+      <div class="panel">
+        <div class="empty">
+          <span class="empty__i"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 0 0 0-14z M20 20l-4-4 M8.5 11h5"></path></svg></span>
+          <h2 id="empty-t">Không tìm thấy kết quả</h2>
+          <p class="clamp-3">Hãy kiểm tra lại chính tả, thử từ khóa ngắn hơn hoặc xem các mục gợi ý dưới đây.</p>
+          <div class="sug">
+            {suggestions.map((s) => (
+              <a href={s.href}>{s.label}<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14 M13 6l6 6l-6 6"></path></svg></a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script type="application/json" id="search-index" set:html={JSON.stringify(index)} />
+</Base>
+
+<script>
+  type Item = { title: string; text: string; url: string; type: string };
+  const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').toLowerCase();
+  const items: Item[] = JSON.parse(document.getElementById('search-index')!.textContent!);
+  const input = document.getElementById('site-search') as HTMLInputElement;
+  const list = document.getElementById('results')!;
+  const count = document.getElementById('count')!;
+  const empty = document.getElementById('empty')!;
+  const emptyT = document.getElementById('empty-t')!;
+  const more = document.getElementById('more') as HTMLButtonElement;
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('.chip')];
+  const badge: Record<string, string> = { 'Chương trình': 'prog', 'Tin tức': 'news', 'Tuyển dụng': 'job' };
+  let type = 'Tất cả';
+  let expanded = false;
+  const q0 = new URLSearchParams(location.search).get('q') ?? '';
+  input.value = q0;
+
+  function strong(text: string) {
+    const s = document.createElement('strong');
+    s.textContent = text;
+    return s;
+  }
+  function render() {
+    const raw = input.value.trim();
+    const q = norm(raw);
+    const hits = items.filter((i) => (type === 'Tất cả' || i.type === type) && norm(i.title + ' ' + i.text).includes(q));
+    list.replaceChildren(...hits.map((i, n) => {
+      const li = document.createElement('li');
+      if (n >= 4 && !expanded) li.className = 'extra';
+      const a = document.createElement('a');
+      a.href = i.url;
+      const b = document.createElement('span');
+      b.className = 'tp ' + badge[i.type];
+      b.textContent = i.type;
+      const h = document.createElement('h2');
+      h.textContent = i.title;
+      const p = document.createElement('p');
+      p.className = 'clamp-2';
+      p.textContent = i.text;
+      a.append(b, h, p);
+      li.append(a);
+      return li;
+    }));
+    count.replaceChildren('Tìm thấy ', strong(String(hits.length)), ' kết quả' + (raw ? ' cho “' : ''), ...(raw ? [strong(raw), '”'] : []));
+    empty.hidden = hits.length > 0;
+    emptyT.textContent = raw ? `Không tìm thấy kết quả cho “${raw}”` : 'Không tìm thấy kết quả';
+    more.hidden = expanded || hits.length <= 4;
+    more.textContent = `Xem tất cả ${hits.length} kết quả`;
+  }
+  chips.forEach((c) => c.addEventListener('click', () => {
+    type = c.dataset.type!;
+    expanded = false;
+    chips.forEach((o) => o.setAttribute('aria-pressed', String(o === c)));
+    render();
+  }));
+  more.addEventListener('click', () => { expanded = true; render(); });
+  input.addEventListener('input', () => { expanded = false; render(); });
+  render();
+</script>
+
+<style>
+  h1 { margin: 0; font-size: 52px; line-height: 1.08; font-weight: 700; letter-spacing: -1.2px; text-wrap: balance; }
+  .hero-p { margin: 0; font-size: 17.5px; line-height: 1.7; color: var(--tint-1); max-width: 640px; }
+  svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  .sf { display: flex; flex-wrap: wrap; gap: 12px; max-width: 760px; }
+  .sf__box { flex: 1 1 280px; position: relative; display: flex; align-items: center; }
+  .sf__box svg { position: absolute; left: 18px; color: #4A5578; stroke-width: 2; }
+  .sf input { width: 100%; height: 56px; padding: 0 16px 0 52px; border: 1px solid #D5DAE8; border-radius: 16px; background: #fff; color: #0F1738; font-size: 18px; font-family: inherit; box-sizing: border-box; }
+  .sf button { height: 56px; padding: 0 30px; border: 0; border-radius: 999px; background: var(--red); color: #fff; font-family: inherit; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 18px 32px -14px var(--red), inset 0 1px 0 rgba(255,255,255,0.35); }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 var(--pad-x); }
+  .res-sec { padding: 88px 0; }
+  .res { display: flex; flex-direction: column; gap: 40px; }
+  .top { display: flex; flex-direction: column; gap: 16px; }
+  .top p { margin: 0; font-size: 16px; color: #4A5578; }
+  .top :global(strong) { color: #0F1738; }
+  .chips { display: flex; gap: 10px; overflow-x: auto; flex-wrap: wrap; padding-bottom: 6px; }
+  .chip { flex: none; height: 44px; padding: 0 18px; border-radius: 999px; border: 0; box-shadow: inset 0 0 0 1px #B9C0D8; background: #fff; color: #0F1738; font-family: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer; }
+  .chip[aria-pressed='true'] { background: var(--navy); color: #fff; box-shadow: none; }
+  .list { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .list :global(li) { display: flex; padding: 28px; border-radius: 28px; background: #fff; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 18px 36px -24px rgba(15,23,56,0.2); }
+  .list :global(a) { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: #0F1738; }
+  .list :global(.tp) { align-self: flex-start; padding: 4px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 700; }
+  .list :global(.prog) { background: var(--soft); color: var(--navy); }
+  .list :global(.news) { background: var(--red-soft); color: var(--red); }
+  .list :global(.job) { background: var(--tint-5); color: #2C3560; }
+  .list :global(h2) { margin: 0; font-size: 20px; line-height: 1.35; font-weight: 700; letter-spacing: -0.2px; color: var(--navy); }
+  .list :global(p) { margin: 0; font-size: 16px; line-height: 1.65; color: #4A5578; flex: 1; }
+  .more { display: none; align-items: center; justify-content: center; height: 50px; border: 0; border-radius: 999px; background: #fff; color: var(--navy); font-family: inherit; font-weight: 600; font-size: 15px; cursor: pointer; box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); }
+  .panel-sec { padding: 0 24px; }
+  .panel-sec[hidden] { display: none; }
+  .panel { max-width: 1360px; margin: 0 auto 88px; border-radius: 48px; background: linear-gradient(180deg, var(--tint-3) 0%, #F7F8FC 100%); padding: 88px 24px; }
+  .empty { max-width: 1152px; margin: 0 auto; border-radius: 32px; background: #fff; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); padding: 56px 40px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+  .empty__i { width: 72px; height: 72px; border-radius: 24px; background: linear-gradient(145deg, var(--accent) 0%, var(--navy) 100%); color: #fff; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 12px 20px -10px color-mix(in srgb, var(--navy) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4); }
+  .empty__i svg { stroke-width: 1.8; }
+  .empty h2 { margin: 0; font-size: 24px; line-height: 1.3; font-weight: 700; letter-spacing: -0.5px; overflow-wrap: anywhere; }
+  .empty p { margin: 0; font-size: 16px; line-height: 1.7; color: #4A5578; max-width: 520px; }
+  .sug { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 6px; }
+  .sug a { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 22px; border-radius: 999px; background: #fff; color: var(--navy); box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); font-weight: 600; font-size: 15px; text-decoration: none; }
+  .sug svg { stroke-width: 2.2; }
+  @media (max-width: 767px) {
+    h1 { font-size: 30px; }
+    .res-sec { padding: 40px 0; }
+    .res { gap: 20px; }
+    .chips { flex-wrap: nowrap; }
+    .list { grid-template-columns: 1fr; gap: 12px; }
+    .list :global(li) { padding: 16px; border-radius: 22px; }
+    .list :global(li.extra) { display: none; }
+    .list :global(h2) { font-size: 16px; }
+    .list :global(p) { font-size: 15px; }
+    .more { display: flex; }
+    .more[hidden] { display: none; }
+    .panel-sec { padding: 0 8px; }
+    .panel { margin-bottom: 40px; border-radius: 32px; padding: 40px 14px; }
+    .empty { padding: 24px 16px; }
+    .empty__i { width: 56px; height: 56px; }
+    .empty h2 { font-size: 20px; }
+  }
+</style>

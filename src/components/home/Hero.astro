@@ -1,0 +1,104 @@
+---
+import Scene3D from '@/components/Scene3D.astro';
+import { STATS, SEASON_TEXT } from '@/data/home';
+---
+<section class="hero">
+  <div class="in">
+    <div class="copy">
+      <span class="badge"><span class="dot" aria-hidden="true"></span>Trung tâm Ngoại ngữ – Tin học ERG</span>
+      <h1>Tiên phong đào tạo Công nghệ &amp; Kỹ năng số</h1>
+      <p class="lead">Hệ thống đào tạo chuẩn Quốc tế, trang bị hành trang vững chắc cho kỷ nguyên số hóa.</p>
+      <div class="cta">
+        <a class="primary" href="/linh-vuc-dao-tao">Khám phá các khóa học
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14 M13 6l6 6l-6 6"></path></svg></a>
+        <a class="ghost only-desktop" href="/lien-he">Nhận tư vấn lộ trình</a>
+      </div>
+    </div>
+    <div class="scene"><Scene3D embedded /></div>
+    <div class="stats">
+      {STATS.map((s) => (
+        <div class="stat"><span class="v">{s.value}</span><span class="l">{s.label}</span></div>
+      ))}
+    </div>
+  </div>
+</section>
+<section class="notice-wrap">
+  <div class="notice">
+    {SEASON_TEXT.map((s) => <span class={`tag sv sv-${s.key}`}>{s.tag}</span>)}
+    <a href="/tin-tuc">
+      {SEASON_TEXT.map((s) => <span class={`sv sv-${s.key}`}>{s.notice}</span>)}
+    </a>
+  </div>
+</section>
+
+<style>
+  .hero {
+    --hero-bg: radial-gradient(900px 560px at 80% 62%, color-mix(in srgb, var(--glow) 70%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(640px 400px at 6% 100%, color-mix(in srgb, var(--red) 42%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(180deg, var(--navy-night) 0%, var(--navy-2) 100%);
+    --hero-soft: var(--tint-1); --hero-cta: var(--red); --hero-cta-text: #FFFFFF; --dot: #FF3355; --dot-dark: #8A0018;
+    position: relative; overflow: hidden; background: var(--hero-bg); color: #FFFFFF; border-radius: 0 0 56px 56px;
+  }
+  .in { max-width: 1200px; margin: 0 auto; padding: 56px 24px 88px; display: flex; flex-wrap: wrap; align-items: center; gap: 32px 48px; }
+  .copy { flex: 1.1 1 340px; display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+  .badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; padding: 7px 16px 7px 8px; border-radius: 999px; background: rgba(255,255,255,0.10); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22); font-size: 14px; font-weight: 600; }
+  .dot { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #FFFFFF 0%, var(--dot) 48%, var(--dot-dark) 100%); }
+  h1 { margin: 0; font-size: 62px; line-height: 1.08; font-weight: 700; letter-spacing: -1.6px; text-wrap: balance; }
+  .lead { margin: 0; font-size: 19px; line-height: 1.65; color: var(--hero-soft); max-width: 540px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+  .primary { display: inline-flex; align-items: center; gap: 10px; height: 54px; padding: 0 28px; border-radius: 999px; background: var(--hero-cta); color: var(--hero-cta-text); font-weight: 700; font-size: 16px; text-decoration: none; box-shadow: 0 18px 32px -14px var(--hero-cta), inset 0 1px 0 rgba(255,255,255,0.35); }
+  .primary svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .ghost { display: inline-flex; align-items: center; height: 54px; padding: 0 26px; border-radius: 999px; background: rgba(255,255,255,0.10); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4); color: #FFFFFF; font-weight: 600; font-size: 16px; text-decoration: none; }
+  .scene { flex: 1 1 340px; min-width: 0; }
+  .stats { flex: 1 1 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .stat { display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-radius: 24px; background: rgba(255,255,255,0.09); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18), inset 0 1px 0 rgba(255,255,255,0.25); }
+  .v { font-size: 36px; font-weight: 700; line-height: 1; letter-spacing: -1px; min-width: 92px; }
+  .l { font-size: 14.5px; color: var(--hero-soft); line-height: 1.4; }
+
+  .notice-wrap { padding: 0 24px; }
+  .notice { --notice-bg: #FFFFFF; --notice-tag: var(--red); position: relative; max-width: 1152px; margin: -30px auto 0; box-sizing: border-box; padding: 12px 22px 12px 12px; border-radius: 24px; background: var(--notice-bg); box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; font-size: 15px; }
+  .tag { padding: 7px 14px; border-radius: 999px; background: var(--notice-tag); color: #FFFFFF; font-weight: 700; font-size: 13px; }
+  .notice a { color: #0F1738; font-weight: 600; text-decoration: none; min-height: 36px; display: inline-flex; align-items: center; }
+
+  /* seasonal text: every variant is in the HTML, only the active season's is shown */
+  .sv { display: none; }
+  .sv-none { display: inline; }
+  :global(:root[data-season]:not([data-season='none'])) .sv-none { display: none; }
+
+  :global(:root[data-season='tet']) .hero { --hero-bg: radial-gradient(900px 560px at 80% 62%, rgba(255,120,60,0.55) 0%, rgba(255,120,60,0) 70%), radial-gradient(640px 400px at 6% 100%, rgba(242,176,30,0.4) 0%, rgba(242,176,30,0) 70%), linear-gradient(180deg, #4A0508 0%, #8E0F15 100%); --hero-soft: #FFE9B8; --hero-cta: #F2B01E; --hero-cta-text: #3A1A00; --dot: #F2B01E; --dot-dark: #9A5B00; }
+  :global(:root[data-season='tet']) .notice { --notice-bg: #FFF9E8; --notice-tag: #B3131B; }
+  :global(:root[data-season='tet']) .sv-tet { display: inline; }
+  :global(:root[data-season='noel']) .hero { --hero-bg: radial-gradient(900px 560px at 80% 62%, rgba(40,190,130,0.5) 0%, rgba(40,190,130,0) 70%), radial-gradient(640px 400px at 6% 100%, rgba(200,16,46,0.4) 0%, rgba(200,16,46,0) 70%), linear-gradient(180deg, #04241A 0%, #0E4D3A 100%); --hero-soft: #D3ECDF; --hero-cta: #C8102E; --hero-cta-text: #FFFFFF; --dot: #E5223F; --dot-dark: #7C0A1C; }
+  :global(:root[data-season='noel']) .notice { --notice-bg: #F3FAF6; --notice-tag: #0E4D3A; }
+  :global(:root[data-season='noel']) .sv-noel { display: inline; }
+  :global(:root[data-season='newyear']) .hero { --hero-bg: radial-gradient(900px 560px at 80% 62%, rgba(140,110,255,0.55) 0%, rgba(140,110,255,0) 70%), radial-gradient(640px 400px at 6% 100%, rgba(242,176,30,0.36) 0%, rgba(242,176,30,0) 70%), linear-gradient(180deg, #0B0638 0%, #2A1A8A 100%); --hero-soft: #DCD8FF; --hero-cta: #F2B01E; --hero-cta-text: #3A1A00; --dot: #F2B01E; --dot-dark: #9A5B00; }
+  :global(:root[data-season='newyear']) .notice { --notice-bg: #FFFFFF; --notice-tag: #2A1A8A; }
+  :global(:root[data-season='newyear']) .sv-newyear { display: inline; }
+  :global(:root[data-season='hungvuong']) .hero { --hero-bg: radial-gradient(900px 560px at 80% 62%, rgba(242,176,30,0.42) 0%, rgba(242,176,30,0) 70%), radial-gradient(640px 400px at 6% 100%, rgba(204,60,20,0.4) 0%, rgba(204,60,20,0) 70%), linear-gradient(180deg, #3D0A05 0%, #7A2A0C 100%); --hero-soft: #FFE3C2; --hero-cta: #F2B01E; --hero-cta-text: #3A1A00; --dot: #F2B01E; --dot-dark: #9A5B00; }
+  :global(:root[data-season='hungvuong']) .notice { --notice-bg: #FFFFFF; --notice-tag: #7A2A0C; }
+  :global(:root[data-season='hungvuong']) .sv-hungvuong { display: inline; }
+  :global(:root[data-season='thongnhat']) .hero { --hero-bg: radial-gradient(900px 560px at 80% 62%, rgba(255,170,60,0.45) 0%, rgba(255,170,60,0) 70%), radial-gradient(640px 400px at 6% 100%, rgba(255,218,42,0.3) 0%, rgba(255,218,42,0) 70%), linear-gradient(180deg, #5A0A0A 0%, #A31414 100%); --hero-soft: #FFE3D6; --hero-cta: #FFDA2A; --hero-cta-text: #5A0A0A; --dot: #FFDA2A; --dot-dark: #B38600; }
+  :global(:root[data-season='thongnhat']) .notice { --notice-bg: #FFFFFF; --notice-tag: #A31414; }
+  :global(:root[data-season='thongnhat']) .sv-thongnhat { display: inline; }
+  :global(:root[data-season='thieunhi']) .hero { --hero-bg: radial-gradient(900px 560px at 80% 62%, rgba(94,230,255,0.5) 0%, rgba(94,230,255,0) 70%), radial-gradient(640px 400px at 6% 100%, rgba(255,93,115,0.36) 0%, rgba(255,93,115,0) 70%), linear-gradient(180deg, #06245C 0%, #1456C8 100%); --hero-soft: #D6E8FF; --hero-cta: #FF5D73; --hero-cta-text: #FFFFFF; --dot: #FFC857; --dot-dark: #B37A00; }
+  :global(:root[data-season='thieunhi']) .notice { --notice-bg: #FFFFFF; --notice-tag: #1456C8; }
+  :global(:root[data-season='thieunhi']) .sv-thieunhi { display: inline; }
+  :global(:root[data-season='quockhanh']) .hero { --hero-bg: radial-gradient(900px 560px at 80% 62%, rgba(255,190,60,0.5) 0%, rgba(255,190,60,0) 70%), radial-gradient(640px 400px at 6% 100%, rgba(255,218,42,0.3) 0%, rgba(255,218,42,0) 70%), linear-gradient(180deg, #5C0808 0%, #B01515 100%); --hero-soft: #FFE3D6; --hero-cta: #FFDA2A; --hero-cta-text: #5C0808; --dot: #FFDA2A; --dot-dark: #B38600; }
+  :global(:root[data-season='quockhanh']) .notice { --notice-bg: #FFFFFF; --notice-tag: #B01515; }
+  :global(:root[data-season='quockhanh']) .sv-quockhanh { display: inline; }
+  :global(:root[data-season='trungthu']) .hero { --hero-bg: radial-gradient(900px 560px at 80% 62%, rgba(255,216,107,0.42) 0%, rgba(255,216,107,0) 70%), radial-gradient(640px 400px at 6% 100%, rgba(120,90,255,0.4) 0%, rgba(120,90,255,0) 70%), linear-gradient(180deg, #0A1440 0%, #1D2F8F 100%); --hero-soft: #DADFFF; --hero-cta: #F2B01E; --hero-cta-text: #3A1A00; --dot: #FFD86B; --dot-dark: #B37A00; }
+  :global(:root[data-season='trungthu']) .notice { --notice-bg: #FFFFFF; --notice-tag: #1D2F8F; }
+  :global(:root[data-season='trungthu']) .sv-trungthu { display: inline; }
+  :global(:root[data-season='nhagiao']) .hero { --hero-bg: radial-gradient(900px 560px at 80% 62%, rgba(255,143,177,0.5) 0%, rgba(255,143,177,0) 70%), radial-gradient(640px 400px at 6% 100%, rgba(120,90,255,0.34) 0%, rgba(120,90,255,0) 70%), linear-gradient(180deg, #3A0A2E 0%, #8A1A5E 100%); --hero-soft: #FFDDEB; --hero-cta: #E0336B; --hero-cta-text: #FFFFFF; --dot: #FF8FB1; --dot-dark: #A01A4E; }
+  :global(:root[data-season='nhagiao']) .notice { --notice-bg: #FFFFFF; --notice-tag: #8A1A5E; }
+  :global(:root[data-season='nhagiao']) .sv-nhagiao { display: inline; }
+  @media (max-width: 767px) {
+    .hero { border-radius: 0 0 32px 32px; }
+    .in { padding: 24px 16px 56px; }
+    h1 { font-size: 34px; }
+    .lead { font-size: 16.5px; }
+    .stats { gap: 8px; }
+    .stat { flex-direction: column; align-items: flex-start; gap: 6px; padding: 12px; border-radius: 18px; }
+    .v { font-size: 24px; min-width: 0; }
+    .l { font-size: 12.5px; }
+    .notice-wrap { padding: 0 16px; }
+  }
+</style>

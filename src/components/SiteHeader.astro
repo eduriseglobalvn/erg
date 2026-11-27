@@ -1,0 +1,297 @@
+---
+// Site header from SiteHeader.dc.html + MobileMenu.dc.html.
+// Sticky: the greeting strip scrolls away, the pill stays. Holiday look comes from <html data-season> (set in Base.astro).
+import { NAV, PROGRAMS, FIELDS, CONTACT, type NavKey } from '@/data/site';
+
+interface Props { active?: NavKey }
+const { active = 'home' } = Astro.props;
+const megaFields = ['ic3-gs6', 'mos', 'tin-hoc-co-ban-nang-cao', 'lap-trinh-thieu-nhi', 'stem-robotics', 'lap-trinh-thi-dau'].map((s) => FIELDS.find((f) => f.slug === s)!);
+const caret = 'M6 9l6 6l6-6';
+const arrow = 'M5 12h14 M13 6l6 6l-6 6';
+const search = 'M11 4a7 7 0 1 0 0 14a7 7 0 0 0 0-14z M16 16l4.5 4.5';
+---
+<header class="hd" data-scrolled="false">
+  <div class="hd-decor" data-decor="back" aria-hidden="true"></div>
+
+  <div class="hd-strip">
+    <div class="hd-strip-in">
+      <span class="hd-greet" data-greet></span>
+      <a class="hd-greet-link only-desktop" href="/tin-tuc" data-greet-link></a>
+    </div>
+  </div>
+
+  <div class="hd-bar">
+    <div class="hd-inner">
+      <div class="hd-pill">
+        <a class="hd-plate" href="/" aria-label="ERG – Edurise Global, về trang chủ">
+          <img src="/erg-logo.webp" alt="ERG – Edurise Global" width="2000" height="918" />
+        </a>
+
+        <nav class="hd-nav only-desktop" aria-label="Điều hướng chính">
+          {NAV.map((n) => n.key === 'programs' ? (
+            <div class="hd-mega-wrap">
+              <a class="hd-link" href={n.href} aria-current={active === n.key ? 'page' : undefined}>
+                {n.label}<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" class="hd-caret"><path d={caret} /></svg>
+              </a>
+              <div class="hd-mega">
+                <div class="hd-mega-grid">
+                  <div class="hd-mega-col">
+                    <span class="hd-mega-label">Nhóm chương trình</span>
+                    <div class="hd-mega-groups">
+                      {PROGRAMS.map((p) => (
+                        <a class="hd-group" href={`/chuong-trinh/${p.slug}`}>
+                          <span class="hd-group-ico"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d={p.icon} /></svg></span>
+                          <span class="hd-group-txt"><span class="hd-group-t">{p.title}</span><span class="hd-group-s">{p.short}</span></span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                  <div class="hd-mega-col">
+                    <span class="hd-mega-label">Lĩnh vực đào tạo</span>
+                    <div class="hd-mega-fields">
+                      {megaFields.map((f) => <a href={`/linh-vuc-dao-tao/${f.slug}`}>{f.title}</a>)}
+                      <a class="hd-mega-all" href="/linh-vuc-dao-tao">Xem tất cả {FIELDS.length} lĩnh vực<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d={arrow} /></svg></a>
+                    </div>
+                  </div>
+                  <div class="hd-mega-card">
+                    <span class="hd-mega-card-t">Chưa biết nên chọn chương trình nào?</span>
+                    <span class="hd-mega-card-s">ERG sẽ tư vấn nhanh lộ trình phù hợp theo độ tuổi, nền tảng và mục tiêu chứng chỉ.</span>
+                    <a href="/lien-he">Nhận tư vấn lộ trình</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <a class="hd-link" href={n.href} aria-current={active === n.key ? 'page' : undefined}>
+              {n.label}{n.caret && <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" class="hd-caret"><path d={caret} /></svg>}
+            </a>
+          ))}
+        </nav>
+
+        <div class="hd-actions">
+          <a class="hd-icon" href="/tim-kiem" aria-label="Tìm kiếm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={search} /></svg></a>
+          <a class="hd-cta only-desktop" href="/lien-he">Đăng ký tư vấn<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d={arrow} /></svg></a>
+          <button class="hd-icon only-mobile" type="button" aria-label="Mở menu" aria-haspopup="dialog" data-mm-open>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16 M4 12h16 M4 17h16" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hd-decor" data-decor="front" aria-hidden="true"></div>
+</header>
+
+<dialog class="mm" aria-label="Menu">
+  <div class="mm-top">
+    <a href="/"><img src="/erg-logo.webp" alt="ERG – Edurise Global" width="2000" height="918" /></a>
+    <form method="dialog"><button class="mm-close" aria-label="Đóng menu"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18" /></svg></button></form>
+  </div>
+  <form class="mm-search" action="/tim-kiem" role="search">
+    <label for="mm-q" class="sr-only">Tìm kiếm</label>
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d={search} /></svg>
+    <input id="mm-q" name="q" type="search" placeholder="Tìm khóa học, tin tức…" />
+  </form>
+  <nav class="mm-nav" aria-label="Menu chính">
+    <a href="/gioi-thieu/cau-chuyen-cua-erg" aria-current={active === 'about' ? 'page' : undefined}>Giới thiệu</a>
+    <details open={active === 'programs'}>
+      <summary aria-current={active === 'programs' ? 'page' : undefined}>Chương trình đào tạo<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d={caret} /></svg></summary>
+      <div class="mm-sub">
+        <a href="/linh-vuc-dao-tao">Tất cả lĩnh vực đào tạo</a>
+        {PROGRAMS.map((p) => <a href={`/chuong-trinh/${p.slug}`}>{p.title}</a>)}
+      </div>
+    </details>
+    <a href="/tin-tuc" aria-current={active === 'news' ? 'page' : undefined}>Tin tức</a>
+    <a href="/tuyen-dung" aria-current={active === 'careers' ? 'page' : undefined}>Tuyển dụng</a>
+    <a href="/lien-he" aria-current={active === 'contact' ? 'page' : undefined}>Liên hệ</a>
+  </nav>
+  <div class="mm-foot">
+    <a class="mm-cta" href="/lien-he">Đăng ký tư vấn</a>
+    <a class="mm-tel" href={`tel:${CONTACT.hotlineTel}`}>
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" /></svg>{CONTACT.hotline}
+    </a>
+  </div>
+</dialog>
+
+<script>
+  import { decorSvg } from '@/lib/decor.js';
+  import { canChi } from '@/lib/season';
+
+  const root = document.documentElement;
+  const season = root.dataset.season ?? 'none';
+  const header = document.querySelector<HTMLElement>('.hd')!;
+  const pill = header.querySelector<HTMLElement>('.hd-pill')!;
+  const mobileMq = matchMedia('(max-width: 767px)');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Greeting text per holiday: [desktop, mobile, link].
+  const now = new Date();
+  // Tết falls in Jan/Feb; a ?season=tet preview later in the year greets the coming Tết.
+  const tetYear = now.getFullYear() + (now.getMonth() > 5 ? 1 : 0);
+  const nyYear = now.getMonth() === 11 ? now.getFullYear() + 1 : now.getFullYear();
+  const GREET: Record<string, [string, string, string]> = {
+    tet: [`Chúc mừng năm mới · Xuân ${canChi(tetYear)} ${tetYear}`, 'Chúc mừng năm mới', 'Lịch nghỉ Tết và khai giảng đầu xuân'],
+    noel: ['Giáng sinh an lành', 'Giáng sinh an lành', 'Tin tức từ ERG'],
+    newyear: [`Chúc mừng năm mới ${nyYear}`, `Chúc mừng năm mới ${nyYear}`, 'Thông báo lịch nghỉ lễ'],
+    hungvuong: ['Giỗ Tổ Hùng Vương · mùng 10 tháng 3 âm lịch', 'Giỗ Tổ Hùng Vương 10/3', 'Thông báo lịch nghỉ lễ'],
+    thongnhat: ['Mừng ngày Thống nhất đất nước 30/4 và Quốc tế Lao động 1/5', 'Mừng lễ 30/4 – 1/5', 'Thông báo lịch nghỉ lễ'],
+    thieunhi: ['Chúc mừng ngày Quốc tế Thiếu nhi 1/6', 'Mừng Quốc tế Thiếu nhi 1/6', 'Tin tức từ ERG'],
+    quockhanh: ['Mừng Quốc khánh 2/9', 'Mừng Quốc khánh 2/9', 'Thông báo lịch nghỉ lễ'],
+    trungthu: ['Vui Tết Trung thu · rằm tháng Tám', 'Vui Tết Trung thu', 'Tin tức từ ERG'],
+    nhagiao: ['Tri ân thầy cô · Ngày Nhà giáo Việt Nam 20/11', 'Mừng ngày Nhà giáo Việt Nam 20/11', 'Tin tức từ ERG'],
+  };
+
+  function paint() {
+    const g = GREET[season];
+    if (!g) return;
+    const mobile = mobileMq.matches;
+    header.querySelector('[data-greet]')!.textContent = mobile ? g[1] : g[0];
+    header.querySelector('[data-greet-link]')!.textContent = g[2];
+    // Drawn in real pixels around the measured pill, so the decor stays on the bar at any screen width.
+    const hr = header.getBoundingClientRect(), pr = pill.getBoundingClientRect();
+    const d = decorSvg(season, mobile, { W: hr.width, x0: pr.left - hr.left, x1: pr.right - hr.left, y: pr.top - hr.top, h: pr.height });
+    for (const el of header.querySelectorAll<HTMLElement>('[data-decor]')) {
+      el.innerHTML = el.dataset.decor === 'back' ? d.back : d.front;
+      el.style.height = d.height;
+      if (reduce) el.querySelector('svg')?.pauseAnimations();
+    }
+  }
+  paint();
+  let lastW = innerWidth, raf = 0;
+  addEventListener('resize', () => {
+    if (innerWidth === lastW) return; // a mobile URL bar showing/hiding only changes the height
+    lastW = innerWidth;
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(paint);
+  });
+
+  // Keep the mega menu open briefly after the pointer leaves, so a slightly off path to it does not close it.
+  for (const wrap of header.querySelectorAll<HTMLElement>('.hd-mega-wrap')) {
+    let t = 0;
+    wrap.addEventListener('pointerenter', () => { clearTimeout(t); wrap.dataset.open = ''; });
+    wrap.addEventListener('pointerleave', () => { t = window.setTimeout(() => delete wrap.dataset.open, 280); });
+  }
+
+  const onScroll = () => { header.dataset.scrolled = String(scrollY > 8); };
+  onScroll();
+  addEventListener('scroll', onScroll, { passive: true });
+
+  const menu = document.querySelector<HTMLDialogElement>('dialog.mm')!;
+  document.querySelector('[data-mm-open]')!.addEventListener('click', () => menu.showModal());
+  menu.addEventListener('click', (e) => { if (e.target === menu) menu.close(); });
+  mobileMq.addEventListener('change', () => { if (!mobileMq.matches) menu.close(); });
+
+  // SMIL animations (footer waves, holiday decor) ignore CSS, so pause them here.
+  if (reduce) for (const s of document.querySelectorAll('svg')) s.pauseAnimations();
+</script>
+
+<style>
+  .hd { --strip-h: 0px; position: sticky; top: calc(-1 * var(--strip-h)); z-index: 50; margin-bottom: -1px; background: var(--strip); color: var(--ink); transition: background 0.25s; }
+  :global(:root[data-season]:not([data-season='none'])) .hd { --strip-h: 40px; }
+  .hd[data-scrolled='true'] { background: transparent; }
+
+  .hd-decor { position: absolute; left: 0; top: 0; width: 100%; height: 0; pointer-events: none; overflow: visible; }
+  .hd-decor :global(svg) { width: 100%; height: 100%; }
+  .hd[data-scrolled='true'] .hd-decor { visibility: hidden; }
+
+  .hd-strip { display: none; position: relative; height: var(--strip-h); background: rgba(0, 0, 0, 0.22); color: #FFFFFF; }
+  :global(:root[data-season]:not([data-season='none'])) .hd-strip { display: block; }
+  .hd[data-scrolled='true'] .hd-strip { visibility: hidden; }
+  .hd-strip-in { max-width: 1200px; height: 100%; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; font-size: 14px; font-weight: 500; white-space: nowrap; }
+  .hd-greet { font-weight: 600; color: var(--greet); overflow: hidden; text-overflow: ellipsis; }
+  .hd-greet-link { color: #FFFFFF; text-underline-offset: 3px; }
+
+  .hd-bar { padding: 14px 24px; }
+  .hd-inner { position: relative; max-width: 1200px; margin: 0 auto; }
+  .hd-pill {
+    position: relative; height: 64px; padding: 0 10px; border-radius: 999px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.06) 100%);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 20px 44px -22px rgba(0, 0, 20, 0.7);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4);
+    transition: background 0.25s, box-shadow 0.25s;
+  }
+  .hd[data-scrolled='true'] .hd-pill { background: rgba(255, 255, 255, 0.86); box-shadow: 0 1px 2px rgba(15, 23, 56, 0.06), 0 18px 40px -20px rgba(15, 23, 56, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.9); }
+
+  .hd-plate { flex: none; display: flex; align-items: center; height: 46px; padding: 0 18px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 8px 18px -10px rgba(0, 0, 20, 0.6); }
+  .hd-plate img { height: 36px; width: auto; }
+  .hd[data-scrolled='true'] .hd-plate { background: transparent; box-shadow: none; }
+
+  .hd-nav { flex: none; display: flex; align-items: center; gap: 2px; }
+  .hd-link { display: inline-flex; align-items: center; gap: 5px; height: 44px; padding: 0 16px; border-radius: 999px; font-size: 15px; font-weight: 500; letter-spacing: 0.1px; white-space: nowrap; text-decoration: none; color: var(--on-dark); }
+  .hd-link[aria-current='page'] { color: #FFFFFF; font-weight: 600; background: rgba(255, 255, 255, 0.16); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22); }
+  .hd-link:hover { color: #FFFFFF; }
+  .hd[data-scrolled='true'] .hd-link { color: #1B2447; }
+  .hd[data-scrolled='true'] .hd-link[aria-current='page'] { color: var(--navy); background: var(--soft); box-shadow: none; }
+  .hd-caret { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0.7; }
+
+  .hd-actions { flex: none; display: flex; align-items: center; gap: 8px; }
+  .hd-icon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 0; border-radius: 999px; background: none; color: #FFFFFF; cursor: pointer; }
+  .hd-icon svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .hd[data-scrolled='true'] .hd-icon { color: var(--ink); }
+  .hd-cta { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: var(--cta); box-shadow: 0 10px 22px -10px var(--cta), inset 0 1px 0 rgba(255, 255, 255, 0.35); color: var(--cta-text); font-weight: 600; font-size: 16px; white-space: nowrap; text-decoration: none; }
+  .hd-cta svg, .hd-mega-all svg { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* mega menu: opens on hover or keyboard focus of the programmes item */
+  .hd-mega { display: none; position: absolute; left: 0; right: 0; top: 76px; background: #FFFFFF; border-radius: 32px; box-shadow: 0 40px 80px -30px rgba(0, 0, 40, 0.55); }
+  .hd-mega::before { content: ''; position: absolute; left: 0; right: 0; top: -26px; height: 26px; }
+  .hd-mega-wrap[data-open] .hd-mega, .hd-mega-wrap:focus-within .hd-mega { display: block; }
+  .hd-mega-wrap[data-open] .hd-caret, .hd-mega-wrap:focus-within .hd-caret { transform: rotate(180deg); }
+  /* an open menu sits above the front holiday decor (bunting, lights) */
+  .hd-bar:has(.hd-mega-wrap[data-open], .hd-mega-wrap:focus-within) { position: relative; z-index: 2; }
+  .hd-mega-grid { padding: 36px 36px 40px; display: grid; grid-template-columns: 1.5fr 1fr 0.9fr; gap: 48px; }
+  .hd-mega-col { display: flex; flex-direction: column; gap: 14px; }
+  .hd-mega-label { font-size: 11.5px; font-weight: 700; color: var(--muted); }
+  .hd-mega-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 16px; }
+  .hd-group { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border-radius: 18px; text-decoration: none; color: var(--ink); }
+  .hd-group:hover, .hd-group:focus-visible { background: var(--soft-2); }
+  .hd-group-ico { flex: none; width: 36px; height: 36px; border-radius: 12px; background: var(--soft); color: var(--navy); display: inline-flex; align-items: center; justify-content: center; }
+  .hd-group-ico svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .hd-group-txt { display: flex; flex-direction: column; gap: 2px; }
+  .hd-group-t { font-size: 14.5px; font-weight: 600; }
+  .hd-group-s { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+  .hd-mega-fields { display: flex; flex-direction: column; }
+  .hd-mega-fields a { display: flex; align-items: center; min-height: 40px; font-size: 14.5px; font-weight: 500; color: var(--ink); text-decoration: none; }
+  .hd-mega-fields a:hover { color: var(--navy); }
+  .hd-mega-fields .hd-mega-all { gap: 6px; min-height: 44px; margin-top: 6px; font-size: 14px; font-weight: 700; color: var(--navy); }
+  .hd-mega-card { align-self: start; border-radius: 24px; background: radial-gradient(260px 160px at 100% 0%, color-mix(in srgb, var(--glow) 70%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), var(--navy-deep); color: #FFFFFF; padding: 26px; display: flex; flex-direction: column; gap: 12px; }
+  .hd-mega-card-t { font-size: 18px; font-weight: 700; line-height: 1.35; }
+  .hd-mega-card-s { font-size: 13.5px; line-height: 1.6; color: var(--hero-soft); }
+  .hd-mega-card a { align-self: flex-start; display: inline-flex; align-items: center; height: 44px; padding: 0 18px; margin-top: 6px; border-radius: 999px; background: #FFFFFF; color: var(--navy); font-weight: 700; font-size: 14.5px; text-decoration: none; }
+
+  @media (max-width: 767px) {
+    :global(:root[data-season]:not([data-season='none'])) .hd { --strip-h: 36px; }
+    .hd-strip-in { padding: 0 16px; font-size: 13px; font-weight: 600; }
+    .hd-bar { padding: 10px; }
+    .hd-pill { height: 56px; border-radius: 20px; padding: 0 4px 0 7px; gap: 8px; }
+    .hd-plate { height: 42px; padding: 0 12px; border-radius: 14px; }
+    .hd-plate img { height: 32px; }
+    .hd-actions { gap: 0; }
+    .hd-icon { width: 48px; height: 48px; }
+    .hd-icon svg { width: 22px; height: 22px; }
+  }
+
+  /* mobile menu (dialog) */
+  .mm { width: 100%; max-width: 100%; height: 100%; max-height: 100%; margin: 0; padding: 0; border: 0; background: #FFFFFF; color: var(--ink); flex-direction: column; }
+  .mm[open] { display: flex; }
+  .mm::backdrop { background: rgba(0, 0, 30, 0.4); }
+  .mm svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .mm-top { height: 64px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 16px; border-bottom: 1px solid var(--line); }
+  .mm-top img { height: 38px; width: auto; }
+  .mm-close { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border: 0; background: none; cursor: pointer; }
+  .mm-search { flex: none; margin: 12px 16px; display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 18px; color: var(--muted); }
+  .mm-search input { flex: 1; min-width: 0; border: 0; outline: 0; font-size: 15.5px; color: var(--ink); background: transparent; }
+  .mm-search:focus-within { outline: 3px solid var(--accent-2); outline-offset: 2px; }
+  .mm-nav { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+  .mm-nav > a, .mm-nav summary { display: flex; align-items: center; justify-content: space-between; min-height: 52px; padding: 0 16px; font-size: 16px; font-weight: 600; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line-soft); cursor: pointer; list-style: none; }
+  .mm-nav summary::-webkit-details-marker { display: none; }
+  .mm-nav [aria-current='page'] { color: var(--navy); font-weight: 700; box-shadow: inset 3px 0 0 var(--navy); }
+  .mm-nav details[open] { background: var(--soft-2); border-bottom: 1px solid var(--line-soft); }
+  .mm-nav details[open] summary { border-bottom: 0; }
+  .mm-nav details[open] summary svg { transform: rotate(180deg); }
+  .mm-nav summary svg { stroke: var(--muted); stroke-width: 2.2; }
+  .mm-sub { display: flex; flex-direction: column; padding: 0 16px 10px 32px; }
+  .mm-sub a { display: flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; }
+  .mm-foot { flex: none; padding: 14px 16px 20px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+  .mm-cta { display: flex; align-items: center; justify-content: center; height: 52px; border-radius: 999px; background: var(--cta); box-shadow: 0 18px 32px -14px var(--cta); color: var(--cta-text); font-weight: 700; font-size: 16px; text-decoration: none; }
+  .mm-tel { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; font-weight: 700; color: var(--navy); text-decoration: none; }
+</style>

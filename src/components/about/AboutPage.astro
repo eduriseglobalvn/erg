@@ -1,0 +1,241 @@
+---
+import Base from '@/layouts/Base.astro';
+import AboutHero from './AboutHero.astro';
+import { NAME_PARTS, FEATURES, VALUES, VISION_TAGS, type AboutKey } from '@/data/about';
+interface Props { current: 'story' | 'values' | 'vision' }
+const { current } = Astro.props;
+const META: Record<Props['current'], { title: string; description: string; crumb: string; anchor: string }> = {
+  story: { title: 'Câu chuyện của ERG', crumb: 'Câu chuyện của ERG', anchor: 'cau-chuyen', description: 'Khơi nguồn trí tuệ – Dẫn lối tương lai. Câu chuyện của Edurise Global.' },
+  values: { title: 'Giá trị cốt lõi', crumb: 'Giá trị cốt lõi', anchor: 'gia-tri', description: 'Năm trụ cột định hình phong cách làm việc và chất lượng đào tạo tại ERG.' },
+  vision: { title: 'Tầm nhìn & Sứ mệnh', crumb: 'Tầm nhìn & Sứ mệnh', anchor: 'tam-nhin', description: 'Khơi dậy tiềm năng con người, kiến tạo công dân số toàn cầu.' },
+};
+const m = META[current];
+const key: AboutKey = current;
+---
+<Base title={m.title} description={m.description} active="about">
+  <AboutHero current={key} crumb={m.crumb} title="Giới thiệu về ERG" lead="Khơi nguồn trí tuệ – Dẫn lối tương lai. Câu chuyện, giá trị cốt lõi, tầm nhìn và sứ mệnh của Edurise Global." />
+
+  <section id="cau-chuyen" class="ab-sec">
+    <div class="story ab-in">
+      <div class="story__txt">
+        <span class="ab-chip">Câu chuyện của ERG</span>
+        <h2 class="story__h">Khát vọng trong kỷ nguyên số</h2>
+        <p class="story__p clamp-4">Giữa làn sóng chuyển đổi số mạnh mẽ, khi giáo dục toàn cầu đối mặt với yêu cầu đổi mới để bắt nhịp thời đại, ERG (EduRise Global) ra đời với một khát vọng lớn: biến công nghệ trở thành chiếc cầu nối bền vững giữa tri thức và con người.</p>
+        <button type="button" class="ab-more only-mobile" data-more aria-expanded="false">Xem thêm</button>
+        <p class="story__q clamp-4">“Chúng tôi không chỉ dạy công nghệ, chúng tôi dùng công nghệ để khai phóng tiềm năng con người.”</p>
+      </div>
+      <div class="story__pic">
+        <div role="img" aria-label="Ảnh đội ngũ và hoạt động của ERG" class="story__ph"><span>Ảnh: đội ngũ ERG</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ab-panelwrap">
+    <div class="ab-panel">
+      <div class="ab-in">
+        <div class="ab-head">
+          <span class="ab-chip">Giải mã tên gọi</span>
+          <h2 class="name-h">“Edu + Rise + Global” – khai phóng tiềm năng trí tuệ bằng giải pháp giáo dục thông minh và toàn diện</h2>
+          <p class="clamp-3">Được sáng lập bởi những nhà giáo dục tâm huyết cùng đội ngũ chuyên gia công nghệ sâu sắc, ERG là sự giao thoa giữa tư duy giáo dục tiến bộ và năng lực sáng tạo đột phá trong kỷ nguyên số.</p>
+        </div>
+        <div class="grid3">
+          {NAME_PARTS.map((n) => (
+            <div class="ab-card item item--name">
+              <span class="word" style={`color:${n.color}`}>{n.word}</span>
+              <div class="item__txt">
+                <h3 class="name-label">{n.label}</h3>
+                <p class="clamp-2">{n.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ab-sec">
+    <div class="ab-in">
+      <div class="ab-head">
+        <span class="ab-chip">Điều tạo nên ERG</span>
+        <h2>Ba điểm làm nên ERG</h2>
+      </div>
+      <div class="grid3">
+        {FEATURES.map((f) => (
+          <div class="ab-card item">
+            <span class="ico ico--red">
+              <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d={f.icon}></path></svg>
+            </span>
+            <div class="item__txt">
+              <h3 class="item__h">{f.title}</h3>
+              <p class="clamp-2">{f.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="gia-tri" class="ab-panelwrap">
+    <div class="ab-panel">
+      <div class="ab-in">
+        <div class="ab-head">
+          <span class="ab-chip">Giá trị cốt lõi · Văn hóa doanh nghiệp</span>
+          <h2>Năm trụ cột định hình ERG</h2>
+          <p class="clamp-3">Năm trụ cột định hình phong cách làm việc và chất lượng đào tạo tại ERG.</p>
+        </div>
+        <div class="rail">
+          {VALUES.map((v) => (
+            <div class="ab-card vcard">
+              <span class="ico ico--blue">
+                <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d={v.icon}></path></svg>
+              </span>
+              <h3 class="item__h">{v.title}</h3>
+              <p class="vcard__p">{v.text}</p>
+            </div>
+          ))}
+          <div class="vcard vcard--cta">
+            <h3 class="item__h">Sẵn sàng đồng hành cùng ERG?</h3>
+            <p class="vcard__p">Chúng tôi luôn chào đón những nhân tài chia sẻ cùng hệ giá trị để kiến tạo tương lai giáo dục.</p>
+            <a href="/tuyen-dung" class="join">Gia nhập ngay
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14 M13 6l6 6l-6 6"></path></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tam-nhin" class="ab-sec">
+    <div class="ab-in">
+      <div class="ab-head">
+        <span class="ab-chip">Tầm nhìn &amp; Sứ mệnh</span>
+        <h2>La bàn định hướng</h2>
+        <p class="clamp-3">“Khơi dậy tiềm năng con người, kiến tạo công dân số toàn cầu.”</p>
+      </div>
+      <div class="grid2">
+        <div class="ab-card vm vm--vision">
+          <div class="vm__top">
+            <span class="pill pill--blue">Tầm nhìn · Vision</span>
+            <span class="pill pill--w">Mục tiêu 2030</span>
+          </div>
+          <h3 class="vm__h">Hệ sinh thái giáo dục số</h3>
+          <p class="vm__p clamp-4">ERG định hướng trở thành hệ sinh thái giáo dục công nghệ tiên phong nơi khoa học và công nghệ được ứng dụng sâu rộng để tái định nghĩa cách con người học tập và làm việc. Chúng tôi kiến tạo một không gian học tập không biên giới, lấy công nghệ làm động lực bứt phá, khai phóng tư duy đột phá, nuôi dưỡng năng lực sáng tạo và trang bị kỹ năng để mỗi cá nhân tự tin chinh phục tương lai số.</p>
+          <button type="button" class="ab-more only-mobile" data-more aria-expanded="false">Xem thêm</button>
+          <div class="tags only-desktop">
+            {VISION_TAGS.map((g) => <span>{g}</span>)}
+          </div>
+        </div>
+        <div class="ab-card vm">
+          <div class="vm__top">
+            <span class="pill pill--red">Sứ mệnh · Mission</span>
+            <span class="pill pill--red2">Phương châm</span>
+          </div>
+          <h3 class="vm__h">Thực học - Thực làm</h3>
+          <p class="vm__p clamp-4">ERG mang trong mình sứ mệnh thu hẹp khoảng cách số bằng giáo dục công nghệ chất lượng cao. Chúng tôi trang bị cho người học nền tảng vững chắc, tư duy công nghệ hiện đại và khả năng giải quyết vấn đề trong thế giới số. Các chương trình đào tạo của ERG luôn cập nhật xu hướng công nghệ mới nhất, giúp học viên không chỉ làm chủ kỹ năng, mà còn sẵn sàng thích ứng, sáng tạo và tự tin chinh phục thị trường lao động toàn cầu.</p>
+          <button type="button" class="ab-more only-mobile" data-more aria-expanded="false">Xem thêm</button>
+          <div class="stats">
+            <div class="stat stat--red"><span class="stat__n">[SỐ LIỆU]</span><span class="stat__l">Học viên tiêu biểu</span></div>
+            <div class="stat stat--blue"><span class="stat__n">[SỐ LIỆU]</span><span class="stat__l">Hài lòng về chất lượng</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="end">
+    <div class="ab-cta">
+      <div class="ab-cta__txt">
+        <h2>Hãy cùng chúng tôi viết tiếp câu chuyện này</h2>
+        <p class="clamp-3">Gặp gỡ đội ngũ lãnh đạo và các đối tác đang đồng hành cùng ERG.</p>
+      </div>
+      <div class="ab-cta__btns">
+        <a href="/tuyen-dung" class="ab-btn-red">Gia nhập đội ngũ ERG</a>
+        <a href="/lien-he" class="ab-btn-glass only-desktop">Liên hệ hợp tác</a>
+      </div>
+    </div>
+  </section>
+
+  {current !== 'story' && <script is:inline define:vars={{ anchor: m.anchor }}>document.getElementById(anchor)?.scrollIntoView();</script>}
+  <script>
+    // "Xem thêm" lifts the mobile line clamp on the paragraph right before the button.
+    document.querySelectorAll<HTMLButtonElement>('[data-more]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const open = b.getAttribute('aria-expanded') !== 'true';
+        b.previousElementSibling?.classList.toggle('clamp-4', !open);
+        b.setAttribute('aria-expanded', String(open));
+        b.textContent = open ? 'Thu gọn' : 'Xem thêm';
+      }),
+    );
+  </script>
+</Base>
+
+<style>
+  .story { flex-direction: row; align-items: center; gap: 64px; }
+  .story__txt { flex: 1 1 0; min-width: 0; max-width: 560px; display: flex; flex-direction: column; gap: 16px; }
+  .story__h { margin: 0; font-size: 42px; line-height: 1.15; font-weight: 700; letter-spacing: -1px; text-wrap: balance; }
+  .story__p { margin: 0; font-size: 17px; line-height: 1.75; color: #4A5578; }
+  .story__q { margin: 0; padding: 28px; border-radius: 28px; background: #fff; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 18px 36px -24px rgba(15,23,56,0.2); font-size: 17px; line-height: 1.65; font-weight: 600; color: var(--navy); }
+  .story__pic { flex: 1 1 0; min-width: 0; width: 100%; }
+  .story__ph { aspect-ratio: 4 / 3; border-radius: 28px; background: linear-gradient(150deg, var(--soft) 0%, var(--tint-2) 100%); border: 1px dashed #9AA3C7; display: flex; align-items: flex-end; padding: 16px; box-sizing: border-box; }
+  .story__ph span { font-size: 13px; color: #2C3560; background: #fff; padding: 6px 12px; border-radius: 999px; }
+  .name-h { margin: 0; font-size: 32px; line-height: 1.15; font-weight: 700; letter-spacing: -1px; text-wrap: balance; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .item { display: flex; flex-direction: column; gap: 16px; padding: 28px; }
+  .item__txt { display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 0; }
+  .item__h { font-size: 19px; font-weight: 700; }
+  .name-label { font-size: 13px; font-weight: 700; color: #2C3560; }
+  .word { flex: none; font-size: 44px; font-weight: 700; letter-spacing: -1px; line-height: 1; }
+  .ico { flex: none; width: 52px; height: 52px; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; }
+  .ico svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .ico--red { background: linear-gradient(145deg, var(--red-soft-2) 0%, var(--red-soft) 100%); color: var(--red); box-shadow: inset 0 1px 0 #fff, 0 10px 18px -12px color-mix(in srgb, var(--red) 50%, transparent); }
+  .ico--blue { background: linear-gradient(145deg, var(--accent) 0%, var(--navy) 100%); color: #fff; box-shadow: 0 12px 20px -10px color-mix(in srgb, var(--navy) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4); }
+  .rail { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .vcard { box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; padding: 28px; }
+  .vcard__p { margin: 0; font-size: 16px; line-height: 1.7; color: #4A5578; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .vcard--cta { justify-content: center; gap: 14px; border-radius: 28px; background: linear-gradient(145deg, var(--tint-4) 0%, var(--soft) 100%); }
+  .vcard--cta .item__h { color: var(--navy); }
+  .join { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 24px; border-radius: 999px; background: var(--navy); color: #fff; font-weight: 600; font-size: 15px; text-decoration: none; box-shadow: 0 16px 28px -14px color-mix(in srgb, var(--navy) 80%, transparent); }
+  .join svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .vm { display: flex; flex-direction: column; gap: 16px; padding: 36px; border-radius: 32px; color: #0F1738; }
+  .vm--vision { background: linear-gradient(145deg, var(--tint-4) 0%, var(--soft) 100%); }
+  .vm__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; font-size: 13.5px; font-weight: 700; }
+  .pill--blue { background: #fff; color: var(--navy); }
+  .pill--w { background: #fff; color: #4A5578; font-size: 12.5px; font-weight: 600; }
+  .pill--red { background: var(--red-soft); color: var(--red-deep); }
+  .pill--red2 { background: var(--red-soft); color: var(--red); font-size: 12.5px; font-weight: 600; }
+  .vm__h { margin: 0; font-size: 28px; line-height: 1.25; font-weight: 700; letter-spacing: -0.2px; }
+  .vm__p { margin: 0; font-size: 16px; line-height: 1.75; color: #4A5578; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+  .tags span { padding: 7px 14px; border-radius: 999px; background: #fff; font-size: 13.5px; font-weight: 600; color: var(--navy); }
+  .stats { display: flex; gap: 12px; margin-top: auto; }
+  .stat { flex: 1 1 0; display: flex; flex-direction: column; gap: 2px; padding: 14px 16px; border-radius: 22px; }
+  .stat--red { background: linear-gradient(145deg, #FFF0F2 0%, var(--red-soft) 100%); }
+  .stat--blue { background: linear-gradient(145deg, var(--tint-4) 0%, var(--soft) 100%); }
+  .stat__n { font-size: 26px; font-weight: 700; line-height: 1.1; letter-spacing: -0.5px; }
+  .stat--red .stat__n { color: var(--red); }
+  .stat--blue .stat__n { color: var(--navy); }
+  .stat__l { font-size: 13px; font-weight: 600; color: #4A5578; }
+  .end { padding: 0 24px 88px; }
+
+  @media (max-width: 767px) {
+    .story { flex-direction: column; gap: 20px; }
+    .story__h, .name-h { font-size: 24px; }
+    .name-h { font-size: 20px; }
+    .story__q { padding: 16px; }
+    .story__ph { aspect-ratio: 16 / 9; }
+    .grid3, .grid2 { grid-template-columns: 1fr; gap: 12px; }
+    .item { padding: 16px; gap: 14px; }
+    .item--name, .item:not(.item--name) { flex-direction: row; align-items: flex-start; }
+    .item__txt { gap: 4px; }
+    .word { width: 96px; font-size: 26px; }
+    .ico { width: 44px; height: 44px; }
+    .rail { display: flex; overflow-x: auto; padding-bottom: 44px; margin-bottom: -44px; gap: 12px; }
+    .vcard { flex: none; width: 270px; padding: 16px; border-radius: 22px; }
+    .vcard__p { -webkit-line-clamp: 3; }
+    .vm { padding: 20px 18px; }
+    .vm__h { font-size: 22px; }
+    .stat__n { font-size: 22px; }
+    .end { padding: 0 16px 40px; }
+  }
+</style>

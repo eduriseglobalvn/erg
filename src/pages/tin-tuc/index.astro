@@ -1,0 +1,129 @@
+---
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/news/Hero.astro';
+import NewsCard from '@/components/news/NewsCard.astro';
+import { NEWS, NEWS_CATS } from '@/data/news';
+import { fetchEduNews } from '@/lib/eduFeed';
+const feat = NEWS[0];
+// shortcut: the digest is fetched at build time, so it is only as fresh as the last deploy; schedule a Cloudflare Pages deploy hook to refresh it.
+const list = [...NEWS, ...(await fetchEduNews())];
+// shortcut: all articles on one page so pagination is omitted, add it when the list outgrows one page.
+---
+<Base title="Tin tức & Sự kiện" description="Cập nhật hoạt động, chương trình đào tạo và kiến thức công nghệ mới nhất từ ERG." active="news">
+  <div>
+    <Hero crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Tin tức' }]}>
+      <h1>Tin tức &amp; Sự kiện</h1>
+      <p class="hero-p clamp-3">Cập nhật hoạt động, chương trình đào tạo và kiến thức công nghệ mới nhất từ ERG.</p>
+    </Hero>
+
+    <section class="feat-sec">
+      <div class="wrap">
+        <a class="feat" href={`/tin-tuc/${feat.slug}`}>
+          <div class="cover" role="img" aria-label="Ảnh bìa bài viết nổi bật"><span>Ảnh bìa bài viết nổi bật</span></div>
+          <div class="feat__body">
+            <span class="badge">Bài viết nổi bật</span>
+            <span class="feat__meta">{feat.date} · {feat.cat}</span>
+            <h2 class="clamp-3">{feat.title}</h2>
+            <p class="clamp-3">{feat.lead}</p>
+            <span class="read">Đọc bài viết
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14 M13 6l6 6l-6 6"></path></svg></span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="panel-sec">
+      <div class="panel">
+        <div class="panel__in">
+          <div class="tools">
+            <div class="chips" role="group" aria-label="Lọc theo danh mục">
+              {NEWS_CATS.map((c, i) => <button type="button" class="chip" data-cat={c} aria-pressed={i === 0 ? 'true' : 'false'}>{c}</button>)}
+            </div>
+            <div class="find">
+              <label for="news-search">Tìm bài viết</label>
+              <div class="find__box">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 0 0 0-14z M20 20l-4-4"></path></svg>
+                <input id="news-search" type="search" placeholder="Nhập từ khóa" autocomplete="off" />
+              </div>
+            </div>
+          </div>
+          <div class="grid">
+            {list.map((a) => <div class="grid__i" data-cat={a.cat} data-q={`${a.title} ${a.text}`}><NewsCard a={a} /></div>)}
+          </div>
+          <p id="news-empty" hidden class="none">Không có bài viết phù hợp.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').toLowerCase();
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('.chip')];
+  const items = [...document.querySelectorAll<HTMLElement>('.grid__i')];
+  const input = document.getElementById('news-search') as HTMLInputElement;
+  const empty = document.getElementById('news-empty')!;
+  let cat = 'Tất cả';
+  function apply() {
+    const q = norm(input.value.trim());
+    let n = 0;
+    items.forEach((el) => {
+      const ok = (cat === 'Tất cả' || el.dataset.cat === cat) && norm(el.dataset.q || '').includes(q);
+      el.hidden = !ok;
+      if (ok) n++;
+    });
+    empty.hidden = n > 0;
+  }
+  chips.forEach((b) => b.addEventListener('click', () => {
+    cat = b.dataset.cat!;
+    chips.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+    apply();
+  }));
+  input.addEventListener('input', apply);
+</script>
+
+<style>
+  h1 { margin: 0; font-size: 52px; line-height: 1.08; font-weight: 700; letter-spacing: -1.2px; text-wrap: balance; }
+  .hero-p { margin: 0; font-size: 17.5px; line-height: 1.7; color: var(--tint-1); max-width: 640px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 var(--pad-x); }
+  .feat-sec { padding: 56px 0 88px; }
+  .feat { display: flex; flex-wrap: wrap; padding: 10px; border-radius: 36px; background: #fff; text-decoration: none; color: #0F1738; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); }
+  .cover { flex: 1 1 340px; min-height: 280px; border-radius: 28px; background: linear-gradient(150deg, var(--soft) 0%, var(--tint-2) 100%); border: 1px dashed #9AA3C7; display: flex; align-items: flex-end; padding: 20px; box-sizing: border-box; }
+  .cover span { font-size: 13px; color: #2C3560; background: #fff; padding: 6px 12px; border-radius: 999px; }
+  .feat__body { flex: 1 1 340px; min-width: 0; padding: 40px 44px; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+  .badge { align-self: flex-start; padding: 6px 14px; border-radius: 999px; background: var(--red-soft); color: var(--red-deep); font-size: 13.5px; font-weight: 700; }
+  .feat__meta { font-size: 13.5px; font-weight: 600; color: #4A5578; }
+  .feat h2 { margin: 0; font-size: 32px; line-height: 1.2; font-weight: 700; letter-spacing: -0.8px; text-wrap: balance; }
+  .feat p { margin: 0; font-size: 16px; line-height: 1.7; color: #4A5578; }
+  .read { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 24px; border-radius: 999px; background: var(--navy); color: #fff; font-weight: 700; font-size: 15px; box-shadow: 0 16px 28px -14px color-mix(in srgb, var(--navy) 80%, transparent); }
+  .read svg, .find svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .panel-sec { padding: 0 24px; }
+  .panel { max-width: 1360px; margin: 0 auto; border-radius: 48px; background: linear-gradient(180deg, var(--tint-3) 0%, #F7F8FC 100%); padding: 88px 0; }
+  .panel__in { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px; }
+  .tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; }
+  .chips { display: flex; gap: 10px; flex-wrap: wrap; max-width: 100%; }
+  .chip { flex: none; height: 44px; padding: 0 18px; border-radius: 999px; border: 0; box-shadow: inset 0 0 0 1px #B9C0D8; background: #fff; color: #0F1738; font-family: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer; }
+  .chip[aria-pressed='true'] { background: var(--navy); color: #fff; box-shadow: none; }
+  .find { flex: 1 1 280px; max-width: 400px; display: flex; flex-direction: column; gap: 6px; }
+  .find label { font-size: 13.5px; font-weight: 600; }
+  .find__box { position: relative; display: flex; align-items: center; }
+  .find svg { position: absolute; left: 16px; color: #4A5578; stroke-width: 2; }
+  .find input { width: 100%; height: 54px; padding: 0 16px 0 46px; border: 1px solid #D5DAE8; border-radius: 16px; background: #fff; font-size: 15.5px; font-family: inherit; box-sizing: border-box; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .grid__i { display: flex; flex-direction: column; }
+  .grid__i[hidden] { display: none; }
+  .grid__i :global(.nc) { flex: 1; }
+  .none { margin: 0; text-align: center; color: #4A5578; }
+  @media (max-width: 767px) {
+    h1 { font-size: 30px; }
+    .feat-sec { padding: 28px 0 40px; }
+    .cover { min-height: 160px; }
+    .feat__body { padding: 16px 12px 18px; }
+    .feat h2 { font-size: 21px; }
+    .panel-sec { padding: 0 8px; }
+    .panel { border-radius: 32px; padding: 40px 0; }
+    .panel__in { padding: 0 14px; gap: 20px; }
+    .chips { flex-wrap: nowrap; overflow-x: auto; }
+    .grid { grid-template-columns: 1fr; gap: 12px; }
+  }
+</style>

@@ -1,0 +1,153 @@
+---
+import { KEYWORDS } from '@/data/seo';
+import Base from '@/layouts/Base.astro';
+import Hero from '@/components/careers/Hero.astro';
+import { JOBS, HIRING_STEPS } from '@/data/jobs';
+
+export function getStaticPaths() {
+  return JOBS.map((job) => ({ params: { slug: job.slug }, props: { job } }));
+}
+const { job } = Astro.props;
+const others = JOBS.filter((j) => j.slug !== job.slug).slice(0, 3);
+const facts = [['Bộ phận', job.dept], ['Hình thức', job.type], ['Địa điểm', job.place], ['Hạn nộp', job.deadline]];
+const summary = [['Số lượng tuyển', job.headcount], ['Mức lương', job.salary], ['Hạn nộp CV', job.deadline]];
+const sections = [['Mô tả công việc', job.desc], ['Yêu cầu ứng viên', job.reqs], ['Quyền lợi', job.bens]] as const;
+const arrow = 'M5 12h14 M13 6l6 6l-6 6';
+const apply = `/tuyen-dung/${job.slug}/ung-tuyen`;
+---
+<Base title={`Tuyển dụng ${job.title}`} keywords={KEYWORDS.careers} description={job.summary} active="careers">
+  <div>
+    <Hero crumbs={[{ label: 'Tuyển dụng', href: '/tuyen-dung' }, { label: job.title }]} title={job.title} lead={job.summary}>
+      <dl slot="foot" class="facts">
+        {facts.map(([l, v]) => (<div><dt>{l}</dt><dd>{v}</dd></div>))}
+      </dl>
+    </Hero>
+
+    <section class="sec">
+      <div class="in in--row">
+        <div class="main">
+          {sections.map(([h, items], i) => (
+            <div class:list={['blk', { 'blk--sep': i > 0 }]}>
+              <h2>{h}</h2>
+              <ul>{items.map((t) => <li>{t}</li>)}</ul>
+            </div>
+          ))}
+          <div class="blk blk--sep blk--steps">
+            <h2>Quy trình ứng tuyển</h2>
+            <ol class="steps">
+              {HIRING_STEPS.map((s) => (
+                <li><span class="no">{s.no}</span><div><h3>{s.title}</h3><p class="clamp-2">{s.textDetail}</p></div></li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        <aside>
+          <div class="cr-card side">
+            <h3>Bạn đã sẵn sàng?</h3>
+            <p class="clamp-2">Hãy gửi CV ngay để không bỏ lỡ cơ hội làm việc tại môi trường chuyên nghiệp.</p>
+            <dl class="sum">
+              {summary.map(([l, v]) => (<div><dt>{l}</dt><dd>{v}</dd></div>))}
+            </dl>
+            <a href={apply} class="btn btn--primary" style="height:56px;font-size:17px">Ứng tuyển ngay
+              <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" class="ic" style="stroke-width:2.2"><path d={arrow} /></svg></a>
+            <a href="/tuyen-dung/theo-doi" class="lnk">Tra cứu hồ sơ đã nộp</a>
+            <div class="share">
+              <span>Chia sẻ</span>
+              <a href="#" aria-label="Sao chép liên kết"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" class="ic"><path d="M10 14a4 4 0 0 0 5.6 0l3-3a4 4 0 0 0-5.6-5.6l-1 1 M14 10a4 4 0 0 0-5.6 0l-3 3a4 4 0 0 0 5.6 5.6l1-1" /></svg></a>
+              <a href="https://www.facebook.com/eduriseerg" aria-label="Chia sẻ lên Facebook"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" class="ic"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z" /></svg></a>
+              <a href="mailto:?subject=Tuyển dụng ERG" aria-label="Chia sẻ qua email"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" class="ic"><path d="M3 6h18v12H3z M3 7l9 6l9-6" /></svg></a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panelwrap">
+      <div class="cr-panel">
+        <div class="in in--panel">
+          <div class="headrow">
+            <div class="head"><span class="cr-chip">Cơ hội khác</span><h2 class="h2s">Vị trí khác</h2></div>
+            <a href="/tuyen-dung" class="cr-white-btn only-desktop" style="min-height:50px;padding:0 24px;font-weight:700">Xem tất cả vị trí
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="ic" style="stroke-width:2.2"><path d={arrow} /></svg></a>
+          </div>
+          <div class="grid">
+            {others.map((j) => (
+              <a href={`/tuyen-dung/${j.slug}`} class="cr-card other">
+                <h3>{j.title}</h3>
+                <div class="tags"><span class="cr-tag">{j.dept}</span><span class="cr-tag cr-tag--alt">{j.type}</span></div>
+                <div class="other__m"><span>Địa điểm: {j.place}</span><span>Hạn nộp: {j.deadline}</span></div>
+                <span class="other__go">Xem chi tiết <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" class="ic" style="stroke-width:2.2"><path d={arrow} /></svg></span>
+              </a>
+            ))}
+          </div>
+          <a href="/tuyen-dung" class="only-mobile cr-white-btn wide">Xem tất cả vị trí</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .ic { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  h2 { font-size: 24px; line-height: 1.25; font-weight: 700; letter-spacing: -0.4px; }
+  .h2s { font-size: 42px; line-height: 1.15; letter-spacing: -1px; text-wrap: balance; }
+  h3 { font-size: 16px; font-weight: 700; }
+  .facts { flex: 1 1 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 0; }
+  .facts div { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 16px 20px; border-radius: 24px; background: rgba(255,255,255,0.09); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18), inset 0 1px 0 rgba(255,255,255,0.25); }
+  .facts dt { font-size: 13px; color: var(--tint-1); }
+  .facts dd { margin: 0; font-size: 16px; font-weight: 700; }
+  .sec { padding: 88px 0; }
+  .in { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px; }
+  .in--row { flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: 40px 56px; }
+  .main { flex: 2 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 40px; }
+  .blk { display: flex; flex-direction: column; gap: 14px; }
+  .blk--sep { padding-top: 40px; border-top: 1px solid #EEF1F7; }
+  .blk--steps { gap: 18px; }
+  .blk ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; font-size: 16px; line-height: 1.7; color: #4A5578; }
+  .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .steps li { display: flex; align-items: flex-start; gap: 14px; }
+  .steps li > div { display: flex; flex-direction: column; gap: 2px; padding-top: 5px; }
+  .steps h3 { font-size: 16.5px; letter-spacing: -0.2px; }
+  .steps p { font-size: 15px; line-height: 1.6; color: #4A5578; }
+  .no { flex: none; width: 36px; height: 36px; border-radius: 18px; background: linear-gradient(145deg, var(--accent) 0%, var(--navy) 100%); color: #fff; box-shadow: 0 12px 20px -10px color-mix(in srgb, var(--navy) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; }
+  aside { flex: 1 1 320px; max-width: 420px; min-width: 0; }
+  .side { display: flex; flex-direction: column; gap: 16px; padding: 30px; border-radius: 32px; }
+  .side h3 { font-size: 20px; letter-spacing: -0.3px; }
+  .side p { font-size: 16px; line-height: 1.65; color: #4A5578; }
+  .sum { margin: 0; display: flex; flex-direction: column; border-top: 1px solid #EEF1F7; }
+  .sum div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #EEF1F7; font-size: 14.5px; }
+  .sum dt { color: #4A5578; }
+  .sum dd { margin: 0; font-weight: 700; text-align: right; }
+  .lnk { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-size: 14.5px; font-weight: 700; color: var(--navy); text-decoration: none; }
+  .share { display: flex; align-items: center; gap: 10px; padding-top: 16px; border-top: 1px solid #EEF1F7; }
+  .share span { font-size: 13.5px; font-weight: 600; color: #4A5578; margin-right: auto; }
+  .share a { width: 44px; height: 44px; border-radius: 22px; background: #fff; box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); color: var(--navy); display: inline-flex; align-items: center; justify-content: center; }
+  .panelwrap { padding: 0 24px; }
+  .headrow { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; }
+  .head { display: flex; flex-direction: column; gap: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .other { display: flex; flex-direction: column; gap: 12px; padding: 28px; text-decoration: none; color: #0F1738; }
+  .other h3 { font-size: 18px; line-height: 1.35; letter-spacing: -0.2px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .other__m { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #4A5578; flex: 1; }
+  .other__go { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: var(--navy); }
+  .wide { height: 48px; width: 100%; }
+  @media (max-width: 767px) {
+    h2 { font-size: 22px; }
+    .h2s { font-size: 24px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .facts div { padding: 10px 14px; }
+    .sec { padding: 40px 0; }
+    .in { padding: 0 16px; gap: 20px; }
+    .in--row { gap: 40px 56px; }
+    .main { gap: 20px; }
+    .blk--sep { padding-top: 20px; }
+    aside { max-width: 100%; }
+    .side { padding: 20px; }
+    .panelwrap { padding: 0 8px; }
+    .panelwrap .in { padding: 0 14px; }
+    .grid { grid-template-columns: 1fr; gap: 12px; }
+    .other { padding: 16px; }
+  }
+</style>

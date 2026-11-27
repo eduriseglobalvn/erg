@@ -1,0 +1,229 @@
+---
+import ProgramLayout from '@/components/program/ProgramLayout.astro';
+import { PROGRAMS, CONTACT } from '@/data/site';
+import { GROUPS, programOf } from '@/data/programs';
+
+export function getStaticPaths() {
+  return PROGRAMS.flatMap((p) => GROUPS[p.slug].courses.map((c) => ({ params: { nhom: p.slug, slug: c.slug } })));
+}
+const { nhom, slug } = Astro.params;
+const p = programOf(nhom!);
+const g = GROUPS[nhom!];
+const c = g.courses.find((x) => x.slug === slug)!;
+const base = `/chuong-trinh/${nhom}`;
+const others = g.courses.filter((x) => x.slug !== slug);
+const fieldCls = 'height: 54px; padding: 0 16px; border: 1px solid #D5DAE8; border-radius: 16px; background: #FFFFFF; font-size: 15.5px; font-family: inherit; box-sizing: border-box; width: 100%';
+---
+<ProgramLayout
+  title={`Khóa học ${c.title}`} description={c.text}
+  schema={{ '@type': 'Course', name: c.title, description: c.text, inLanguage: 'vi' }} nhom={nhom!} firstCourse={g.courses[0].slug} current="courses"
+  crumbs={[{ label: 'Trang chủ', href: '/' }, { label: p.title, href: base }, { label: `Khóa học ${c.title}` }]}
+  heading={c.title} lead={c.text} topic={c.topic}
+>
+  <span slot="pill" class="pg-pill-w only-desktop">{c.tag}</span>
+  <div slot="bottom" class="facts">
+    {c.heroFacts.map((f) => (
+      <div class="fact">
+        <span class="fact-l">{f.label}</span>
+        <span class="fact-v">{f.value}</span>
+      </div>
+    ))}
+  </div>
+
+  <section class="pg-sec">
+    <div class="pg-row">
+      <div class="pg-half pg-half-text">
+        <span class="pg-pill">Tổng quan</span>
+        <h2 class="pg-h2">{c.overviewTitle}</h2>
+        <p class="pg-p pg-clamp4" id="ov">{c.overview}</p>
+        <button type="button" class="more-txt only-mobile" data-reveal="ov">Xem thêm</button>
+        <h3 style="margin: 10px 0 0; font-size: 20px; line-height: 1.3; font-weight: 700; letter-spacing: -0.3px">Đối tượng học viên</h3>
+        <ul class="targets">
+          {c.targets.map((t) => (
+            <li>
+              <span class="tick"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M5 12l5 5l9-10"></path></svg></span>
+              <span class="pg-desc clamp-2">{t}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="pg-half">
+        <div class="pic" role="img" aria-label={`${c.photo} tại ERG`}><span>{c.photo} tại ERG</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pg-panel-o">
+    <div class="pg-panel">
+      <div class="pg-wrap">
+        <div class="pg-head">
+          <span class="pg-pill">Chương trình học</span>
+          <h2 class="pg-h2">Nội dung đào tạo</h2>
+        </div>
+        <div class="pg-grid pg-c5 pg-cap" id="mods">
+          {c.modules.map((m, i) => (
+            <div class="pg-card pg-card--sm">
+              <span class="pg-ico pg-ico--round">{i + 1}</span>
+              <div class="pg-body" style="gap: 6px">
+                <h3 class="pg-ct" style="line-height: inherit">{m.title}</h3>
+                <p class="pg-cd clamp-2">{m.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        {c.modules.length > 4 && <button type="button" class="pg-more only-mobile" data-reveal="mods">Xem tất cả {c.modules.length} mô-đun</button>}
+      </div>
+    </div>
+  </section>
+
+  <section class="pg-sec">
+    <div class="pg-wrap">
+      <div class="pg-head">
+        <span class="pg-pill">Chứng chỉ</span>
+        <h2 class="pg-h2">Kỳ thi và chứng chỉ</h2>
+        <p class="pg-p clamp-3">{c.examIntro}</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          {c.benefits.map((b) => <span class="benefit">{b}</span>)}
+        </div>
+      </div>
+      <div class="pg-row" style="padding: 0">
+        <div class="pg-half levels">
+          {c.levels.map((l, i) => (
+            <div class="lvl">
+              <span class="lvl-n">{String(i + 1).padStart(2, '0')}</span>
+              <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <h3 class="pg-ct" style="line-height: inherit">{l.title}</h3>
+                <p class="pg-cd clamp-2">{l.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="pg-half exam">
+          <table>
+            <tbody>
+              {c.examRows.map((r) => (
+                <tr><th scope="row">{r.label}</th><td>{r.value}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pg-panel-o">
+    <div class="pg-panel">
+      <div class="pg-row">
+        <div class="pg-half" style="display: flex; flex-direction: column; gap: 14px">
+          <span class="pg-pill">Hỏi đáp</span>
+          <h2 class="pg-h2" style="margin-bottom: 6px">Câu hỏi thường gặp</h2>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            {c.faqs.map((q) => (
+              <details class="faq">
+                <summary>{q.q}
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6l6-6"></path></svg></summary>
+                <p>{q.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+        <div class="pg-half">
+          <div class="reg">
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <h2 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.3px">Đăng ký học {c.title}</h2>
+              <p style="margin: 0; font-size: 15.5px; line-height: 1.6; color: #4A5578">ERG sẽ gọi lại để tư vấn lộ trình và lịch học phù hợp.</p>
+            </div>
+            <form action="#" data-static-form style="display: flex; flex-direction: column; gap: 14px">
+              <div class="fld"><label for="reg-name">Họ tên</label><input id="reg-name" name="name" type="text" autocomplete="name" required style={fieldCls} /></div>
+              <div class="fld"><label for="reg-phone">Số điện thoại</label><input id="reg-phone" name="phone" type="tel" autocomplete="tel" required style={fieldCls} /></div>
+              <div class="fld">
+                <label for="reg-email">Email</label>
+                <input id="reg-email" name="email" type="email" autocomplete="email" style={fieldCls} />
+                <span style="font-size: 12.5px; color: #4A5578">Không bắt buộc, dùng để gửi lộ trình chi tiết.</span>
+              </div>
+              <div class="fld">
+                <label for="reg-shift">Ca học mong muốn</label>
+                <select id="reg-shift" name="shift" style={fieldCls}>
+                  <option value="">Chọn ca học</option>
+                  <option value="1">[CA HỌC 1]</option>
+                  <option value="2">[CA HỌC 2]</option>
+                  <option value="3">[CA HỌC 3]</option>
+                </select>
+              </div>
+              <p data-form-note hidden tabindex="-1" role="status" style="margin: 0; padding: 12px 16px; border-radius: 16px; background: var(--soft); color: var(--navy); font-size: 14.5px; line-height: 1.6">Chức năng gửi trực tuyến đang được hoàn thiện. Vui lòng gọi hotline 0938.830.098 hoặc email info@erg.edu.vn.</p>
+              <button type="submit" class="btn btn--primary" style="height: 54px">Đăng ký tư vấn</button>
+            </form>
+            <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 14px; border-top: 1px solid #EEF1F7; font-size: 14px; color: #4A5578">
+              <span>Kiểm tra năng lực đầu vào miễn phí.</span>
+              <span>Lịch học: [LỊCH HỌC]</span>
+              <a href={`tel:${CONTACT.hotlineTel}`} style="display: inline-flex; align-items: center; min-height: 44px; color: var(--navy); font-weight: 700">Hotline {CONTACT.hotline}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {others.length > 0 && (
+    <section class="pg-sec">
+      <div class="pg-wrap">
+        <div class="pg-head">
+          <span class="pg-pill">Cùng nhóm {p.title}</span>
+          <h2 class="pg-h2">Khóa học khác trong nhóm</h2>
+        </div>
+        <div class="pg-grid pg-c2">
+          {others.map((o) => (
+            <a class="pg-card other" href={`${base}/khoa-hoc/${o.slug}`}>
+              <span class="pg-tag">{o.level}</span>
+              <h3 class="pg-ct" style="font-size: 20px; line-height: inherit">{o.title}</h3>
+              <p class="pg-cd clamp-2" style="flex: 1">{o.text}</p>
+              <span class="pg-link">Xem chi tiết
+                <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" class="pg-arrow" style="stroke-width: 2.2"><path d="M5 12h14 M13 6l6 6l-6 6"></path></svg></span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</ProgramLayout>
+
+<style>
+  .facts { flex: 1 1 100%; min-width: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .fact { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 14px 18px; border-radius: 24px; background: rgba(255,255,255,0.07); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14); }
+  .fact-l { font-size: 12.5px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--tint-1); }
+  .fact-v { font-size: 17px; font-weight: 700; line-height: 1.3; }
+  .more-txt { align-self: flex-start; height: 44px; padding: 0; border: 0; background: transparent; color: var(--navy); font-family: inherit; font-weight: 700; font-size: 15px; cursor: pointer; }
+  .targets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .targets li { display: flex; gap: 12px; align-items: flex-start; }
+  .tick { flex: none; width: 26px; height: 26px; border-radius: 50%; background: #E6F4EC; color: #0E7A4B; display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; }
+  .tick svg { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .pg-desc { font-size: var(--pg-desc); line-height: 1.55; color: #0F1738; }
+  .pic { aspect-ratio: 4 / 3; border-radius: 36px; background: linear-gradient(150deg, var(--soft) 0%, var(--tint-2) 100%); border: 1px dashed #9AA3C7; box-shadow: 0 50px 80px -40px color-mix(in srgb, var(--navy) 45%, transparent); display: flex; align-items: flex-end; padding: 16px; box-sizing: border-box; }
+  .pic span { font-size: 13px; color: #2C3560; background: #FFFFFF; padding: 6px 12px; border-radius: 999px; }
+  .benefit { display: inline-flex; align-items: center; padding: 8px 16px; border-radius: 999px; background: var(--soft); color: var(--navy); font-size: 13.5px; font-weight: 600; }
+  .levels { display: flex; flex-direction: column; gap: var(--pg-grid); }
+  .lvl { display: flex; align-items: flex-start; gap: var(--pg-card-gap); padding: var(--pg-card-pad); border-radius: var(--pg-card-r); background: #FFFFFF; box-shadow: var(--pg-shadow-sm); }
+  .lvl-n { flex: none; min-width: 44px; font-size: 26px; font-weight: 700; color: var(--red); line-height: 1.1; letter-spacing: -1px; }
+  .exam { overflow-x: auto; border-radius: 24px; background: #FFFFFF; box-shadow: var(--pg-shadow); }
+  .exam table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  .exam th { text-align: left; padding: 14px 18px; background: var(--tint-5); border-bottom: 1px solid #EEF1F7; font-weight: 700; width: 42%; }
+  .exam td { padding: 14px 18px; border-bottom: 1px solid #EEF1F7; color: #4A5578; }
+  .faq { border-radius: 24px; background: #FFFFFF; box-shadow: var(--pg-shadow-sm); }
+  .faq summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 0 20px; font-size: 16px; font-weight: 700; cursor: pointer; }
+  .faq svg { flex: none; fill: none; stroke: var(--navy); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .faq p { margin: 0; padding: 0 20px 18px; font-size: 15.5px; line-height: 1.7; color: #4A5578; }
+  .reg { background: #FFFFFF; border-radius: 32px; padding: 32px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--pg-shadow); }
+  .fld { display: flex; flex-direction: column; gap: 6px; }
+  .fld label { font-size: 13.5px; font-weight: 600; }
+  .other { text-decoration: none; color: #0F1738; }
+  .other .pg-ct { margin: 0; }
+  @media (max-width: 767px) {
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .fact { padding: 10px 14px; }
+    .fact-v { font-size: 15px; }
+    .pic { aspect-ratio: 16 / 9; }
+    .exam table { min-width: 320px; }
+    .reg { padding: 20px; }
+    .other { flex-direction: column; }
+  }
+</style>

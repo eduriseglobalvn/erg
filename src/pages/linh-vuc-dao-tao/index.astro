@@ -1,0 +1,157 @@
+---
+import Base from '@/layouts/Base.astro';
+import FieldHero from '@/components/fields/FieldHero.astro';
+import SectionHead from '@/components/fields/SectionHead.astro';
+import { PROGRAMS, FIELDS, FIELD_GROUPS, CONTACT } from '@/data/site';
+
+const filters = [{ key: 'all', label: 'Tất cả' }, { key: 'cert', label: FIELD_GROUPS.cert }, { key: 'prog', label: FIELD_GROUPS.prog }];
+const arrow = 'M5 12h14 M13 6l6 6l-6 6';
+---
+<Base title="Lĩnh vực đào tạo" description="Hệ thống đào tạo CNTT, chứng chỉ quốc tế và lập trình theo lộ trình rõ ràng, giúp học viên làm chủ công nghệ từ nền tảng đến thi đấu chuyên sâu." active="programs">
+  <FieldHero
+    crumbs={[{ label: 'Trang chủ', href: '/' }, { label: 'Lĩnh vực đào tạo' }]}
+    title="Lĩnh vực đào tạo"
+    text="Hệ thống đào tạo CNTT, chứng chỉ quốc tế và lập trình theo lộ trình rõ ràng, giúp học viên làm chủ công nghệ từ nền tảng đến thi đấu chuyên sâu."
+  />
+
+  <section class="sec">
+    <div class="wrap stack">
+      <SectionHead eyebrow="Chương trình theo nhóm" title="Sáu nhóm chương trình, một địa chỉ duy nhất" />
+      <div class="grid3 collapsible" data-collapsible>
+        {PROGRAMS.map((p) => (
+          <a class="card prog" href={`/chuong-trinh/${p.slug}`}>
+            <span class="ico ico--blue"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d={p.icon} /></svg></span>
+            <div class="txt">
+              <h3>{p.title}</h3>
+              <p class="clamp-2">{p.text}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+      <button type="button" class="more only-mobile" data-expand>Xem tất cả {PROGRAMS.length} nhóm chương trình
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d={arrow} /></svg></button>
+    </div>
+  </section>
+
+  <section id="linh-vuc" class="panel-wrap">
+    <div class="panel">
+      <div class="wrap stack in">
+        <SectionHead eyebrow="Các chương trình đào tạo" title="Mười lĩnh vực, chọn theo mục tiêu của bạn">
+          <p class="clamp-3">Nội dung bám sát chuẩn quốc tế, chuẩn quốc gia và nhu cầu phát triển năng lực số thực tế cho từng nhóm học viên.</p>
+        </SectionHead>
+        <div role="group" aria-label="Lọc theo nhóm" class="chips">
+          {filters.map((c, i) => (
+            <button type="button" class="chip" data-filter={c.key} aria-pressed={i === 0 ? 'true' : 'false'}>{c.label}</button>
+          ))}
+        </div>
+        <div class="grid2 collapsible" data-collapsible id="field-grid">
+          {FIELDS.map((f) => (
+            <a class="card field" href={`/linh-vuc-dao-tao/${f.slug}`} data-group={f.group}>
+              <span class="ico ico--red"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d={f.icon} /></svg></span>
+              <div class="txt">
+                <span class="tag only-desktop">{FIELD_GROUPS[f.group]}</span>
+                <h3>{f.title}</h3>
+                <p class="clamp-2 desc">{f.text}</p>
+                <p class="who only-desktop"><strong>Dành cho: </strong>{f.who}</p>
+                <span class="go only-desktop">Xem chương trình
+                  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d={arrow} /></svg></span>
+              </div>
+            </a>
+          ))}
+        </div>
+        <button type="button" class="more only-mobile" data-expand>Xem tất cả {FIELDS.length} lĩnh vực
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d={arrow} /></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec cta-sec">
+    <div class="cta">
+      <div class="cta-txt">
+        <h2>Bạn chưa biết bắt đầu từ đâu?</h2>
+        <p class="clamp-3">Đừng ngần ngại liên hệ với chúng tôi để được tư vấn lộ trình học tập phù hợp nhất.</p>
+      </div>
+      <div class="cta-btns">
+        <a class="b-white" href="https://zalo.me/0938830098">Đăng ký tư vấn qua Zalo</a>
+        <a class="b-ghost only-desktop" href="tel:0938830098">Gọi {CONTACT.hotline}</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const grid = document.getElementById('field-grid')!;
+  const cards = [...grid.querySelectorAll<HTMLElement>('[data-group]')];
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+  chips.forEach((chip) => chip.addEventListener('click', () => {
+    const key = chip.dataset.filter!;
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+    cards.forEach((card) => { card.hidden = key !== 'all' && card.dataset.group !== key; });
+    // a filtered list is short enough: skip the mobile "show more" collapse
+    if (key !== 'all') grid.classList.add('expanded');
+  }));
+  document.querySelectorAll<HTMLButtonElement>('[data-expand]').forEach((btn) => btn.addEventListener('click', () => {
+    btn.previousElementSibling?.classList.add('expanded');
+    btn.hidden = true;
+  }));
+</script>
+
+<style>
+  .sec { padding: 88px 0; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  .stack { display: flex; flex-direction: column; gap: 40px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .card { display: flex; gap: 16px; padding: 28px; border-radius: 28px; background: #fff; text-decoration: none; color: #0F1738; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); }
+  .card[hidden] { display: none; }
+  .prog { flex-direction: column; }
+  .field { align-items: flex-start; }
+  .ico { flex: none; width: 52px; height: 52px; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; }
+  .ico svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .ico--blue { background: linear-gradient(145deg, var(--accent) 0%, var(--navy) 100%); color: #fff; box-shadow: 0 12px 20px -10px color-mix(in srgb, var(--navy) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4); }
+  .ico--red { background: linear-gradient(145deg, var(--red-soft-2) 0%, var(--red-soft) 100%); color: var(--red); box-shadow: inset 0 1px 0 #fff, 0 10px 18px -12px color-mix(in srgb, var(--red) 50%, transparent); }
+  .txt { display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 0; }
+  h3 { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.3; letter-spacing: -0.2px; }
+  .txt p { margin: 0; font-size: 16px; line-height: 1.65; color: #4A5578; }
+  .desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .tag { align-self: flex-start; padding: 5px 12px; border-radius: 999px; background: var(--soft); color: var(--navy); font-size: 12.5px; font-weight: 600; }
+  .txt p.who { padding-top: 12px; border-top: 1px solid #EEF1F7; font-size: 13.5px; line-height: 1.6; color: #2C3560; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .go { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 14px; font-weight: 700; color: var(--navy); }
+  .go svg, .more svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .panel-wrap { padding: 0 24px; }
+  .panel { max-width: 1360px; margin: 0 auto; border-radius: 48px; background: linear-gradient(180deg, var(--tint-3) 0%, #F7F8FC 100%); padding: 88px 0; }
+  .in { padding: 0 24px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; overflow-x: auto; }
+  .chip { flex: none; min-height: 46px; padding: 0 20px; border-radius: 999px; border: 0; background: #fff; color: var(--navy); box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); font-family: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer; }
+  .chip[aria-pressed='true'] { background: var(--navy); color: #fff; box-shadow: 0 16px 28px -14px color-mix(in srgb, var(--navy) 80%, transparent); }
+  .more { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 50px; padding: 0 24px; border-radius: 999px; border: 0; background: #fff; font-family: inherit; font-size: 15px; font-weight: 700; color: var(--navy); box-shadow: 0 1px 2px rgba(15,23,56,0.06), 0 14px 28px -18px rgba(15,23,56,0.3); width: 100%; cursor: pointer; }
+  .cta-sec { padding: 88px 24px; }
+  .cta { position: relative; overflow: hidden; max-width: 1152px; margin: 0 auto; border-radius: 48px; color: #fff; padding: 48px 56px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px 40px; background: radial-gradient(760px 420px at 92% 8%, color-mix(in srgb, var(--glow) 60%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(620px 380px at 0% 100%, color-mix(in srgb, var(--red) 34%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(160deg, var(--navy-night) 0%, var(--navy-2) 100%); }
+  .cta-txt { display: flex; flex-direction: column; gap: 12px; flex: 1 1 320px; min-width: 0; }
+  .cta h2 { margin: 0; font-size: 42px; line-height: 1.15; font-weight: 700; letter-spacing: -1px; text-wrap: balance; }
+  .cta p { margin: 0; font-size: 17px; line-height: 1.65; color: var(--tint-1); }
+  .cta-btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .b-white, .b-ghost { display: inline-flex; align-items: center; height: 54px; border-radius: 999px; font-size: 16px; text-decoration: none; }
+  .b-white { padding: 0 28px; background: #fff; color: var(--navy); font-weight: 700; box-shadow: 0 18px 30px -16px rgba(0,0,0,0.6); }
+  .b-ghost { padding: 0 26px; background: rgba(255,255,255,0.10); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4); color: #fff; font-weight: 600; }
+
+  @media (max-width: 767px) {
+    .sec { padding: 40px 0; }
+    .wrap { padding: 0 16px; }
+    .stack { gap: 24px; }
+    .grid3, .grid2 { grid-template-columns: 1fr; gap: 12px; }
+    .card { padding: 16px; border-radius: 22px; gap: 14px; }
+    .prog { flex-direction: row; align-items: flex-start; }
+    .ico { width: 44px; height: 44px; }
+    .txt { gap: 4px; }
+    .desc { -webkit-line-clamp: 2; }
+    .chips { flex-wrap: nowrap; }
+    .panel-wrap { padding: 0 8px; }
+    .panel { border-radius: 32px; padding: 40px 0; }
+    .in { padding: 0 14px; }
+    .cta-sec { padding: 40px 16px; }
+    .cta { border-radius: 32px; padding: 28px 20px; }
+    .cta h2 { font-size: 24px; }
+    .collapsible:not(.expanded) > :nth-child(n+5) { display: none; }
+  }
+</style>

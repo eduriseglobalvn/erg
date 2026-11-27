@@ -1,0 +1,34 @@
+---
+import type { Article } from '@/data/news';
+interface Props { a: Article }
+const { a } = Astro.props;
+---
+<a class="nc" href={a.href ?? `/tin-tuc/${a.slug}`} {...(a.href ? { target: '_blank', rel: 'noopener' } : {})}>
+  {a.image
+    ? <img class="nc__pic" src={a.image} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+    : <div class="nc__pic" role="img" aria-label="Ảnh bìa bài viết"><span>Ảnh bìa bài viết</span></div>}
+  <div class="nc__body">
+    <span class="nc__meta">{a.date} · {a.cat}</span>
+    <h3 class="nc__t">{a.title}</h3>
+    <p class="nc__d">{a.text}</p>
+    <span class="nc__more">Xem chi tiết</span>
+  </div>
+</a>
+<style>
+  .nc { display: flex; flex-direction: column; border-radius: 32px; padding: 10px; background: #fff; text-decoration: none; color: #0F1738; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); }
+  .nc__pic { flex: none; aspect-ratio: 16 / 10; border-radius: 24px; background: linear-gradient(150deg, var(--soft) 0%, var(--tint-2) 100%); border: 1px dashed #9AA3C7; display: flex; align-items: flex-end; padding: 14px; box-sizing: border-box; }
+  img.nc__pic { width: 100%; padding: 0; border: 0; object-fit: cover; }
+  .nc__pic span { font-size: 12.5px; color: #2C3560; background: #fff; padding: 5px 11px; border-radius: 999px; }
+  .nc__body { padding: 18px 14px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 0; }
+  .nc__meta { font-size: 13px; font-weight: 600; color: #4A5578; }
+  .nc__t { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.4; letter-spacing: -0.2px; }
+  .nc__d { margin: 0; font-size: 16px; line-height: 1.65; color: #4A5578; flex: 1; }
+  .nc__more { font-size: 14px; font-weight: 700; color: var(--navy); }
+  @media (max-width: 767px) {
+    .nc { flex-direction: row; gap: 12px; border-radius: 22px; }
+    .nc__pic { width: 96px; align-self: flex-start; aspect-ratio: 1 / 1; border-radius: 16px; }
+    .nc__pic span, .nc__d, .nc__more { display: none; }
+    .nc__body { padding: 4px 6px 4px 0; }
+    .nc__t { font-size: 15.5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  }
+</style>

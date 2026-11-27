@@ -1,0 +1,82 @@
+---
+// Shared hero, breadcrumb and section tabs for all five Giới thiệu routes.
+import Scene3D from '@/components/Scene3D.astro';
+import { ABOUT_TABS, type AboutKey } from '@/data/about';
+interface Props { current: AboutKey; crumb: string; title: string; lead: string }
+const { current, crumb, title, lead } = Astro.props;
+---
+<section class="hero">
+  <div class="hero__in">
+    <div class="hero__txt">
+      <nav aria-label="Đường dẫn" class="crumb">
+        <a href="/">Trang chủ</a><span aria-hidden="true">/</span>
+        <a href="/gioi-thieu/cau-chuyen-cua-erg">Giới thiệu</a><span aria-hidden="true">/</span>
+        <span>{crumb}</span>
+      </nav>
+      <h1>{title}</h1>
+      <p class="clamp-3">{lead}</p>
+    </div>
+    <div class="hero__scene only-desktop"><Scene3D compact embedded /></div>
+  </div>
+</section>
+<section class="tabs-wrap">
+  <nav aria-label="Mục trong phần Giới thiệu" class="tabs">
+    {ABOUT_TABS.map((t) => (
+      <a href={t.href} class:list={[{ on: t.key === current }]} aria-current={t.key === current ? 'page' : undefined}>{t.label}</a>
+    ))}
+  </nav>
+</section>
+<style>
+  .hero { position: relative; overflow: hidden; color: #fff; border-radius: 0 0 56px 56px; background: radial-gradient(900px 560px at 80% 62%, color-mix(in srgb, var(--glow) 70%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(640px 400px at 6% 100%, color-mix(in srgb, var(--red) 42%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(180deg, var(--navy-night) 0%, var(--navy-2) 100%); }
+  .hero__in { max-width: 1200px; margin: 0 auto; padding: 40px 24px 72px; display: flex; flex-wrap: wrap; align-items: center; gap: 24px 48px; }
+  .hero__txt { flex: 1.4 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .hero__scene { flex: 1 1 300px; min-width: 0; }
+  .crumb { display: flex; flex-wrap: wrap; gap: 6px 10px; font-size: 14px; color: var(--tint-1); }
+  .crumb a { color: #fff; text-decoration: none; }
+  h1 { margin: 0; font-size: 52px; line-height: 1.08; font-weight: 700; letter-spacing: -1.2px; text-wrap: balance; }
+  p { margin: 0; font-size: 17.5px; line-height: 1.7; color: var(--tint-1); max-width: 640px; }
+  .tabs-wrap { position: relative; padding: 0 24px; }
+  .tabs { max-width: 1152px; margin: -28px auto 0; box-sizing: border-box; padding: 6px; border-radius: 999px; background: #fff; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); display: flex; gap: 4px; overflow-x: auto; }
+  .tabs a { display: inline-flex; align-items: center; flex: none; height: 44px; padding: 0 18px; border-radius: 999px; font-size: 15px; font-weight: 600; white-space: nowrap; text-decoration: none; color: #1B2447; }
+  .tabs a.on { background: var(--navy); color: #fff; }
+  @media (max-width: 767px) {
+    .hero { border-radius: 0 0 32px 32px; }
+    .hero__in { padding: 24px 16px 44px; }
+    h1 { font-size: 30px; }
+    .tabs-wrap { padding: 0 16px; }
+    .tabs { border-radius: 26px; }
+  }
+</style>
+<style is:global>
+  .ab-sec { padding: 88px 0; scroll-margin-top: 96px; }
+  .ab-in { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 40px; }
+  .ab-head { display: flex; flex-direction: column; gap: 14px; max-width: 640px; }
+  .ab-head h2, .ab-cta h2 { margin: 0; font-size: 42px; line-height: 1.15; font-weight: 700; letter-spacing: -1px; text-wrap: balance; }
+  .ab-head p { margin: 0; font-size: 17px; line-height: 1.7; color: #4A5578; }
+  .ab-chip { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: var(--red-soft); color: var(--red-deep); font-size: 13.5px; font-weight: 700; }
+  .ab-panelwrap { padding: 0 24px; scroll-margin-top: 96px; }
+  .ab-panel { max-width: 1360px; margin: 0 auto; border-radius: 48px; background: linear-gradient(180deg, var(--tint-3) 0%, #F7F8FC 100%); padding: 88px 0; }
+  .ab-panel .ab-in { padding: 0 24px; }
+  .ab-card { background: #fff; box-shadow: 0 1px 2px rgba(15,23,56,0.04), 0 28px 56px -28px rgba(15,23,56,0.22); border-radius: 28px; }
+  .ab-card h3 { margin: 0; letter-spacing: -0.2px; }
+  .ab-card p { margin: 0; font-size: 16px; line-height: 1.65; color: #4A5578; }
+  .ab-more { align-self: flex-start; min-height: 44px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 15px; font-weight: 700; color: var(--navy); cursor: pointer; }
+  .ab-cta { position: relative; overflow: hidden; max-width: 1152px; margin: 0 auto; border-radius: 48px; background: radial-gradient(760px 420px at 92% 8%, color-mix(in srgb, var(--glow) 60%, transparent) 0%, color-mix(in srgb, var(--glow) 0%, transparent) 70%), radial-gradient(620px 380px at 0% 100%, color-mix(in srgb, var(--red) 34%, transparent) 0%, color-mix(in srgb, var(--red) 0%, transparent) 70%), linear-gradient(160deg, var(--navy-night) 0%, var(--navy-2) 100%); color: #fff; padding: 48px 56px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px 40px; }
+  .ab-cta__txt { display: flex; flex-direction: column; gap: 12px; flex: 1 1 320px; min-width: 0; }
+  .ab-cta p { margin: 0; font-size: 17px; line-height: 1.65; color: var(--tint-1); }
+  .ab-cta__btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .ab-cta a { display: inline-flex; align-items: center; height: 54px; padding: 0 28px; border-radius: 999px; font-weight: 700; font-size: 16px; text-decoration: none; }
+  .ab-btn-red { background: var(--red); color: #fff; box-shadow: 0 18px 32px -14px var(--red), inset 0 1px 0 rgba(255,255,255,0.35); }
+  .ab-btn-white { background: #fff; color: var(--navy); box-shadow: 0 18px 30px -16px rgba(0,0,0,0.6); }
+  .ab-btn-glass { background: rgba(255,255,255,0.10); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4); color: #fff; font-weight: 600 !important; }
+  @media (max-width: 767px) {
+    .ab-sec { padding: 40px 0; }
+    .ab-in { padding: 0 16px; gap: 24px; }
+    .ab-head h2, .ab-cta h2 { font-size: 24px; }
+    .ab-panelwrap { padding: 0 8px; }
+    .ab-panel { border-radius: 32px; padding: 40px 0; }
+    .ab-panel .ab-in { padding: 0 14px; }
+    .ab-card { border-radius: 22px; }
+    .ab-cta { border-radius: 32px; padding: 28px 20px; }
+  }
+</style>

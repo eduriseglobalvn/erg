@@ -1,0 +1,100 @@
+---
+import ProgramLayout from '@/components/program/ProgramLayout.astro';
+import { PROGRAMS } from '@/data/site';
+import { GROUPS, STANDARD_ICONS, programOf } from '@/data/programs';
+
+export function getStaticPaths() {
+  return PROGRAMS.map((p) => ({ params: { nhom: p.slug } }));
+}
+const { nhom } = Astro.params;
+const p = programOf(nhom!);
+const g = GROUPS[nhom!];
+const base = `/chuong-trinh/${nhom}`;
+const lead = 'Những người truyền lửa đam mê công nghệ. Tại ERG, giáo viên không chỉ là người dạy kiến thức mà còn là người dẫn đường, khơi dậy tiềm năng số trong mỗi học viên.';
+---
+<ProgramLayout
+  title={`Đội ngũ giáo viên ${p.title}`} description={lead} nhom={nhom!} firstCourse={g.courses[0].slug} tabs={false}
+  crumbs={[{ label: 'Trang chủ', href: '/' }, { label: p.title, href: base }, { label: 'Đội ngũ giáo viên' }]}
+  heading="Đội ngũ giáo viên tâm huyết" lead={lead}
+>
+  <section class="pg-sec">
+    <div class="pg-wrap" style="gap: 40px">
+      <div class="pg-head">
+        <span class="pg-pill">{p.title}</span>
+        <h2 class="pg-h2">{g.teachersHeading}</h2>
+        <p class="pg-p clamp-3" style="line-height: 1.7">{g.teachersLead}</p>
+      </div>
+      <ul class="rail">
+        {g.teachers.map((t) => (
+          <li class="tc">
+            <div class="tc-ph" role="img" aria-label="Ảnh chân dung giáo viên"><span>Ảnh: chân dung giáo viên</span></div>
+            <div class="tc-b">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px">
+                <h3 style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; letter-spacing: -0.2px">{t.name}</h3>
+                <span class="yrs">{t.years}</span>
+              </div>
+              <span style="font-size: 14px; font-weight: 700; color: var(--red)">{t.role}</span>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px">
+                {t.certs.map((c) => <span class="cert">{c}</span>)}
+              </div>
+              <p class="quote clamp-2">“{t.quote}”</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="pg-panel-o">
+    <div class="pg-panel">
+      <div class="pg-wrap" style="gap: 40px">
+        <div class="pg-head">
+          <span class="pg-pill">Cam kết chất lượng</span>
+          <h2 class="pg-h2">Tiêu chuẩn giáo viên ERG</h2>
+          <p class="pg-p clamp-3" style="line-height: 1.7">Mỗi giáo viên của ERG đều được đánh giá theo cùng một bộ tiêu chuẩn về chuyên môn, phương pháp và sự tận tâm với học viên.</p>
+        </div>
+        <div class="pg-grid pg-c3" style="gap: 22px">
+          {g.standards.map((s, i) => (
+            <div class="pg-card std">
+              <span class="pg-ico" style="width: var(--std-ico, 52px); height: var(--std-ico, 52px)"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" style="stroke-width: 1.8"><path d={STANDARD_ICONS[i % STANDARD_ICONS.length]}></path></svg></span>
+              <div class="pg-body" style="gap: 10px">
+                <h3 class="pg-ct" style="font-size: 19px">{s.title}</h3>
+                <p class="pg-cd clamp-2" style="font-size: 16px; line-height: 1.65">{s.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pg-cta-o">
+    <div class="pg-cta">
+      <div class="pg-cta-t">
+        <h2 class="pg-h2">Trở thành một phần của ERG Team</h2>
+        <p class="clamp-3">Bạn yêu công nghệ và muốn truyền lửa cho thế hệ học viên tiếp theo? ERG luôn chào đón giáo viên tâm huyết.</p>
+      </div>
+      <div class="pg-actions" style="margin: 0">
+        <a class="pg-btn-w" href="/tuyen-dung">Xem vị trí tuyển dụng</a>
+        <a class="btn btn--glass only-desktop" href={base} style="height: 54px; padding: 0 26px">Về chương trình {p.title}</a>
+      </div>
+    </div>
+  </section>
+</ProgramLayout>
+
+<style>
+  .rail { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+  .tc { box-sizing: border-box; display: flex; flex-direction: column; border-radius: 28px; overflow: hidden; background: #FFFFFF; box-shadow: var(--pg-shadow); }
+  .tc-ph { aspect-ratio: 4 / 5; background: linear-gradient(150deg, var(--soft) 0%, var(--tint-2) 100%); border-bottom: 1px dashed #9AA3C7; display: flex; align-items: flex-end; padding: 16px; box-sizing: border-box; }
+  .tc-ph span { font-size: 12.5px; color: #2C3560; background: #FFFFFF; padding: 5px 11px; border-radius: 999px; }
+  .tc-b { padding: 22px 24px 26px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .yrs { flex: none; padding: 4px 10px; border-radius: 999px; background: var(--tint-5); color: #4A5578; font-size: 12.5px; font-weight: 700; }
+  .cert { padding: 5px 12px; border-radius: 999px; background: var(--soft); color: var(--navy); font-size: 12.5px; font-weight: 600; }
+  .quote { margin: 6px 0 0; font-size: 16px; line-height: 1.65; color: #4A5578; }
+  @media (max-width: 767px) {
+    .rail { display: flex; overflow-x: auto; padding-bottom: 44px; margin-bottom: -44px; }
+    .tc { flex: none; width: 260px; }
+    .tc-ph { aspect-ratio: 16 / 10; }
+    .std { --std-ico: 44px; align-items: flex-start; }
+  }
+</style>
